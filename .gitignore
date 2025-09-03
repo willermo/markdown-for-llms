@@ -1,0 +1,10 @@
+# Ignore all PDF files
+*.pdf
+*.log
+*.json
+
+# Ignore all files in subdirectories
+*/
+
+# But keep .gitkeep files
+!**/.gitkeep
