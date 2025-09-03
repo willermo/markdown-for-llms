@@ -1,5 +1,14 @@
 # Markdown for LLMs
 
+> [!CAUTION]
+>
+> This `README.md` file is outdated.
+> I am actually perfoming a huge refactoring of the entire project to build an optimized and complete workflow pipeline for LLMs optimized markdown extraction.
+>
+> **Stay tuned! :)**
+
+
+
 This guide is a walkthrough to derive a clean markdown collection of resources from other common source formats.
 
 It uses `Marker` to convert from `.pdf` files and `pandoc` to convert other common formats (`epub`, `mobi`, `azw3`).
