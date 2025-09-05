@@ -1,8 +1,23 @@
-import os
+#!/usr/bin/env python3
+"""
+Markdown Cleaning Pipeline
+
+This module provides comprehensive cleaning functionality for markdown files,
+removing various artifacts and normalizing content for LLM consumption.
+"""
+
 import re
-import logging
+import os
+import sys
+import argparse
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Dict, Any
+from tqdm import tqdm
+
+# Import new infrastructure
+from config import get_config
+from logging_config import get_cleaning_logger, log_operation, ProgressLogger
+from exceptions import CleaningError, FileReadError, FileWriteError, error_context
 
 # --- Configuration ---
 INPUT_DIR = "converted_markdown"
@@ -15,25 +30,23 @@ PRESERVE_TABLES = True      # Keep table formatting
 MIN_LINE_LENGTH = 3         # Remove lines shorter than this (likely artifacts)
 # ---------------------
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE),
-        logging.StreamHandler()
-    ]
-)
-
 class MarkdownCleaner:
-    def __init__(self, aggressive: bool = True):
-        self.aggressive = aggressive
+    """Comprehensive markdown cleaning with configurable options"""
+    
+    def __init__(self, aggressive: bool = None, config=None):
+        # Use config if provided, otherwise get global config
+        self.config = config or get_config().cleaning
+        self.aggressive = aggressive if aggressive is not None else self.config.aggressive_cleaning
+        
         self.stats = {
             'files_processed': 0,
-            'total_removals': 0,
+            'characters_removed': 0,
             'lines_removed': 0,
-            'characters_removed': 0
+            'artifacts_cleaned': 0
         }
+        
+        # Setup logging using new system
+        self.logger = get_cleaning_logger()
     
     def clean_ocr_artifacts(self, content: str) -> str:
         """Remove OCR artifacts like [A]BC -> ABC, [T]here -> There"""
@@ -127,9 +140,13 @@ class MarkdownCleaner:
         
         return content
     
-    def remove_short_lines(self, lines: List[str], min_length: int = 3) -> List[str]:
-        """Remove lines that are too short to be meaningful"""
+    def remove_short_lines(self, lines: List[str], min_length: int = None) -> List[str]:
+        """Remove meaningless short lines while preserving structure"""
+        if min_length is None:
+            min_length = self.config.min_line_length
+            
         cleaned_lines = []
+        
         for line in lines:
             stripped = line.strip()
             # Keep markdown headers, lists, and meaningful short lines
@@ -145,55 +162,61 @@ class MarkdownCleaner:
         return cleaned_lines
     
     def clean_markdown_file(self, file_path: Path) -> str:
-        """Main cleaning function"""
-        logging.info(f"Processing: {file_path.name}")
-        
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-            original_content = f.read()
-        
-        original_length = len(original_content)
-        content = original_content
-        
-        # Apply cleaning steps
-        content = self.clean_ocr_artifacts(content)
-        content = self.clean_html_artifacts(content)
-        content = self.clean_pandoc_artifacts(content)
-        content = self.clean_image_artifacts(content)
-        content = self.clean_formatting_artifacts(content)
-        content = self.normalize_whitespace(content)
-        
-        # Process line by line for final cleanup
-        lines = content.splitlines()
-        
-        # Remove short/meaningless lines
-        if self.aggressive:
-            lines = self.remove_short_lines(lines, MIN_LINE_LENGTH)
-        
-        # Final line-level cleaning
-        cleaned_lines = []
-        for line in lines:
-            # Skip empty image tags
-            if re.match(r'^!\[\]\([^\)]+\)$', line.strip()):
-                continue
-            # Skip Pandoc fenced divs
-            if re.match(r'^\s*:::', line):
-                continue
-            # Skip lines with only special characters
-            if re.match(r'^[\s\-_=*#]+$', line.strip()) and len(line.strip()) < 10:
-                continue
+        """Clean a single markdown file and return the cleaned content"""
+        with error_context("cleaning", str(file_path), CleaningError):
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+            except FileNotFoundError:
+                self.logger.error(f"File not found: {file_path}")
+                raise FileReadError(f"File not found: {file_path}", str(file_path), "cleaning")
+            except Exception as e:
+                self.logger.error(f"Error reading file {file_path}: {str(e)}")
+                raise FileReadError(f"Error reading file: {str(e)}", str(file_path), "cleaning")
             
-            cleaned_lines.append(line)
-        
-        final_content = "\n".join(cleaned_lines)
-        
-        # Calculate statistics
-        chars_removed = original_length - len(final_content)
-        self.stats['characters_removed'] += chars_removed
-        self.stats['total_removals'] += 1
-        
-        logging.info(f"  Reduced by {chars_removed} characters ({chars_removed/original_length*100:.1f}%)")
-        
-        return final_content
+            original_length = len(content)
+            original_lines = content.count('\n')
+            
+            # Apply cleaning steps
+            content = self.clean_ocr_artifacts(content)
+            content = self.clean_html_artifacts(content)
+            content = self.clean_pandoc_artifacts(content)
+            content = self.clean_image_artifacts(content)
+            content = self.clean_formatting_artifacts(content)
+            content = self.normalize_whitespace(content)
+            
+            # Process line by line for final cleanup
+            lines = content.splitlines()
+            
+            # Remove short/meaningless lines
+            if self.aggressive:
+                lines = self.remove_short_lines(lines, self.config.min_line_length)
+            
+            # Final line-level cleaning
+            cleaned_lines = []
+            for line in lines:
+                # Skip empty image tags
+                if re.match(r'^!\[\]\([^\)]+\)$', line.strip()):
+                    continue
+                # Skip Pandoc fenced divs
+                if re.match(r'^\s*:::', line):
+                    continue
+                # Skip lines with only special characters
+                if re.match(r'^[\s\-_=*#]+$', line.strip()) and len(line.strip()) < 10:
+                    continue
+                
+                cleaned_lines.append(line)
+            
+            final_content = "\n".join(cleaned_lines)
+            
+            # Update statistics
+            self.stats['files_processed'] += 1
+            self.stats['characters_removed'] += original_length - len(final_content)
+            self.stats['lines_removed'] += original_lines - final_content.count('\n')
+            
+            self.logger.info(f"Cleaned {file_path.name}: {original_length} -> {len(final_content)} chars")
+            
+            return final_content
     
     def get_statistics(self) -> str:
         """Return cleaning statistics"""
@@ -207,45 +230,50 @@ Cleaning Statistics:
 
 def main():
     """Main function to process all markdown files"""
-    input_path = Path(INPUT_DIR)
-    output_path = Path(OUTPUT_DIR)
+    # Use configuration system
+    config = get_config()
+    input_path = Path(config.directories.converted)
+    output_path = Path(config.directories.cleaned)
+    
+    # Use new logging system
+    logger = get_cleaning_logger()
     
     if not input_path.exists():
-        logging.error(f"Input directory '{INPUT_DIR}' not found.")
+        logger.error(f"Input directory '{input_path}' not found.")
         return
     
     output_path.mkdir(exist_ok=True)
-    logging.info(f"Created/verified output directory: '{OUTPUT_DIR}'")
+    logger.info(f"Created/verified output directory: '{output_path}'")
     
-    cleaner = MarkdownCleaner(aggressive=AGGRESSIVE_CLEANING)
-    
-    logging.info("Starting comprehensive Markdown cleaning...")
-    logging.info(f"Input folder: {INPUT_DIR}")
-    logging.info(f"Output folder: {OUTPUT_DIR}")
-    logging.info("=" * 50)
+    cleaner = MarkdownCleaner()
     
     markdown_files = list(input_path.glob("*.md"))
     
     if not markdown_files:
-        logging.warning("No .md files found in input directory")
+        logger.warning("No .md files found in input directory")
         return
     
-    for md_file in markdown_files:
-        try:
-            cleaned_content = cleaner.clean_markdown_file(md_file)
-            
-            output_file = output_path / md_file.name
-            with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(cleaned_content)
-            
-            cleaner.stats['files_processed'] += 1
-            
-        except Exception as e:
-            logging.error(f"Failed to process {md_file.name}: {str(e)}")
+    # Use progress logger for batch processing
+    progress = ProgressLogger(logger, len(markdown_files), "markdown cleaning")
     
-    logging.info("=" * 50)
-    logging.info("Cleaning completed!")
-    logging.info(cleaner.get_statistics())
+    with log_operation(logger, "batch markdown cleaning", file_count=len(markdown_files)):
+        for md_file in markdown_files:
+            try:
+                with error_context("cleaning", str(md_file), CleaningError):
+                    cleaned_content = cleaner.clean_markdown_file(md_file)
+                    
+                    output_file = output_path / md_file.name
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        f.write(cleaned_content)
+                    
+                    progress.update(item_name=md_file.name)
+                    
+            except Exception as e:
+                logger.error(f"Failed to process {md_file.name}: {str(e)}")
+                progress.update()  # Still count as processed for progress
+        
+        progress.complete()
+        logger.info(cleaner.get_statistics())
 
 if __name__ == "__main__":
     main()

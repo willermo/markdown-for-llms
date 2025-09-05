@@ -1,11 +1,24 @@
-import os
+#!/usr/bin/env python3
+"""
+Markdown Validation Pipeline
+
+This module provides comprehensive validation for cleaned markdown files,
+assessing quality and providing recommendations for improvement.
+"""
+
 import re
+import os
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass, asdict
-from collections import Counter
+from collections import defaultdict
+
+# Import new infrastructure
+from config import get_config
+from logging_config import get_validation_logger, log_operation, ProgressLogger
+from exceptions import ValidationError, FileReadError, error_context
 
 # --- Configuration ---
 INPUT_DIR = "cleaned_markdown"
@@ -16,10 +29,9 @@ LOG_FILE = "validation.log"
 # Validation thresholds
 MIN_CONTENT_LENGTH = 100        # Minimum characters for valid content
 MAX_CONTENT_LENGTH = 10_000_000 # Maximum characters (10MB text files)
-MIN_WORDS = 50                  # Minimum word count
+MIN_WORDS = 50                  # Minimum word count for valid content
 MAX_ARTIFACT_RATIO = 0.05       # Maximum ratio of artifacts to content
 MIN_READABILITY_SCORE = 20      # Minimum readability score (0-100)
-# ---------------------
 
 logging.basicConfig(
     level=logging.INFO,
@@ -57,7 +69,15 @@ class ValidationResult:
     recommendations: List[str]
 
 class MarkdownValidator:
-    def __init__(self):
+    """Comprehensive markdown validation with quality scoring"""
+    
+    def __init__(self, config=None):
+        # Use config if provided, otherwise get global config
+        self.config = config or get_config().validation
+        
+        # Setup logging using new system
+        self.logger = get_validation_logger()
+        
         self.html_pattern = re.compile(r'<[^>]+>')
         self.suspicious_patterns = {
             'ocr_artifacts': re.compile(r'\[[A-Za-z]\]'),
@@ -91,7 +111,8 @@ class MarkdownValidator:
             return 0
         
         # Basic metrics
-        word_count = len(words)
+        content_length = len(content)
+        word_count = len(content.split())
         sentence_count = len(re.findall(r'[.!?]+', content)) or 1
         
         # Average word length
@@ -202,55 +223,125 @@ class MarkdownValidator:
         
         return issues
     
-    def generate_recommendations(self, result: ValidationResult) -> List[str]:
+    def validate_markdown_file(self, file_path: Path) -> ValidationResult:
+        """Validate a single markdown file"""
+        with error_context("validation", str(file_path), ValidationError):
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+            except Exception as e:
+                self.logger.error(f"Error reading file {file_path}: {str(e)}")
+                raise FileReadError(f"Error reading file: {str(e)}", str(file_path), "validation")
+            
+            # Basic metrics
+            file_size = file_path.stat().st_size
+            character_count = len(content)
+            words = content.split()
+            word_count = len(words)
+            lines = content.split('\n')
+            line_count = len(lines)
+            
+            # Count paragraphs and headings
+            non_empty_lines = [line for line in lines if line.strip()]
+            paragraph_count = len([line for line in non_empty_lines if not line.strip().startswith('#')])
+            heading_count = len([line for line in lines if line.strip().startswith('#')])
+            
+            # Calculate artifact ratio
+            total_artifacts = len(self.detect_html_tags(content)) + len(self.detect_encoding_issues(content)) + len(self.detect_formatting_issues(content))
+            artifact_ratio = total_artifacts / max(1, word_count)
+            
+            # Calculate scores
+            readability_score = self.calculate_readability_score(content)
+            structure_score = self.calculate_structure_score(content)
+            
+            # Quality checks
+            html_tags = self.detect_html_tags(content)
+            encoding_issues = self.detect_encoding_issues(content)
+            formatting_issues = self.detect_formatting_issues(content)
+            suspicious_patterns = self.count_artifacts(content)[1]
+            
+            # Create result
+            result = ValidationResult(
+                filename=file_path.name,
+                file_size=file_size,
+                character_count=character_count,
+                word_count=word_count,
+                paragraph_count=paragraph_count,
+                heading_count=heading_count,
+                line_count=line_count,
+                artifact_ratio=artifact_ratio,
+                readability_score=readability_score,
+                structure_score=structure_score,
+                html_tags=html_tags,
+                suspicious_patterns=suspicious_patterns,
+                encoding_issues=encoding_issues,
+                formatting_issues=formatting_issues,
+                is_valid=False,  # Will be set below
+                quality_grade='',  # Will be set below
+                recommendations=[]  # Will be set below
+            )
+            
+            # Generate recommendations and grade
+            issues = {
+                'html_tags': html_tags,
+                'encoding_issues': encoding_issues,
+                'formatting_issues': formatting_issues,
+                'suspicious_patterns': suspicious_patterns
+            }
+            result.recommendations = self.generate_recommendations(issues)
+            result.quality_grade = self.assign_quality_grade(readability_score, structure_score, artifact_ratio)
+            result.is_valid = (
+                result.character_count >= MIN_CONTENT_LENGTH and
+                result.word_count >= MIN_WORDS and
+                result.artifact_ratio <= MAX_ARTIFACT_RATIO and
+                len(result.html_tags) <= 5 and
+                len(result.encoding_issues) <= 3
+            )
+            
+            self.logger.info(f"  Grade: {result.quality_grade}, Valid: {result.is_valid}")
+            
+            return result
+    
+    def generate_recommendations(self, issues: Dict[str, List[str]]) -> List[str]:
         """Generate improvement recommendations"""
         recommendations = []
         
-        if result.character_count < MIN_CONTENT_LENGTH:
-            recommendations.append("File too short - may not contain meaningful content")
-        
-        if result.artifact_ratio > MAX_ARTIFACT_RATIO:
-            recommendations.append("High artifact ratio - run additional cleaning")
-        
-        if result.readability_score < MIN_READABILITY_SCORE:
-            recommendations.append("Low readability score - check for formatting issues")
-        
-        if result.html_tags:
+        if issues['html_tags']:
             recommendations.append("Remove remaining HTML tags")
         
-        if result.encoding_issues:
+        if issues['encoding_issues']:
             recommendations.append("Fix encoding issues")
         
-        if result.structure_score < 50:
-            recommendations.append("Improve document structure (headings, paragraphs)")
+        if issues['formatting_issues']:
+            recommendations.append("Fix formatting issues")
         
-        if result.word_count < MIN_WORDS:
-            recommendations.append("Content may be too brief for meaningful analysis")
+        if issues['suspicious_patterns']:
+            recommendations.append("Investigate suspicious patterns")
         
         return recommendations
     
-    def calculate_quality_grade(self, result: ValidationResult) -> str:
+    def assign_quality_grade(self, readability_score: float, structure_score: float, artifact_ratio: float) -> str:
         """Assign quality grade A-F based on metrics"""
         score = 0
         
         # Content length (20 points)
-        if result.character_count >= MIN_CONTENT_LENGTH:
+        if readability_score >= MIN_READABILITY_SCORE:
             score += 20
         
         # Low artifact ratio (20 points)
-        if result.artifact_ratio <= MAX_ARTIFACT_RATIO:
+        if artifact_ratio <= MAX_ARTIFACT_RATIO:
             score += 20
         
         # Readability (20 points)
-        score += min(20, result.readability_score / 5)
+        score += min(20, readability_score / 5)
         
         # Structure (20 points)
-        score += min(20, result.structure_score / 5)
+        score += min(20, structure_score / 5)
         
-        # No major issues (20 points)
-        if not result.html_tags and not result.encoding_issues:
+        # No major issues (20 points) - simplified without undefined issues variable
+        if artifact_ratio <= 0.1:  # Very low artifact ratio
             score += 20
-        elif len(result.html_tags) + len(result.encoding_issues) <= 2:
+        elif artifact_ratio <= 0.2:  # Moderate artifact ratio
             score += 10
         
         # Grade assignment
@@ -259,93 +350,6 @@ class MarkdownValidator:
         elif score >= 70: return 'C'
         elif score >= 60: return 'D'
         else: return 'F'
-    
-    def validate_file(self, file_path: Path) -> ValidationResult:
-        """Validate a single markdown file"""
-        logging.info(f"Validating: {file_path.name}")
-        
-        try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                content = f.read()
-        except Exception as e:
-            logging.error(f"Failed to read {file_path.name}: {str(e)}")
-            # Return minimal failed result
-            return ValidationResult(
-                filename=file_path.name,
-                file_size=0,
-                character_count=0,
-                word_count=0,
-                paragraph_count=0,
-                heading_count=0,
-                line_count=0,
-                artifact_ratio=1.0,
-                readability_score=0,
-                structure_score=0,
-                html_tags=[],
-                suspicious_patterns=[f"File read error: {str(e)}"],
-                encoding_issues=[],
-                formatting_issues=[],
-                is_valid=False,
-                quality_grade='F',
-                recommendations=["Fix file reading issues"]
-            )
-        
-        # Basic metrics
-        file_size = file_path.stat().st_size
-        character_count = len(content)
-        words = content.split()
-        word_count = len(words)
-        lines = content.split('\n')
-        line_count = len(lines)
-        
-        # Count paragraphs and headings
-        non_empty_lines = [line for line in lines if line.strip()]
-        paragraph_count = len([line for line in non_empty_lines if not line.strip().startswith('#')])
-        heading_count = len([line for line in lines if line.strip().startswith('#')])
-        
-        # Quality analysis
-        artifact_count, suspicious_patterns = self.count_artifacts(content)
-        artifact_ratio = artifact_count / max(1, character_count)
-        
-        readability_score = self.calculate_readability_score(content)
-        structure_score = self.calculate_structure_score(content)
-        
-        # Issue detection
-        html_tags = self.detect_html_tags(content)
-        encoding_issues = self.detect_encoding_issues(content)
-        formatting_issues = self.detect_formatting_issues(content)
-        
-        # Create result
-        result = ValidationResult(
-            filename=file_path.name,
-            file_size=file_size,
-            character_count=character_count,
-            word_count=word_count,
-            paragraph_count=paragraph_count,
-            heading_count=heading_count,
-            line_count=line_count,
-            artifact_ratio=artifact_ratio,
-            readability_score=readability_score,
-            structure_score=structure_score,
-            html_tags=html_tags,
-            suspicious_patterns=suspicious_patterns,
-            encoding_issues=encoding_issues,
-            formatting_issues=formatting_issues,
-            is_valid=False,  # Will be set below
-            quality_grade='',  # Will be set below
-            recommendations=[]  # Will be set below
-        )
-        
-        # Generate recommendations and grade
-        result.recommendations = self.generate_recommendations(result)
-        result.quality_grade = self.calculate_quality_grade(result)
-        result.is_valid = (
-            result.character_count >= MIN_CONTENT_LENGTH and
-            result.word_count >= MIN_WORDS and
-            result.artifact_ratio <= MAX_ARTIFACT_RATIO and
-            len(result.html_tags) <= 5 and
-            len(result.encoding_issues) <= 3
-        )
         
         logging.info(f"  Grade: {result.quality_grade}, Valid: {result.is_valid}")
         

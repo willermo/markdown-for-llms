@@ -1,0 +1,25 @@
+# Document Intelligence Pipeline Dependencies
+
+# Core dependencies
+requests>=2.31.0
+tiktoken>=0.5.1
+tqdm>=4.66.0
+python-dotenv>=1.0.0
+
+# Testing dependencies
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# Optional dependencies for enhanced functionality
+colorama>=0.4.6  # For colored terminal output
+rich>=13.0.0     # For enhanced console output (optional)
+
+# Development dependencies (optional)
+black>=23.0.0    # Code formatting
+flake8>=6.0.0    # Linting
+mypy>=1.5.0      # Type checking
+
+# System dependencies (install separately):
+# - pandoc (for document conversion)
+# - docker (for on-premises PDF conversion)

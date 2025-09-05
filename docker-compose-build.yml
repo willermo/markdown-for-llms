@@ -1,0 +1,35 @@
+services:
+  marker-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: marker-api-build
+    ports:
+      - "8000:8000"
+    environment:
+      - TORCH_DEVICE=cpu # Change to 'cuda' if you have GPU support
+      - MAX_PAGES=0 # 0 = no limit
+      - WORKER_MULTIPLIER=1
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./temp_processing:/app/temp # Temporary processing directory
+      - marker_models:/root/.cache/datalab/models # Persist ML models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s # Longer start period for build
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
+
+volumes:
+  marker_models:
+    driver: local
+  temp_processing:
+    driver: local
