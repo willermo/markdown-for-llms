@@ -79,6 +79,15 @@ class ConversionConfig:
     conversion_timeout: int = 3600
     max_retries: int = 3
     retry_delay: int = 10
+    # Marker options
+    use_llm: bool = False
+    force_ocr: bool = False
+    paginate: bool = False
+    strip_existing_ocr: bool = True
+    disable_image_extraction: bool = True
+    # Cloud polling
+    max_polls: int = 300
+    poll_interval: int = 2
     
     def __post_init__(self):
         if self.supported_pdf_formats is None:
@@ -260,6 +269,26 @@ def apply_env_overrides(config: PipelineConfig) -> PipelineConfig:
     if "LOG_LEVEL" in os.environ:
         config.log_level = os.environ["LOG_LEVEL"]
     
+    if "CONVERSION_TIMEOUT" in os.environ:
+        config.conversion.conversion_timeout = int(os.environ["CONVERSION_TIMEOUT"])
+    # Marker toggles via env
+    env_bools = {
+        "MARKER_USE_LLM": ("use_llm", bool),
+        "MARKER_FORCE_OCR": ("force_ocr", bool),
+        "MARKER_PAGINATE": ("paginate", bool),
+        "MARKER_STRIP_EXISTING_OCR": ("strip_existing_ocr", bool),
+        "MARKER_DISABLE_IMAGE_EXTRACTION": ("disable_image_extraction", bool),
+    }
+    for env_key, (attr, _typ) in env_bools.items():
+        if env_key in os.environ:
+            val = os.environ[env_key].strip().lower() in ("1", "true", "yes", "on")
+            setattr(config.conversion, attr, val)
+
+    if "MAX_POLLS" in os.environ:
+        config.conversion.max_polls = int(os.environ["MAX_POLLS"])
+    if "POLL_INTERVAL" in os.environ:
+        config.conversion.poll_interval = int(os.environ["POLL_INTERVAL"])
+
     return config
 
 if __name__ == "__main__":

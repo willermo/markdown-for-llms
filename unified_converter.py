@@ -155,6 +155,9 @@ class MarkerConverter:
         self.is_local = is_local
         self.logger = get_orchestrator_logger()
         self.session = requests.Session()
+        # Polling configuration
+        self.max_polls = int(self.config.get("max_polls", 300))
+        self.poll_interval = int(self.config.get("poll_interval", 2))
         
         if not is_local:
             # Cloud API requires API key
@@ -171,9 +174,15 @@ class MarkerConverter:
     def is_available(self) -> bool:
         """Check if Marker API is available."""
         try:
-            health_url = f"{self.base_url.rstrip('/')}/health" if self.is_local else f"{self.base_url.rstrip('/')}/marker"
-            resp = self.session.get(health_url, timeout=30)
-            return resp.status_code in [200, 405]  # 405 is OK for cloud API endpoint
+            if self.is_local:
+                health_url = f"{self.base_url.rstrip('/')}/health"
+                resp = self.session.get(health_url, timeout=10)
+                return resp.status_code == 200
+            else:
+                # Cloud: endpoint may not support GET; treat 200/401/403/405 as reachable
+                marker_url = f"{self.base_url.rstrip('/')}/marker"
+                resp = self.session.get(marker_url, timeout=10)
+                return resp.status_code in (200, 401, 403, 405)
         except requests.exceptions.RequestException:
             return False
     
@@ -260,9 +269,14 @@ class MarkerConverter:
             form_data = {
                 "file": (os.path.basename(file_path), fh, "application/pdf"),
                 "output_format": (None, "markdown"),
+                "use_llm": (None, "true" if self.config.get("use_llm", False) else "false"),
+                "force_ocr": (None, "true" if self.config.get("force_ocr", False) else "false"),
+                "strip_existing_ocr": (None, "true" if self.config.get("strip_existing_ocr", True) else "false"),
+                "disable_image_extraction": (None, "true" if self.config.get("disable_image_extraction", True) else "false"),
+                "paginate": (None, "true" if self.config.get("paginate", False) else "false"),
             }
             
-            timeout = self.config.get("conversion_timeout", 300)
+            timeout = self.config.get("conversion_timeout", 3600)
             resp = self.session.post(url, files=form_data, timeout=timeout)
             resp.raise_for_status()
             
@@ -287,6 +301,11 @@ class MarkerConverter:
             form_data = {
                 "file": (os.path.basename(file_path), fh, "application/pdf"),
                 "output_format": (None, "markdown"),
+                "use_llm": (None, "true" if self.config.get("use_llm", False) else "false"),
+                "force_ocr": (None, "true" if self.config.get("force_ocr", False) else "false"),
+                "strip_existing_ocr": (None, "true" if self.config.get("strip_existing_ocr", True) else "false"),
+                "disable_image_extraction": (None, "true" if self.config.get("disable_image_extraction", True) else "false"),
+                "paginate": (None, "true" if self.config.get("paginate", False) else "false"),
             }
             
             timeout = self.config.get("conversion_timeout", 30)
@@ -301,8 +320,8 @@ class MarkerConverter:
     
     def _poll_for_completion(self, check_url: str) -> Optional[Dict]:
         """Poll for cloud conversion completion."""
-        max_polls = 300  # 10 minutes at 2s intervals
-        poll_interval = 2
+        max_polls = int(self.config.get("max_polls", self.max_polls))
+        poll_interval = int(self.config.get("poll_interval", self.poll_interval))
         
         for poll_count in range(max_polls):
             try:
@@ -316,7 +335,7 @@ class MarkerConverter:
                     return data if data.get("success") else None
                 
                 if status in ("queued", "processing", "running", "in_progress"):
-                    if poll_count % 30 == 0:  # Log every minute
+                    if poll_count % max(1, int(60 / max(1, poll_interval))) == 0:  # roughly every minute
                         self.logger.info(f"Still processing... (poll {poll_count + 1})")
                     time.sleep(poll_interval)
                     continue
@@ -488,54 +507,67 @@ class UnifiedDocumentConverter:
         for conv_type, files in files_by_converter.items():
             self.logger.info(f"  {conv_type}: {len(files)} files")
         
-        # Convert files
+        # Convert files by converter group to control concurrency for heavy backends
         results = []
         total_files = len(files_to_process)
-        
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            future_to_file = {
-                executor.submit(self.convert_file, str(file_path)): file_path 
-                for file_path in files_to_process
-            }
-            
-            completed = 0
-            for future in as_completed(future_to_file):
-                file_path = future_to_file[future]
-                completed += 1
-                
-                try:
-                    result = future.result()
-                    results.append(result)
-                    
-                    if result.success:
-                        # Save the converted markdown
-                        output_file = output_path / f"{file_path.stem}.md"
-                        with open(output_file, 'w', encoding='utf-8') as f:
-                            f.write(result.markdown_content)
-                        
-                        # Save images if present
-                        if result.images:
-                            img_dir = output_path / "images" / file_path.stem
-                            img_dir.mkdir(parents=True, exist_ok=True)
-                            for img_name, img_b64 in result.images.items():
-                                try:
-                                    img_data = base64.b64decode(img_b64)
-                                    with open(img_dir / img_name, "wb") as f:
-                                        f.write(img_data)
-                                except Exception as e:
-                                    self.logger.warning(f"Failed to save image {img_name}: {e}")
-                        
-                        self.logger.info(f"✓ [{completed}/{total_files}] {file_path.name} -> {result.converter_used}")
-                    else:
-                        self.logger.error(f"✗ [{completed}/{total_files}] {file_path.name}: {result.error}")
-                        
-                except Exception as e:
-                    self.logger.error(f"✗ [{completed}/{total_files}] {file_path.name}: {str(e)}")
-                    results.append(ConversionResult(
-                        file_path=str(file_path),
-                        success=False,
-                        error=str(e)
-                    ))
+        completed = 0
+
+        def handle_result(file_path: Path, result: ConversionResult):
+            nonlocal completed
+            results.append(result)
+            completed += 1
+            if result.success:
+                # Save the converted markdown
+                output_file = output_path / f"{file_path.stem}.md"
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    f.write(result.markdown_content)
+                # Save images if present
+                if result.images:
+                    img_dir = output_path / "images" / file_path.stem
+                    img_dir.mkdir(parents=True, exist_ok=True)
+                    for img_name, img_b64 in result.images.items():
+                        try:
+                            img_data = base64.b64decode(img_b64)
+                            with open(img_dir / img_name, "wb") as f:
+                                f.write(img_data)
+                        except Exception as e:
+                            self.logger.warning(f"Failed to save image {img_name}: {e}")
+                self.logger.info(f"✓ [{completed}/{total_files}] {file_path.name} -> {result.converter_used}")
+            else:
+                self.logger.error(f"✗ [{completed}/{total_files}] {file_path.name}: {result.error}")
+
+        for conv_type, files in files_by_converter.items():
+            # Limit local_marker to sequential processing to avoid OOM / restarts
+            group_workers = 1 if conv_type == 'local_marker' else max_workers
+            if group_workers <= 1:
+                for file_path in files:
+                    try:
+                        res = self.convert_file(str(file_path))
+                        handle_result(file_path, res)
+                    except Exception as e:
+                        self.logger.error(f"✗ [{completed+1}/{total_files}] {file_path.name}: {str(e)}")
+                        results.append(ConversionResult(
+                            file_path=str(file_path),
+                            success=False,
+                            error=str(e)
+                        ))
+                        completed += 1
+            else:
+                with ThreadPoolExecutor(max_workers=group_workers) as executor:
+                    future_to_file = {executor.submit(self.convert_file, str(fp)): fp for fp in files}
+                    for future in as_completed(future_to_file):
+                        file_path = future_to_file[future]
+                        try:
+                            res = future.result()
+                            handle_result(file_path, res)
+                        except Exception as e:
+                            self.logger.error(f"✗ [{completed+1}/{total_files}] {file_path.name}: {str(e)}")
+                            results.append(ConversionResult(
+                                file_path=str(file_path),
+                                success=False,
+                                error=str(e)
+                            ))
+                            completed += 1
         
         # Write summary
         self._write_conversion_summary(results, output_path)

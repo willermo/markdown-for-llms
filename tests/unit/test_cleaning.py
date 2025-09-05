@@ -139,7 +139,8 @@ class TestMarkdownCleaner:
         assert "<span" not in result
         assert "&nbsp;" not in result
         assert "**broken emphasis formatting**" in result  # Should fix spacing
-        assert "ab" not in result  # Short line removed
+        # Verify the standalone short line 'ab' was removed (avoid false positives like 'above')
+        assert "ab" not in [ln.strip() for ln in result.splitlines()]
         assert "Valid Section" in result
         assert "This is good content" in result
     
@@ -162,12 +163,9 @@ class TestMarkdownCleaner:
         """Test error handling for invalid files"""
         non_existent_file = tmp_path / "nonexistent.md"
         
-        # Should handle missing file gracefully
-        result = cleaner.clean_markdown_file(non_existent_file)
-        
-        # Should return empty string for non-existent file
-        assert isinstance(result, str)
-        assert len(result) == 0
+        # Should raise a FileReadError for missing file
+        with pytest.raises(FileReadError):
+            cleaner.clean_markdown_file(non_existent_file)
     
     def test_error_handling_permission_denied(self, cleaner, tmp_path, monkeypatch):
         """Test error handling for permission issues"""
@@ -180,9 +178,9 @@ class TestMarkdownCleaner:
         
         monkeypatch.setattr('builtins.open', mock_open)
         
-        # Should handle permission error gracefully
-        result = cleaner.clean_markdown_file(test_file)
-        assert isinstance(result, str)
+        # Should raise FileReadError on permission issues
+        with pytest.raises(FileReadError):
+            cleaner.clean_markdown_file(test_file)
     
     @pytest.mark.parametrize("aggressive,min_length,expected_removals", [
         (True, 3, True),   # Aggressive mode should remove short lines

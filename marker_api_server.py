@@ -20,6 +20,39 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Marker PDF Converter API", version="1.0.0")
 
+# Global model cache to avoid reloading on each request
+_model_dict = None
+_converter = None
+
+def get_converter():
+    """Get cached converter instance"""
+    global _model_dict, _converter
+    if _converter is None:
+        from marker.converters.pdf import PdfConverter
+        from marker.models import create_model_dict
+        
+        logger.info("Loading ML models (one-time setup)...")
+        _model_dict = create_model_dict()
+        _converter = PdfConverter(
+            artifact_dict=_model_dict,
+            processor_list=None,
+            renderer=None
+        )
+        logger.info("✓ Models loaded and converter ready")
+    return _converter
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize models on startup"""
+    logger.info("Initializing Marker API server...")
+    # Pre-load models to avoid delays on first request
+    try:
+        get_converter()
+        logger.info("✓ Server ready to accept requests")
+    except Exception as e:
+        logger.error(f"Failed to initialize models: {e}")
+        # Continue startup anyway - models will load on first request
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
@@ -32,8 +65,8 @@ async def convert_pdf(
     use_llm: bool = False,
     force_ocr: bool = False,
     paginate: bool = False,
-    strip_existing_ocr: bool = False,
-    disable_image_extraction: bool = False,
+    strip_existing_ocr: bool = True,  # Default to True for text PDFs
+    disable_image_extraction: bool = True,  # Default to True for LLM use
     max_pages: Optional[int] = None
 ):
     """Convert PDF to markdown using Marker"""
@@ -42,11 +75,6 @@ async def convert_pdf(
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
     
     try:
-        # Import marker here to catch import errors
-        from marker.converters.pdf import PdfConverter
-        from marker.models import create_model_dict
-        from marker.config.parser import ConfigParser
-        
         # Create temporary file for input
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
             content = await file.read()
@@ -54,28 +82,25 @@ async def convert_pdf(
             temp_file_path = temp_file.name
         
         try:
-            # Create configuration
-            config = ConfigParser({
-                'output_format': output_format,
-                'languages': ['English'],
-                'force_ocr': force_ocr,
-                'paginate': paginate,
-                'max_pages': max_pages
-            })
+            # Get cached converter (loads models only once)
+            converter = get_converter()
             
-            # Load models (this is expensive, should be cached in production)
-            model_dict = create_model_dict()
-            
-            # Create converter
-            converter = PdfConverter(
-                artifact_dict=model_dict,
-                processor_list=None,
-                renderer=None
-            )
-            
-            # Convert PDF
+            # Convert PDF with timeout and better error handling
+            logger.info(f"Converting PDF: {file.filename}")
             document = converter(temp_file_path)
-            full_text = document.render()
+            
+            # Handle different document output types
+            if hasattr(document, 'render'):
+                full_text = document.render()
+            elif hasattr(document, 'markdown'):
+                full_text = document.markdown
+            elif hasattr(document, 'text'):
+                full_text = document.text
+            else:
+                # Fallback: convert to string
+                full_text = str(document)
+            
+            logger.info(f"✓ Conversion completed for {file.filename}")
             
             # Clean up temp file
             os.unlink(temp_file_path)

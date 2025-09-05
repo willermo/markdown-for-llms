@@ -2,13 +2,15 @@ import os
 import re
 import json
 import logging
+import argparse
 import tiktoken
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Union
 from dataclasses import dataclass, asdict
 from enum import Enum
+from config import get_config
 
-# --- Configuration ---
+# --- Configuration (defaults; can be overridden via CLI or config) ---
 INPUT_DIR = "validated_markdown"
 OUTPUT_DIR = "chunked_markdown"
 METADATA_FILE = "chunking_metadata.json"
@@ -30,7 +32,7 @@ LLM_PRESETS = {
     'custom': {'chunk_size': DEFAULT_CHUNK_SIZE, 'overlap': DEFAULT_OVERLAP}
 }
 
-TARGET_LLM = 'custom'  # Change this to use specific LLM presets
+TARGET_LLM = 'custom'  # Overridden at runtime via CLI or config
 # ---------------------
 
 logging.basicConfig(
@@ -55,14 +57,15 @@ class ChunkMetadata:
     chunk_index: int
     total_chunks: int
     token_count: int
-    character_count: int
     word_count: int
-    start_position: int
-    end_position: int
     heading_context: List[str]  # Hierarchical headings leading to this chunk
     content_type: str           # paragraph, heading, list, etc.
-    overlap_with_previous: int
-    overlap_with_next: int
+    # Optional fields with defaults for compatibility
+    character_count: int = 0
+    start_position: int = 0
+    end_position: int = 0
+    overlap_with_previous: int = 0
+    overlap_with_next: int = 0
 
 @dataclass
 class ChunkingResult:
@@ -419,11 +422,140 @@ class SmartChunker:
             return "paragraph"
 
 class MarkdownChunker:
-    def __init__(self, target_llm: str = TARGET_LLM):
+    def __init__(self, target_llm: str = TARGET_LLM, chunk_size: Optional[int] = None, overlap: Optional[int] = None):
         self.target_llm = target_llm
-        self.chunk_size = LLM_PRESETS[target_llm]['chunk_size']
-        self.overlap = LLM_PRESETS[target_llm]['overlap']
+        # Resolve defaults from presets then apply overrides if provided
+        preset_chunk_size = LLM_PRESETS.get(target_llm, LLM_PRESETS['custom'])['chunk_size']
+        preset_overlap = LLM_PRESETS.get(target_llm, LLM_PRESETS['custom'])['overlap']
+        self.chunk_size = chunk_size if chunk_size is not None else preset_chunk_size
+        self.overlap = overlap if overlap is not None else preset_overlap
         self.chunker = SmartChunker(self.chunk_size, self.overlap)
+        self._stats = {"files_processed": 0, "total_chunks": 0}
+
+    # --- Test compatibility wrappers ---
+    def count_tokens(self, text: str) -> int:
+        if not text or not text.strip():
+            return 0
+        return self.chunker.token_counter.count_tokens(text)
+
+    def split_by_sentences(self, text: str) -> List[str]:
+        # Pure sentence split expected by tests
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        return [s for s in sentences if s.strip()]
+
+    def extract_headings(self, content: str) -> List[Tuple[int, str, str]]:
+        return self.chunker.extract_headings(content)
+
+    def chunk_by_semantic_sections(self, content: str) -> List[str]:
+        return [chunk for (chunk, _ctx) in self.chunker.chunk_semantic(content)]
+
+    def chunk_by_fixed_size(self, content: str) -> List[str]:
+        return self.chunker.token_counter.split_by_tokens(content, self.chunk_size)
+
+    def chunk_by_sliding_window(self, content: str) -> List[str]:
+        # Token-based sliding window with overlap for predictable behavior
+        encoding = self.chunker.token_counter.encoding
+        tokens = encoding.encode(content)
+        if not tokens:
+            return []
+        step = max(1, self.chunk_size - self.overlap)
+        chunks: List[str] = []
+        for i in range(0, len(tokens), step):
+            window = tokens[i:i + self.chunk_size]
+            if not window:
+                break
+            chunks.append(encoding.decode(window).strip())
+            if i + self.chunk_size >= len(tokens):
+                break
+        return chunks
+
+    def create_chunk_metadata(self, chunk_content: str, source_file: Path, chunk_index: int, total_chunks: int) -> ChunkMetadata:
+        # Compute basic metrics
+        token_count = self.count_tokens(chunk_content)
+        word_count = len(chunk_content.split())
+        char_count = len(chunk_content)
+        # Attempt to infer heading context from the chunk itself
+        headings = self.extract_headings(chunk_content)
+        heading_context = [h for (_pos, _lvl, h) in headings] if headings else []
+        content_type = self.chunker.classify_content(chunk_content)
+        return ChunkMetadata(
+            chunk_id=f"{source_file.stem}_chunk_{chunk_index+1:03d}",
+            source_file=str(source_file.name),
+            chunk_index=chunk_index,
+            total_chunks=total_chunks,
+            token_count=token_count,
+            character_count=char_count,
+            word_count=word_count,
+            start_position=0,
+            end_position=char_count,
+            heading_context=heading_context,
+            content_type=content_type,
+            overlap_with_previous=0,
+            overlap_with_next=0,
+        )
+
+    def save_chunk_with_metadata(self, chunk_content: str, metadata: ChunkMetadata, output_file: Path) -> None:
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write("---\n")
+            f.write(f"chunk_id: {metadata.chunk_id}\n")
+            f.write(f"source_file: {metadata.source_file}\n")
+            f.write(f"chunk_index: {metadata.chunk_index}\n")
+            f.write(f"total_chunks: {metadata.total_chunks}\n")
+            f.write(f"token_count: {metadata.token_count}\n")
+            f.write(f"word_count: {metadata.word_count}\n")
+            if metadata.heading_context:
+                f.write(f"heading_context: {' > '.join(metadata.heading_context)}\n")
+            f.write(f"content_type: {metadata.content_type}\n")
+            f.write("---\n\n")
+            f.write(chunk_content)
+
+    def chunk_markdown_file(self, file_path: Path, output_dir: Path) -> List[Path]:
+        if not file_path.exists():
+            return []
+        try:
+            content = file_path.read_text(encoding='utf-8', errors='ignore')
+        except Exception:
+            return []
+        if not content.strip():
+            return []
+        # Produce chunks and metadata
+        result = self.chunker.chunk_document(content, file_path.name, ChunkingStrategy.SEMANTIC)
+        chunks = []
+        for i, meta in enumerate(result.chunks):
+            chunk_text = content[meta.start_position:meta.end_position]
+            out_file = output_dir / f"{Path(file_path).stem}_chunk_{i+1:03d}.md"
+            # Convert internal metadata to minimal metadata expected by tests
+            save_meta = ChunkMetadata(
+                chunk_id=meta.chunk_id,
+                source_file=file_path.name,
+                chunk_index=i,
+                total_chunks=result.total_chunks,
+                token_count=meta.token_count,
+                character_count=meta.character_count,
+                word_count=meta.word_count,
+                start_position=meta.start_position,
+                end_position=meta.end_position,
+                heading_context=meta.heading_context,
+                content_type=meta.content_type,
+                overlap_with_previous=meta.overlap_with_previous,
+                overlap_with_next=meta.overlap_with_next,
+            )
+            self.save_chunk_with_metadata(chunk_text, save_meta, out_file)
+            chunks.append(out_file)
+        # Update stats
+        self._stats["files_processed"] += 1
+        self._stats["total_chunks"] += len(chunks)
+        return chunks
+
+    def process_directory(self, input_dir: Path, output_dir: Path) -> Dict[Path, List[Path]]:
+        results: Dict[Path, List[Path]] = {}
+        for md_file in Path(input_dir).glob("*.md"):
+            results[md_file] = self.chunk_markdown_file(md_file, output_dir)
+        return results
+
+    def get_statistics(self) -> Dict[str, int]:
+        return dict(self._stats)
         
     def process_file(self, file_path: Path, strategy: ChunkingStrategy = ChunkingStrategy.SEMANTIC) -> Tuple[ChunkingResult, List[str]]:
         """Process a single markdown file and return chunks with metadata"""
@@ -483,7 +615,7 @@ class MarkdownChunker:
                 # Write chunk content
                 f.write(chunk_text)
 
-def create_index_file(all_results: List[ChunkingResult], output_path: Path):
+def create_index_file(all_results: List[ChunkingResult], output_path: Path, target_llm: str, chunk_size: int, overlap: int):
     """Create an index file listing all chunks"""
     index_data = {
         'chunking_summary': {
@@ -491,9 +623,9 @@ def create_index_file(all_results: List[ChunkingResult], output_path: Path):
             'total_chunks': sum(r.total_chunks for r in all_results),
             'total_tokens': sum(r.total_tokens for r in all_results),
             'average_chunk_size': sum(r.total_tokens for r in all_results) / sum(r.total_chunks for r in all_results) if all_results else 0,
-            'target_llm': TARGET_LLM,
-            'chunk_size_target': LLM_PRESETS[TARGET_LLM]['chunk_size'],
-            'overlap_size': LLM_PRESETS[TARGET_LLM]['overlap']
+            'target_llm': target_llm,
+            'chunk_size_target': chunk_size,
+            'overlap_size': overlap
         },
         'files': []
     }
@@ -524,65 +656,89 @@ def create_index_file(all_results: List[ChunkingResult], output_path: Path):
         json.dump(index_data, f, indent=2, ensure_ascii=False)
 
 def main():
-    """Main chunking function"""
-    input_path = Path(INPUT_DIR)
-    output_path = Path(OUTPUT_DIR)
-    
+    """Main chunking function with CLI and config integration"""
+    parser = argparse.ArgumentParser(description="Markdown chunker")
+    parser.add_argument('--input-dir', help='Input directory of validated markdown files')
+    parser.add_argument('--output-dir', help='Output directory for chunked markdown files')
+    parser.add_argument('--target-llm', choices=list(LLM_PRESETS.keys()), help='Target LLM preset')
+    parser.add_argument('--chunk-size', type=int, help='Override chunk size')
+    parser.add_argument('--overlap', type=int, help='Override overlap size')
+    args = parser.parse_args()
+
+    # Load configuration for defaults
+    try:
+        cfg = get_config()
+        cfg_input = Path(cfg.directories.cleaned)
+        cfg_output = Path(cfg.directories.chunked)
+        cfg_llm = cfg.chunking.target_llm.value
+        cfg_chunk = cfg.chunking.chunk_size
+        cfg_overlap = cfg.chunking.overlap
+    except Exception:
+        cfg_input = Path(INPUT_DIR)
+        cfg_output = Path(OUTPUT_DIR)
+        cfg_llm = TARGET_LLM
+        cfg_chunk = DEFAULT_CHUNK_SIZE
+        cfg_overlap = DEFAULT_OVERLAP
+
+    input_path = Path(args.input_dir) if args.input_dir else cfg_input
+    output_path = Path(args.output_dir) if args.output_dir else cfg_output
+    target_llm = args.target_llm if args.target_llm else cfg_llm
+    chunk_size = args.chunk_size if args.chunk_size is not None else cfg_chunk
+    overlap = args.overlap if args.overlap is not None else cfg_overlap
+
     if not input_path.exists():
-        logging.error(f"Input directory '{INPUT_DIR}' not found.")
+        logging.error(f"Input directory '{input_path}' not found.")
         return
-    
     output_path.mkdir(exist_ok=True)
-    
-    chunker = MarkdownChunker(TARGET_LLM)
+
+    chunker = MarkdownChunker(target_llm=target_llm, chunk_size=chunk_size, overlap=overlap)
     all_results = []
-    
-    logging.info(f"Starting markdown chunking for {TARGET_LLM}...")
+
+    logging.info(f"Starting markdown chunking for {target_llm}...")
     logging.info(f"Target chunk size: {chunker.chunk_size} tokens")
     logging.info(f"Overlap size: {chunker.overlap} tokens")
-    logging.info(f"Input folder: {INPUT_DIR}")
-    logging.info(f"Output folder: {OUTPUT_DIR}")
+    logging.info(f"Input folder: {input_path}")
+    logging.info(f"Output folder: {output_path}")
     logging.info("=" * 60)
-    
+
     markdown_files = list(input_path.glob("*.md"))
-    
     if not markdown_files:
         logging.warning("No .md files found in input directory")
         return
-    
+
     # Process each file
     for md_file in markdown_files:
         try:
             # Try semantic chunking first
             result, chunks = chunker.process_file(md_file, ChunkingStrategy.SEMANTIC)
-            
+
             if result and chunks:
                 # Check if chunks are too large, switch to sliding window
                 oversized_chunks = [c for c in result.chunks if c.token_count > chunker.chunk_size * 1.5]
-                
+
                 if len(oversized_chunks) > len(result.chunks) * 0.3:  # More than 30% oversized
                     logging.info(f"  Switching to sliding window for {md_file.name}")
                     result, chunks = chunker.process_file(md_file, ChunkingStrategy.SLIDING_WINDOW)
-                
+
                 if result and chunks:
                     chunker.save_chunks(md_file.name, chunks, result, output_path)
                     all_results.append(result)
-                    
+
                     logging.info(f"  ✓ Processed: {result.total_chunks} chunks, avg {result.total_tokens//result.total_chunks} tokens/chunk")
                 else:
                     logging.error(f"  ✗ Failed to chunk: {md_file.name}")
             else:
                 logging.error(f"  ✗ Failed to process: {md_file.name}")
-                
+
         except Exception as e:
             logging.error(f"Error processing {md_file.name}: {str(e)}")
-    
+
     # Create comprehensive metadata
     if all_results:
         # Save detailed metadata
         metadata = {
             'chunking_parameters': {
-                'target_llm': TARGET_LLM,
+                'target_llm': target_llm,
                 'chunk_size': chunker.chunk_size,
                 'overlap': chunker.overlap,
                 'min_chunk_size': MIN_CHUNK_SIZE,
@@ -590,19 +746,19 @@ def main():
             },
             'results': [asdict(result) for result in all_results]
         }
-        
+
         with open(output_path / METADATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False)
-        
+
         # Create index file
-        create_index_file(all_results, output_path)
-        
+        create_index_file(all_results, output_path, target_llm, chunker.chunk_size, chunker.overlap)
+
         # Summary statistics
         total_files = len(all_results)
         total_chunks = sum(r.total_chunks for r in all_results)
         total_tokens = sum(r.total_tokens for r in all_results)
         avg_chunk_size = total_tokens / total_chunks if total_chunks > 0 else 0
-        
+
         logging.info("=" * 60)
         logging.info("CHUNKING SUMMARY:")
         logging.info(f"Files processed: {total_files}")
@@ -612,7 +768,7 @@ def main():
         logging.info(f"Target chunk size: {chunker.chunk_size} tokens")
         logging.info(f"Metadata saved to: {METADATA_FILE}")
         logging.info(f"Index saved to: chunks_index.json")
-        
+
         # Quality metrics
         oversized_chunks = []
         undersized_chunks = []
@@ -622,12 +778,12 @@ def main():
                     oversized_chunks.append(chunk)
                 elif chunk.token_count < chunker.chunk_size * 0.3:
                     undersized_chunks.append(chunk)
-        
+
         if oversized_chunks:
             logging.warning(f"  {len(oversized_chunks)} chunks exceed target size by >20%")
         if undersized_chunks:
             logging.warning(f"  {len(undersized_chunks)} chunks are <30% of target size")
-        
+
         logging.info("🎉 Chunking completed successfully!")
     else:
         logging.error("No files were successfully processed")

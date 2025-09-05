@@ -106,8 +106,8 @@ class PipelineOrchestrator:
             self.logger.error("Pandoc not found in PATH")
             return False
         
-        # Check for required Python packages
-        required_packages = ['tiktoken', 're', 'pathlib']
+        # Check for required Python packages (third-party only)
+        required_packages = ['tiktoken']
         missing_packages = []
         
         for package in required_packages:
@@ -235,7 +235,7 @@ class PipelineOrchestrator:
         
         try:
             result = subprocess.run([sys.executable, str(script_path)], 
-                                  cwd=BASE_DIR, 
+                                  cwd=Path.cwd(), 
                                   capture_output=True, 
                                   text=True,
                                   timeout=1800)  # 30 minutes timeout
@@ -278,7 +278,7 @@ class PipelineOrchestrator:
         
         try:
             result = subprocess.run([sys.executable, str(script_path)], 
-                                  cwd=BASE_DIR, 
+                                  cwd=Path.cwd(), 
                                   capture_output=True, 
                                   text=True,
                                   timeout=900)  # 15 minutes timeout
@@ -327,44 +327,38 @@ class PipelineOrchestrator:
             self.pipeline_state['file_counts']['chunked'] = chunked_count
             return True
         
-        # Update chunking script configuration
+        # Run chunking script with explicit parameters from configuration
         chunk_script_path = BASE_DIR / SCRIPTS['chunk']
-        
-        # Temporarily modify the script's TARGET_LLM setting
-        # This is a bit hacky but ensures the right LLM settings are used
         try:
-            with open(chunk_script_path, 'r') as f:
-                script_content = f.read()
-            
-            # Replace TARGET_LLM setting
-            modified_content = script_content.replace(
-                "TARGET_LLM = 'custom'",
-                f"TARGET_LLM = '{self.config.chunking.target_llm.value}'"
+            validated_dir = self.config_manager.get_directory_path('validated')
+            chunked_dir = self.config_manager.get_directory_path('chunked')
+
+            cmd = [
+                sys.executable,
+                str(chunk_script_path),
+                '--input-dir', str(validated_dir),
+                '--output-dir', str(chunked_dir),
+                '--target-llm', self.config.chunking.target_llm.value,
+                '--chunk-size', str(self.config.chunking.chunk_size),
+                '--overlap', str(self.config.chunking.overlap),
+            ]
+
+            result = subprocess.run(
+                cmd,
+                cwd=Path.cwd(),
+                capture_output=True,
+                text=True,
+                timeout=1800  # 30 minutes timeout
             )
-            
-            # Write temporary script
-            temp_script_path = BASE_DIR / 'temp_chunk_markdown.py'
-            with open(temp_script_path, 'w') as f:
-                f.write(modified_content)
-            
-            # Run chunking script
-            result = subprocess.run([sys.executable, str(temp_script_path)], 
-                                  cwd=BASE_DIR, 
-                                  capture_output=True, 
-                                  text=True,
-                                  timeout=1800)  # 30 minutes timeout
-            
-            # Clean up temporary script
-            temp_script_path.unlink()
-            
+
             if result.returncode == 0:
                 chunked_count = self.count_files('chunked', '*.md')
                 self.logger.info(f"✓ Chunking completed: {chunked_count} chunks")
                 self.pipeline_state['file_counts']['chunked'] = chunked_count
-                
+
                 # Load and report chunking summary
                 try:
-                    metadata_path = BASE_DIR / DIRECTORIES['chunked'] / 'chunks_index.json'
+                    metadata_path = chunked_dir / 'chunks_index.json'
                     with open(metadata_path, 'r') as f:
                         index = json.load(f)
                         summary = index.get('chunking_summary', {})
@@ -372,12 +366,12 @@ class PipelineOrchestrator:
                         self.logger.info(f"Average chunk size: {summary.get('average_chunk_size', 0):.0f} tokens")
                 except Exception as e:
                     self.logger.warning(f"Could not load chunking summary: {e}")
-                
+
                 return True
             else:
                 self.logger.error(f"Chunking failed: {result.stderr}")
                 return False
-                
+
         except subprocess.TimeoutExpired:
             self.logger.error("Chunking timed out after 30 minutes")
             return False
@@ -488,6 +482,20 @@ class PipelineOrchestrator:
         
         return True
 
+    def get_pipeline_statistics(self) -> Dict:
+        """Return summary statistics for the pipeline run."""
+        files_processed = (
+            self.pipeline_state.get('file_counts', {}).get('validated') or
+            self.pipeline_state.get('file_counts', {}).get('cleaned') or
+            self.pipeline_state.get('file_counts', {}).get('converted') or 0
+        )
+        step_times = {rec['step']: rec.get('duration', 0) for rec in self.pipeline_state.get('steps_completed', [])}
+        return {
+            'files_processed': files_processed,
+            'total_processing_time': self.pipeline_state.get('total_processing_time', 0),
+            'step_times': step_times,
+        }
+
 def create_config_file():
     """Create a configuration file for the pipeline"""
     config_manager = get_config_manager()
@@ -543,17 +551,12 @@ Examples:
     
     # Initialize orchestrator with configuration
     config_manager = get_config_manager()
-    
-    # Override config with command line arguments
-    if args.llm != 'claude-3':  # Only override if different from default
-        config_manager.update_llm_settings(args.llm)
-    
-    if args.chunk_size != 8000:  # Only override if different from default
-        config_manager.config.chunking.chunk_size = args.chunk_size
-    
-    if args.overlap != 400:  # Only override if different from default
-        config_manager.config.chunking.overlap = args.overlap
-    
+
+    # Apply CLI overrides deterministically
+    config_manager.update_llm_settings(args.llm)
+    config_manager.config.chunking.chunk_size = args.chunk_size
+    config_manager.config.chunking.overlap = args.overlap
+
     if args.force:
         config_manager.config.skip_existing = False
     

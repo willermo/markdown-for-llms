@@ -26,8 +26,8 @@ class TestMarkdownValidator:
         content_with_html = "Text with <div>HTML</div> and <span class='test'>more</span>"
         content_clean = "Clean text without HTML artifacts"
         
-        html_tags = validator.detect_html_artifacts(content_with_html)
-        clean_tags = validator.detect_html_artifacts(content_clean)
+        html_tags = validator.detect_html_tags(content_with_html)
+        clean_tags = validator.detect_html_tags(content_clean)
         
         assert len(html_tags) == 2
         assert "<div>" in html_tags
@@ -125,11 +125,11 @@ class TestMarkdownValidator:
         result = validator.validate_markdown_file(test_file)
         
         assert isinstance(result, ValidationResult)
-        assert result.file_path == test_file
+        assert result.filename == "high_quality.md"
         assert result.quality_grade in ['A', 'B']  # Should be high quality
         assert result.readability_score >= 50
         assert result.structure_score >= 70
-        assert len(result.issues['html_tags']) == 0
+        assert len(result.html_tags) == 0
     
     def test_validate_markdown_file_low_quality(self, validator, low_quality_content, tmp_path):
         """Test validation of low-quality content"""
@@ -140,17 +140,17 @@ class TestMarkdownValidator:
         
         assert isinstance(result, ValidationResult)
         assert result.quality_grade in ['D', 'F']  # Should be low quality
-        assert len(result.issues['html_tags']) > 0
+        assert len(result.html_tags) > 0
         assert len(result.recommendations) > 0
     
     def test_validate_nonexistent_file(self, validator, tmp_path):
         """Test validation of non-existent file"""
         non_existent = tmp_path / "missing.md"
         
-        result = validator.validate_markdown_file(non_existent)
-        
-        # Should handle gracefully
-        assert result is None or result.quality_grade == 'F'
+        # Should raise FileReadError for missing file
+        from exceptions import FileReadError
+        with pytest.raises(FileReadError):
+            validator.validate_markdown_file(non_existent)
     
     def test_batch_validation(self, validator, high_quality_content, low_quality_content, tmp_path):
         """Test batch validation of multiple files"""
@@ -194,18 +194,26 @@ class TestMarkdownValidator:
     def test_validation_result_dataclass(self):
         """Test ValidationResult dataclass functionality"""
         result = ValidationResult(
-            file_path=Path("test.md"),
-            content_length=1000,
+            filename="test.md",
+            file_size=1234,
+            character_count=1000,
             word_count=150,
+            paragraph_count=10,
+            heading_count=2,
+            line_count=50,
+            artifact_ratio=0.02,
             readability_score=75,
             structure_score=80,
-            artifact_ratio=0.02,
+            html_tags=[],
+            suspicious_patterns=[],
+            encoding_issues=[],
+            formatting_issues=[],
+            is_valid=True,
             quality_grade='B',
-            issues={'html_tags': [], 'encoding_issues': []},
             recommendations=['Improve readability']
         )
         
-        assert result.file_path == Path("test.md")
+        assert result.filename == "test.md"
         assert result.quality_grade == 'B'
         assert len(result.recommendations) == 1
     
@@ -215,20 +223,14 @@ class TestMarkdownValidator:
         (20000000, 3000000, False),  # Too long
         (500, 75, True),     # Acceptable
     ])
-    def test_content_length_validation(self, validator, content_length, word_count, expected_valid):
+    def test_content_length_validation(self, validator, content_length, word_count, expected_valid, tmp_path):
         """Test content length validation with different inputs"""
-        # Create content of specified length
-        content = "word " * word_count
+        # Create a temp file with specified content
+        content = ("word " * word_count)
         content = content[:content_length] if len(content) > content_length else content
-        
-        # Mock the file reading to return our test content
-        class MockPath:
-            def read_text(self, encoding=None):
-                return content
-            def __str__(self):
-                return "test.md"
-        
-        result = validator.validate_markdown_file(MockPath())
+        test_file = tmp_path / "len_test.md"
+        test_file.write_text(content)
+        result = validator.validate_markdown_file(test_file)
         
         if expected_valid:
             assert result.quality_grade != 'F'
@@ -244,7 +246,7 @@ class TestMarkdownValidator:
         result = validator.validate_markdown_file(empty_file)
         
         assert result.quality_grade == 'F'
-        assert result.content_length == 0
+        assert result.character_count == 0
         assert result.word_count == 0
     
     def test_edge_cases_unicode_content(self, validator, tmp_path):
@@ -267,7 +269,7 @@ class TestMarkdownValidator:
         
         # Should handle Unicode properly
         assert result is not None
-        assert result.content_length > 0
+        assert result.character_count > 0
         assert result.word_count > 0
     
     def test_performance_large_file(self, validator, tmp_path):

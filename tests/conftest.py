@@ -197,7 +197,7 @@ def mock_pandoc_failure(monkeypatch):
 @pytest.fixture
 def test_config():
     """Test configuration for pipeline components"""
-    from config import PipelineConfig, DirectoryConfig, ValidationThresholds, CleaningConfig, ChunkingConfig, LLMModel
+    from config import PipelineConfig, DirectoryConfig, ValidationThresholds, CleaningConfig, ChunkingConfig, LLMModel, ConversionConfig
     
     return PipelineConfig(
         directories=DirectoryConfig(),
@@ -215,7 +215,8 @@ def test_config():
             target_llm=LLMModel.CUSTOM,
             chunk_size=1000,
             overlap=100
-        )
+        ),
+        conversion=ConversionConfig()
     )
 
 # Test data constants

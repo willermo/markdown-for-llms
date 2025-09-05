@@ -10,6 +10,7 @@ A comprehensive, production-ready Python pipeline for converting various documen
 - [📁 Project Structure](#project-structure)
 - [🛠️ Installation Guide](#installation-guide)
 - [⚙️ Configuration](#configuration)
+- [⏳ Advanced: Cloud PDF Polling](#advanced-cloud-pdf-polling)
 - [📖 Usage Scenarios](#usage-scenarios)
 - [🔄 Pipeline Steps](#pipeline-steps)
 - [📊 Quality Metrics](#quality-metrics)
@@ -58,7 +59,7 @@ This pipeline transforms documents through a **4-step process** with enterprise-
 
 ```bash
 # Clone the repository
-git clone git@github.com:willermo/markdown-for-llms.git
+git clone https://github.com/willermo/markdown-for-llms.git
 cd markdown-for-llms
 
 # Create virtual environment with meaningful name
@@ -113,15 +114,14 @@ markdown-for-llms/
 ├── validate_markdown.py        # Validation module
 ├── chunk_markdown.py           # Chunking module
 ├── master_workflow.py          # Pipeline orchestrator (refactored)
-├── pdf_converter.py            # Cloud Marker API converter
-├── onprem_pdf_converter.py     # Local Marker API converter
 ├── requirements.txt            # Dependencies
 ├── setup.py                    # Package installation
 ├── pipeline_config.json        # Runtime configuration (enhanced)
 ├── .env                        # Environment variables (create from .env.example)
+├── test_conversion.py          # API smoke test (local Marker)
 └── tests/                      # Test suite
     ├── unit/                   # Unit tests
-    └── integration/            # Integration tests
+    ├── integration/            # Integration tests
 ```
 
 ## Installation Guide
@@ -217,7 +217,9 @@ python -c "from config import get_config_manager; get_config_manager().save_conf
     ],
     "conversion_timeout": 3600,
     "max_retries": 3,
-    "retry_delay": 10
+    "retry_delay": 10,
+    "max_polls": 600,
+    "poll_interval": 2
   },
   "llm_presets": {
     "gpt-3.5-turbo": { "chunk_size": 3000, "overlap": 150 },
@@ -295,6 +297,15 @@ _Requires: Pandoc + Local Marker API running on localhost:8000_
 
 _Requires: Pandoc + MARKER_API_KEY in .env file_
 
+**Polling Controls (Cloud PDF):**
+
+- `max_polls`: Maximum number of status checks for a single conversion (default 300, example shows 600).
+- `poll_interval`: Seconds to wait between status checks (default 2).
+
+These can be tuned for very large PDFs or slower queues.
+
+The converter considers the cloud endpoint reachable if `/marker` responds with HTTP 200/401/403/405; for local it requires `GET /health` to return 200.
+
 ### 🔐 2. Environment Variables (Sensitive Data)
 
 Create `.env` file from template:
@@ -318,6 +329,28 @@ LOG_LEVEL=INFO
 ```
 
 **Environment variables override JSON settings** for deployment flexibility.
+
+## ⏳ Advanced: Cloud PDF Polling
+
+You can fine‑tune how long the pipeline waits for cloud PDF conversions:
+
+```json
+{
+  "conversion_settings": {
+    "max_polls": 600,
+    "poll_interval": 2
+  }
+}
+```
+
+- `max_polls × poll_interval` ≈ maximum wait time. For example, `600 × 2s = 20 minutes`.
+- Increase for very large documents or congested queues; decrease for faster feedback in CI.
+- Defaults: `max_polls=300`, `poll_interval=2`.
+
+Availability checks:
+
+- Local Marker API: health at `GET /health` must return 200.
+- Cloud Marker API: `GET /marker` may respond with 200/401/403/405 depending on auth and method; any of these indicates reachability before submitting a job.
 
 ## Usage Scenarios
 
@@ -660,6 +693,7 @@ curl http://localhost:8000/health
 ```
 
 **⚡ Model Download Behavior:**
+
 - **First startup**: Downloads 5 ML models (~2GB total)
 - **Subsequent startups**: Uses cached models (fast startup)
 - **Model persistence**: Enabled via Docker volumes
@@ -753,34 +787,61 @@ cat test_output/*.md | head -10
 
 #### **GPU Support (Optional)**
 
-Edit `docker-compose.yml` for GPU acceleration:
+Edit `docker-compose.yml` for GPU acceleration (non-Swarm Compose):
 
 ```yaml
 services:
   marker-api:
     environment:
       - TORCH_DEVICE=cuda # Change from 'cpu'
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    device_requests:
+      - driver: nvidia
+        count: 1 # or 'all'
+        capabilities: [gpu]
 ```
 
-#### **Memory Optimization**
+Note:
 
-Adjust memory limits based on your system:
+- `deploy:` blocks are ignored by `docker compose` unless you are using Swarm mode. Use `device_requests` as shown above for regular Compose.
+- Ensure NVIDIA Container Toolkit is installed and Docker is configured, then restart Docker:
+
+```bash
+sudo apt-get install -y nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+```
+
+#### **Memory Optimization (non‑Swarm Compose)**
+
+`docker compose` ignores `deploy:` resource limits unless you use Swarm. This project does not set container memory caps by default to avoid unintended OOM kills.
+
+Recommended approach:
+
+- Keep conversions sequential for local Marker and set conservative concurrency (e.g., `MAX_WORKERS=1`).
+- Disable heavy features in `.env` (image extraction/LLM/paginate/force_ocr) and increase `CONVERSION_TIMEOUT` for large PDFs.
+- Monitor with `docker stats marker-api` and `docker compose logs -f marker-api`.
+
+Optional configuration:
+
+- Increase shared memory (useful for some torch/model workloads):
 
 ```yaml
-deploy:
-  resources:
-    limits:
-      memory: 8G # Maximum memory usage
-    reservations:
-      memory: 4G # Minimum required memory
+services:
+  marker-api:
+    shm_size: "2g"
 ```
+
+- Docker Desktop (Mac/Windows): increase memory in Docker Desktop → Settings → Resources.
+
+- If you must enforce a hard memory cap on Linux (may induce OOM kills):
+
+```bash
+docker update --memory=8g --memory-swap=8g marker-api
+```
+
+Note: Prefer removing caps and reducing concurrency over strict limits for stability during model loading.
 
 ### 🚨 Docker Troubleshooting
 
@@ -855,6 +916,46 @@ top -p $(docker inspect -f '{{.State.Pid}}' marker-api)
 # Restart Docker daemon
 sudo systemctl restart docker
 ```
+
+#### ⚠️ Out-of-Memory (OOM) restarts
+
+If the local Marker API container restarts during conversion and the pipeline logs show errors like:
+
+```
+('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+```
+
+this is typically an OOM kill during heavy PDF processing. Recommended mitigations:
+
+- Set conservative concurrency
+
+  - Env: `MAX_WORKERS=1`
+  - Note: local_marker conversions are serialized by default in code to reduce pressure.
+
+- Disable heavy processing features
+
+  - `.env`: `MARKER_DISABLE_IMAGE_EXTRACTION=true` (default), `MARKER_USE_LLM=false` (default), `MARKER_FORCE_OCR=false`, `MARKER_PAGINATE=false`.
+
+- Remove container memory caps
+
+  - Ensure `docker-compose.yml` does not set `deploy.resources.limits` (not present by default).
+  - Recreate: `docker compose up -d --force-recreate marker-api`.
+
+- Monitor memory and logs
+
+  - `docker stats marker-api`
+  - `docker compose logs -f marker-api`
+
+- Increase conversion timeout for large PDFs
+
+  - `.env`: `CONVERSION_TIMEOUT=7200` (or higher)
+
+- For extremely large books or constrained hosts
+
+  - Switch to `cloud_marker` in `pipeline_config.json` and set `MAX_POLLS`/`POLL_INTERVAL` in `.env`.
+
+- Optional OS tuning (advanced)
+  - Reduce swapping: set `vm.swappiness=0` and temporarily `swapoff -a && swapon -a` to push pages back to RAM.
 
 ### 🔄 Container Lifecycle Management
 
@@ -1055,19 +1156,164 @@ with open('training_data.jsonl', 'w') as f:
 "
 ```
 
-## 🎉 Success!
-
-Your documents are now converted into LLM-ready markdown chunks optimized for your target AI model. Use these chunks for:
-
-- **RAG Systems**: Vector database ingestion
-- **NotebookLM**: Google's notebook AI
-- **Fine-tuning**: Training data preparation
-- **Analysis**: Document processing pipelines
-- **Research**: Academic document processing
-
-Happy chunking! 🚀
-
 ---
+
+## ⏱️ Conversion Timeout Configuration
+
+### 🚨 Important: PDF Conversion Timeout Issue
+
+**Problem**: Large PDF files (>20 pages) may timeout during conversion, causing batch processing failures.
+
+**Root Cause**: Default timeout is 5 minutes (300 seconds), but complex PDFs with images, tables, or OCR requirements can take 15-30 minutes to process.
+
+**Solution**: Configure extended timeouts via environment variables.
+
+### 🔧 Timeout Configuration
+
+**Method 1: Environment Variables (Recommended)**
+
+Create or edit your `.env` file:
+
+```bash
+# Copy template if needed
+cp .env.example .env
+
+# Edit .env file
+CONVERSION_TIMEOUT=3600  # 1 hour (3600 seconds)
+MAX_WORKERS=2           # Reduce parallel processing for stability
+LOG_LEVEL=INFO          # Monitor progress
+```
+
+**Method 2: Direct Environment Export**
+
+```bash
+# Set for current session
+export CONVERSION_TIMEOUT=3600
+export MAX_WORKERS=2
+
+# Run pipeline
+python master_workflow.py
+```
+
+**Method 3: JSON Configuration**
+
+Edit `pipeline_config.json`:
+
+```json
+{
+  "conversion_settings": {
+    "conversion_timeout": 3600,
+    "max_retries": 3,
+    "retry_delay": 10
+  },
+  "pipeline_settings": {
+    "max_workers": 2
+  }
+}
+```
+
+### 📊 Monitoring Long Conversions
+
+**Check conversion status:**
+
+```bash
+# Monitor current conversion status
+python batch_monitor.py
+
+# Wait for completion with progress updates
+python batch_monitor.py --wait
+
+# Check if safe to start new conversion
+python batch_monitor.py --check-queue
+```
+
+**Real-time monitoring:**
+
+```bash
+# Watch Docker logs for progress
+docker compose logs marker-api --follow
+
+# Monitor API health
+curl http://localhost:8000/health
+```
+
+### ⚙️ Recommended Timeout Settings
+
+| Document Type                | Recommended Timeout | Notes                  |
+| ---------------------------- | ------------------- | ---------------------- |
+| Small PDFs (<10 pages)       | 600s (10 min)       | Quick processing       |
+| Medium PDFs (10-50 pages)    | 1800s (30 min)      | Standard documents     |
+| Large PDFs (50+ pages)       | 3600s (1 hour)      | Complex documents      |
+| Very Large PDFs (100+ pages) | 7200s (2 hours)     | Academic papers, books |
+
+### 🚀 Pipeline Commands with Extended Timeouts
+
+**Run pipeline with extended timeout:**
+
+```bash
+# Set timeout and run pipeline
+CONVERSION_TIMEOUT=3600 python master_workflow.py
+
+# Run with monitoring
+CONVERSION_TIMEOUT=3600 python master_workflow.py &
+python batch_monitor.py --wait
+```
+
+**API smoke test (local Marker):**
+
+```bash
+# Quick check that the local API responds and returns markdown
+python test_conversion.py
+```
+
+**Batch processing with safety checks:**
+
+```bash
+# Check if conversion is already running
+python batch_monitor.py --check-queue
+
+# If safe, start pipeline with extended timeout
+if [ $? -eq 0 ]; then
+    CONVERSION_TIMEOUT=3600 python master_workflow.py
+else
+    echo "Conversion already in progress"
+fi
+```
+
+### 🔍 Troubleshooting Timeout Issues
+
+**If conversions still timeout:**
+
+1. **Increase timeout further:**
+
+   ```bash
+   export CONVERSION_TIMEOUT=7200  # 2 hours
+   ```
+
+2. **Reduce parallel processing:**
+
+   ```bash
+   export MAX_WORKERS=1  # Process one file at a time
+   ```
+
+3. **Check Docker resources:**
+
+   ```bash
+   docker stats marker-api
+   # Ensure sufficient memory/CPU
+   ```
+
+4. **Monitor conversion progress:**
+   ```bash
+   docker compose logs marker-api --follow
+   # Look for progress bars and completion messages
+   ```
+
+**Understanding timeout vs. background processing:**
+
+- **Client timeout**: Your script stops waiting, but conversion continues
+- **Server processing**: Docker container keeps working in background
+- **Check completion**: Use `batch_monitor.py` to verify actual status
 
 ## Troubleshooting
 
@@ -1165,7 +1411,7 @@ This pipeline was inspired by the need for high-quality document processing in t
 
 ```bash
 # Fork and clone the repository
-git clone https://github.com/your-username/markdown-for-llms.git
+git clone https://github.com/willermo/markdown-for-llms.git
 cd markdown-for-llms
 
 # Create development environment

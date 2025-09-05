@@ -95,8 +95,10 @@ class MarkdownCleaner:
         # Remove Pandoc attributes
         content = re.sub(r'\{[^\}]+\}', '', content)
         
-        # Remove Pandoc fenced divs
+        # Remove Pandoc fenced divs (line-based)
         content = re.sub(r'^\s*:::.*$', '', content, flags=re.MULTILINE)
+        # Remove inline ':::' artifacts if present
+        content = re.sub(r':::+', '', content)
         
         return content
     
@@ -128,12 +130,12 @@ class MarkdownCleaner:
     
     def clean_formatting_artifacts(self, content: str) -> str:
         """Clean up formatting artifacts"""
-        # Remove orphaned formatting characters
-        content = re.sub(r'(?:^|\s)[*_]{1,2}(?:\s|$)', ' ', content)
-        
         # Fix broken emphasis (e.g., "** text **" -> "**text**")
         content = re.sub(r'\*\* ([^*]+) \*\*', r'**\1**', content)
         content = re.sub(r'_ ([^_]+) _', r'_\1_', content)
+        
+        # Remove orphaned formatting characters
+        content = re.sub(r'(?:^|\s)[*_]{1,2}(?:\s|$)', ' ', content)
         
         # Remove standalone punctuation lines
         content = re.sub(r'^\s*[.,;:!?]+\s*$', '', content, flags=re.MULTILINE)
