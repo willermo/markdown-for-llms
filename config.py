@@ -77,6 +77,7 @@ class ConversionConfig:
     supported_pdf_formats: List[str] = None
     supported_document_formats: List[str] = None
     conversion_timeout: int = 3600
+    connect_timeout: int = 30
     max_retries: int = 3
     retry_delay: int = 10
     # Marker options
@@ -271,6 +272,8 @@ def apply_env_overrides(config: PipelineConfig) -> PipelineConfig:
     
     if "CONVERSION_TIMEOUT" in os.environ:
         config.conversion.conversion_timeout = int(os.environ["CONVERSION_TIMEOUT"])
+    if "CONNECT_TIMEOUT" in os.environ:
+        config.conversion.connect_timeout = int(os.environ["CONNECT_TIMEOUT"])
     # Marker toggles via env
     env_bools = {
         "MARKER_USE_LLM": ("use_llm", bool),

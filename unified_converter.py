@@ -94,12 +94,15 @@ class PandocConverter:
             
             self.logger.debug(f"Running pandoc: {' '.join(cmd)}")
             
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=self.config.get("conversion_timeout", 300)
-            )
+            run_kwargs = {
+                "capture_output": True,
+                "text": True,
+            }
+            # Treat conversion_timeout <= 0 as no-timeout for Pandoc
+            _t = int(self.config.get("conversion_timeout", 300) or 0)
+            if _t > 0:
+                run_kwargs["timeout"] = _t
+            result = subprocess.run(cmd, **run_kwargs)
             
             if result.returncode == 0 and temp_output.exists():
                 # Read converted content
@@ -276,8 +279,12 @@ class MarkerConverter:
                 "paginate": (None, "true" if self.config.get("paginate", False) else "false"),
             }
             
-            timeout = self.config.get("conversion_timeout", 3600)
-            resp = self.session.post(url, files=form_data, timeout=timeout)
+            # For local Marker, keep a short connect timeout and configurable read timeout
+            # - If conversion_timeout <= 0: unlimited read (wait indefinitely), connect timeout stays finite
+            _t = int(self.config.get("conversion_timeout", 3600) or 0)
+            connect_timeout = int(self.config.get("connect_timeout", 30))
+            read_timeout = None if _t <= 0 else _t
+            resp = self.session.post(url, files=form_data, timeout=(connect_timeout, read_timeout))
             resp.raise_for_status()
             
             result = resp.json()
@@ -308,7 +315,9 @@ class MarkerConverter:
                 "paginate": (None, "true" if self.config.get("paginate", False) else "false"),
             }
             
-            timeout = self.config.get("conversion_timeout", 30)
+            # Cloud submission timeout; 0 means no-timeout if explicitly set
+            _t = int(self.config.get("conversion_timeout", 30) or 0)
+            timeout = None if _t <= 0 else _t
             resp = self.session.post(url, files=form_data, timeout=timeout)
             resp.raise_for_status()
             
@@ -322,8 +331,13 @@ class MarkerConverter:
         """Poll for cloud conversion completion."""
         max_polls = int(self.config.get("max_polls", self.max_polls))
         poll_interval = int(self.config.get("poll_interval", self.poll_interval))
+        infinite = max_polls <= 0
+        poll_count = 0
         
-        for poll_count in range(max_polls):
+        if infinite:
+            self.logger.info("Cloud polling: running with no limit (MAX_POLLS<=0)")
+        
+        while True:
             try:
                 resp = self.session.get(check_url, timeout=30)
                 resp.raise_for_status()
@@ -338,21 +352,22 @@ class MarkerConverter:
                     if poll_count % max(1, int(60 / max(1, poll_interval))) == 0:  # roughly every minute
                         self.logger.info(f"Still processing... (poll {poll_count + 1})")
                     time.sleep(poll_interval)
-                    continue
-                
-                if status in ("error", "failed"):
+                elif status in ("error", "failed"):
                     self.logger.error(f"Processing failed: {data.get('error', 'Unknown error')}")
                     return None
-                
-                time.sleep(poll_interval)
+                else:
+                    # Unknown status; keep polling but back off per interval
+                    self.logger.debug(f"Polling status: {status or 'unknown'} (poll {poll_count + 1})")
+                    time.sleep(poll_interval)
                 
             except requests.exceptions.RequestException as e:
                 self.logger.warning(f"Polling error: {str(e)}")
                 time.sleep(poll_interval)
-                continue
-        
-        self.logger.error("Polling timeout reached")
-        return None
+            
+            poll_count += 1
+            if not infinite and poll_count >= max_polls:
+                self.logger.error("Polling timeout reached")
+                return None
 
 class UnifiedDocumentConverter:
     """Unified converter that routes documents to appropriate backends."""

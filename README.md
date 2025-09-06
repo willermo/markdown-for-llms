@@ -326,6 +326,17 @@ OVERLAP_SIZE=200
 TARGET_LLM=claude-3
 MAX_WORKERS=4
 LOG_LEVEL=INFO
+
+# Timeout configuration
+# 0 = no-timeout (wait indefinitely for local Marker & Pandoc)
+CONVERSION_TIMEOUT=3600
+# Keep connect short even when read timeout is unlimited
+CONNECT_TIMEOUT=30
+
+# Cloud polling (for cloud_marker)
+# 0 = infinite polling (no limit)
+MAX_POLLS=600
+POLL_INTERVAL=2
 ```
 
 **Environment variables override JSON settings** for deployment flexibility.
@@ -346,6 +357,7 @@ You can fine‑tune how long the pipeline waits for cloud PDF conversions:
 - `max_polls × poll_interval` ≈ maximum wait time. For example, `600 × 2s = 20 minutes`.
 - Increase for very large documents or congested queues; decrease for faster feedback in CI.
 - Defaults: `max_polls=300`, `poll_interval=2`.
+- Set `max_polls=0` to poll indefinitely (no limit) when using the cloud converter.
 
 Availability checks:
 
@@ -1259,6 +1271,13 @@ CONVERSION_TIMEOUT=3600 python master_workflow.py &
 python batch_monitor.py --wait
 ```
 
+**No-timeout mode (local Marker & Pandoc):**
+
+```bash
+# Wait indefinitely for each file; keep connect timeout short
+CONVERSION_TIMEOUT=0 CONNECT_TIMEOUT=30 python master_workflow.py
+```
+
 **API smoke test (local Marker):**
 
 ```bash
@@ -1288,6 +1307,13 @@ fi
 
    ```bash
    export CONVERSION_TIMEOUT=7200  # 2 hours
+   ```
+
+   Alternative (no-timeout mode):
+
+   ```bash
+   export CONVERSION_TIMEOUT=0      # wait indefinitely
+   export CONNECT_TIMEOUT=30        # connect phase only
    ```
 
 2. **Reduce parallel processing:**
