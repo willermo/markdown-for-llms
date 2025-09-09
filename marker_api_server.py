@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """
-Simple FastAPI server for Marker PDF conversion
+Simple FastAPI server for Marker conversion (multi-format)
 Compatible with the unified converter pipeline
+
+Supports PDFs and additional document types via Marker providers
+(PDF, EPUB, DOCX, PPTX, XLSX, HTML, images), depending on the installed
+Marker version and its dependencies.
 """
 
 import os
@@ -18,7 +22,7 @@ import uvicorn
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Marker PDF Converter API", version="1.0.0")
+app = FastAPI(title="Marker Converter API", version="1.1.0")
 
 # Global model cache to avoid reloading on each request
 _model_dict = None
@@ -28,6 +32,7 @@ def get_converter():
     """Get cached converter instance"""
     global _model_dict, _converter
     if _converter is None:
+        # Full Marker stack with provider registry
         from marker.converters.pdf import PdfConverter
         from marker.models import create_model_dict
         
@@ -59,7 +64,8 @@ async def health_check():
     return {"status": "healthy", "service": "marker-api"}
 
 @app.post("/convert")
-async def convert_pdf(
+@app.post("/marker")
+async def convert_document(
     file: UploadFile = File(...),
     output_format: str = "markdown",
     use_llm: bool = False,
@@ -69,14 +75,13 @@ async def convert_pdf(
     disable_image_extraction: bool = True,  # Default to True for LLM use
     max_pages: Optional[int] = None
 ):
-    """Convert PDF to markdown using Marker"""
-    
-    if not file.filename.lower().endswith('.pdf'):
-        raise HTTPException(status_code=400, detail="Only PDF files are supported")
+    """Convert a document to markdown using Marker (multi-format)."""
     
     try:
+        # Preserve original file suffix to help provider detection
+        suffix = ''.join(Path(file.filename).suffixes) or '.bin'
         # Create temporary file for input
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
             content = await file.read()
             temp_file.write(content)
             temp_file_path = temp_file.name
@@ -85,8 +90,8 @@ async def convert_pdf(
             # Get cached converter (loads models only once)
             converter = get_converter()
             
-            # Convert PDF with timeout and better error handling
-            logger.info(f"Converting PDF: {file.filename}")
+            # Convert document
+            logger.info(f"Converting: {file.filename}")
             document = converter(temp_file_path)
             
             # Handle different document output types
@@ -100,7 +105,8 @@ async def convert_pdf(
                 # Fallback: convert to string
                 full_text = str(document)
             
-            logger.info(f"✓ Conversion completed for {file.filename}")
+            page_count = getattr(converter, 'page_count', 0) or 0
+            logger.info(f"✓ Conversion completed for {file.filename} (pages: {page_count})")
             
             # Clean up temp file
             os.unlink(temp_file_path)
@@ -109,9 +115,18 @@ async def convert_pdf(
             result = {
                 "success": True,
                 "markdown": full_text,
-                "metadata": {"conversion_method": "marker-pdf", "filename": file.filename},
+                "metadata": {
+                    "conversion_method": "marker",
+                    "filename": file.filename,
+                    "output_format": output_format,
+                    "use_llm": use_llm,
+                    "force_ocr": force_ocr,
+                    "paginate": paginate,
+                    "strip_existing_ocr": strip_existing_ocr,
+                    "disable_image_extraction": disable_image_extraction,
+                },
                 "images": {},  # Images handling would need additional implementation
-                "page_count": 0  # Page count would need additional implementation
+                "page_count": page_count,
             }
             
             return JSONResponse(content=result)

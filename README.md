@@ -10,6 +10,7 @@ A comprehensive, production-ready Python pipeline for converting various documen
 - [📁 Project Structure](#project-structure)
 - [🛠️ Installation Guide](#installation-guide)
 - [⚙️ Configuration](#configuration)
+- [🧩 Local Marker: Multi‑Format Support](#local-marker-multi-format-support-epubdocxhtmlpptxxlsximages)
 - [⏳ Advanced: Cloud PDF Polling](#advanced-cloud-pdf-polling)
 - [📖 Usage Scenarios](#usage-scenarios)
 - [🔄 Pipeline Steps](#pipeline-steps)
@@ -46,6 +47,7 @@ This pipeline transforms documents through a **4-step process** with enterprise-
 - **Error Handling**: Custom exceptions with context and recovery strategies
 - **Production Ready**: Proper dependency management, CLI tools, performance optimization
 - **LLM Optimization**: Presets for GPT-4, Claude-3, Llama-2, and custom models
+- **Marker Multi‑Format (Optional)**: Route EPUB/DOCX/HTML/PPTX/XLSX/Images to Marker via env configuration
 
 ## Quick Start
 
@@ -100,7 +102,7 @@ ls chunked_markdown/
 ```
 markdown-for-llms/
 ├── source_pdfs/                # Input: PDF files (routed to Marker API)
-├── source_documents/           # Input: Other documents (routed to Pandoc)
+├── source_documents/           # Input: Other documents (Pandoc by default; can route to Marker via MARKER_DOCUMENT_FORMATS)
 ├── converted_markdown/         # Step 1: Raw markdown from unified converter
 ├── cleaned_markdown/           # Step 2: Cleaned markdown
 ├── validated_markdown/         # Step 3: Quality-validated markdown
@@ -341,6 +343,47 @@ POLL_INTERVAL=2
 
 **Environment variables override JSON settings** for deployment flexibility.
 
+### 🧩 Local Marker: Multi‑Format Support (EPUB/DOCX/HTML/PPTX/XLSX/Images)
+
+This project now supports routing non‑PDF formats to the Marker API, provided your local server supports them.
+
+- The bundled Docker image has been upgraded to install the full Marker stack and provider dependencies.
+- The local API server (`marker_api_server.py`) now accepts both `POST /convert` and `POST /marker` and auto‑detects providers.
+- You can choose which non‑PDF extensions should be sent to Marker using `MARKER_DOCUMENT_FORMATS`.
+
+Enable routing to Marker for selected formats via `.env`:
+
+```bash
+# Point the pipeline to the local Marker server endpoint
+MARKER_LOCAL_BASE_URL=http://localhost:8000
+MARKER_LOCAL_ENDPOINT=/marker   # /convert also works
+
+# Route these extensions to Marker (others stay with Pandoc)
+MARKER_DOCUMENT_FORMATS=epub,docx,html,pptx,xlsx,jpg,png
+
+# Avoid client timeouts on long conversions
+CONVERSION_TIMEOUT=0
+CONNECT_TIMEOUT=30
+```
+
+Quick test (without the pipeline):
+
+```bash
+# HTML
+printf '<h1>Hello</h1>' > sample.html
+curl -s -F "file=@sample.html;type=text/html" http://localhost:8000/marker | jq '.success,.page_count' 
+
+# DOCX (adjust path)
+# curl -s -F "file=@/path/to/sample.docx;type=application/vnd.openxmlformats-officedocument.wordprocessingml.document" \
+#   http://localhost:8000/marker | jq '.success,.page_count'
+```
+
+Notes:
+
+- Supported types depend on the Marker version and installed libs. See Datalab docs: [Supported File Types](https://documentation.datalab.to/docs/common/supportedfiletypes).
+- If Marker rejects a non‑PDF format, the pipeline automatically falls back to Pandoc for that file.
+- For cloud, the same routing works; set `MARKER_CLOUD_BASE_URL` and keep `MARKER_CLOUD_ENDPOINT=/marker`.
+
 ## ⏳ Advanced: Cloud PDF Polling
 
 You can fine‑tune how long the pipeline waits for cloud PDF conversions:
@@ -410,7 +453,7 @@ mkdir source_pdfs source_documents
 cp *.pdf source_pdfs/
 
 # Place other documents in documents directory
-cp *.epub *.mobi *.azw3 *.docx *.html source_documents/
+cp *.epub *.mobi *.azw3 *.docx *.html *.pptx *.xlsx *.jpg *.png source_documents/
 ```
 
 **Configure Conversion Method:**
@@ -491,7 +534,7 @@ The unified converter automatically routes files based on extension and configur
 - **Cloud Marker** (paid): API-based, requires MARKER_API_KEY
 - High-quality ML-based conversion with table/image preservation
 
-**Other Documents** (`source_documents/`) → **Pandoc**
+**Other Documents** (`source_documents/`) → **Pandoc** (by default)
 
 - **EPUB** (.epub) - Standard ebook format
 - **MOBI** (.mobi) - Amazon Kindle format
@@ -499,6 +542,8 @@ The unified converter automatically routes files based on extension and configur
 - **HTML** (.html, .htm) - Web pages
 - **DOCX** (.docx) - Word documents
 - **RTF** (.rtf) - Rich text format
+
+Tip: If an extension is listed in `MARKER_DOCUMENT_FORMATS` (e.g., `epub,docx,html,pptx,xlsx,jpg,png`), it will be routed to the Marker API instead of Pandoc.
 
 **Conversion Features:**
 
@@ -999,8 +1044,14 @@ docker compose ps -a
 #### **Option 1: Direct Python Installation (Faster)**
 
 ```bash
-# Install Marker locally (faster than Docker)
+# Install Marker locally (PDF-only by default)
 pip install marker-pdf uvicorn fastapi python-multipart
+
+# To enable multi-format providers without Docker, also install:
+pip install weasyprint ebooklib mammoth openpyxl beautifulsoup4 filetype
+
+# System libs required for WeasyPrint (Debian/Ubuntu):
+# sudo apt-get install -y libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf-2.0-0
 
 # Start API server directly
 python marker_api_server.py

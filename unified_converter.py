@@ -18,6 +18,7 @@ import time
 import json
 import base64
 import subprocess
+import mimetypes
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass
@@ -173,6 +174,8 @@ class MarkerConverter:
         self.base_url = (config.get("marker_local_base_url", "http://localhost:8000") 
                         if is_local 
                         else config.get("marker_cloud_base_url", "https://www.datalab.to/api/v1"))
+        self.local_endpoint = config.get("marker_local_endpoint", "/convert")
+        self.cloud_endpoint = config.get("marker_cloud_endpoint", "/marker")
     
     def is_available(self) -> bool:
         """Check if Marker API is available."""
@@ -266,11 +269,27 @@ class MarkerConverter:
     
     def _convert_local(self, file_path: str) -> Optional[Dict]:
         """Convert using local Marker API."""
-        url = f"{self.base_url.rstrip('/')}/convert"
+        # Allow configurable endpoint to support official multi-format server
+        endpoint = self.local_endpoint if self.local_endpoint.startswith('/') else f"/{self.local_endpoint}"
+        url = f"{self.base_url.rstrip('/')}{endpoint}"
         
         with open(file_path, "rb") as fh:
+            # Guess MIME type based on file extension; fall back for common types
+            guessed_mime, _ = mimetypes.guess_type(file_path)
+            ext = Path(file_path).suffix.lower().lstrip('.')
+            override_mime = {
+                'pdf': 'application/pdf',
+                'epub': 'application/epub+zip',
+                'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'html': 'text/html',
+                'htm': 'text/html',
+                'rtf': 'application/rtf',
+            }
+            mime_type = override_mime.get(ext, guessed_mime or 'application/octet-stream')
             form_data = {
-                "file": (os.path.basename(file_path), fh, "application/pdf"),
+                "file": (os.path.basename(file_path), fh, mime_type),
                 "output_format": (None, "markdown"),
                 "use_llm": (None, "true" if self.config.get("use_llm", False) else "false"),
                 "force_ocr": (None, "true" if self.config.get("force_ocr", False) else "false"),
@@ -302,11 +321,26 @@ class MarkerConverter:
     
     def _submit_conversion(self, file_path: str) -> Tuple[Optional[str], Optional[str]]:
         """Submit PDF for cloud conversion."""
-        url = f"{self.base_url.rstrip('/')}/marker"
+        endpoint = self.cloud_endpoint if self.cloud_endpoint.startswith('/') else f"/{self.cloud_endpoint}"
+        url = f"{self.base_url.rstrip('/')}{endpoint}"
         
         with open(file_path, "rb") as fh:
+            # Guess MIME type for cloud submissions as well
+            guessed_mime, _ = mimetypes.guess_type(file_path)
+            ext = Path(file_path).suffix.lower().lstrip('.')
+            override_mime = {
+                'pdf': 'application/pdf',
+                'epub': 'application/epub+zip',
+                'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'html': 'text/html',
+                'htm': 'text/html',
+                'rtf': 'application/rtf',
+            }
+            mime_type = override_mime.get(ext, guessed_mime or 'application/octet-stream')
             form_data = {
-                "file": (os.path.basename(file_path), fh, "application/pdf"),
+                "file": (os.path.basename(file_path), fh, mime_type),
                 "output_format": (None, "markdown"),
                 "use_llm": (None, "true" if self.config.get("use_llm", False) else "false"),
                 "force_ocr": (None, "true" if self.config.get("force_ocr", False) else "false"),
@@ -420,29 +454,40 @@ class UnifiedDocumentConverter:
     def get_converter_for_file(self, file_path: str) -> Tuple[Optional[object], str]:
         """Determine which converter to use for a file."""
         file_ext = Path(file_path).suffix.lower().lstrip('.')
-        
+
+        # PDF routing
         if file_ext in self.conversion_config.get("supported_pdf_formats", ["pdf"]):
-            # PDF file - use configured PDF converter
             pdf_converter = self.conversion_config.get("pdf_converter", "local_marker")
-            
             if pdf_converter == "cloud_marker":
                 return self.cloud_marker_converter, "cloud_marker"
             elif pdf_converter == "local_marker":
                 return self.local_marker_converter, "local_marker"
             else:
                 return None, f"unknown_pdf_converter_{pdf_converter}"
-        
-        elif file_ext in self.conversion_config.get("supported_document_formats", []):
-            # Non-PDF document - use configured document converter
+
+        # Non-PDF routing (treat as supported if in supported_document_formats OR marker_document_formats)
+        marker_formats = self.conversion_config.get("marker_document_formats", []) or []
+        supported_nonpdf = set(self.conversion_config.get("supported_document_formats", [])) | set(marker_formats)
+        if file_ext in supported_nonpdf:
+            # If explicitly configured, route certain non-PDF formats to Marker
+            if file_ext in marker_formats:
+                pdf_converter = self.conversion_config.get("pdf_converter", "local_marker")
+                if pdf_converter == "cloud_marker":
+                    return self.cloud_marker_converter, "cloud_marker"
+                elif pdf_converter == "local_marker":
+                    return self.local_marker_converter, "local_marker"
+                else:
+                    self.logger.warning(f"Unknown pdf_converter '{pdf_converter}' for marker_document_formats; falling back to pandoc")
+                    return self.pandoc_converter, "pandoc"
+
+            # Default: use Pandoc
             doc_converter = self.conversion_config.get("document_converter", "pandoc")
-            
             if doc_converter == "pandoc":
                 return self.pandoc_converter, "pandoc"
             else:
                 return None, f"unknown_document_converter_{doc_converter}"
-        
-        else:
-            return None, f"unsupported_format_{file_ext}"
+
+        return None, f"unsupported_format_{file_ext}"
     
     def convert_file(self, file_path: str) -> ConversionResult:
         """Convert a single file using the appropriate converter."""
@@ -461,6 +506,14 @@ class UnifiedDocumentConverter:
         try:
             result = converter.convert(file_path)
             result.converter_used = converter_type
+            # Fallback: if Marker fails for non-PDF formats, try Pandoc automatically
+            ext = Path(file_path).suffix.lower().lstrip('.')
+            marker_formats = self.conversion_config.get("marker_document_formats", []) or []
+            if (not result.success and converter_type in ("local_marker", "cloud_marker") and ext != "pdf" and ext in marker_formats):
+                self.logger.info(f"Falling back to pandoc for {Path(file_path).name}: {result.error}")
+                fb = self.pandoc_converter.convert(file_path)
+                fb.converter_used = "pandoc"
+                return fb
             return result
         except Exception as e:
             return ConversionResult(
@@ -481,10 +534,11 @@ class UnifiedDocumentConverter:
             self.logger.error(f"Source directory not found: {source_dir}")
             return []
         
-        # Find all supported files
+        # Find all supported files (include explicit marker_document_formats)
         supported_formats = (
             self.conversion_config.get("supported_pdf_formats", []) +
-            self.conversion_config.get("supported_document_formats", [])
+            self.conversion_config.get("supported_document_formats", []) +
+            (self.conversion_config.get("marker_document_formats", []) or [])
         )
         
         all_files = []
