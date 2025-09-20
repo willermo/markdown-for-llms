@@ -73,6 +73,9 @@ class ConversionConfig:
     marker_cloud_api_key_env: str = "MARKER_API_KEY"
     marker_local_base_url: str = "http://localhost:8000"
     marker_cloud_base_url: str = "https://www.datalab.to/api/v1"
+    # Endpoints (allow switching to official multi-format server)
+    marker_local_endpoint: str = "/convert"
+    marker_cloud_endpoint: str = "/marker"
     pandoc_options: str = "--wrap=none --strip-comments --markdown-headings=atx"
     supported_pdf_formats: List[str] = None
     supported_document_formats: List[str] = None
@@ -80,6 +83,8 @@ class ConversionConfig:
     connect_timeout: int = 30
     max_retries: int = 3
     retry_delay: int = 10
+    # Marker multi-format support (non-PDF) — opt-in list
+    marker_document_formats: List[str] = None
     # Marker options
     use_llm: bool = False
     force_ocr: bool = False
@@ -95,6 +100,9 @@ class ConversionConfig:
             self.supported_pdf_formats = ["pdf"]
         if self.supported_document_formats is None:
             self.supported_document_formats = ["epub", "mobi", "azw", "azw3", "html", "htm", "docx", "rtf"]
+        if self.marker_document_formats is None:
+            # Empty by default to keep Pandoc for non-PDF unless explicitly enabled
+            self.marker_document_formats = []
 
 @dataclass
 class PipelineConfig:
@@ -274,6 +282,22 @@ def apply_env_overrides(config: PipelineConfig) -> PipelineConfig:
         config.conversion.conversion_timeout = int(os.environ["CONVERSION_TIMEOUT"])
     if "CONNECT_TIMEOUT" in os.environ:
         config.conversion.connect_timeout = int(os.environ["CONNECT_TIMEOUT"])
+    # Marker base URLs and endpoints
+    if "MARKER_LOCAL_BASE_URL" in os.environ:
+        config.conversion.marker_local_base_url = os.environ["MARKER_LOCAL_BASE_URL"].strip()
+    if "MARKER_CLOUD_BASE_URL" in os.environ:
+        config.conversion.marker_cloud_base_url = os.environ["MARKER_CLOUD_BASE_URL"].strip()
+    if "MARKER_BASE_URL" in os.environ:
+        # Backward-compat: apply to cloud base URL
+        config.conversion.marker_cloud_base_url = os.environ["MARKER_BASE_URL"].strip()
+    if "MARKER_LOCAL_ENDPOINT" in os.environ:
+        config.conversion.marker_local_endpoint = os.environ["MARKER_LOCAL_ENDPOINT"].strip()
+    if "MARKER_CLOUD_ENDPOINT" in os.environ:
+        config.conversion.marker_cloud_endpoint = os.environ["MARKER_CLOUD_ENDPOINT"].strip()
+    if "MARKER_DOCUMENT_FORMATS" in os.environ:
+        raw = os.environ["MARKER_DOCUMENT_FORMATS"].strip()
+        if raw:
+            config.conversion.marker_document_formats = [s.strip().lower() for s in raw.split(',') if s.strip()]
     # Marker toggles via env
     env_bools = {
         "MARKER_USE_LLM": ("use_llm", bool),

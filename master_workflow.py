@@ -170,9 +170,11 @@ class PipelineOrchestrator:
         for dir_name, dir_path in source_dirs:
             supported_formats = (
                 self.converter.conversion_config.get("supported_pdf_formats", []) +
-                self.converter.conversion_config.get("supported_document_formats", [])
+                self.converter.conversion_config.get("supported_document_formats", []) +
+                (self.converter.conversion_config.get("marker_document_formats", []) or [])
             )
-            for ext in supported_formats:
+            # De-duplicate extensions
+            for ext in sorted(set(supported_formats)):
                 total_source_files += len(list(dir_path.glob(f"*.{ext}")))
         
         if total_source_files == 0:

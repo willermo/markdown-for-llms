@@ -5,6 +5,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     build-essential \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf-2.0-0 \
     libgl1-mesa-dev \
     libglib2.0-0 \
     libsm6 \
@@ -17,8 +21,16 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Install Marker directly from PyPI and API dependencies
-RUN pip install --no-cache-dir marker-pdf uvicorn fastapi python-multipart
+# Install Marker (full) and provider dependencies + API deps
+RUN pip install --no-cache-dir \
+    weasyprint \
+    ebooklib \
+    mammoth \
+    openpyxl \
+    beautifulsoup4 \
+    filetype \
+    uvicorn fastapi python-multipart \
+ && pip install --no-cache-dir "git+https://github.com/datalab-to/marker@master#egg=marker-pdf"
 
 # Create necessary directories
 RUN mkdir -p /app/temp /app/input
