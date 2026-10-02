@@ -94,6 +94,7 @@ Thumbs.db
 
 # Resources and temporary files
 resources/
+# Local run contexts, handovers, reports and disposable probes (never commit)
 temp/
 tmp/
 

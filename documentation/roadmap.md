@@ -9,7 +9,8 @@ hardware e corpus determineranno dimensione e durata degli incrementi.
 | Fase | Risultato verificabile | Dipendenze | Stato |
 | --- | --- | --- | --- |
 | 0 | Governance, decisioni e documentazione iniziale | Nessuna | Completata con questo intervento |
-| 1 | Corpus, benchmark e scelta motivata dei motori | Campioni e profili hardware | Da iniziare |
+| 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | Approvata, da pianificare |
+| 1 | Corpus, benchmark e scelta motivata dei motori | Fase 0.1, campioni e profili hardware | Da iniziare |
 | 2 | Package applicativo, contratti, configurazione, DB e worker | Risultati essenziali della fase 1 | Da iniziare |
 | 3 | Prima applicazione completa con FastAPI e Web UI minima | Fase 2 e scelta frontend | Da iniziare |
 | 4 | Formati richiesti, PDF scientifici, OCR e asset | Fasi 1–3 | Da iniziare |
@@ -27,6 +28,24 @@ Diátaxis e valutazione MCP. Il codice applicativo resta legacy.
 Completamento: collegamenti locali e skill validati, nessuna decisione tecnica ancora
 aperta presentata come implementata. Il README rimanda ai nuovi documenti; la sua
 riscrittura completa accompagna lo sviluppo.
+
+## Fase 0.1 — Toolchain Python riproducibile
+
+Decisione [ADR 0006](decisions/0006-python-toolchain-uv.md), run iniziale
+`run-a001-fase0-uv`. Dopo l'integrazione manuale del bootstrap in `dev`, creare il
+feature branch dedicato e applicare il [ciclo supervisionato](development/run-lifecycle.md):
+piano, due review, arbitrato, implementazione, due review e arbitrato finale.
+
+Introdurre pyproject, lockfile, versione Python e ambiente locale; separare dipendenze
+runtime/dev, correggere discovery del package e entry point, allineare istruzioni e
+build riproducibili. Escludere `.venv/` e `temp/` dai contesti Docker. Valutare il
+perimetro delle dipendenze Marker senza scegliere prematuramente il motore definitivo.
+Conservare il comportamento applicativo salvo correzioni necessarie al packaging.
+
+**Uscita:** ambiente ricreabile dal lockfile, package importabile e comandi verificati
+fuori dalla directory dei sorgenti, controlli legacy pertinenti eseguiti, limiti
+espliciti, GO finale sullo snapshot e integrazione manuale. Questa fase anticipa
+la parte di packaging della fase 2; il nuovo dominio applicativo resta in fase 2.
 
 ## Fase 1 — Corpus e scelta dei motori
 

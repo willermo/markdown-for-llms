@@ -28,6 +28,20 @@ prevalgono su queste convenzioni; registrare le variazioni architetturali pertin
 
 ## Metodo di lavoro
 
+- Per le run di implementazione seguire il [ciclo supervisionato](documentation/development/run-lifecycle.md)
+  e la skill `.agents/skills/manage-implementation-run/SKILL.md`. Leggere prima
+  `temp/HANDOVER.md` e lo stato della run indicata, se presenti. In assenza di `temp/`,
+  ricreare la struttura con `scripts/run_context.py`; non inventare review o esiti.
+- Ogni run parte da un feature branch di `dev`. Supervisione, pianificazione,
+  implementazione e le due revisioni indipendenti hanno prompt, report e responsabilità
+  separati. ChatGPT e Claude sono i revisori previsti; sostituzioni vanno registrate.
+- Solo il supervisore aggiorna stato condiviso e arbitrati; gli altri ruoli scrivono
+  report e checkpoint propri. Un `GO` vale per gli artefatti identificati nel report.
+- L'utente esegue commit, merge, eventuale push e promozione a `main`: fornire comandi
+  contestualizzati dopo il `GO`, senza eseguirli automaticamente. Un deploy richiede
+  un perimetro operativo esplicito. Questa preferenza prevale sui workflow precedenti.
+- Prima di passare a una nuova chat aggiornare il checkpoint del proprio ruolo.
+  Archiviare ciò che serve in futuro prima della pulizia selettiva di `temp/`.
 - Verificare branch e modifiche esistenti prima di intervenire. Il percorso previsto
   è feature branch da `dev`, integrazione in `dev`, successiva promozione a `main`.
   La roadmap non è un comando a effettuare merge o pubblicazioni automaticamente.
@@ -57,6 +71,10 @@ prevalgono su queste convenzioni; registrare le variazioni architetturali pertin
 ## Documentazione
 
 - `documentation/`: decisioni, proposte, roadmap, valutazioni e risultati di benchmark.
+- Aggiornare [documentation/CHANGELOG.md](documentation/CHANGELOG.md) a ogni avanzamento
+  significativo: data, fase/run, risultato, verifiche, limiti e prossimo passo. Separare
+  lavoro pianificato, realizzato e integrato; registrare commit, merge e deploy solo
+  dopo verifica, conservando la cronologia precedente.
 - `docs/`: documentazione effettiva per utenti e sviluppatori secondo Diátaxis.
 - `README.md`: ingresso al progetto; durante la transizione contiene ancora la guida
   legacy. Aggiornarlo progressivamente insieme alle funzionalità implementate.

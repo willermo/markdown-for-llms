@@ -10,12 +10,14 @@ la configurazione personale e non avvia servizi.
 | [record-architecture-decision](skills/record-architecture-decision/SKILL.md) | Formalizzare o aggiornare una decisione, mantenendo ADR e roadmap coerenti |
 | [verify-conversion-fidelity](skills/verify-conversion-fidelity/SKILL.md) | Valutare modifiche a parser, OCR, cleaning, formule, asset o serializer |
 | [write-diataxis-docs](skills/write-diataxis-docs/SKILL.md) | Scrivere documentazione utente/sviluppatore nella categoria Diátaxis appropriata |
+| [manage-implementation-run](skills/manage-implementation-run/SKILL.md) | Avviare, supervisionare o riprendere una run con doppie review, arbitrati e handover |
 
 Le skill hanno il formato `SKILL.md` con metadati e istruzioni; Codex supporta
 la scoperta da `.agents/skills/` nel repository, come descritto nella
 [documentazione ufficiale](https://learn.chatgpt.com/docs/build-skills).
 Possono essere richiamate esplicitamente per nome o selezionate dal client quando
-pertinenti. Non sono necessari script o dipendenze MCP per queste tre procedure.
+pertinenti. Non sono necessarie dipendenze MCP. La skill delle run usa, quando utile,
+`scripts/run_context.py`, eseguibile con la libreria standard Python.
 
 ## Workflow
 

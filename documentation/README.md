@@ -16,8 +16,19 @@ creato dal `dev` locale al commit `8fa5be9`. Nessun merge è stato eseguito.
 4. [Roadmap a fasi e criteri di completamento](roadmap.md).
 5. [Questioni aperte](open-questions.md) e [debito tecnico legacy](legacy-findings.md).
 6. [Strumenti di sviluppo e valutazione MCP](tooling/mcp.md).
+7. [Ciclo supervisionato delle run](development/run-lifecycle.md) e
+   [archivio permanente delle run](runs/README.md).
+8. [Changelog degli avanzamenti e stato dello sviluppo](CHANGELOG.md).
+
+La migrazione a uv è ora [approvata](decisions/0006-python-toolchain-uv.md) e precede
+i benchmark. Il contesto operativo locale si recupera da `temp/HANDOVER.md`, ignorato
+da Git; dopo un clone si usa lo strumento descritto nel ciclo delle run. Nessuna review
+o implementazione della migrazione viene dichiarata completata dal solo bootstrap.
 
 ## Come mantenere questa base
+
+Aggiornare il [changelog](CHANGELOG.md) a ogni avanzamento significativo, distinguendo
+decisioni, lavoro realizzato, verifiche ed effettiva integrazione o rilascio.
 
 Il draft conserva la proposta iniziale, riorganizzata per la consultazione. Gli ADR
 (Architecture Decision Records) sono la fonte delle scelte correnti: una proposta

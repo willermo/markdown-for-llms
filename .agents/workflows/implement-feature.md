@@ -2,6 +2,10 @@
 
 **Ingresso:** funzionalità o correzione richiesta, con fase della roadmap pertinente.
 
+Per una run, questa procedura è il lavoro della chat implementatrice **dopo** il GO
+sul piano nel [ciclo supervisionato](implementation-run.md). Leggere stato, prompt,
+piano e arbitrato della run in `temp/`; non saltare pianificazione e doppie review.
+
 1. Leggere `AGENTS.md`, stato Git, ADR e codice coinvolto. Preservare le modifiche
    dell'utente e lavorare sul feature branch concordato.
 2. Definire un risultato osservabile e il minimo percorso completo che lo dimostra.
@@ -16,5 +20,7 @@
    e stato della roadmap soltanto quando i criteri sono soddisfatti.
 6. Controllare diff e risultati; consegnare cambiamento, motivazione, verifiche e
    limiti. Non eseguire automaticamente merge o promozioni come effetto della procedura.
+7. Salvare report e checkpoint nei percorsi assegnati dal supervisore; riportarli in
+   chat. Il supervisore genera i prompt per le due review indipendenti dell'implementazione.
 
 **Uscita:** incremento revisionabile, con comportamento dimostrato e documentazione coerente.
