@@ -1,5 +1,13 @@
 # Document Intelligence Pipeline for LLMs
 
+> **Evoluzione del progetto:** è in preparazione una nuova versione con backend
+> FastAPI, Web UI, archivio delle conversioni e attenzione alla fedeltà dei documenti.
+> Vedere [decisioni e draft architetturale](documentation/README.md),
+> [roadmap](documentation/roadmap.md) e [documentazione Diátaxis](docs/README.md).
+> La guida sottostante descrive la pipeline legacy; le funzionalità della nuova
+> architettura non sono ancora implementate e diversi limiti del legacy sono
+> registrati nella [ricognizione](documentation/legacy-findings.md).
+
 A comprehensive, production-ready Python pipeline for converting various document formats into clean, validated, and optimally chunked Markdown files ready for Large Language Model (LLM) consumption and NotebookLM notebooks.
 
 ## Table of Contents
