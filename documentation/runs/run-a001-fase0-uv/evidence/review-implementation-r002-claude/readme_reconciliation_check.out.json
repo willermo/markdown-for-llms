@@ -1,0 +1,67 @@
+{
+ "original_sha_ok": true,
+ "fences_found": 74,
+ "blocks": 74,
+ "ids_unique": true,
+ "mismatch": [],
+ "dispositions": {
+  "modificato": 40,
+  "spostato": 10,
+  "rimosso": 24
+ },
+ "dest_missing": [],
+ "no_reason": [],
+ "inline": [
+  [
+   872,
+   true,
+   true
+  ],
+  [
+   883,
+   true,
+   true
+  ],
+  [
+   889,
+   true,
+   true
+  ],
+  [
+   889,
+   true,
+   true
+  ],
+  [
+   1007,
+   true,
+   true
+  ],
+  [
+   1011,
+   true,
+   true
+  ],
+  [
+   1012,
+   true,
+   true
+  ],
+  [
+   1540,
+   true,
+   true
+  ],
+  [
+   1538,
+   true,
+   true
+  ]
+ ],
+ "inline_dispositions": {
+  "modificato": 4,
+  "rimosso": 5
+ },
+ "planning_vs_actual_differs": 5,
+ "seconds": 0.0023102289997041225
+}

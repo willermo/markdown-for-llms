@@ -26,14 +26,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from enum import Enum
 
 import requests
-from dotenv import load_dotenv
 
-from config import get_config_manager
+from config import get_config_manager, load_workspace_env
 from logging_config import get_orchestrator_logger
 from exceptions import ConversionError, error_context
-
-# Load environment variables
-load_dotenv()
 
 class ConverterType(Enum):
     PANDOC = "pandoc"
@@ -407,6 +403,8 @@ class UnifiedDocumentConverter:
     """Unified converter that routes documents to appropriate backends."""
     
     def __init__(self, config_manager=None):
+        self.workspace = Path.cwd().resolve()
+        load_workspace_env(self.workspace)
         self.config_manager = config_manager or get_config_manager()
         self.config = self.config_manager.config
         self.logger = get_orchestrator_logger()
@@ -526,8 +524,8 @@ class UnifiedDocumentConverter:
     def convert_directory(self, source_dir: str, output_dir: str, max_workers: int = 3, 
                          skip_existing: bool = True) -> List[ConversionResult]:
         """Convert all supported files in a directory."""
-        source_path = Path(source_dir)
-        output_path = Path(output_dir)
+        source_path = self.workspace / Path(source_dir)
+        output_path = self.workspace / Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
         
         if not source_path.exists():

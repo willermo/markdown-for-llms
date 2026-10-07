@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "commands": [
+    {
+      "phase": "collection",
+      "argv": [
+        "/tmp/a001-uv-baseline-pi8cvs6x/venv/bin/python",
+        "-I",
+        "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_baseline.py",
+        "--suite-child",
+        "collection",
+        "--repo",
+        "/home/davide/workarea/markdown-for-llms",
+        "--modules",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-originals",
+        "--fixtures",
+        "/home/davide/workarea/markdown-for-llms/tests/fixtures/run-a001-fase0-uv",
+        "--source-manifest",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/implementation/stages/impl-r001-stage-baseline-s005/sources.json",
+        "--runner-receipt",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-v0-firejail-s005/runner.json",
+        "--workspaces",
+        "/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite",
+        "--output",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-collection-observed.json"
+      ],
+      "pytest_main_argv": [
+        "/home/davide/workarea/markdown-for-llms/tests/unit/test_cleaning.py",
+        "/home/davide/workarea/markdown-for-llms/tests/unit/test_validation.py",
+        "/home/davide/workarea/markdown-for-llms/tests/unit/test_chunking.py",
+        "/home/davide/workarea/markdown-for-llms/tests/integration/test_pipeline.py",
+        "--collect-only",
+        "-q",
+        "--verbosity=-1",
+        "-o",
+        "cache_dir=/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite/pytest-cache-collection"
+      ],
+      "cwd": "/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite",
+      "timeout_seconds": 300,
+      "expected_exit": 0,
+      "cache_dir": "/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite/pytest-cache-collection",
+      "observed_json": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-collection-observed.json",
+      "stdout": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-collection-stdout.txt",
+      "stderr": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-collection-stderr.txt",
+      "may_execute_now": false
+    },
+    {
+      "phase": "run",
+      "argv": [
+        "/tmp/a001-uv-baseline-pi8cvs6x/venv/bin/python",
+        "-I",
+        "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_baseline.py",
+        "--suite-child",
+        "run",
+        "--repo",
+        "/home/davide/workarea/markdown-for-llms",
+        "--modules",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-originals",
+        "--fixtures",
+        "/home/davide/workarea/markdown-for-llms/tests/fixtures/run-a001-fase0-uv",
+        "--source-manifest",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/implementation/stages/impl-r001-stage-baseline-s005/sources.json",
+        "--runner-receipt",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-v0-firejail-s005/runner.json",
+        "--workspaces",
+        "/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite",
+        "--output",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-run-observed.json"
+      ],
+      "pytest_main_argv": [
+        "/home/davide/workarea/markdown-for-llms/tests/unit/test_cleaning.py",
+        "/home/davide/workarea/markdown-for-llms/tests/unit/test_validation.py",
+        "/home/davide/workarea/markdown-for-llms/tests/unit/test_chunking.py",
+        "/home/davide/workarea/markdown-for-llms/tests/integration/test_pipeline.py",
+        "-v",
+        "-rA",
+        "--verbosity=1",
+        "-o",
+        "verbosity_test_cases=1",
+        "-o",
+        "cache_dir=/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite/pytest-cache-run"
+      ],
+      "cwd": "/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite",
+      "timeout_seconds": 300,
+      "expected_exit": 1,
+      "cache_dir": "/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005/legacy-suite/pytest-cache-run",
+      "observed_json": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-run-observed.json",
+      "stdout": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-run-stdout.txt",
+      "stderr": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005/legacy-run-stderr.txt",
+      "may_execute_now": false
+    }
+  ],
+  "expected_nodeids": {
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/resume-baseline-s003/legacy-post-nodeids.json",
+    "bytes": 5903,
+    "sha256": "979792cd255dcbaa714ee8d9f4465fe599baa6966df98037efb489d807207d43"
+  },
+  "selection": [
+    "tests/unit/test_cleaning.py",
+    "tests/unit/test_validation.py",
+    "tests/unit/test_chunking.py",
+    "tests/integration/test_pipeline.py"
+  ],
+  "expected_failed": [
+    "tests/integration/test_pipeline.py::TestPipelineIntegration::test_end_to_end_without_conversion",
+    "tests/integration/test_pipeline.py::TestPipelineIntegration::test_pipeline_statistics_tracking",
+    "tests/integration/test_pipeline.py::TestPipelineIntegration::test_concurrent_processing",
+    "tests/integration/test_pipeline.py::TestPipelineIntegration::test_pipeline_logging",
+    "tests/integration/test_pipeline.py::TestPipelineIntegration::test_configuration_integration"
+  ],
+  "expected_counts": {
+    "collected": 67,
+    "passed": 62,
+    "failed": 5,
+    "skipped": 0,
+    "errors": 0
+  },
+  "config_plugins_versions": "Observation hook records actual values after R/S; never inferred from cache",
+  "cache_collection_nodeids_expected_absent": "Installed pytest 9.1.1 NFPlugin exits before saving nodeids for collect-only",
+  "no_legacy_test_change": true,
+  "no_new_diagnostics_in_legacy_count": true
+}

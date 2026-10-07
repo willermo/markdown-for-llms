@@ -1,0 +1,300 @@
+{
+  "schema": 1,
+  "id": "sha256:d3f1987a4f709c38f46340a4e0c29a0e3df35a2b9e2e1a183085b2741da01fe0",
+  "payload": {
+    "kind": "I",
+    "scope": "run-stage",
+    "source": {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/S.json",
+      "bytes": 18386,
+      "sha256": "059ffadb956cb385d138c9c34599493ff976e519d8071caa7e394428302278ac",
+      "id": "sha256:ec8c23d796bc2b2a45d134112e6f0454d9e07d91c9542ae1454cbb4140d9b8eb"
+    },
+    "snapshot": {
+      "label": "impl-r001-stage-launcher-s076",
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-launcher-s076.json",
+      "sha256": "a351ef30334b769544e15add4f92b9b7ffa5e276afb4863c35ebf5af098ca971",
+      "worktree_sha256": "1ce644fd14e17fe8862eb2e00aea4506d48443594cb3682ac57b54047277a028"
+    },
+    "archives": [
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0.tar.gz",
+        "bytes": 46160,
+        "sha256": "a6a85fe172249982229d9df770856c27a76fa59dd2109f1f5efb8191267fa357"
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0-py3-none-any.whl",
+        "bytes": 47514,
+        "sha256": "6fff8af117ef40ee2872ebb4d81295bd3421144a3a7adc2905555cb7e7bf001c"
+      }
+    ],
+    "interpreter": {
+      "implementation": "CPython",
+      "version": [
+        3,
+        12,
+        13
+      ],
+      "executable": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "executable_realpath": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "prefix": "/tmp/run-a001-product-wheel-env-r001",
+      "base_prefix": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu",
+      "stdlib": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12",
+      "expected_managed": "/home/davide/workarea/markdown-for-llms/.venv-python",
+      "isolated": true,
+      "files": [
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/os.py",
+          "bytes": 40821,
+          "sha256": "54c43a1fc69c979c70d8f7d097174cee163bfe59937723ee353043dd4a0211e1"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/__init__.py",
+          "bytes": 14020,
+          "sha256": "d5d41e2c29049515d295d81a6d40b4890fbec8d8482cfb401630f8ef2f77e4d5"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py",
+          "bytes": 51052,
+          "sha256": "10ba48ae8063cfe7589436041d0d4628c05f427c7709cf8e75e486f8930cc32c"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "bytes": 27860296,
+          "sha256": "8392ec78d090ab7e1b1c058cff454de64a0780e263e6a9e66cdb1256be322fb0"
+        }
+      ]
+    },
+    "profile": "base",
+    "inputs": [
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+        "bytes": 22237,
+        "sha256": "a72698bfbffc44862256834c14603935415e043db0abacc1044d5e836f523fb5"
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+        "bytes": 19196,
+        "sha256": "4bd91afef7be9ac467eb3fe2762c839f90f4541cfce7cf3df76367ebed06ec19"
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py",
+        "bytes": 2451,
+        "sha256": "996f22d2ab1b4478677957001144735bef6e75de3777db3052b3c54360200c53"
+      }
+    ],
+    "argv": [
+      "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+      "--repo",
+      "/home/davide/workarea/markdown-for-llms",
+      "--source-manifest",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/S.json",
+      "--sdist",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0.tar.gz",
+      "--wheel",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0-py3-none-any.whl",
+      "--profile",
+      "base",
+      "--expected-managed",
+      "/home/davide/workarea/markdown-for-llms/.venv-python",
+      "--receipt",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/I.json"
+    ],
+    "cwd": "/home/davide/workarea/markdown-for-llms",
+    "status": "PASS",
+    "installed": {
+      "origins": {
+        "batch_monitor.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/batch_monitor.py",
+        "chunk_markdown.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/chunk_markdown.py",
+        "clean_markdown.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/clean_markdown.py",
+        "config.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/config.py",
+        "exceptions.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/exceptions.py",
+        "logging_config.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/logging_config.py",
+        "marker_api_server.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/marker_api_server.py",
+        "master_workflow.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/master_workflow.py",
+        "unified_converter.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/unified_converter.py",
+        "validate_markdown.py": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/validate_markdown.py"
+      },
+      "dependencies": [
+        {
+          "name": "certifi",
+          "version": "2026.7.22"
+        },
+        {
+          "name": "charset-normalizer",
+          "version": "3.5.2"
+        },
+        {
+          "name": "idna",
+          "version": "3.20"
+        },
+        {
+          "name": "markdown-for-llms",
+          "version": "1.0.0"
+        },
+        {
+          "name": "python-dotenv",
+          "version": "1.2.4"
+        },
+        {
+          "name": "regex",
+          "version": "2024.11.6"
+        },
+        {
+          "name": "requests",
+          "version": "2.34.2"
+        },
+        {
+          "name": "tiktoken",
+          "version": "0.14.0"
+        },
+        {
+          "name": "tqdm",
+          "version": "4.70.1"
+        },
+        {
+          "name": "urllib3",
+          "version": "2.8.0"
+        }
+      ],
+      "direct_url": {
+        "url": "file:///home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0-py3-none-any.whl",
+        "archive_info": {}
+      },
+      "files": [
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-chunk",
+          "bytes": 327,
+          "sha256": "20408e0f2a273f8ab7bde67ff50bfb4d715ece73feb46af68855cb76f32c7bbb"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-clean",
+          "bytes": 327,
+          "sha256": "8b7a017e9e0202d6cf605ef01cef30ec675e9b9bf53cddd78e15c21b39c0fa89"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-config",
+          "bytes": 319,
+          "sha256": "6b3badb75f996e7537cf834fe8ae8af89c00d66081715b124a237c08dc38bbf7"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-pipeline",
+          "bytes": 328,
+          "sha256": "d541ef5e25b010d227c45c61e63de3858e05418fbe71fab72c51432d02e92ef4"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-validate",
+          "bytes": 330,
+          "sha256": "6665c1f69368d4e8d36f75888302d2af3720c8087c51d01f651533cc1239702d"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/batch_monitor.py",
+          "bytes": 7939,
+          "sha256": "075e4b48cfd3d7811f2c44ef6d8e51c83e6c7ceaee4dd3fcbd3e5ef7682f4341"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/chunk_markdown.py",
+          "bytes": 33774,
+          "sha256": "bc12659b2b3e12d266d5e9489b1956bffb8c8e5e1ff1878bf31cedd8719cb36b"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/clean_markdown.py",
+          "bytes": 10897,
+          "sha256": "14331c33d98292ea1401fb738b5be18c9ef1bd96e13f942301f55c8a7137c42f"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/config.py",
+          "bytes": 14060,
+          "sha256": "bda2e2f5a05ff30d1f361c0dc3cb921b3aaed0c37889311f04a3ca09fb77890f"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/exceptions.py",
+          "bytes": 3283,
+          "sha256": "7a7a2c1253887ddfc8d959e1c006550df044dcb39dab594cd2930a98f82741fd"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/logging_config.py",
+          "bytes": 8416,
+          "sha256": "4974330828f68ac51cbda940e5951c30754fc81513ef6d362840db00b5b2b961"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/INSTALLER",
+          "bytes": 2,
+          "sha256": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/METADATA",
+          "bytes": 5160,
+          "sha256": "e2e25f86be8e04220c6746ee80ecbae48bb7fd3b4735d274593c577eaa76357b"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/RECORD",
+          "bytes": 2119,
+          "sha256": "6225b6fce2b16ebf3b29e67e89cdfcc82cadca21c651b01ab1fab21c013b1e5c"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/REQUESTED",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/WHEEL",
+          "bytes": 91,
+          "sha256": "61532836a2b3111b7ec23519c09df7c41180c27165fb872a6d8913b566b88ad1"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/direct_url.json",
+          "bytes": 199,
+          "sha256": "513e6dfc2252386286343a3e583dc7775f602e5b61075539d44eb49963758108"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/entry_points.txt",
+          "bytes": 206,
+          "sha256": "2e46d7feddee333bc4876f85e00c029786e3da43c8d502b1fc5753f49481c52c"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/licenses/LICENSE",
+          "bytes": 1091,
+          "sha256": "85979c43399acb91fab2769719101c0b1d7279da82230de246ebcb137e9a797c"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/top_level.txt",
+          "bytes": 147,
+          "sha256": "b57db1c32a94cb36f063424ccd180d4618c25c9eccba0c48cb2085ed7003b3df"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/uv_cache.json",
+          "bytes": 127,
+          "sha256": "fce24f674cc13de878126dd8337fb656c6ff0597fbff0815f561b10e699d5272"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/marker_api_server.py",
+          "bytes": 5769,
+          "sha256": "8b957f0dc3ae47c7103959aaeb868d23c522a7ac3ea1912a96d7babbbd383d89"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/master_workflow.py",
+          "bytes": 27078,
+          "sha256": "69246d83dbbb40750228cd0c14f31414b8c79e42897150777979c7e91b6884e1"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/unified_converter.py",
+          "bytes": 32495,
+          "sha256": "ea215d4640fac724392ef0ef66a0979e67d721d6cda7892f6106759d5d4420ee"
+        },
+        {
+          "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/validate_markdown.py",
+          "bytes": 18936,
+          "sha256": "5f9fef017a9d29b4e0b197a14c1dd85b17a9655433b1b4bea3eafb7863f95771"
+        }
+      ],
+      "canonical_archive": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0-py3-none-any.whl",
+        "bytes": 47514,
+        "sha256": "6fff8af117ef40ee2872ebb4d81295bd3421144a3a7adc2905555cb7e7bf001c"
+      },
+      "direct_url_hash_status": "NOT_DECLARED; verified B digest and all wheel payload bytes"
+    }
+  },
+  "captured_at_utc": "2026-10-07T11:46:00.483089+00:00"
+}

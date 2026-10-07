@@ -1,0 +1,15 @@
+# Sola configurazione: candidato CUDA 12.6, supporto GPU non attestato.
+services:
+  marker-api:
+    build:
+      args:
+        MARKER_EXTRA: marker-cu126
+    environment:
+      TORCH_DEVICE: cuda
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

@@ -26,6 +26,13 @@ wheels/
 MANIFEST
 
 # Virtual environments
+.venv/
+.venv-python/
+.venv-marker/
+.venv-marker-gpu/
+# Cache, temporanei e output package separati dalla baseline in /tmp.
+.cache/uv-package-s001/
+.cache/uv-fidelity/
 venv/
 env/
 ENV/
@@ -77,7 +84,8 @@ test_*.pdf
 *.tmp
 
 # IDE and editors
-.vscode/
+.vscode/*
+!.vscode/settings.uv.example.json
 .idea/
 *.swp
 *.swo

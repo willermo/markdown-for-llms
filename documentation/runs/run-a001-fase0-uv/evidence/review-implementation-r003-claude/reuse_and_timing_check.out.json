@@ -1,0 +1,81 @@
+{
+ "docker_context_objects": 24,
+ "docker_context_all_equal_now": true,
+ "docker_context_contains_delta_paths": [],
+ "docker_context_names": [
+  ".dockerignore",
+  ".python-version",
+  "Dockerfile",
+  "LICENSE",
+  "MANIFEST.in",
+  "README.md",
+  "batch_monitor.py",
+  "build-constraints.txt",
+  "chunk_markdown.py",
+  "clean_markdown.py",
+  "config.py",
+  "exceptions.py",
+  "logging_config.py",
+  "marker_api_server.py",
+  "master_workflow.py",
+  "pyproject.toml",
+  "scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py",
+  "scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+  "scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+  "scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+  "scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+  "unified_converter.py",
+  "uv.lock",
+  "validate_markdown.py"
+ ],
+ "c_docker_exact_now": true,
+ "c_docker_paths": [
+  "scripts/diagnostics/run-a001-fase0-uv/run_docker_contract.py",
+  "scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py",
+  "scripts/diagnostics/run-a001-fase0-uv/prepare_docker_inputs.py",
+  "tests/docker/test_marker_contract.py",
+  "tests/conftest.py"
+ ],
+ "B56_equal_now": true,
+ "S_build_fields_equal_s060": {
+  "modules": true,
+  "build_inputs": true,
+  "backend": true,
+  "toolchain": true
+ },
+ "S_b002_build_fields_equal_s060": {
+  "modules": true,
+  "build_inputs": true,
+  "backend": true,
+  "toolchain": true
+ },
+ "delta_paths_in_S_build_inputs": [],
+ "cumulative_at_mtime": {
+  "entry.json": 8440.0,
+  "scripts/diagnostics/run-a001-fase0-uv/run_offline.py": 8495.573,
+  "docs/how-to/ambiente-uv.md": 8495.619,
+  "docs/reference/toolchain-legacy.md": 8495.659,
+  "tests/unit/test_core_diagnostics.py": 8522.799,
+  "docs/how-to/marker-legacy-docker.md": 8522.799,
+  "admission.json": 8655.457,
+  "calls.json": 8671.266,
+  "execution-result.json": 8671.267,
+  "static.json": 8768.26,
+  "finalize.py": 8902.323,
+  "matrix.json": 8903.211,
+  "final-checks.json": 8903.351,
+  "manifest.json": 8903.355,
+  "close_cost.py": 8946.92,
+  "finalize-failure.json": 8946.996,
+  "closing-accounting.json": 8946.998,
+  "codex_turn_checkpoint_ef7680e5": 8966.239
+ },
+ "cap_crossed_wall": 1791373781.5295157,
+ "closing_monotonic_delta_check": 8946.997684,
+ "closing_wall_delta_check": 8946.997684,
+ "last_R_result_charged_at": [
+  8663.98717994499,
+  8671.266410166863
+ ],
+ "seconds_internal": 0.0035
+}

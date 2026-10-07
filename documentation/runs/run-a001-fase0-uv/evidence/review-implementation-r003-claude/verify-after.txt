@@ -1,0 +1,10 @@
+2026-10-07T14:14:02+02:00
+argv: /home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12 -I -B scripts/run_context.py verify run-a001-fase0-uv --label impl-r001-stage-final-s003
+MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.
+exit=0
+6295835b1407ea44f6c49780d38061c0fd5d6389a2ef1e096da9dd260f778962  temp/run-a001-fase0-uv/snapshots/impl-r001-stage-final-s003.json
+66ba82200e5def5a4db76f9bafccb0731b506091
+66ba82200e5def5a4db76f9bafccb0731b506091
+cached-diff-lines=0
+diff-check-exit=0
+/dev/nvme0n1p2 501809635328 350072795136 126171037696  74% /

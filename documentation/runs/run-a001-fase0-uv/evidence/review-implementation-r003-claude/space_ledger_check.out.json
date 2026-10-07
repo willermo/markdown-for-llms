@@ -1,0 +1,36 @@
+{
+ "roots": {
+  "temp/run-a001-fase0-uv": {
+   "logical": 683256849,
+   "allocated": 746184704,
+   "entries": 32568
+  },
+  ".venv-python": {
+   "logical": 96544304,
+   "allocated": 106397696,
+   "entries": 4978
+  },
+  ".venv": {
+   "logical": 386508,
+   "allocated": 569344,
+   "entries": 115
+  },
+  "/tmp/run-a001-product-wheel-env-r001": {
+   "logical": 12750383,
+   "allocated": 15405056,
+   "entries": 1355
+  }
+ },
+ "logical": 792938044,
+ "allocated": 868556800,
+ "H": 868556800,
+ "delta": 315015168,
+ "incremental_cap": 369098752,
+ "remaining": 54083584,
+ "stop_check": true,
+ "admitted": true,
+ "repository_free": 126172110848,
+ "tmp_free": 497102848,
+ "seconds_internal": 0.186,
+ "note": "Misura indipendente approssimata: inode contati una volta, directory incluse; non sostituisce il ledger del supervisore."
+}

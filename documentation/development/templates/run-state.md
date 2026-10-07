@@ -29,3 +29,8 @@ La creazione del contesto non dimostra che il branch esista o che una review sia
 
 Inserire percorsi esatti a piani, snapshot, review e arbitrati quando prodotti.
 Solo il supervisore aggiorna questo file dopo aver verificato le evidenze.
+
+## Rilievi e fallimenti correnti
+
+ID, attribuzione alla base, decisione motivata e prova richiesta. Rimandare agli
+arbitrati e alla storia, mantenendo qui soltanto ciò che serve alla prossima azione.

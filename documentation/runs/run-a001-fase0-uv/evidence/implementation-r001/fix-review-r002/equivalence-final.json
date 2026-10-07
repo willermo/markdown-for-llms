@@ -1,0 +1,433 @@
+{
+  "status": "PASS_EXACT_CONSUMED_INPUTS_ONLY",
+  "B56_current_exact": {
+    "modules": true,
+    "build_inputs": true,
+    "backend": true,
+    "toolchain": true
+  },
+  "B56": {
+    "sdist": {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0.tar.gz",
+      "bytes": 46160,
+      "sha256": "a6a85fe172249982229d9df770856c27a76fa59dd2109f1f5efb8191267fa357"
+    },
+    "wheel": {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0-py3-none-any.whl",
+      "bytes": 47514,
+      "sha256": "6fff8af117ef40ee2872ebb4d81295bd3421144a3a7adc2905555cb7e7bf001c"
+    }
+  },
+  "Docker_r007_context_objects": [
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/.dockerignore",
+        "bytes": 789,
+        "sha256": "60111a6ee46d8ad13a56ea48c982e59f8e51e462914e862dcf401d6dc6c2497d"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/.dockerignore",
+        "bytes": 789,
+        "sha256": "60111a6ee46d8ad13a56ea48c982e59f8e51e462914e862dcf401d6dc6c2497d"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/.python-version",
+        "bytes": 8,
+        "sha256": "aa0d6581054e6e4ff3f91839deca7a854ad37221b8784d060b42d0f847ff1a3b"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/.python-version",
+        "bytes": 8,
+        "sha256": "aa0d6581054e6e4ff3f91839deca7a854ad37221b8784d060b42d0f847ff1a3b"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/Dockerfile",
+        "bytes": 3936,
+        "sha256": "88b369ad301d158e4d132f0c8bef2e7f2f496a5f619d51ef2712e3e64941c0d9"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/Dockerfile",
+        "bytes": 3936,
+        "sha256": "88b369ad301d158e4d132f0c8bef2e7f2f496a5f619d51ef2712e3e64941c0d9"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/LICENSE",
+        "bytes": 1091,
+        "sha256": "85979c43399acb91fab2769719101c0b1d7279da82230de246ebcb137e9a797c"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/LICENSE",
+        "bytes": 1091,
+        "sha256": "85979c43399acb91fab2769719101c0b1d7279da82230de246ebcb137e9a797c"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/MANIFEST.in",
+        "bytes": 675,
+        "sha256": "d0aade862edff8609519c2694901af53b552c6d99548ef3e943ca7d698d19527"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/MANIFEST.in",
+        "bytes": 675,
+        "sha256": "d0aade862edff8609519c2694901af53b552c6d99548ef3e943ca7d698d19527"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/README.md",
+        "bytes": 4070,
+        "sha256": "33ce6c4b41780abfbca27e0cf0e1166db25fd095b70aa268e2c8919f5a13942f"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/README.md",
+        "bytes": 4070,
+        "sha256": "33ce6c4b41780abfbca27e0cf0e1166db25fd095b70aa268e2c8919f5a13942f"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/batch_monitor.py",
+        "bytes": 7939,
+        "sha256": "075e4b48cfd3d7811f2c44ef6d8e51c83e6c7ceaee4dd3fcbd3e5ef7682f4341"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/batch_monitor.py",
+        "bytes": 7939,
+        "sha256": "075e4b48cfd3d7811f2c44ef6d8e51c83e6c7ceaee4dd3fcbd3e5ef7682f4341"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/build-constraints.txt",
+        "bytes": 19,
+        "sha256": "5b96a1b3ab68ccbd56cda1f7d56e804b7ac05194b86762b3763c84c13a92cfeb"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/build-constraints.txt",
+        "bytes": 19,
+        "sha256": "5b96a1b3ab68ccbd56cda1f7d56e804b7ac05194b86762b3763c84c13a92cfeb"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/chunk_markdown.py",
+        "bytes": 33774,
+        "sha256": "bc12659b2b3e12d266d5e9489b1956bffb8c8e5e1ff1878bf31cedd8719cb36b"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/chunk_markdown.py",
+        "bytes": 33774,
+        "sha256": "bc12659b2b3e12d266d5e9489b1956bffb8c8e5e1ff1878bf31cedd8719cb36b"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/clean_markdown.py",
+        "bytes": 10897,
+        "sha256": "14331c33d98292ea1401fb738b5be18c9ef1bd96e13f942301f55c8a7137c42f"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/clean_markdown.py",
+        "bytes": 10897,
+        "sha256": "14331c33d98292ea1401fb738b5be18c9ef1bd96e13f942301f55c8a7137c42f"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/config.py",
+        "bytes": 14060,
+        "sha256": "bda2e2f5a05ff30d1f361c0dc3cb921b3aaed0c37889311f04a3ca09fb77890f"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/config.py",
+        "bytes": 14060,
+        "sha256": "bda2e2f5a05ff30d1f361c0dc3cb921b3aaed0c37889311f04a3ca09fb77890f"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/exceptions.py",
+        "bytes": 3283,
+        "sha256": "7a7a2c1253887ddfc8d959e1c006550df044dcb39dab594cd2930a98f82741fd"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/exceptions.py",
+        "bytes": 3283,
+        "sha256": "7a7a2c1253887ddfc8d959e1c006550df044dcb39dab594cd2930a98f82741fd"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/logging_config.py",
+        "bytes": 8416,
+        "sha256": "4974330828f68ac51cbda940e5951c30754fc81513ef6d362840db00b5b2b961"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/logging_config.py",
+        "bytes": 8416,
+        "sha256": "4974330828f68ac51cbda940e5951c30754fc81513ef6d362840db00b5b2b961"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/marker_api_server.py",
+        "bytes": 5769,
+        "sha256": "8b957f0dc3ae47c7103959aaeb868d23c522a7ac3ea1912a96d7babbbd383d89"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/marker_api_server.py",
+        "bytes": 5769,
+        "sha256": "8b957f0dc3ae47c7103959aaeb868d23c522a7ac3ea1912a96d7babbbd383d89"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/master_workflow.py",
+        "bytes": 27078,
+        "sha256": "69246d83dbbb40750228cd0c14f31414b8c79e42897150777979c7e91b6884e1"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/master_workflow.py",
+        "bytes": 27078,
+        "sha256": "69246d83dbbb40750228cd0c14f31414b8c79e42897150777979c7e91b6884e1"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/pyproject.toml",
+        "bytes": 2737,
+        "sha256": "60ef6f17da3f6787b14137749c5143323117dd2e9b257748cc556def5060b856"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/pyproject.toml",
+        "bytes": 2737,
+        "sha256": "60ef6f17da3f6787b14137749c5143323117dd2e9b257748cc556def5060b856"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py",
+        "bytes": 2451,
+        "sha256": "996f22d2ab1b4478677957001144735bef6e75de3777db3052b3c54360200c53"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py",
+        "bytes": 2451,
+        "sha256": "996f22d2ab1b4478677957001144735bef6e75de3777db3052b3c54360200c53"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+        "bytes": 3996,
+        "sha256": "e7986831f8f97984842e234beed4915cc9a0cc740ea449368c8df106898d830f"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+        "bytes": 3996,
+        "sha256": "e7986831f8f97984842e234beed4915cc9a0cc740ea449368c8df106898d830f"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+        "bytes": 9123,
+        "sha256": "6265063d6ced39afc949c47a75dbb0dba89622961d3b4f62f7b83b913d50b60e"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+        "bytes": 9123,
+        "sha256": "6265063d6ced39afc949c47a75dbb0dba89622961d3b4f62f7b83b913d50b60e"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+        "bytes": 19196,
+        "sha256": "4bd91afef7be9ac467eb3fe2762c839f90f4541cfce7cf3df76367ebed06ec19"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+        "bytes": 19196,
+        "sha256": "4bd91afef7be9ac467eb3fe2762c839f90f4541cfce7cf3df76367ebed06ec19"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+        "bytes": 22237,
+        "sha256": "a72698bfbffc44862256834c14603935415e043db0abacc1044d5e836f523fb5"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+        "bytes": 22237,
+        "sha256": "a72698bfbffc44862256834c14603935415e043db0abacc1044d5e836f523fb5"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/unified_converter.py",
+        "bytes": 32495,
+        "sha256": "ea215d4640fac724392ef0ef66a0979e67d721d6cda7892f6106759d5d4420ee"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/unified_converter.py",
+        "bytes": 32495,
+        "sha256": "ea215d4640fac724392ef0ef66a0979e67d721d6cda7892f6106759d5d4420ee"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/uv.lock",
+        "bytes": 287148,
+        "sha256": "b3288f1d51b880d9c683a43607d9eedc5b8c87465c8a1d357818c6b61d12f05f"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/uv.lock",
+        "bytes": 287148,
+        "sha256": "b3288f1d51b880d9c683a43607d9eedc5b8c87465c8a1d357818c6b61d12f05f"
+      }
+    },
+    {
+      "context": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004/validate_markdown.py",
+        "bytes": 18936,
+        "sha256": "5f9fef017a9d29b4e0b197a14c1dd85b17a9655433b1b4bea3eafb7863f95771"
+      },
+      "current": {
+        "path": "/home/davide/workarea/markdown-for-llms/validate_markdown.py",
+        "bytes": 18936,
+        "sha256": "5f9fef017a9d29b4e0b197a14c1dd85b17a9655433b1b4bea3eafb7863f95771"
+      }
+    }
+  ],
+  "C_docker_driver_probe_exact": [
+    {
+      "path": "scripts/diagnostics/run-a001-fase0-uv/run_docker_contract.py",
+      "kind": "file",
+      "bytes": 17212,
+      "sha256": "60ae6c3ae888ced84dddc8763f803042b989bc097b8eb692a9a18e20c79bdc82"
+    }
+  ],
+  "Docker_history": "supervisor R019 native Completed27/27; historical native_completion:false preserved",
+  "wheel_B20_B56_payload_entrypoints_exact": [
+    "batch_monitor.py",
+    "chunk_markdown.py",
+    "clean_markdown.py",
+    "config.py",
+    "exceptions.py",
+    "logging_config.py",
+    "marker_api_server.py",
+    "master_workflow.py",
+    "unified_converter.py",
+    "validate_markdown.py",
+    "markdown_for_llms-1.0.0.dist-info/entry_points.txt"
+  ],
+  "all_metadata_headers_equal": true,
+  "description_only_delta": "README; canonical B56 installed and current six I/E obtained separately",
+  "previous_equivalence": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/equivalence-final.json",
+  "scope": "No old R or I receipt promoted to current PASS",
+  "profiles": [
+    {
+      "name": "root",
+      "versions_exact": true,
+      "old_I": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-root-s045.json",
+        "bytes": 14218,
+        "sha256": "9e1e4eb4e1c0f8f7f8399dc5c05aaac48c7815cd26a1dd819a02702452ca12e6"
+      },
+      "new_I": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/I-root-s060.json"
+    },
+    {
+      "name": "base-a",
+      "versions_exact": true,
+      "old_I": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-base-a-s045.json",
+        "bytes": 15968,
+        "sha256": "fdc69d23a511cdb55b4669e942eeb5560f108b8d11e5ae57f3f0755937f7860b"
+      },
+      "new_I": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/I-base-a-s060.json"
+    },
+    {
+      "name": "base-b",
+      "versions_exact": true,
+      "old_I": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-base-b-s045.json",
+        "bytes": 15968,
+        "sha256": "eba196478889ad1c348433ff04a6ac3dd74884ec4f9a42c2f7e20028f3d339a6"
+      },
+      "new_I": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/I-base-b-s060.json"
+    },
+    {
+      "name": "external",
+      "versions_exact": true,
+      "old_I": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-external-s045.json",
+        "bytes": 13880,
+        "sha256": "76807efbefde50ff97afe8f909c596e5840784a604e4072eb179bc4abf18fbcf"
+      },
+      "new_I": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/I-external-s060.json"
+    },
+    {
+      "name": "dev",
+      "versions_exact": true,
+      "old_I": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-dev-s045.json",
+        "bytes": 18020,
+        "sha256": "a3957ae6ee433cd7de13847b0da751db3097a4c068bb08cf57256cf3befaf7b6"
+      },
+      "new_I": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/I-dev-s060.json"
+    },
+    {
+      "name": "api",
+      "versions_exact": true,
+      "old_I": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-api-s045.json",
+        "bytes": 18869,
+        "sha256": "9e87fad47fec3f003522d40a4f68902095f195c894aaf50473bcdadc52a7f160"
+      },
+      "new_I": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/I-api-s060.json"
+    }
+  ],
+  "input_inventory_all_actual_records_verified": 809,
+  "CLI_fidelity_baseline_reuse": "Exact B20/B56 ten modules, entrypoints, METADATA headers, dependencies and all805+ inventory runtime/fixtures/cache/Pandoc/baseline bytes; only description body differs, not consumed by actual CLI/fidelity. Fresh six I/E and R replace current binding; old R remains historical.",
+  "C_docker_driver_probe_and_test_exact": [
+    {
+      "path": "scripts/diagnostics/run-a001-fase0-uv/run_docker_contract.py",
+      "kind": "file",
+      "bytes": 17212,
+      "sha256": "60ae6c3ae888ced84dddc8763f803042b989bc097b8eb692a9a18e20c79bdc82"
+    },
+    {
+      "path": "scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py",
+      "kind": "file",
+      "bytes": 7992,
+      "sha256": "2e499342d0098ba66843ea19e5455b63d90c971ca67c03d4a63bbdf1226f324b"
+    },
+    {
+      "path": "scripts/diagnostics/run-a001-fase0-uv/prepare_docker_inputs.py",
+      "kind": "file",
+      "bytes": 22384,
+      "sha256": "2e8df0dad65fa47a883daf7e449123dd71707c405be1ccc18c314fe33248d1a8"
+    },
+    {
+      "path": "tests/docker/test_marker_contract.py",
+      "kind": "file",
+      "sha256": "8182a0c1f63ea99f482af74f780348028398c6e3643a62044f80b644a536320a",
+      "executable": false
+    },
+    {
+      "path": "tests/conftest.py",
+      "kind": "file",
+      "sha256": "1176bde0d2791e77c436e7908ba4562377258e7fd6f09c02ef9f56fe1ede5d22",
+      "executable": false
+    }
+  ]
+}

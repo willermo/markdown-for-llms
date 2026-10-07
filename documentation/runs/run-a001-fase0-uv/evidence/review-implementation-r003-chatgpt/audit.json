@@ -1,0 +1,549 @@
+{
+  "identity": {
+    "status": "PASS_READER_ONLY",
+    "seconds": 1.283335885964334,
+    "result": {
+      "received_identities": 132,
+      "all_exact": true
+    }
+  },
+  "real_R": {
+    "status": "PASS_READER_ONLY",
+    "seconds": 0.9718023599125445,
+    "result": {
+      "real_received_R": [
+        {
+          "run_id": "run-a001-fase0-uv",
+          "S": "sha256:ec8c23d796bc2b2a45d134112e6f0454d9e07d91c9542ae1454cbb4140d9b8eb",
+          "I": "sha256:d3f1987a4f709c38f46340a4e0c29a0e3df35a2b9e2e1a183085b2741da01fe0",
+          "binding": {
+            "argv": [
+              "/tmp/run-a001-product-wheel-env-r001/bin/python",
+              "-I",
+              "-B",
+              "/home/davide/workarea/markdown-for-llms/scripts/run_context.py",
+              "verify",
+              "run-a001-fase0-uv",
+              "--label",
+              "impl-r001-stage-launcher-s076"
+            ],
+            "exit_code": 0,
+            "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n",
+            "stderr": "",
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-launcher-s076.json",
+            "sha256": "a351ef30334b769544e15add4f92b9b7ffa5e276afb4863c35ebf5af098ca971",
+            "worktree_sha256": "1ce644fd14e17fe8862eb2e00aea4506d48443594cb3682ac57b54047277a028",
+            "label": "impl-r001-stage-launcher-s076"
+          },
+          "target_python": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+          "realpath": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "namespace": "net:[4026533887]",
+          "host_namespace": "net:[4026531833]",
+          "preflight": [
+            {
+              "argv": [
+                "/tmp/run-a001-product-wheel-env-r001/bin/python",
+                "-I",
+                "-B",
+                "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/check_preflight.py",
+                "--repo",
+                "/home/davide/workarea/markdown-for-llms",
+                "--source",
+                "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/S.json",
+                "--receipt",
+                "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/I.json"
+              ],
+              "exit_code": 0,
+              "stdout": "PASS_CURRENT_I\n",
+              "stderr": ""
+            }
+          ],
+          "monitor_seconds": 3.640357250813395,
+          "charged_at": 8663.98717994499,
+          "socket_and_processes_collected": true,
+          "current_payload_hashes_exact": true
+        },
+        {
+          "run_id": "run-b002-fase0-uv",
+          "S": "sha256:7f30d223b410fe2d3466ce8b225e86e032d44783f9777b67e8b379bd8a9edc0c",
+          "I": "sha256:a65d9eba5503a7c644f5feb127dca69970dd48477a04811fd2a72988b956ae51",
+          "binding": {
+            "argv": [
+              "/tmp/run-a001-product-wheel-env-r001/bin/python",
+              "-I",
+              "-B",
+              "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002/scripts/run_context.py",
+              "verify",
+              "run-b002-fase0-uv",
+              "--label",
+              "launcher-r021-s001"
+            ],
+            "exit_code": 0,
+            "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n",
+            "stderr": "",
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002/temp/run-b002-fase0-uv/snapshots/launcher-r021-s001.json",
+            "sha256": "cbee424372857937f11265d5768ec88ba12212935ea5735915df5007fb19856c",
+            "worktree_sha256": "9cfa2df8d9b795c90c9c5a36e5ced501b2601863d2b9f59bf7b14a767c6da40a",
+            "label": "launcher-r021-s001"
+          },
+          "target_python": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+          "realpath": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "namespace": "net:[4026533887]",
+          "host_namespace": "net:[4026531833]",
+          "preflight": [
+            {
+              "argv": [
+                "/tmp/run-a001-product-wheel-env-r001/bin/python",
+                "-I",
+                "-B",
+                "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002/scripts/diagnostics/run-a001-fase0-uv/check_preflight.py",
+                "--repo",
+                "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002",
+                "--source",
+                "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-b002-fase0-uv/S.json",
+                "--receipt",
+                "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-b002-fase0-uv/I.json"
+              ],
+              "exit_code": 0,
+              "stdout": "PASS_CURRENT_I\n",
+              "stderr": ""
+            }
+          ],
+          "monitor_seconds": 3.6442340780049562,
+          "charged_at": 8671.266410166863,
+          "socket_and_processes_collected": true,
+          "current_payload_hashes_exact": true
+        }
+      ],
+      "clone_tools_all_equal": true,
+      "alternate_readonly_usage": "/home/davide/workarea/markdown-for-llms/.git/objects",
+      "git_calls_only_clone": [
+        {
+          "argv": [
+            "git",
+            "init",
+            "--initial-branch",
+            "synthetic-r021"
+          ],
+          "cwd": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002",
+          "environment": {
+            "HOME": "/home/davide",
+            "LANG": "C.UTF-8",
+            "LC_ALL": "C.UTF-8",
+            "PATH": "/home/davide/.pyenv/versions/3.12.3/bin:/usr/bin:/bin",
+            "PIP_CONFIG_FILE": "/dev/null",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1",
+            "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+            "TZ": "UTC",
+            "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+            "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+            "UV_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+            "UV_PYTHON_DOWNLOADS": "never",
+            "XDG_CACHE_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+            "XDG_CONFIG_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+            "XDG_CONFIG_DIRS": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+            "UV_PYTHON_INSTALL_DIR": "/home/davide/workarea/markdown-for-llms/.venv-python",
+            "UV_HTTP_RETRIES": "0",
+            "UV_CONCURRENT_DOWNLOADS": "1",
+            "UV_PROJECT_ENVIRONMENT": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/runtime-acquisition"
+          },
+          "exit": 0,
+          "stdout": "Initialized empty Git repository in /home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002/.git/\n",
+          "stderr": "",
+          "seconds": 0.0037463719490915537,
+          "shell": false,
+          "close_fds": true
+        },
+        {
+          "argv": [
+            "git",
+            "update-ref",
+            "refs/heads/synthetic-r021",
+            "66ba82200e5def5a4db76f9bafccb0731b506091"
+          ],
+          "cwd": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002",
+          "environment": {
+            "HOME": "/home/davide",
+            "LANG": "C.UTF-8",
+            "LC_ALL": "C.UTF-8",
+            "PATH": "/home/davide/.pyenv/versions/3.12.3/bin:/usr/bin:/bin",
+            "PIP_CONFIG_FILE": "/dev/null",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1",
+            "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+            "TZ": "UTC",
+            "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+            "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+            "UV_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+            "UV_PYTHON_DOWNLOADS": "never",
+            "XDG_CACHE_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+            "XDG_CONFIG_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+            "XDG_CONFIG_DIRS": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+            "UV_PYTHON_INSTALL_DIR": "/home/davide/workarea/markdown-for-llms/.venv-python",
+            "UV_HTTP_RETRIES": "0",
+            "UV_CONCURRENT_DOWNLOADS": "1",
+            "UV_PROJECT_ENVIRONMENT": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/runtime-acquisition"
+          },
+          "exit": 0,
+          "stdout": "",
+          "stderr": "",
+          "seconds": 0.0018772759940475225,
+          "shell": false,
+          "close_fds": true
+        },
+        {
+          "argv": [
+            "git",
+            "update-ref",
+            "refs/heads/dev",
+            "66ba82200e5def5a4db76f9bafccb0731b506091"
+          ],
+          "cwd": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002",
+          "environment": {
+            "HOME": "/home/davide",
+            "LANG": "C.UTF-8",
+            "LC_ALL": "C.UTF-8",
+            "PATH": "/home/davide/.pyenv/versions/3.12.3/bin:/usr/bin:/bin",
+            "PIP_CONFIG_FILE": "/dev/null",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1",
+            "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+            "TZ": "UTC",
+            "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+            "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+            "UV_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+            "UV_PYTHON_DOWNLOADS": "never",
+            "XDG_CACHE_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+            "XDG_CONFIG_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+            "XDG_CONFIG_DIRS": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+            "UV_PYTHON_INSTALL_DIR": "/home/davide/workarea/markdown-for-llms/.venv-python",
+            "UV_HTTP_RETRIES": "0",
+            "UV_CONCURRENT_DOWNLOADS": "1",
+            "UV_PROJECT_ENVIRONMENT": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/runtime-acquisition"
+          },
+          "exit": 0,
+          "stdout": "",
+          "stderr": "",
+          "seconds": 0.0016718879342079163,
+          "shell": false,
+          "close_fds": true
+        }
+      ],
+      "received_mock_call": {
+        "argv": [
+          "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/davide/workarea/markdown-for-llms/tests/unit",
+          "-p",
+          "test_core_diagnostics.py",
+          "-v"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "environment": {
+          "HOME": "/home/davide",
+          "LANG": "C.UTF-8",
+          "LC_ALL": "C.UTF-8",
+          "PATH": "/home/davide/.pyenv/versions/3.12.3/bin:/usr/bin:/bin",
+          "PIP_CONFIG_FILE": "/dev/null",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONNOUSERSITE": "1",
+          "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+          "TZ": "UTC",
+          "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/mock-tmp",
+          "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+          "UV_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+          "UV_PYTHON_DOWNLOADS": "never",
+          "XDG_CACHE_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+          "XDG_CONFIG_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+          "XDG_CONFIG_DIRS": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+          "UV_PYTHON_INSTALL_DIR": "/home/davide/workarea/markdown-for-llms/.venv-python",
+          "UV_HTTP_RETRIES": "0",
+          "UV_CONCURRENT_DOWNLOADS": "1",
+          "UV_PROJECT_ENVIRONMENT": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/runtime-acquisition"
+        },
+        "exit": 0,
+        "stdout": "{\"status\": \"IMPEDITA\", \"receipt\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/mock-tmp/tmpc1djb6fb/receipt/receipt.json\"}\n{\"status\": \"IMPEDITA\", \"receipt\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/mock-tmp/tmp4_mt1jqu/receipt/receipt.json\"}\n{\"status\": \"IMPEDITA\", \"receipt\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/mock-tmp/tmpkdrkn1pe/receipt/receipt.json\"}\n{\"status\": \"FAIL\", \"receipt\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/mock-tmp/tmp02vithjp/output/receipt.json\"}\n",
+        "stderr": "test_baseline_argv_isolated_and_closed (test_core_diagnostics.CoreBoundaries.test_baseline_argv_isolated_and_closed) ... ok\ntest_closed_environment_never_merges_secrets (test_core_diagnostics.CoreBoundaries.test_closed_environment_never_merges_secrets) ... ok\ntest_empty_baseline_config_stops_ancestor_discovery (test_core_diagnostics.CoreBoundaries.test_empty_baseline_config_stops_ancestor_discovery) ... ok\ntest_missing_or_mutated_preliminary_binding_rejected (test_core_diagnostics.CoreBoundaries.test_missing_or_mutated_preliminary_binding_rejected) ... ok\ntest_target_startup_checked_before_launch (test_core_diagnostics.CoreBoundaries.test_target_startup_checked_before_launch) ... ok\ntest_cleanup_failure_has_receipt_and_original_error (test_core_diagnostics.LauncherCleanup.test_cleanup_failure_has_receipt_and_original_error) ... ok\ntest_eacces_after_bind_keeps_original_and_collects_socket (test_core_diagnostics.LauncherCleanup.test_eacces_after_bind_keeps_original_and_collects_socket) ... ok\ntest_timeout_after_bind_keeps_original_and_collects_socket (test_core_diagnostics.LauncherCleanup.test_timeout_after_bind_keeps_original_and_collects_socket) ... ok\ntest_both_valid_run_ids_invoke_verifier_with_target_python (test_core_diagnostics.LauncherSnapshots.test_both_valid_run_ids_invoke_verifier_with_target_python) ... ok\ntest_invalid_schema_id_label_and_path_stop_before_verifier (test_core_diagnostics.LauncherSnapshots.test_invalid_schema_id_label_and_path_stop_before_verifier) ... ok\ntest_snapshot_and_parent_symlinks_rejected_before_verifier (test_core_diagnostics.LauncherSnapshots.test_snapshot_and_parent_symlinks_rejected_before_verifier) ... ok\ntest_stale_stops_before_socket_or_workload_and_has_receipt (test_core_diagnostics.LauncherSnapshots.test_stale_stops_before_socket_or_workload_and_has_receipt) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.118s\n\nOK\n",
+        "seconds": 0.47094434406608343,
+        "shell": false,
+        "close_fds": true
+      },
+      "new_product_probes_by_reviewer": 0
+    }
+  },
+  "reuse_docs": {
+    "status": "PASS_READER_ONLY",
+    "seconds": 0.22160752210766077,
+    "result": {
+      "Docker_context_pairs": 24,
+      "Docker_driver_objects": 5,
+      "B56_exact": true,
+      "build_fields_exact": true,
+      "inventory_records_exact": 809,
+      "inventory_delta_only_launcher": true,
+      "supervisor_only_documentation_changed": [
+        "documentation/CHANGELOG.md",
+        "documentation/README.md",
+        "documentation/decisions/0006-python-toolchain-uv.md",
+        "documentation/decisions/README.md",
+        "documentation/roadmap.md"
+      ],
+      "local_links": [
+        {
+          "path": "docs/how-to/ambiente-uv.md",
+          "line": 113,
+          "target": "../../.vscode/settings.uv.example.json"
+        },
+        {
+          "path": "docs/how-to/ambiente-uv.md",
+          "line": 150,
+          "target": "marker-legacy-docker.md"
+        },
+        {
+          "path": "docs/how-to/ambiente-uv.md",
+          "line": 152,
+          "target": "../reference/toolchain-legacy.md"
+        },
+        {
+          "path": "docs/how-to/ambiente-uv.md",
+          "line": 153,
+          "target": "marker-legacy-docker.md"
+        },
+        {
+          "path": "docs/how-to/ambiente-uv.md",
+          "line": 153,
+          "target": "../README.md"
+        },
+        {
+          "path": "docs/how-to/marker-legacy-docker.md",
+          "line": 49,
+          "target": "ambiente-uv.md"
+        },
+        {
+          "path": "docs/how-to/marker-legacy-docker.md",
+          "line": 125,
+          "target": "ambiente-uv.md"
+        },
+        {
+          "path": "docs/how-to/marker-legacy-docker.md",
+          "line": 125,
+          "target": "../reference/toolchain-legacy.md"
+        },
+        {
+          "path": "docs/how-to/marker-legacy-docker.md",
+          "line": 125,
+          "target": "../README.md"
+        },
+        {
+          "path": "docs/reference/toolchain-legacy.md",
+          "line": 128,
+          "target": "../../documentation/development/run-lifecycle.md"
+        },
+        {
+          "path": "docs/reference/toolchain-legacy.md",
+          "line": 130,
+          "target": "../how-to/ambiente-uv.md"
+        }
+      ],
+      "verify_options": [
+        "--",
+        "--archives-only",
+        "--profile"
+      ],
+      "whitespace": {
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "",
+        "stderr": "",
+        "seconds": 0.005750951822847128
+      },
+      "old_R_historical": true,
+      "old_fast_not_transferred_to_new_tests": true
+    }
+  },
+  "accounting": {
+    "status": "PASS_READER_ONLY",
+    "seconds": 0.010543350130319595,
+    "result": {
+      "formula_reconstructed": 8946.997683905065,
+      "closing": {
+        "status": "NON_PASS_PROSPECTIVE_TIME",
+        "command": [
+          "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "-I",
+          "-B",
+          "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/close_cost.py"
+        ],
+        "script": {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/close_cost.py",
+          "bytes": 2235,
+          "sha256": "3a9fdb022ede2dfd2b9ec6e7972be226cc6fb72aacc8e915748e3d3970cec497"
+        },
+        "observed_after_all_report_checkpoint_manifest_rewrites": 8946.997655021958,
+        "closing_record_margin_seconds": 1,
+        "prospective_charged_upper": 8947.997655021958,
+        "cap": 8880,
+        "overrun": 67.99765502195805,
+        "historical_lower_bound": 8321.418588865316,
+        "historical_upper_known": false,
+        "historical_budget_PASS": false,
+        "new_workload_after_cap": false,
+        "wall": 1791373848.5271993,
+        "monotonic": 1294998.34212155,
+        "no_further_file_writes": true
+      },
+      "historical_ledger": {
+        "historical_cap_seconds": 8280,
+        "original_declared_seconds": 8285.28744326299,
+        "corrected_cumulative_lower_bound_seconds": 8321.418588865316,
+        "corrected_overrun_lower_bound_seconds": 41.41858886531554,
+        "presentation_cumulative_lower_bound_rounded_seconds": 8321.42,
+        "presentation_overrun_lower_bound_rounded_seconds": 41.42,
+        "formula": "entry.core_entry_seconds + entry.core_preparation_before_entry_seconds + last_delivery_mtime - entry.wall_start - auth.wait_excluded_seconds",
+        "last_delivery_mtime": 1791367898.304797,
+        "precision_note": "41.42 is the rounded presentation of the 41.418... lower bound",
+        "upper_bound_known": false,
+        "unrecorded_final_rewrite": true,
+        "historical_budget_PASS": false,
+        "last_product_workload_cumulative_seconds": 8251.006317519117,
+        "product_workload_over_cap_observed": false,
+        "retrospective_authorization": false
+      },
+      "finalize_failure": {
+        "command": [
+          "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "-I",
+          "-B",
+          "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/finalize.py"
+        ],
+        "exit": 1,
+        "error": "AssertionError charged<8880 after report/checkpoint/manifest writes",
+        "workload_started": false,
+        "all_real_R_and_mock_results_unchanged": true
+      },
+      "manifest_mismatches": {
+        "manifest.json": [
+          "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/delivery.json"
+        ],
+        "manifest-closing.json": []
+      },
+      "mtime_timeline": [
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/result.json",
+          "mtime": 1791373565.5169938,
+          "charge_from_mtime": 8663.987478017807,
+          "seconds_after_observed": -283.01020550727844
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-b002-fase0-uv/result.json",
+          "mtime": 1791373572.7963188,
+          "charge_from_mtime": 8671.2668030262,
+          "seconds_after_observed": -275.7308804988861
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/execution-result.json",
+          "mtime": 1791373572.7964442,
+          "charge_from_mtime": 8671.266928434372,
+          "seconds_after_observed": -275.7307550907135
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/reuse.json",
+          "mtime": 1791373669.7888923,
+          "charge_from_mtime": 8768.259376525879,
+          "seconds_after_observed": -178.73830699920654
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/static.json",
+          "mtime": 1791373669.7890484,
+          "charge_from_mtime": 8768.259532690048,
+          "seconds_after_observed": -178.73815083503723
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/finalize.py",
+          "mtime": 1791373803.8525863,
+          "charge_from_mtime": 8902.323070526123,
+          "seconds_after_observed": -44.6746129989624
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/matrix.json",
+          "mtime": 1791373804.7404523,
+          "charge_from_mtime": 8903.210936546326,
+          "seconds_after_observed": -43.786746978759766
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/outer-invocations.json",
+          "mtime": 1791373804.740801,
+          "charge_from_mtime": 8903.211285352707,
+          "seconds_after_observed": -43.78639817237854
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/checkpoint-before-r020.md",
+          "mtime": 1791373804.7409954,
+          "charge_from_mtime": 8903.211479663849,
+          "seconds_after_observed": -43.78620386123657
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/final-checks.json",
+          "mtime": 1791373804.8804765,
+          "charge_from_mtime": 8903.350960731506,
+          "seconds_after_observed": -43.6467227935791
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/manifest.json",
+          "mtime": 1791373804.8844519,
+          "charge_from_mtime": 8903.354936122894,
+          "seconds_after_observed": -43.64274740219116
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/close_cost.py",
+          "mtime": 1791373848.449668,
+          "charge_from_mtime": 8946.920152187347,
+          "seconds_after_observed": -0.07753133773803711
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/finalize-failure.json",
+          "mtime": 1791373848.5257492,
+          "charge_from_mtime": 8946.996233463287,
+          "seconds_after_observed": -0.0014500617980957031
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/implementation/report-r020.md",
+          "mtime": 1791373848.525844,
+          "charge_from_mtime": 8946.996328353882,
+          "seconds_after_observed": -0.0013551712036132812
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/delivery.json",
+          "mtime": 1791373848.5264597,
+          "charge_from_mtime": 8946.996943950653,
+          "seconds_after_observed": -0.0007395744323730469
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/manifest-closing.json",
+          "mtime": 1791373848.5271575,
+          "charge_from_mtime": 8946.997641801834,
+          "seconds_after_observed": -4.172325134277344e-05
+        },
+        {
+          "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/closing-accounting.json",
+          "mtime": 1791373848.5272505,
+          "charge_from_mtime": 8946.99773478508,
+          "seconds_after_observed": 5.125999450683594e-05
+        }
+      ],
+      "unaccounted_writes_later_than_margin": [],
+      "max_real_R_charge": 8671.266410166863
+    }
+  }
+}

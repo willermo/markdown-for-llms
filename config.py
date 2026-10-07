@@ -10,6 +10,13 @@ from pathlib import Path
 from typing import Dict, Optional, Any, List
 from enum import Enum
 
+
+def load_workspace_env(workspace: Path) -> None:
+    """Carica soltanto .env del workspace; l'ambiente della shell prevale."""
+    from dotenv import load_dotenv
+
+    load_dotenv(dotenv_path=workspace / ".env", override=False)
+
 class LLMModel(Enum):
     GPT_3_5_TURBO = "gpt-3.5-turbo"
     GPT_4 = "gpt-4"
@@ -130,7 +137,8 @@ class ConfigManager:
     }
     
     def __init__(self, config_path: Optional[Path] = None):
-        self.config_path = config_path or Path("pipeline_config.json")
+        self.workspace = Path.cwd().resolve()
+        self.config_path = self.workspace / (config_path or Path("pipeline_config.json"))
         self._config: Optional[PipelineConfig] = None
     
     @property
@@ -238,12 +246,12 @@ class ConfigManager:
         directories = asdict(self.config.directories)
         if directory_type not in directories:
             raise ValueError(f"Unknown directory type: {directory_type}")
-        return Path(directories[directory_type])
+        return self.workspace / Path(directories[directory_type])
     
     def create_directories(self) -> None:
         """Create all configured directories"""
         for directory in asdict(self.config.directories).values():
-            Path(directory).mkdir(parents=True, exist_ok=True)
+            (self.workspace / directory).mkdir(parents=True, exist_ok=True)
 
 # Global configuration instance
 _config_manager = None
@@ -318,7 +326,7 @@ def apply_env_overrides(config: PipelineConfig) -> PipelineConfig:
 
     return config
 
-if __name__ == "__main__":
+def main():
     # CLI for configuration management
     import argparse
     
@@ -348,3 +356,7 @@ if __name__ == "__main__":
     if args.show:
         config = config_manager.config
         print(json.dumps(config_manager._config_to_dict(config), indent=2))
+
+
+if __name__ == "__main__":
+    main()

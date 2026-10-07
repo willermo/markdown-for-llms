@@ -1,0 +1,254 @@
+{
+  "schema": 1,
+  "repo": "/home/davide/workarea/markdown-for-llms",
+  "base_prefix": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu",
+  "python_version": "3.12.13",
+  "tmpdir": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+  "workspace": "/home/davide/workarea/markdown-for-llms",
+  "tokenizer_cache": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+  "socket_root": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r",
+  "binaries": {
+    "unshare": "/usr/bin/unshare",
+    "firejail": "/usr/bin/firejail",
+    "git": "/usr/bin/git",
+    "pandoc": "/usr/bin/pandoc"
+  },
+  "daemons": [
+    {
+      "path": "/run/containerd/containerd.sock",
+      "exists": true,
+      "canonical": "/run/containerd/containerd.sock"
+    },
+    {
+      "path": "/run/dbus/system_bus_socket",
+      "exists": true,
+      "canonical": "/run/dbus/system_bus_socket"
+    },
+    {
+      "path": "/run/docker.sock",
+      "exists": true,
+      "canonical": "/run/docker.sock"
+    },
+    {
+      "path": "/run/podman/podman.sock",
+      "exists": false,
+      "canonical": "/run/podman/podman.sock"
+    },
+    {
+      "path": "/run/snapd.socket",
+      "exists": true,
+      "canonical": "/run/snapd.socket"
+    },
+    {
+      "path": "/run/user/1000/bus",
+      "exists": true,
+      "canonical": "/run/user/1000/bus"
+    },
+    {
+      "path": "/run/user/1000/docker.sock",
+      "exists": false,
+      "canonical": "/run/user/1000/docker.sock"
+    },
+    {
+      "path": "/run/user/1000/keyring/ssh",
+      "exists": true,
+      "canonical": "/run/user/1000/keyring/ssh"
+    },
+    {
+      "path": "/run/user/1000/podman/podman.sock",
+      "exists": false,
+      "canonical": "/run/user/1000/podman/podman.sock"
+    },
+    {
+      "path": "/var/run/containerd/containerd.sock",
+      "exists": true,
+      "canonical": "/run/containerd/containerd.sock"
+    },
+    {
+      "path": "/var/run/docker.sock",
+      "exists": true,
+      "canonical": "/run/docker.sock"
+    }
+  ],
+  "environment": {
+    "HOME": "/home/davide",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/home/davide/.pyenv/versions/3.12.3/bin:/usr/bin:/bin",
+    "PIP_CONFIG_FILE": "/dev/null",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "TZ": "UTC",
+    "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+    "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+    "UV_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+    "UV_PYTHON_DOWNLOADS": "never",
+    "XDG_CACHE_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+    "XDG_CONFIG_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+    "XDG_CONFIG_DIRS": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config"
+  },
+  "dependencies": [
+    {
+      "name": "certifi",
+      "version": "2026.7.22"
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.2"
+    },
+    {
+      "name": "idna",
+      "version": "3.20"
+    },
+    {
+      "name": "markdown-for-llms",
+      "version": "1.0.0"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.4"
+    },
+    {
+      "name": "regex",
+      "version": "2024.11.6"
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2"
+    },
+    {
+      "name": "tiktoken",
+      "version": "0.14.0"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.1"
+    },
+    {
+      "name": "urllib3",
+      "version": "2.8.0"
+    }
+  ],
+  "files": [
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "bytes": 27860296,
+      "sha256": "8392ec78d090ab7e1b1c058cff454de64a0780e263e6a9e66cdb1256be322fb0"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/os.py",
+      "bytes": 40821,
+      "sha256": "54c43a1fc69c979c70d8f7d097174cee163bfe59937723ee353043dd4a0211e1"
+    },
+    {
+      "path": "/home/davide/.local/bin/uv",
+      "bytes": 56032056,
+      "sha256": "fd24f4de9bbe5bfaf605e1056a3c30a5dafa4373ebdd67ebdd9085078cc3abe5"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+      "bytes": 18,
+      "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.py",
+      "bytes": 4342,
+      "sha256": "6cf30c56faf2a55228914dbbd17f8088ed371ebb08f5e7fa6fd931f913fcaf1d"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/pyvenv.cfg",
+      "bytes": 192,
+      "sha256": "730416412baa18bc43a8478564bef6ce48c48e066330965cc9f8e48e722278b2"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/certifi-2026.7.22.dist-info/METADATA",
+      "bytes": 2474,
+      "sha256": "ef5af1638fbb23676ac3c5777dfcfc2cd9c348fe4172ed5ba3d277655b248090"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/charset_normalizer-3.5.2.dist-info/METADATA",
+      "bytes": 46395,
+      "sha256": "89ce6362bb7be88558f4be99a98f5d1b4da93d19cd0323e5ee0bac05cf883dfb"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA",
+      "bytes": 7207,
+      "sha256": "dbd8c14c1e4ca1e0c9824a6dbc7cbbf78884f38eb52d91148cd3025f671e4b85"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/METADATA",
+      "bytes": 5160,
+      "sha256": "e2e25f86be8e04220c6746ee80ecbae48bb7fd3b4735d274593c577eaa76357b"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/python_dotenv-1.2.4.dist-info/METADATA",
+      "bytes": 29979,
+      "sha256": "87cfee6042412d48df1100ea7822684988c3f2b79de7a250f4717f4df3026d6f"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/regex-2024.11.6.dist-info/METADATA",
+      "bytes": 40487,
+      "sha256": "834d4e6889c9292660684fac77a4b805ac1cfb14b67e0d321d16eb535397ce98"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/requests-2.34.2.dist-info/METADATA",
+      "bytes": 4806,
+      "sha256": "8c384ba3e979480faae2859d3c5e6c1276dd2c3616e322e124d52c8cfc556f27"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/tiktoken-0.14.0.dist-info/METADATA",
+      "bytes": 6669,
+      "sha256": "30086725221223f7a19463e71c0e9f79fe7aba9125b36632c00bf50a23fa968a"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/tqdm-4.70.1.dist-info/METADATA",
+      "bytes": 57366,
+      "sha256": "a5da70b966afea3a759716041bad7187f2ece02c22348cf9e7c0a512bbf15f57"
+    },
+    {
+      "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/urllib3-2.8.0.dist-info/METADATA",
+      "bytes": 7389,
+      "sha256": "10898c620e8007c030e07fa5622b68358a43010025dfbd78a1cb797699de2bb4"
+    },
+    {
+      "path": "/usr/bin/unshare",
+      "bytes": 43624,
+      "sha256": "a23c8863860669003dc4660039fe642f5795c8c2195898ebc5d01afa1ac3d11c"
+    },
+    {
+      "path": "/usr/bin/firejail",
+      "bytes": 475064,
+      "sha256": "09d572b0638ecb3abc206d1456dcac38fc00efc4587444ab72c9a6428ad0acda"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/pandoc",
+      "bytes": 199114624,
+      "sha256": "3dd273647f0265cb439f22976d5366a54b071a3783f6fec50838b47fb53d701b"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache/9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+      "bytes": 1681126,
+      "sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7"
+    }
+  ],
+  "python": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+  "prefix": "/tmp/run-a001-product-wheel-env-r001",
+  "startup": {
+    "site_dirs": [
+      "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages"
+    ],
+    "pth": [
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+        "bytes": 18,
+        "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+      }
+    ]
+  }
+}

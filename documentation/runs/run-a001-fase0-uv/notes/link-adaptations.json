@@ -1,0 +1,2473 @@
+[
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r001.md",
+    "changes": [
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "arbitration-plan-r003.md",
+        "archived": "arbitration-plan-r003.md"
+      },
+      {
+        "original": "../../../documentation/development/run-lifecycle.md#mandati-operativi-e-prove-preliminari",
+        "archived": "../../../../development/run-lifecycle.md#mandati-operativi-e-prove-preliminari"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/protocol-simplification-r001/pilot-scope.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/29-implementation-r001-pilot-baseline-recovery.md",
+        "archived": "../prompts/29-implementation-r001-pilot-baseline-recovery.md"
+      },
+      {
+        "original": "../prompts/30-supervisor-baseline-recovery-pilot-reception-r001.md",
+        "archived": "../prompts/30-supervisor-baseline-recovery-pilot-reception-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r002.md",
+    "changes": [
+      {
+        "original": "addendum-operational-protocol-r001.md",
+        "archived": "addendum-operational-protocol-r001.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/pilot-baseline-recovery-reception-r001/decision.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/pilot-baseline-recovery-reception-r001/continuation-scope.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/31-implementation-r001-continue-preliminary-baseline.md",
+        "archived": "../prompts/31-implementation-r001-continue-preliminary-baseline.md"
+      },
+      {
+        "original": "../prompts/32-supervisor-baseline-recovery-continuation-reception.md",
+        "archived": "../prompts/32-supervisor-baseline-recovery-continuation-reception.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r003.md",
+    "changes": [
+      {
+        "original": "addendum-operational-protocol-r002.md",
+        "archived": "addendum-operational-protocol-r002.md"
+      },
+      {
+        "original": "../prompts/33-implementation-r001-resume-c001-local-corrections.md",
+        "archived": "../prompts/33-implementation-r001-resume-c001-local-corrections.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r004.md",
+    "changes": [
+      {
+        "original": "../../../documentation/development/process-adaptation-2026-10-05.md",
+        "archived": "../../../../development/process-adaptation-2026-10-05.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r008.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-implementation-r001/package-s009-reception-r001/primary-source-receipts.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r019.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-implementation-r001/final-host-time-r001/reception.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/final-host-time-r001/authorized-scope.json",
+        "archived": "../../evidence/supervisor-implementation-r001/final-host-time-r001/authorized-scope.json"
+      },
+      {
+        "original": "../prompts/56-implementation-r001-complete-host-proofs-with-time.md",
+        "archived": "../prompts/56-implementation-r001-complete-host-proofs-with-time.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r020.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-implementation-r002/reception-r001/reception.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r021.md",
+    "changes": [
+      {
+        "original": "arbitration-implementation-r002.md",
+        "archived": "arbitration-implementation-r002.md"
+      },
+      {
+        "original": "../prompts/59-implementation-r001-fix-launcher-and-close-review-r002.md",
+        "archived": "../prompts/59-implementation-r001-fix-launcher-and-close-review-r002.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-implementation-r002/corrected-time-ledger.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-implementation-r002/authorized-scope.json",
+        "archived": "../../evidence/supervisor-arbitration-implementation-r002/authorized-scope.json"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r022.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-implementation-r003/reception-r001/reception.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/review-implementation-r003-common.md",
+        "archived": "../prompts/review-implementation-r003-common.md"
+      },
+      {
+        "original": "../prompts/60-review-implementation-r003-chatgpt.md",
+        "archived": "../prompts/60-review-implementation-r003-chatgpt.md"
+      },
+      {
+        "original": "../prompts/61-review-implementation-r003-claude.md",
+        "archived": "../prompts/61-review-implementation-r003-claude.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/arbitration-implementation-r001.md",
+    "changes": [
+      {
+        "original": "../reviews/review-implementation-r001-chatgpt.md",
+        "archived": "../reviews/review-implementation-r001-chatgpt.md"
+      },
+      {
+        "original": "../reviews/review-implementation-r001-claude.md",
+        "archived": "../reviews/review-implementation-r001-claude.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-implementation-r001/reception.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../snapshots/arbitration-implementation-r001-inputs.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/55-implementation-r001-fix-review-findings.md",
+        "archived": "../prompts/55-implementation-r001-fix-review-findings.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/arbitration-implementation-r002.md",
+    "changes": [
+      {
+        "original": "../reviews/review-implementation-r002-chatgpt.md",
+        "archived": "../reviews/review-implementation-r002-chatgpt.md"
+      },
+      {
+        "original": "../reviews/review-implementation-r002-claude.md",
+        "archived": "../reviews/review-implementation-r002-claude.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-implementation-r002/reception.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-implementation-r002/corrected-time-ledger.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "addendum-operational-protocol-r021.md",
+        "archived": "addendum-operational-protocol-r021.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-implementation-r002/authorized-scope.json",
+        "archived": "../../evidence/supervisor-arbitration-implementation-r002/authorized-scope.json"
+      },
+      {
+        "original": "../prompts/59-implementation-r001-fix-launcher-and-close-review-r002.md",
+        "archived": "../prompts/59-implementation-r001-fix-launcher-and-close-review-r002.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/arbitration-implementation-r003.md",
+    "changes": [
+      {
+        "original": "../reviews/review-implementation-r003-chatgpt.md",
+        "archived": "../reviews/review-implementation-r003-chatgpt.md"
+      },
+      {
+        "original": "../reviews/review-implementation-r003-claude.md",
+        "archived": "../reviews/review-implementation-r003-claude.md"
+      },
+      {
+        "original": "../prompts/62-user-close-run-a001-manual-git.md",
+        "archived": "../prompts/62-user-close-run-a001-manual-git.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/arbitration-plan-r001.md",
+    "changes": [
+      {
+        "original": "../plans/plan-r001.md",
+        "archived": "../plans/plan-r001.md"
+      },
+      {
+        "original": "../snapshots/plan-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../reviews/review-plan-r001-chatgpt.md",
+        "archived": "../reviews/review-plan-r001-chatgpt.md"
+      },
+      {
+        "original": "../reviews/review-plan-r001-claude.md",
+        "archived": "../reviews/review-plan-r001-claude.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r001/identity-and-probes.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r001/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r001/pyenv-shim-probe.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/arbitration-plan-r002.md",
+    "changes": [
+      {
+        "original": "../plans/plan-r002.md",
+        "archived": "../plans/plan-r002.md"
+      },
+      {
+        "original": "../snapshots/plan-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../reviews/review-plan-r002-chatgpt.md",
+        "archived": "../reviews/review-plan-r002-chatgpt.md"
+      },
+      {
+        "original": "../reviews/review-plan-r002-claude.md",
+        "archived": "../reviews/review-plan-r002-claude.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r002/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r002/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r002/static-findings.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/02-planning-r003.md",
+        "archived": "../prompts/02-planning-r003.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/arbitrations/arbitration-plan-r003.md",
+    "changes": [
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../snapshots/plan-r003.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../snapshots/arbitration-context-r003.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../reviews/review-plan-r003-chatgpt.md",
+        "archived": "../reviews/review-plan-r003-chatgpt.md"
+      },
+      {
+        "original": "../reviews/review-plan-r003-claude.md",
+        "archived": "../reviews/review-plan-r003-claude.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r003/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r003/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/04-implementation-r001.md",
+        "archived": "../prompts/04-implementation-r001.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/decision.md",
+    "changes": [
+      {
+        "original": "reception.json",
+        "archived": "../../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "suite-observations.json",
+        "archived": "../../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "content-observations.json",
+        "archived": "../../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "sources.json",
+        "archived": "../../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/handovers/supervisor-baseline-recovery-r002.md",
+    "changes": [
+      {
+        "original": "../prompts/13-implementation-r001-prepare-baseline-s005.md",
+        "archived": "../prompts/13-implementation-r001-prepare-baseline-s005.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/baseline-recovery-r002/decision.md",
+        "archived": "../../evidence/supervisor-implementation-r001/baseline-recovery-r002/decision.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/baseline-recovery-r002/response.json",
+        "archived": "../../evidence/supervisor-implementation-r001/baseline-recovery-r002/response.json"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/baseline-recovery-r002/reception.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/baseline-recovery-r002/suite-observations.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/supervisor-baseline-recovery-r002.md",
+        "archived": "supervisor-baseline-recovery-r002.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r001-before-baseline-s001.md",
+    "changes": [
+      {
+        "original": "../prompts/04-implementation-r001.md",
+        "archived": "../prompts/04-implementation-r001.md"
+      },
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r003.md",
+        "archived": "../arbitrations/arbitration-plan-r003.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/entry-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/",
+        "archived": "../../evidence/implementation-r001"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s001/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/handoff-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r001-before-baseline-s002.md",
+    "changes": [
+      {
+        "original": "../prompts/04-implementation-r001.md",
+        "archived": "../prompts/04-implementation-r001.md"
+      },
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r003.md",
+        "archived": "../arbitrations/arbitration-plan-r003.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/entry-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/",
+        "archived": "../../evidence/implementation-r001"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s001/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/handoff-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/06-implementation-r001-baseline-s001.md",
+        "archived": "../prompts/06-implementation-r001-baseline-s001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s001/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-unshare-s001/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-firejail-s001/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s001/impediment-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "report-r001-before-baseline-s001.md",
+        "archived": "report-r001-before-baseline-s001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r001-before-baseline-s003.md",
+    "changes": [
+      {
+        "original": "../prompts/04-implementation-r001.md",
+        "archived": "../prompts/04-implementation-r001.md"
+      },
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r003.md",
+        "archived": "../arbitrations/arbitration-plan-r003.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/entry-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/",
+        "archived": "../../evidence/implementation-r001"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s001/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/handoff-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/06-implementation-r001-baseline-s001.md",
+        "archived": "../prompts/06-implementation-r001-baseline-s001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s001/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-unshare-s001/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-firejail-s001/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s001/impediment-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "report-r001-before-baseline-s001.md",
+        "archived": "report-r001-before-baseline-s001.md"
+      },
+      {
+        "original": "../prompts/07-implementation-r001-prepare-baseline-s002.md",
+        "archived": "../prompts/07-implementation-r001-prepare-baseline-s002.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r001/decision.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s002/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "report-r001-before-baseline-s002.md",
+        "archived": "report-r001-before-baseline-s002.md"
+      },
+      {
+        "original": "../handovers/implementation-r001-before-baseline-s002.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s002/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s002/handoff-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/08-implementation-r001-baseline-s002.md",
+        "archived": "../prompts/08-implementation-r001-baseline-s002.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s002/response.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s002/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-unshare-s002/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-firejail-s002/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s002/impediment-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r001.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/pilot-baseline-recovery-r001/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/pilot-baseline-recovery-r001/completion-preliminary.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-install-r003/preparation.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/27-implementation-r001-install-baseline-s006.md",
+        "archived": "../prompts/27-implementation-r001-install-baseline-s006.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s006/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s006/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s006/stop-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s006/preserved-output-hashes.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s006/delivery-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/26-implementation-r001-prepare-baseline-install-s006.md",
+        "archived": "../prompts/26-implementation-r001-prepare-baseline-install-s006.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s006/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-install-r002/preparation.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-install-r002/synthetic-final.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-install-r002/static-checks-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s005/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s005/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s005/venv-failure-analysis.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s004/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s004/output-audit-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s004/tool-results-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s004/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s003/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s003/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s003/impediment-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s003/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-recovery-r001/preparation.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-recovery-r001/commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-recovery-r001/static-checks-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s002/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s002/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s002/baseline-recovery-proposal-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s002/managed-next-gates-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s002/metadata-summary-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s002/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s002/preparation.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s002/commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s002/pre-request-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s001/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s001/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s001/metadata-analysis.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s001/next-scope-proposal.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s001/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s001/preparation.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s001/acquisition-plan.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s001/pure-tests-03.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s001/static-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-package-s001/technical-transition.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s005/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s005/manual-content-audit.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s005/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s005/received-copies.json",
+        "archived": "../../evidence/implementation-r001/resume-baseline-s005/received-copies.json"
+      },
+      {
+        "original": "../prompts/04-implementation-r001.md",
+        "archived": "../prompts/04-implementation-r001.md"
+      },
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r003.md",
+        "archived": "../arbitrations/arbitration-plan-r003.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s005/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/entry-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/",
+        "archived": "../../evidence/implementation-r001"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s001/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/handoff-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/06-implementation-r001-baseline-s001.md",
+        "archived": "../prompts/06-implementation-r001-baseline-s001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s001/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-unshare-s001/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-firejail-s001/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s001/impediment-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "report-r001-before-baseline-s001.md",
+        "archived": "report-r001-before-baseline-s001.md"
+      },
+      {
+        "original": "../prompts/07-implementation-r001-prepare-baseline-s002.md",
+        "archived": "../prompts/07-implementation-r001-prepare-baseline-s002.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r001/decision.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s002/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "report-r001-before-baseline-s002.md",
+        "archived": "report-r001-before-baseline-s002.md"
+      },
+      {
+        "original": "../handovers/implementation-r001-before-baseline-s002.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s002/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s002/handoff-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/08-implementation-r001-baseline-s002.md",
+        "archived": "../prompts/08-implementation-r001-baseline-s002.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s002/response.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s002/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-unshare-s002/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/runner-bootstrap-r-firejail-s002/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s002/impediment-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../prompts/09-implementation-r001-prepare-baseline-s003.md",
+        "archived": "../prompts/09-implementation-r001-prepare-baseline-s003.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r002/decision.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "report-r001-before-baseline-s003.md",
+        "archived": "report-r001-before-baseline-s003.md"
+      },
+      {
+        "original": "../handovers/implementation-r001-before-baseline-s003.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s003/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s003/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../prompts/10-implementation-r001-baseline-s003.md",
+        "archived": "../prompts/10-implementation-r001-baseline-s003.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s003/report-before-resume.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s003/handover-before-resume.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s003/runner-analysis.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s003/sources.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s003/source-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s003/audit-v0.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s003/content-audit.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s003/impediment-r003.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s004/preparation.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s004/final-pure-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s004/historical-verification.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s004/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s004/internal-suite-commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s004/audit.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s004/impediment-r004.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../prompts/05-supervisor-stage-r001.md",
+        "archived": "../prompts/05-supervisor-stage-r001.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s005/preparation.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s005/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s005/handoff-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r002.md",
+    "changes": [
+      {
+        "original": "../prompts/36-implementation-r001-complete-uv-core.md",
+        "archived": "../prompts/36-implementation-r001-complete-uv-core.md"
+      },
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r003.md",
+        "archived": "../arbitrations/arbitration-plan-r003.md"
+      },
+      {
+        "original": "../arbitrations/addendum-operational-protocol-r004.md",
+        "archived": "../arbitrations/addendum-operational-protocol-r004.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/core-completion-r001/before/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-baseline-s006/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/core-completion-r001/acquisition-gate-request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/core-completion-r001/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r003.md",
+    "changes": [
+      {
+        "original": "stages/impl-r001-stage-baseline-s006/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s006/corrections.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s006/partial-content-observation.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s008/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s008/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s008/next-gate-request-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r004.md",
+    "changes": [
+      {
+        "original": "stages/impl-r001-stage-baseline-s007/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-baseline-s007/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-ebooklib-audit-r001/report.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-ebooklib-audit-r001/next-package-gate-request-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r005.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/resume-package-s009/next-registry-metadata-gate-request-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s009/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s009/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r006.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/resume-package-s010/offline-classification.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s010/next-gate-request-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s010/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s010/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r007.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/resume-package-s011/next-gate-request-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-package-s011/completion-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/resume-package-s011/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/implementation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r012.md",
+    "changes": [
+      {
+        "original": "../prompts/47-supervisor-handover-product-inputs-and-sbi.md",
+        "archived": "../prompts/47-supervisor-handover-product-inputs-and-sbi.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-product-s016/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/product-inputs-r001/delivery.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/product-inputs-r001/static-validation-r005.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../work/product-sbi-r001/package-inputs.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r013.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/product-sbi-s016-r001/delivery.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/product-sbi-s016-r001/sequence-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/product-sbi-s016-r001/sandbox-diagnosis.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/product-sbi-s016-r001/final-checks-before-checkpoint.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r014.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/product-sbi-s017-r001/delivery.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "stages/impl-r001-stage-product-s018/request.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/product-sbi-s017-r001/record-fix-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/product-sbi-s018-r001/static-input-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r015.md",
+    "changes": [
+      {
+        "original": "../prompts/50-implementation-r001-complete-approved-plan.md",
+        "archived": "../prompts/50-implementation-r001-complete-approved-plan.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r001/delivery-r015-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r001/additional-resources-proposal-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r016.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/completion-r002/delivery-r016.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r002/final-checks-r016.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r002/core-resource-boundary-r016.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/docker-cpu-r001/final-docker-checks-r016.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r002/received22-index-r016.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r017.md",
+    "changes": [
+      {
+        "original": "../evidence/implementation-r001/completion-r003/delivery-r017.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r003/final-checks-r017.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r003/equivalence-final.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/completion-r003/matrix-r017.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/plans/plan-r001.md",
+    "changes": [
+      {
+        "original": "../prompts/02-planning-r001.md",
+        "archived": "../prompts/02-planning-r001.md"
+      },
+      {
+        "original": "../evidence/planning-r001/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../brief.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0006-python-toolchain-uv.md",
+        "archived": "../../../../decisions/0006-python-toolchain-uv.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0007-supervised-development-runs.md",
+        "archived": "../../../../decisions/0007-supervised-development-runs.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0001-document-fidelity.md",
+        "archived": "../../../../decisions/0001-document-fidelity.md"
+      },
+      {
+        "original": "../../../documentation/development/templates/plan.md",
+        "archived": "../../../../development/templates/plan.md"
+      },
+      {
+        "original": "../evidence/supervisor-preparation-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../../../documentation/development/run-lifecycle.md",
+        "archived": "../../../../development/run-lifecycle.md"
+      },
+      {
+        "original": "../../../documentation/roadmap.md",
+        "archived": "../../../../roadmap.md"
+      },
+      {
+        "original": "../../../.agents/skills/manage-implementation-run/SKILL.md",
+        "archived": "../../../../../.agents/skills/manage-implementation-run/SKILL.md"
+      },
+      {
+        "original": "../../../.agents/skills/verify-conversion-fidelity/SKILL.md",
+        "archived": "../../../../../.agents/skills/verify-conversion-fidelity/SKILL.md"
+      },
+      {
+        "original": "../evidence/planning-r001/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r001/uv-help-run.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r001/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r001/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r001/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/planning-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/plans/plan-r002.md",
+    "changes": [
+      {
+        "original": "../prompts/02-planning-r002.md",
+        "archived": "../prompts/02-planning-r002.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r001.md",
+        "archived": "../arbitrations/arbitration-plan-r001.md"
+      },
+      {
+        "original": "../snapshots/planning-context-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r002/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../brief.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0006-python-toolchain-uv.md",
+        "archived": "../../../../decisions/0006-python-toolchain-uv.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0007-supervised-development-runs.md",
+        "archived": "../../../../decisions/0007-supervised-development-runs.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0001-document-fidelity.md",
+        "archived": "../../../../decisions/0001-document-fidelity.md"
+      },
+      {
+        "original": "../../../documentation/roadmap.md",
+        "archived": "../../../../roadmap.md"
+      },
+      {
+        "original": "../../../documentation/development/run-lifecycle.md",
+        "archived": "../../../../development/run-lifecycle.md"
+      },
+      {
+        "original": "../../../documentation/development/templates/plan.md",
+        "archived": "../../../../development/templates/plan.md"
+      },
+      {
+        "original": "../evidence/planning-r002/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r002/static-inventory.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r001/pyenv-shim-probe.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r001/identity-and-probes.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../../../.agents/skills/verify-conversion-fidelity/SKILL.md",
+        "archived": "../../../../../.agents/skills/verify-conversion-fidelity/SKILL.md"
+      },
+      {
+        "original": "../evidence/planning-r002/static-inventory.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r002/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r002/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/planning-r002.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/plans/plan-r003.md",
+    "changes": [
+      {
+        "original": "../prompts/02-planning-r003.md",
+        "archived": "../prompts/02-planning-r003.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r002.md",
+        "archived": "../arbitrations/arbitration-plan-r002.md"
+      },
+      {
+        "original": "../snapshots/planning-context-r003.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r003/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../brief.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0006-python-toolchain-uv.md",
+        "archived": "../../../../decisions/0006-python-toolchain-uv.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0007-supervised-development-runs.md",
+        "archived": "../../../../decisions/0007-supervised-development-runs.md"
+      },
+      {
+        "original": "../../../documentation/decisions/0001-document-fidelity.md",
+        "archived": "../../../../decisions/0001-document-fidelity.md"
+      },
+      {
+        "original": "../../../documentation/roadmap.md",
+        "archived": "../../../../roadmap.md"
+      },
+      {
+        "original": "../../../documentation/development/run-lifecycle.md",
+        "archived": "../../../../development/run-lifecycle.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r002/transition.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../../../documentation/development/templates/plan.md",
+        "archived": "../../../../development/templates/plan.md"
+      },
+      {
+        "original": "../evidence/planning-r003/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r003/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r002/static-inventory.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r002/static-findings.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r001/pyenv-shim-probe.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-plan-r001/identity-and-probes.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../../../.agents/skills/verify-conversion-fidelity/SKILL.md",
+        "archived": "../../../../../.agents/skills/verify-conversion-fidelity/SKILL.md"
+      },
+      {
+        "original": "../evidence/planning-r003/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r003/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r003/findings.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/planning-r003/checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/planning-r003.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/06-implementation-r001-baseline-s001.md",
+    "changes": [
+      {
+        "original": "04-implementation-r001.md",
+        "archived": "04-implementation-r001.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s001/response.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/supervisor-stage-baseline-s001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s001/resume-commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/07-implementation-r001-prepare-baseline-s002.md",
+    "changes": [
+      {
+        "original": "../handovers/supervisor-runner-recovery-r001.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r001/proposed-commands-baseline-s002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/08-implementation-r001-baseline-s002.md",
+    "changes": [
+      {
+        "original": "04-implementation-r001.md",
+        "archived": "04-implementation-r001.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r001/decision.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s002/response.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/supervisor-stage-baseline-s002.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s002/resume-commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/09-implementation-r001-prepare-baseline-s003.md",
+    "changes": [
+      {
+        "original": "../handovers/supervisor-runner-recovery-r002.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r002/response.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r002/proposed-commands-baseline-s003.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/10-implementation-r001-baseline-s003.md",
+    "changes": [
+      {
+        "original": "04-implementation-r001.md",
+        "archived": "04-implementation-r001.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/runner-recovery-r002/decision.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s003/response.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/supervisor-stage-baseline-s003.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s003/resume-commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/12-implementation-r001-baseline-s004.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s004/response.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/supervisor-stage-baseline-s004.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s004/resume-commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s004/internal-suite-commands.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/13-implementation-r001-prepare-baseline-s005.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-implementation-r001/baseline-recovery-r002/decision.md",
+        "archived": "../../evidence/supervisor-implementation-r001/baseline-recovery-r002/decision.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/baseline-recovery-r002/response.json",
+        "archived": "../../evidence/supervisor-implementation-r001/baseline-recovery-r002/response.json"
+      },
+      {
+        "original": "../handovers/supervisor-baseline-recovery-r002.md",
+        "archived": "../handovers/supervisor-baseline-recovery-r002.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/baseline-recovery-r002/proposed-commands-baseline-s005.json",
+        "archived": "../../evidence/supervisor-implementation-r001/baseline-recovery-r002/proposed-commands-baseline-s005.json"
+      },
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/14-implementation-r001-baseline-s005.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s005/resume-commands.json",
+        "archived": "../../evidence/supervisor-implementation-r001/impl-r001-stage-baseline-s005/resume-commands.json"
+      },
+      {
+        "original": "../evidence/implementation-r001/preparation-baseline-s005/internal-suite-commands.json",
+        "archived": "../../evidence/implementation-r001/preparation-baseline-s005/internal-suite-commands.json"
+      },
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/15-implementation-r001-prepare-package-s001.md",
+    "changes": [
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/16-implementation-r001-inventory-package-s001.md",
+    "changes": [
+      {
+        "original": "05-supervisor-stage-r001.md",
+        "archived": "05-supervisor-stage-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/17a-implementation-r001-storage-addendum.md",
+    "changes": [
+      {
+        "original": "../evidence/supervisor-handover-package-s002-r001/storage-decision.md",
+        "archived": "../../evidence/supervisor-handover-package-s002-r001/storage-decision.md"
+      },
+      {
+        "original": "../evidence/supervisor-handover-package-s002-r001/storage-scope-r001.json",
+        "archived": "../../evidence/supervisor-handover-package-s002-r001/storage-scope-r001.json"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/29-implementation-r001-pilot-baseline-recovery.md",
+    "changes": [
+      {
+        "original": "../arbitrations/addendum-operational-protocol-r001.md",
+        "archived": "../arbitrations/addendum-operational-protocol-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/33-implementation-r001-resume-c001-local-corrections.md",
+    "changes": [
+      {
+        "original": "31-implementation-r001-continue-preliminary-baseline.md",
+        "archived": "31-implementation-r001-continue-preliminary-baseline.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/53-review-implementation-r001-chatgpt.md",
+    "changes": [
+      {
+        "original": "review-implementation-r001-common.md",
+        "archived": "review-implementation-r001-common.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/54-review-implementation-r001-claude.md",
+    "changes": [
+      {
+        "original": "review-implementation-r001-common.md",
+        "archived": "review-implementation-r001-common.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/55-implementation-r001-fix-review-findings.md",
+    "changes": [
+      {
+        "original": "../arbitrations/arbitration-implementation-r001.md",
+        "archived": "../arbitrations/arbitration-implementation-r001.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/56-implementation-r001-complete-host-proofs-with-time.md",
+    "changes": [
+      {
+        "original": "../arbitrations/addendum-operational-protocol-r019.md",
+        "archived": "../arbitrations/addendum-operational-protocol-r019.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/final-host-time-r001/authorized-scope.json",
+        "archived": "../../evidence/supervisor-implementation-r001/final-host-time-r001/authorized-scope.json"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/57-review-implementation-r002-chatgpt.md",
+    "changes": [
+      {
+        "original": "review-implementation-r002-common.md",
+        "archived": "review-implementation-r002-common.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/58-review-implementation-r002-claude.md",
+    "changes": [
+      {
+        "original": "review-implementation-r002-common.md",
+        "archived": "review-implementation-r002-common.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/59-implementation-r001-fix-launcher-and-close-review-r002.md",
+    "changes": [
+      {
+        "original": "../arbitrations/arbitration-implementation-r002.md",
+        "archived": "../arbitrations/arbitration-implementation-r002.md"
+      },
+      {
+        "original": "../arbitrations/addendum-operational-protocol-r021.md",
+        "archived": "../arbitrations/addendum-operational-protocol-r021.md"
+      },
+      {
+        "original": "../evidence/supervisor-arbitration-implementation-r002/authorized-scope.json",
+        "archived": "../../evidence/supervisor-arbitration-implementation-r002/authorized-scope.json"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/60-review-implementation-r003-chatgpt.md",
+    "changes": [
+      {
+        "original": "review-implementation-r003-common.md",
+        "archived": "review-implementation-r003-common.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/61-review-implementation-r003-claude.md",
+    "changes": [
+      {
+        "original": "review-implementation-r003-common.md",
+        "archived": "review-implementation-r003-common.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/prompts/62-user-close-run-a001-manual-git.md",
+    "changes": [
+      {
+        "original": "../../../documentation/runs/run-a001-fase0-uv/manifest.md",
+        "archived": "../../manifest.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-implementation-r001-chatgpt.md",
+    "changes": [
+      {
+        "original": "../prompts/53-review-implementation-r001-chatgpt.md",
+        "archived": "../prompts/53-review-implementation-r001-chatgpt.md"
+      },
+      {
+        "original": "../prompts/review-implementation-r001-common.md",
+        "archived": "../prompts/review-implementation-r001-common.md"
+      },
+      {
+        "original": "../evidence/review-implementation-r001-chatgpt/match-before.txt",
+        "archived": "../../evidence/review-implementation-r001-chatgpt/match-before.txt"
+      },
+      {
+        "original": "../evidence/review-implementation-r001-chatgpt/match-after.txt",
+        "archived": "../../evidence/review-implementation-r001-chatgpt/match-after.txt"
+      },
+      {
+        "original": "../evidence/review-implementation-r001-chatgpt/final-review-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-implementation-r001-chatgpt/",
+        "archived": "../../evidence/review-implementation-r001-chatgpt"
+      },
+      {
+        "original": "../evidence/review-implementation-r001-chatgpt/probe-launcher-error.py",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-implementation-r001-chatgpt/launcher-error-reproduction-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/review-implementation-r001-chatgpt.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-implementation-r001-claude.md",
+    "changes": [
+      {
+        "original": "../prompts/54-review-implementation-r001-claude.md",
+        "archived": "../prompts/54-review-implementation-r001-claude.md"
+      },
+      {
+        "original": "../prompts/review-implementation-r001-common.md",
+        "archived": "../prompts/review-implementation-r001-common.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r001/final-review-reception-r001/freeze-identity.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+    "changes": [
+      {
+        "original": "../prompts/57-review-implementation-r002-chatgpt.md",
+        "archived": "../prompts/57-review-implementation-r002-chatgpt.md"
+      },
+      {
+        "original": "../prompts/review-implementation-r002-common.md",
+        "archived": "../prompts/review-implementation-r002-common.md"
+      },
+      {
+        "original": "../evidence/review-implementation-r002-chatgpt/match-before.json",
+        "archived": "../../evidence/review-implementation-r002-chatgpt/match-before.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r002-chatgpt/final-checks.json",
+        "archived": "../../evidence/review-implementation-r002-chatgpt/final-checks.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r002-chatgpt/read-inventory.json",
+        "archived": "../../evidence/review-implementation-r002-chatgpt/read-inventory.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r002-chatgpt/",
+        "archived": "../../evidence/review-implementation-r002-chatgpt"
+      },
+      {
+        "original": "../evidence/review-implementation-r002-chatgpt/static-audit.json",
+        "archived": "../../evidence/review-implementation-r002-chatgpt/static-audit.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r002-chatgpt/probe-run-identity.json",
+        "archived": "../../evidence/review-implementation-r002-chatgpt/probe-run-identity.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r002-chatgpt/probe-run-identity.json",
+        "archived": "../../evidence/review-implementation-r002-chatgpt/probe-run-identity.json"
+      },
+      {
+        "original": "../handovers/review-implementation-r002-chatgpt.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-implementation-r002-claude.md",
+    "changes": [
+      {
+        "original": "../prompts/58-review-implementation-r002-claude.md",
+        "archived": "../prompts/58-review-implementation-r002-claude.md"
+      },
+      {
+        "original": "../prompts/review-implementation-r002-common.md",
+        "archived": "../prompts/review-implementation-r002-common.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r002/reception-r001/delta-s001-to-received.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r002/reception-r001/freeze-identity.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-implementation-r003-chatgpt.md",
+    "changes": [
+      {
+        "original": "../prompts/60-review-implementation-r003-chatgpt.md",
+        "archived": "../prompts/60-review-implementation-r003-chatgpt.md"
+      },
+      {
+        "original": "../prompts/review-implementation-r003-common.md",
+        "archived": "../prompts/review-implementation-r003-common.md"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/match-before.json",
+        "archived": "../../evidence/review-implementation-r003-chatgpt/match-before.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/final-checks.json",
+        "archived": "../../evidence/review-implementation-r003-chatgpt/final-checks.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/targeted-delta.diff",
+        "archived": "../../evidence/review-implementation-r003-chatgpt/targeted-delta.diff"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/targeted-delta-checks.json",
+        "archived": "../../evidence/review-implementation-r003-chatgpt/targeted-delta-checks.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/audit.json",
+        "archived": "../../evidence/review-implementation-r003-chatgpt/audit.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/read-inventory.json",
+        "archived": "../../evidence/review-implementation-r003-chatgpt/read-inventory.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/probe.json",
+        "archived": "../../evidence/review-implementation-r003-chatgpt/probe.json"
+      },
+      {
+        "original": "../evidence/review-implementation-r003-chatgpt/",
+        "archived": "../../evidence/review-implementation-r003-chatgpt"
+      },
+      {
+        "original": "../handovers/review-implementation-r003-chatgpt.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-implementation-r003-claude.md",
+    "changes": [
+      {
+        "original": "../prompts/61-review-implementation-r003-claude.md",
+        "archived": "../prompts/61-review-implementation-r003-claude.md"
+      },
+      {
+        "original": "../prompts/review-implementation-r003-common.md",
+        "archived": "../prompts/review-implementation-r003-common.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r003/reception-r001/freeze-identity.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-implementation-r003/reception-r001/delta-s002-to-received.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-plan-r001-chatgpt.md",
+    "changes": [
+      {
+        "original": "../prompts/review-plan-r001-chatgpt.md",
+        "archived": "../prompts/review-plan-r001-chatgpt.md"
+      },
+      {
+        "original": "../plans/plan-r001.md",
+        "archived": "../plans/plan-r001.md"
+      },
+      {
+        "original": "../snapshots/plan-r001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-chatgpt/checks-final.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-chatgpt/identity-pre.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-chatgpt/identity-post.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-chatgpt/static-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-chatgpt/toolchain-static.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-chatgpt/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-plan-r001-claude.md",
+    "changes": [
+      {
+        "original": "../evidence/review-plan-r001-claude/checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-claude/pyenv-probe.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-claude/pyenv-probe.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-claude/checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r001-claude/checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-plan-r002-chatgpt.md",
+    "changes": [
+      {
+        "original": "../prompts/review-plan-r002-chatgpt.md",
+        "archived": "../prompts/review-plan-r002-chatgpt.md"
+      },
+      {
+        "original": "../plans/plan-r002.md",
+        "archived": "../plans/plan-r002.md"
+      },
+      {
+        "original": "../snapshots/plan-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/identity-pre.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/identity-post.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/checks-final.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/input-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-plan-review-r002/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../arbitrations/arbitration-plan-r001.md",
+        "archived": "../arbitrations/arbitration-plan-r001.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/static-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/toolchain-static.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/readme-inventory-check.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/finding-gpt-p001.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/toolchain-static.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-chatgpt/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/review-plan-r002-chatgpt.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-plan-r002-claude.md",
+    "changes": [
+      {
+        "original": "../plans/plan-r002.md",
+        "archived": "../plans/plan-r002.md"
+      },
+      {
+        "original": "../snapshots/plan-r002.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/identity-pre.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/identity-post.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/static-checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/uv-cache-excerpts.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/uv-cli-settings-excerpts.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/uv-cache-excerpts.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/static-checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/uv-cli-settings-excerpts.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/static-checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r002-claude/static-checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-plan-r003-chatgpt.md",
+    "changes": [
+      {
+        "original": "../prompts/review-plan-r003-chatgpt.md",
+        "archived": "../prompts/review-plan-r003-chatgpt.md"
+      },
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../snapshots/plan-r003.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/identity-pre.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/identity-post.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/input-integrity.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/supervisor-plan-review-r003/receipt.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/static-checks.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/static-reconciliation.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/checks-final.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-chatgpt/",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../handovers/review-plan-r003-chatgpt.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/reviews/review-plan-r003-claude.md",
+    "changes": [
+      {
+        "original": "../prompts/review-plan-r003-claude.md",
+        "archived": "../prompts/review-plan-r003-claude.md"
+      },
+      {
+        "original": "../plans/plan-r003.md",
+        "archived": "../plans/plan-r003.md"
+      },
+      {
+        "original": "../snapshots/plan-r003.json",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-claude/identity-pre.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-claude/identity-post.txt",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-claude/static-checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-claude/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-claude/sources.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      },
+      {
+        "original": "../evidence/review-plan-r003-claude/static-checks.md",
+        "archived": "../../notes/materiale-locale-conservato.md"
+      }
+    ]
+  }
+]

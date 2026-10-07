@@ -1,0 +1,11 @@
+# Lista ammessa per la sdist; PKG-INFO e setup.cfg sono generati dal backend.
+global-exclude *
+include pyproject.toml MANIFEST.in README.md LICENSE .python-version build-constraints.txt
+include config.py logging_config.py exceptions.py unified_converter.py master_workflow.py
+include clean_markdown.py validate_markdown.py chunk_markdown.py batch_monitor.py marker_api_server.py
+include markdown_for_llms.egg-info/PKG-INFO
+include markdown_for_llms.egg-info/SOURCES.txt
+include markdown_for_llms.egg-info/dependency_links.txt
+include markdown_for_llms.egg-info/entry_points.txt
+include markdown_for_llms.egg-info/requires.txt
+include markdown_for_llms.egg-info/top_level.txt

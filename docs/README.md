@@ -1,9 +1,7 @@
 # Documentazione per utenti e sviluppatori
 
-Questa è la struttura iniziale della documentazione della nuova versione. Le guide
-operative saranno pubblicate insieme alle funzionalità verificate; il prodotto
-descritto nella roadmap non è ancora implementato. La guida legacy rimane nel
-[README del repository](../README.md).
+Le guide uv/Marker e la reference descrivono la pipeline legacy. La nuova applicazione è in progettazione;
+le sue funzionalità non sono disponibili. Il [README](../README.md) è l'ingresso.
 
 La struttura segue [Diátaxis](https://diataxis.fr/):
 

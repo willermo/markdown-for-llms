@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "netns": "net:[4026533887]",
+  "runner": {
+    "argv": [
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/check_runner.py",
+      "--target",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/effective-target.json",
+      "--host-netns",
+      "net:[4026531833]",
+      "--repo",
+      "/home/davide/workarea/markdown-for-llms",
+      "--synthetic-socket",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+      "--output",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/wrapper/runner.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"status\": \"PASS\", \"receipt\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/wrapper/runner.json\"}\n",
+    "stderr": ""
+  },
+  "preflights": [
+    {
+      "argv": [
+        "/tmp/run-a001-product-wheel-env-r001/bin/python",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/check_preflight.py",
+        "--repo",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/S.json",
+        "--receipt",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/I.json"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS_CURRENT_I\n",
+      "stderr": ""
+    }
+  ],
+  "status": "PASS",
+  "command": {
+    "argv": [
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "-c",
+      "import sys,time;assert sys.flags.isolated and sys.dont_write_bytecode;print('SYNTHETIC_OFFLINE_ONLY');time.sleep(.3)"
+    ],
+    "cwd": "/home/davide/workarea/markdown-for-llms",
+    "pid": 30,
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_seconds": 0.3250189090613276,
+    "observed_processes": [
+      {
+        "pid": 30,
+        "netns": "net:[4026533887]",
+        "cmdline": "/tmp/run-a001-product-wheel-env-r001/bin/python -I -B -c import sys,time;assert sys.flags.isolated and sys.dont_write_bytecode;print('SYNTHETIC_OFFLINE_ONLY');time.sleep(.3) "
+      }
+    ],
+    "command_namespace_observed": true,
+    "observed_namespaces_match": true,
+    "stdout": "command-stdout.txt",
+    "stderr": "command-stderr.txt"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "inspection": {
+    "python": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+    "real_python": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+    "prefix": "/tmp/run-a001-product-wheel-env-r001",
+    "startup": [
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+        "bytes": 18,
+        "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.py",
+        "bytes": 4342,
+        "sha256": "6cf30c56faf2a55228914dbbd17f8088ed371ebb08f5e7fa6fd931f913fcaf1d"
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/pyvenv.cfg",
+        "bytes": 192,
+        "sha256": "730416412baa18bc43a8478564bef6ce48c48e066330965cc9f8e48e722278b2"
+      }
+    ],
+    "backend_wheel": null,
+    "backend_files": [],
+    "base": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu"
+  },
+  "configuration": {
+    "absent_paths": [
+      "/etc/uv/uv.toml",
+      "/etc/uv.toml",
+      "/home/davide/workarea/markdown-for-llms/uv.toml",
+      "/home/davide/.netrc",
+      "/home/davide/.pydistutils.cfg",
+      "/home/davide/.local/share/uv/credentials/credentials.toml"
+    ],
+    "XDG_CONFIG_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+    "contents_read": false
+  },
+  "at": "2026-10-07T11:46:07.850900+00:00"
+}

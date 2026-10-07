@@ -1,0 +1,422 @@
+{
+  "schema": 1,
+  "id": "sha256:62b33bf6ed822aebfcda94e201f07a3e03e21a95367c8f9f5b4c9b8485e7b806",
+  "payload": {
+    "scope": "run-stage",
+    "repo": "/home/davide/workarea/markdown-for-llms",
+    "host_repo": "/home/davide/workarea/markdown-for-llms",
+    "git": {
+      "branch": "feature/run-a001-uv",
+      "head": "66ba82200e5def5a4db76f9bafccb0731b506091",
+      "dev": "66ba82200e5def5a4db76f9bafccb0731b506091",
+      "merge_base": "66ba82200e5def5a4db76f9bafccb0731b506091",
+      "status": " M .agents/skills/manage-implementation-run/SKILL.md\n M .agents/workflows/implement-feature.md\n M .agents/workflows/implementation-run.md\n M .env.example\n M .gitignore\n M AGENTS.md\n M Dockerfile\n M README.md\n M config.py\n M docker-compose-build.yml\n M docker-compose.yml\n M docs/README.md\n M docs/how-to/README.md\n M docs/reference/README.md\n M documentation/CHANGELOG.md\n M documentation/README.md\n M documentation/decisions/0006-python-toolchain-uv.md\n M documentation/decisions/0007-supervised-development-runs.md\n M documentation/decisions/README.md\n M documentation/development/run-lifecycle.md\n M documentation/development/templates/arbitration.md\n M documentation/development/templates/implementation-report.md\n M documentation/development/templates/plan.md\n M documentation/development/templates/review.md\n M documentation/development/templates/role-prompt.md\n M documentation/development/templates/run-state.md\n M documentation/roadmap.md\n M master_workflow.py\n D requirements.txt\n D setup.py\n M tests/conftest.py\n M tests/integration/test_pipeline.py\n M unified_converter.py\n?? .dockerignore\n?? .python-version\n?? .vscode/settings.uv.example.json\n?? MANIFEST.in\n?? build-constraints.txt\n?? docker-compose.gpu.yml\n?? docs/how-to/ambiente-uv.md\n?? docs/how-to/marker-legacy-docker.md\n?? docs/how-to/pipeline-backends.md\n?? docs/reference/pipeline-config.md\n?? docs/reference/toolchain-legacy.md\n?? documentation/development/process-adaptation-2026-10-05.md\n?? pyproject.toml\n?? scripts/diagnostics/run-a001-fase0-uv/attest_product_backend.py\n?? scripts/diagnostics/run-a001-fase0-uv/check_preflight.py\n?? scripts/diagnostics/run-a001-fase0-uv/check_preserved.py\n?? scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py\n?? scripts/diagnostics/run-a001-fase0-uv/check_runner.py\n?? scripts/diagnostics/run-a001-fase0-uv/check_source_inputs.py\n?? scripts/diagnostics/run-a001-fase0-uv/guard_product_inputs.py\n?? scripts/diagnostics/run-a001-fase0-uv/image_package.py\n?? scripts/diagnostics/run-a001-fase0-uv/image_prepare.py\n?? scripts/diagnostics/run-a001-fase0-uv/inventory_docs.py\n?? scripts/diagnostics/run-a001-fase0-uv/make_fixtures.py\n?? scripts/diagnostics/run-a001-fase0-uv/make_input_inventory.py\n?? scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py\n?? scripts/diagnostics/run-a001-fase0-uv/prepare_docker_inputs.py\n?? scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py\n?? scripts/diagnostics/run-a001-fase0-uv/run_baseline.py\n?? scripts/diagnostics/run-a001-fase0-uv/run_docker_contract.py\n?? scripts/diagnostics/run-a001-fase0-uv/run_offline.py\n?? scripts/diagnostics/run-a001-fase0-uv/run_tests.py\n?? scripts/diagnostics/run-a001-fase0-uv/run_trusted_script.py\n?? scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py\n?? tests/api/test_marker_wrapper.py\n?? tests/docker/test_marker_contract.py\n?? tests/fixtures/run-a001-fase0-uv/assets/f5.png\n?? tests/fixtures/run-a001-fase0-uv/dotenv-1200-80.txt\n?? tests/fixtures/run-a001-fase0-uv/f1-stable.md\n?? tests/fixtures/run-a001-fase0-uv/f2-sensitive.md\n?? tests/fixtures/run-a001-fase0-uv/f3-cleaned-sensitive.md\n?? tests/fixtures/run-a001-fase0-uv/f3-cleaned-stable.md\n?? tests/fixtures/run-a001-fase0-uv/f4-pandoc.html\n?? tests/fixtures/run-a001-fase0-uv/f5-asset.md\n?? tests/fixtures/run-a001-fase0-uv/f6-multichunk.md\n?? tests/fixtures/run-a001-fase0-uv/fixture-config.json\n?? tests/fixtures/run-a001-fase0-uv/provenance.json\n?? tests/packaging/test_installed_distribution.py\n?? tests/unit/test_config_cli.py\n?? tests/unit/test_core_diagnostics.py\n?? tests/unit/test_package_diagnostics.py\n?? tests/unit/test_phase_launch.py\n?? tests/unit/test_uv_diagnostics.py\n?? uv.lock"
+    },
+    "modules": [
+      {
+        "path": "batch_monitor.py",
+        "kind": "file",
+        "bytes": 7939,
+        "sha256": "075e4b48cfd3d7811f2c44ef6d8e51c83e6c7ceaee4dd3fcbd3e5ef7682f4341"
+      },
+      {
+        "path": "chunk_markdown.py",
+        "kind": "file",
+        "bytes": 33774,
+        "sha256": "bc12659b2b3e12d266d5e9489b1956bffb8c8e5e1ff1878bf31cedd8719cb36b"
+      },
+      {
+        "path": "clean_markdown.py",
+        "kind": "file",
+        "bytes": 10897,
+        "sha256": "14331c33d98292ea1401fb738b5be18c9ef1bd96e13f942301f55c8a7137c42f"
+      },
+      {
+        "path": "config.py",
+        "kind": "file",
+        "bytes": 14060,
+        "sha256": "bda2e2f5a05ff30d1f361c0dc3cb921b3aaed0c37889311f04a3ca09fb77890f"
+      },
+      {
+        "path": "exceptions.py",
+        "kind": "file",
+        "bytes": 3283,
+        "sha256": "7a7a2c1253887ddfc8d959e1c006550df044dcb39dab594cd2930a98f82741fd"
+      },
+      {
+        "path": "logging_config.py",
+        "kind": "file",
+        "bytes": 8416,
+        "sha256": "4974330828f68ac51cbda940e5951c30754fc81513ef6d362840db00b5b2b961"
+      },
+      {
+        "path": "marker_api_server.py",
+        "kind": "file",
+        "bytes": 5769,
+        "sha256": "8b957f0dc3ae47c7103959aaeb868d23c522a7ac3ea1912a96d7babbbd383d89"
+      },
+      {
+        "path": "master_workflow.py",
+        "kind": "file",
+        "bytes": 27078,
+        "sha256": "69246d83dbbb40750228cd0c14f31414b8c79e42897150777979c7e91b6884e1"
+      },
+      {
+        "path": "unified_converter.py",
+        "kind": "file",
+        "bytes": 32495,
+        "sha256": "ea215d4640fac724392ef0ef66a0979e67d721d6cda7892f6106759d5d4420ee"
+      },
+      {
+        "path": "validate_markdown.py",
+        "kind": "file",
+        "bytes": 18936,
+        "sha256": "5f9fef017a9d29b4e0b197a14c1dd85b17a9655433b1b4bea3eafb7863f95771"
+      }
+    ],
+    "build_inputs": [
+      {
+        "path": ".python-version",
+        "kind": "file",
+        "bytes": 8,
+        "sha256": "aa0d6581054e6e4ff3f91839deca7a854ad37221b8784d060b42d0f847ff1a3b"
+      },
+      {
+        "path": "LICENSE",
+        "kind": "file",
+        "bytes": 1091,
+        "sha256": "85979c43399acb91fab2769719101c0b1d7279da82230de246ebcb137e9a797c"
+      },
+      {
+        "path": "MANIFEST.in",
+        "kind": "file",
+        "bytes": 675,
+        "sha256": "d0aade862edff8609519c2694901af53b552c6d99548ef3e943ca7d698d19527"
+      },
+      {
+        "path": "README.md",
+        "kind": "file",
+        "bytes": 4070,
+        "sha256": "33ce6c4b41780abfbca27e0cf0e1166db25fd095b70aa268e2c8919f5a13942f"
+      },
+      {
+        "path": "build-constraints.txt",
+        "kind": "file",
+        "bytes": 19,
+        "sha256": "5b96a1b3ab68ccbd56cda1f7d56e804b7ac05194b86762b3763c84c13a92cfeb"
+      },
+      {
+        "path": "pyproject.toml",
+        "kind": "file",
+        "bytes": 2737,
+        "sha256": "60ef6f17da3f6787b14137749c5143323117dd2e9b257748cc556def5060b856"
+      },
+      {
+        "path": "requirements.txt",
+        "kind": "absent"
+      },
+      {
+        "path": "setup.cfg",
+        "kind": "absent"
+      },
+      {
+        "path": "setup.py",
+        "kind": "absent"
+      },
+      {
+        "path": "src",
+        "kind": "absent"
+      },
+      {
+        "path": "uv.lock",
+        "kind": "file",
+        "bytes": 287148,
+        "sha256": "b3288f1d51b880d9c683a43607d9eedc5b8c87465c8a1d357818c6b61d12f05f"
+      },
+      {
+        "path": "uv.toml",
+        "kind": "absent"
+      }
+    ],
+    "diagnostics": [
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/attest_product_backend.py",
+        "kind": "file",
+        "bytes": 2116,
+        "sha256": "793c189f01531246e22fc0f7e41dce6f063470c14ffc329dda28848bbc5e0906"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/check_preflight.py",
+        "kind": "file",
+        "bytes": 1319,
+        "sha256": "c86e2389eb283ccbfb9f7a53b8ca81c5392470bc28f47931ce9384c26bfba749"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/check_preserved.py",
+        "kind": "file",
+        "bytes": 3110,
+        "sha256": "0e5ce3db6675a1c130edb3ce5689bdfe4ec2e74d111985219c3e4fedf528d2d8"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py",
+        "kind": "file",
+        "bytes": 2451,
+        "sha256": "996f22d2ab1b4478677957001144735bef6e75de3777db3052b3c54360200c53"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/check_runner.py",
+        "kind": "file",
+        "bytes": 16324,
+        "sha256": "a1058dcca25a12aa9ea1b9d0a3960c7ee82966f238e672c3726ab3f76853dc88"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/check_source_inputs.py",
+        "kind": "file",
+        "bytes": 991,
+        "sha256": "a5f648c34b56a5f4fc7ed28d6f1962e8fb4ca69265eb6122b8194f7cdea5f1f7"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/guard_product_inputs.py",
+        "kind": "file",
+        "bytes": 5467,
+        "sha256": "2d4da81118867da41bf9a8abc3d4cc5a63fe461c26e376c25768579f941076f3"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+        "kind": "file",
+        "bytes": 3996,
+        "sha256": "e7986831f8f97984842e234beed4915cc9a0cc740ea449368c8df106898d830f"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+        "kind": "file",
+        "bytes": 9123,
+        "sha256": "6265063d6ced39afc949c47a75dbb0dba89622961d3b4f62f7b83b913d50b60e"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/inventory_docs.py",
+        "kind": "file",
+        "bytes": 1844,
+        "sha256": "b8e8eea62cc793c37c7c8ecffb933e9a36dd9b3bdef21b7c6977ca08e8383136"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/make_fixtures.py",
+        "kind": "file",
+        "bytes": 8101,
+        "sha256": "f2e96506ed7c0bc01ad89db4340b3d1b2f7820197d77f9c1d4110b79fcb84c84"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/make_input_inventory.py",
+        "kind": "file",
+        "bytes": 2646,
+        "sha256": "3a46ee10eab008af9660ce4b1c02be9669e707f5b1837f9250d6898557d15e6f"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+        "kind": "file",
+        "bytes": 19196,
+        "sha256": "4bd91afef7be9ac467eb3fe2762c839f90f4541cfce7cf3df76367ebed06ec19"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/prepare_docker_inputs.py",
+        "kind": "file",
+        "bytes": 22384,
+        "sha256": "2e8df0dad65fa47a883daf7e449123dd71707c405be1ccc18c314fe33248d1a8"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py",
+        "kind": "file",
+        "bytes": 7992,
+        "sha256": "2e499342d0098ba66843ea19e5455b63d90c971ca67c03d4a63bbdf1226f324b"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/run_baseline.py",
+        "kind": "file",
+        "bytes": 41046,
+        "sha256": "51cb25eb00285c4759271f381644db9a39d7106a3e5497eb9e04031479648be0"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/run_docker_contract.py",
+        "kind": "file",
+        "bytes": 17212,
+        "sha256": "60ae6c3ae888ced84dddc8763f803042b989bc097b8eb692a9a18e20c79bdc82"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+        "kind": "file",
+        "bytes": 17800,
+        "sha256": "2946aa1673b515f1186b6cdbf8483342c013205ce837f000e43d66fff4afcefd"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/run_tests.py",
+        "kind": "file",
+        "bytes": 5554,
+        "sha256": "3cf0ec0903caaba3efd735db3a29b4a186dfa21f400c1c74092684aa348e4442"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/run_trusted_script.py",
+        "kind": "file",
+        "bytes": 985,
+        "sha256": "567cd2e5df5fd9b8d4ef8985f04896f88c4e7be2305faf2b3a5cd1fd8f436d0e"
+      },
+      {
+        "path": "scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+        "kind": "file",
+        "bytes": 22237,
+        "sha256": "a72698bfbffc44862256834c14603935415e043db0abacc1044d5e836f523fb5"
+      }
+    ],
+    "input_inventory": {
+      "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/stage-s060/package-inputs.json",
+      "kind": "file",
+      "bytes": 241366,
+      "sha256": "392c23fb5d965d4d4c158dce2c9f9005fe72d0a7ba657d788e38c388a3525051"
+    },
+    "backend": {
+      "build_system": {
+        "requires": [
+          "setuptools==84.0.0"
+        ],
+        "build-backend": "setuptools.build_meta"
+      },
+      "tool_uv": {
+        "required-version": "==0.10.10",
+        "python-downloads": "manual",
+        "default-groups": [],
+        "build-constraint-dependencies": [
+          "setuptools==84.0.0"
+        ],
+        "reinstall-package": [
+          "markdown-for-llms"
+        ],
+        "no-build-package": [
+          "marker-pdf"
+        ],
+        "conflicts": [
+          [
+            {
+              "extra": "marker-cpu"
+            },
+            {
+              "extra": "marker-cu126"
+            }
+          ]
+        ],
+        "sources": {
+          "torch": [
+            {
+              "index": "torch-cpu",
+              "extra": "marker-cpu"
+            },
+            {
+              "index": "torch-cu126",
+              "extra": "marker-cu126"
+            }
+          ]
+        },
+        "index": [
+          {
+            "name": "torch-cpu",
+            "url": "https://download.pytorch.org/whl/cpu",
+            "explicit": true
+          },
+          {
+            "name": "torch-cu126",
+            "url": "https://download.pytorch.org/whl/cu126",
+            "explicit": true
+          }
+        ],
+        "dependency-metadata": [
+          {
+            "name": "ebooklib",
+            "version": "0.18",
+            "requires-dist": [
+              "lxml",
+              "six"
+            ]
+          }
+        ]
+      },
+      "config_settings": {},
+      "build_environment": {}
+    },
+    "toolchain": {
+      "executable": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "executable_realpath": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "python_sha256": "8392ec78d090ab7e1b1c058cff454de64a0780e263e6a9e66cdb1256be322fb0",
+      "prefix": "/tmp/run-a001-product-wheel-env-r001",
+      "base_prefix": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu",
+      "version": "3.12.13 (main, Mar 10 2026, 18:17:25) [Clang 21.1.4 ]",
+      "stdlib": {
+        "os_path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/os.py",
+        "os_sha256": "54c43a1fc69c979c70d8f7d097174cee163bfe59937723ee353043dd4a0211e1"
+      },
+      "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+      "uv_path": "/home/davide/.local/bin/uv",
+      "uv_sha256": "fd24f4de9bbe5bfaf605e1056a3c30a5dafa4373ebdd67ebdd9085078cc3abe5",
+      "dependencies_incoming": [
+        {
+          "name": "certifi",
+          "version": "2026.7.22",
+          "metadata_sha256": "ef5af1638fbb23676ac3c5777dfcfc2cd9c348fe4172ed5ba3d277655b248090",
+          "record_sha256": "cff9d243744c96445494c29abee3d592d0a6955d5504f4fbe034dce7aaf38490"
+        },
+        {
+          "name": "charset-normalizer",
+          "version": "3.5.2",
+          "metadata_sha256": "89ce6362bb7be88558f4be99a98f5d1b4da93d19cd0323e5ee0bac05cf883dfb",
+          "record_sha256": "50fc642189e41b3156bb7d791de1e296f5c4a87f007c7e1d80c13bb062b4adc5"
+        },
+        {
+          "name": "idna",
+          "version": "3.20",
+          "metadata_sha256": "dbd8c14c1e4ca1e0c9824a6dbc7cbbf78884f38eb52d91148cd3025f671e4b85",
+          "record_sha256": "5cb00483f65ae878e5d27e17f92dfedcb84330efd42424fc8e56e6bb242430d7"
+        },
+        {
+          "name": "python-dotenv",
+          "version": "1.2.4",
+          "metadata_sha256": "87cfee6042412d48df1100ea7822684988c3f2b79de7a250f4717f4df3026d6f",
+          "record_sha256": "0a3453db05461675d26d8920548722c7ee4a16566db9de602598de06b2318a54"
+        },
+        {
+          "name": "regex",
+          "version": "2024.11.6",
+          "metadata_sha256": "834d4e6889c9292660684fac77a4b805ac1cfb14b67e0d321d16eb535397ce98",
+          "record_sha256": "f364e91b56333a72ddd0e43de54a33d5425a33142447df4b85e26b233afa031d"
+        },
+        {
+          "name": "requests",
+          "version": "2.34.2",
+          "metadata_sha256": "8c384ba3e979480faae2859d3c5e6c1276dd2c3616e322e124d52c8cfc556f27",
+          "record_sha256": "fc8c5216d0e865d815bd04cc240b5adc5d56f6c3dbe9aef3b4ea3b83d735bdfe"
+        },
+        {
+          "name": "tiktoken",
+          "version": "0.14.0",
+          "metadata_sha256": "30086725221223f7a19463e71c0e9f79fe7aba9125b36632c00bf50a23fa968a",
+          "record_sha256": "5d0af7285eb6ee6b8954764a44b27c47dc2ee8b2d136c9418d6f7593b55a07c1"
+        },
+        {
+          "name": "tqdm",
+          "version": "4.70.1",
+          "metadata_sha256": "a5da70b966afea3a759716041bad7187f2ece02c22348cf9e7c0a512bbf15f57",
+          "record_sha256": "6b01f16f11274845ec8a84359c6974d318a106734e1027402d377bf9ee42d986"
+        },
+        {
+          "name": "urllib3",
+          "version": "2.8.0",
+          "metadata_sha256": "10898c620e8007c030e07fa5622b68358a43010025dfbd78a1cb797699de2bb4",
+          "record_sha256": "1753d325c8936a612ecdc947e686ade56b21f591fbb7518330cb0f2f7619c330"
+        }
+      ]
+    },
+    "snapshot": {
+      "label": "impl-r001-stage-product-s060",
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-product-s060.json",
+      "sha256": "42bcfbb1f825ff849967629747d372b284ad34c1446d4578c8ec6bd288e95c00",
+      "worktree_sha256": "f2b37f423c570e13a12ca5469a87fc6ca9719dd114d807460ab8ed9fb981ccd5"
+    }
+  },
+  "captured_at_utc": "2026-10-07T10:02:27.134513+00:00"
+}

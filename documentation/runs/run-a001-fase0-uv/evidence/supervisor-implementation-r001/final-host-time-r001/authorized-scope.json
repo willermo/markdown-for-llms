@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "run_id": "run-a001-fase0-uv",
+  "role": "supervisor",
+  "status": "AUTHORIZED_FINAL_HOST_COMPLETION_CORE_8100S",
+  "addendum": "temp/run-a001-fase0-uv/arbitrations/addendum-operational-protocol-r019.md",
+  "prompt": "temp/run-a001-fase0-uv/prompts/56-implementation-r001-complete-host-proofs-with-time.md",
+  "source_proposal": {
+    "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/resource-boundary.json",
+    "bytes": 2190,
+    "sha256": "f01a8c0a1b2e695b1b8d79a8be5093cab67199d3fd7f10650c8945d300960b92"
+  },
+  "extends_protected_sources_and_toolchain": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/product-input-reception-r001/authorized-scope.json",
+    "bytes": 63176,
+    "sha256": "3fd09c86e4cd4d124c3df035cf84ee102b97fee7c372a5e27689d8463134e4c7"
+  },
+  "core": {
+    "Hentry": 553541632,
+    "additional_bytes": 0,
+    "incremental_bytes": 369098752,
+    "max_pool_bytes": 1073741824,
+    "stop_bytes": 939524096,
+    "external_reserve_bytes": 16777216,
+    "roots": [
+      "temp/run-a001-fase0-uv",
+      ".venv-python",
+      ".venv",
+      "/tmp/run-a001-product-wheel-env-r001"
+    ],
+    "exclude_new_docker_subtrees": [
+      "temp/run-a001-fase0-uv/work/docker-cpu-r001",
+      "temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001"
+    ],
+    "formula": "H=max(logical,allocated); Delta=max(0,H-553541632)<369098752; H+max(0,369098752-Delta)+16777216<939524096",
+    "reset": false,
+    "repository_free_required_bytes": 1073741824,
+    "external_tmp_free_required_bytes": 134217728,
+    "workload_cap_seconds": 8100,
+    "charged_entry_seconds": 7194.886280257022,
+    "remaining_at_reception_seconds": 905.113719742978,
+    "max_single_child_seconds": 900,
+    "outer_extra_seconds": 180,
+    "authorized_acquisition": "no new acquisition needed; reuse verified available toolchain/runtime/cache",
+    "authorized_payload_bytes_known": 10659742,
+    "prefixes": "new dev/API prefixes under run/work; preserve four base environments as comparison targets",
+    "legacy_file_cap_bytes": 33554432,
+    "total_additional_bytes_since112MiB": 251658240,
+    "additional_time_seconds": 900,
+    "additional_network_bytes": 0,
+    "storage_authorization_origin": "user +48 MiB received in implementer resource-authorization.json, total352MiB; no new storage extension here",
+    "last_received_H_bytes": 890355712
+  },
+  "docker_cpu": {
+    "storage_cap_bytes": 17179869184,
+    "workload_cap_seconds": 7200,
+    "network_cap_bytes": 1073741824,
+    "charged_entry_seconds": 872.2351763881743,
+    "data_roots": [
+      "temp/run-a001-fase0-uv/work/docker-cpu-r001",
+      "temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001"
+    ],
+    "engine": "existing local Docker engine; only dedicated run-owned image/build/container objects; inspect baseline data-root/free space before admission",
+    "daemon_storage_accounting": "include attributed new layers/images/build cache/container writable data in distinct16GiB pool; baseline existing objects, avoid double-counting shared bytes, conservative accounting when exact attribution unavailable",
+    "payload_admission": "before each transfer verify origin/digest/size or enforce remaining-byte stream cap; account OCI/APT/Torch and retries, not only known wheel total",
+    "build_admission": "bind Python/uv OCI digests and Debian signed metadata, bind EbookLib backend/get_requires/constraints; no unknown backend or arbitrary dependency fallback",
+    "file_cap": "large verified wheels/layers use explicit artifact size within remaining storage/network caps, not inherited32MiB core cap",
+    "deadline": "choose finite deadlines compatible with tools within separate7200s budget, including preparation/retries; core900s child cap does not silently apply to native Docker build",
+    "operations": [
+      "V7 CPU native build and both Compose config checks",
+      "V8 installed-code diagnostics network=none pull=never, no service startup or Marker inference"
+    ],
+    "paid": 0,
+    "weights_remote_fonts_inference": false,
+    "GPU": false,
+    "host_privilege_or_policy_change": false,
+    "cleanup_global": false,
+    "remaining_at_reception_seconds": 6327.764823611826,
+    "rebuild_required_only_if_dependent_inputs_change": true,
+    "received_network_upper_entry_bytes": 496040215,
+    "received_storage_upper_entry_bytes": 15861197984,
+    "network_upper_is_reported_accounting_not_measured_wire": true,
+    "new_operation_required_only_if_dependent_inputs_change": true,
+    "ledger_rule": "native Shared cache represented by own/public images charged whole, plus positive unshared cache and files; keep historical floor11247782439; reviewer cache-only/preparation included; justify attribution for reviewers"
+  },
+  "common": {
+    "execution_snapshots_owner": "implementer",
+    "review_snapshot_owner": "supervisor",
+    "monitor_period_seconds": 0.5,
+    "periodic_not_atomic": true,
+    "log_stream_bytes": 1048576,
+    "json_bytes": 8388608,
+    "no_budget_reset": true,
+    "preserve_old_failures_and_proofs": true,
+    "no_Git_write_in_working_repository": true,
+    "official_tool_approval_required_when_applicable": true,
+    "two_independent_final_reviews_pending": true
+  },
+  "date": "2026-10-07",
+  "extends_previous_scope": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/final-core-resources-r001/authorized-scope.json",
+    "bytes": 5169,
+    "sha256": "5f145be84a463d7b68cbd7257f02bd124cde53b543f811d3518fc6e299a6feec"
+  },
+  "source_user_storage_authorization": {
+    "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/resource-authorization.json",
+    "bytes": 420,
+    "sha256": "1addeb7e86bf76e2d6e99551f5f454dc017c0ad688d7ac757b6deb4410357a78"
+  }
+}

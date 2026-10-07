@@ -20,7 +20,11 @@ piano e arbitrato della run in `temp/`; non saltare pianificazione e doppie revi
    e stato della roadmap soltanto quando i criteri sono soddisfatti.
 6. Controllare diff e risultati; consegnare cambiamento, motivazione, verifiche e
    limiti. Non eseguire automaticamente merge o promozioni come effetto della procedura.
-7. Salvare report e checkpoint nei percorsi assegnati dal supervisore; riportarli in
+7. Correggere difetti ordinari e strumenti nella stessa chat; ripetere le prove
+   invalidate identificando autonomamente i nuovi input e creando gli eventuali
+   snapshot di esecuzione, senza richieste di freeze o preparazioni intermedie.
+   Rinviare soltanto scostamenti sostanziali reali.
+8. Salvare report e checkpoint nei percorsi assegnati dal supervisore; riportarli in
    chat. Il supervisore genera i prompt per le due review indipendenti dell'implementazione.
 
 **Uscita:** incremento revisionabile, con comportamento dimostrato e documentazione coerente.

@@ -1,0 +1,24 @@
+{
+ "sdist_sha": "a6a85fe172249982229d9df770856c27a76fa59dd2109f1f5efb8191267fa357",
+ "wheel_sha": "6fff8af117ef40ee2872ebb4d81295bd3421144a3a7adc2905555cb7e7bf001c",
+ "sdist_readme_eq_current": true,
+ "sdist_modules_eq": true,
+ "sdist_pyproject_eq": true,
+ "sdist_members": 26,
+ "wheel_modules_eq": true,
+ "wheel_description_eq_readme": true,
+ "wheel_top_level": [
+  "batch_monitor.py",
+  "chunk_markdown.py",
+  "clean_markdown.py",
+  "config.py",
+  "exceptions.py",
+  "logging_config.py",
+  "markdown_for_llms-1.0.0.dist-info",
+  "marker_api_server.py",
+  "master_workflow.py",
+  "unified_converter.py",
+  "validate_markdown.py"
+ ],
+ "seconds": 0.010602218797430396
+}

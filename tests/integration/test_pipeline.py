@@ -21,10 +21,9 @@ class TestPipelineIntegration:
 
     def _seed_converted(self, base_dir: Path):
         cfg = get_config_manager().config
+        cfg.skip_existing = False
         converted_dir = base_dir / cfg.directories.converted
-        cleaned_dir = base_dir / cfg.directories.cleaned
         converted_dir.mkdir(parents=True, exist_ok=True)
-        cleaned_dir.mkdir(parents=True, exist_ok=True)
         filler = ("This is substantial content for validation with many words and proper sentences. " * 20).strip()
         sample_md = f"""
 # Sample Title
@@ -41,11 +40,6 @@ More substantial content here to test chunking and validation.
 {filler}
 """.strip()
         (converted_dir / "sample.md").write_text(sample_md)
-        # Seed a cleaned counterpart to allow validation to proceed deterministically
-        cleaned_md = sample_md.replace('<span>HTML</span> ', '')
-        cleaned_md = cleaned_md.replace('D[AN] S. K[ENNEDY]', 'DAN S. KENNEDY')
-        cleaned_md = cleaned_md.replace('** broken emphasis **', '**broken emphasis**')
-        (cleaned_dir / "sample.md").write_text(cleaned_md)
 
     def test_end_to_end_without_conversion(self, temp_workspace, monkeypatch):
         # Operate within the temp workspace
@@ -145,25 +139,6 @@ More substantial content here to test chunking and validation.
 
 {filler}
 """.strip())
-        # Seed corresponding cleaned file
-        cleaned_dir = Path.cwd() / config_manager.config.directories.cleaned
-        cleaned_dir.mkdir(parents=True, exist_ok=True)
-        cleaned2 = f"""
-# Sample Title 2
-
-This is another test document to validate the pipeline.
-
-It contains artifacts and OCR issues fixed like DAN S. KENNEDY, and
-formatting issues like **broken emphasis** that should be cleaned.
-
-## Section
-
-More substantial content here to test chunking and validation.
-
-{filler}
-""".strip()
-        (cleaned_dir / "sample2.md").write_text(cleaned2)
-
         # Configure for concurrent processing
         config_manager.config.max_workers = 2
 

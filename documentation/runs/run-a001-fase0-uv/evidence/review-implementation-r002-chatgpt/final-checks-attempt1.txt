@@ -1,0 +1,10 @@
+Primo tentativo del reader finalize.py: verify snapshot completato exit0;
+arresto successivo nel controllo dei link propri al file final-checks.json non
+ancora scritto. Il confronto Path lessicale non normalizzava ../ nel target.
+Corretto soltanto il reader proprio con resolve(), poi ripetuto il controllo.
+
+Traceback (most recent call last):
+  File "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/review-implementation-r002-chatgpt/finalize.py", line 29, in <module>
+    assert all(x['exists'] for x in links)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
