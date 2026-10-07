@@ -1,7 +1,7 @@
 # Archivio permanente delle run
 
 Qui si conservano piani, review, arbitrati, evidenze e sintesi utili dopo la pulizia
-del contesto locale. La prima run ha concluso la revisione tecnica; l’integrazione Git è ancora pendente.
+del contesto locale. La prima run ha concluso la revisione tecnica ed è integrata in `dev` a `b90c6d4`.
 
 Ogni run archiviata ha una directory `<run-id>/`, un `manifest.md` derivato dal
 [template](../development/templates/archive-manifest.md) e sottocartelle per report,
@@ -20,5 +20,6 @@ va verificata separatamente e registrata nel manifest.
 
 - [run-a001-fase0-uv](run-a001-fase0-uv/manifest.md): toolchain uv, fase0.1;
   GO finale r003 dopo review GO/GO, quote temporali NON PASS conservate.
-  Archivio selettivo verificato; commit e integrazione manuale in dev pendenti,
+  Archivio selettivo verificato; feature `8479f97` integrata manualmente in dev
+  a `b90c6d4`, albero identico e 405 file MATCH. Push non verificato;
   nessun deploy/main o pulizia della run effettuati.

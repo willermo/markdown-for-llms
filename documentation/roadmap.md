@@ -9,7 +9,7 @@ hardware e corpus determineranno dimensione e durata degli incrementi.
 | Fase | Risultato verificabile | Dipendenze | Stato |
 | --- | --- | --- | --- |
 | 0 | Governance, decisioni e documentazione iniziale | Nessuna | Bootstrap integrato in dev a `66ba822` |
-| 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio e Git manuale preparati; commit/integrazione in dev ancora pendenti |
+| 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio verificato; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; push non verificato |
 | 1 | Corpus, benchmark e scelta motivata dei motori | Fase 0.1, campioni e profili hardware | Da iniziare |
 | 2 | Package applicativo, contratti, configurazione, DB e worker | Risultati essenziali della fase 1 | Da iniziare |
 | 3 | Prima applicazione completa con FastAPI e Web UI minima | Fase 2 e scelta frontend | Da iniziare |

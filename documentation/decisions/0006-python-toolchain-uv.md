@@ -2,7 +2,7 @@
 
 - Data: 2026-10-02
 - Stato decisione: accettata
-- Stato implementazione: GO piano e implementazione r003 dopo doppie review; archivio e Git manuale preparati, deviazioni temporali NON PASS conservate; commit/integrazione in dev ancora pendenti
+- Stato implementazione: GO piano e implementazione r003 dopo doppie review; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; archivio verificato, deviazioni temporali NON PASS conservate, push non verificato
 - Origine: approvazione esplicita dell'utente dopo la valutazione del setup Python
 
 ## Decisione

@@ -121,8 +121,9 @@ risolti; riusi applicativi/B56/Docker verificati ai propri input. CLA-I009
 corretto: addebito8947,998s non upper, fine turno8966,24s come inferenza,
 gate tardivo/FAIL ricostruito. Quote temporali NON PASS conservate, deviazione
 amministrativa accettata senza sanatoria. [Archivio permanente](runs/run-a001-fase0-uv/manifest.md)
-reale, istruzioni Git manuali preparate. Commit e squash merge in dev
-**non eseguiti**, fase0.1 non ancora integrata; nessuna nuova fase avviata.
+reale. Fase0.1 **integrata manualmente in dev** a `b90c6d4c00aed5ceb9122f6f42544736de7ff35a`
+il 2026-10-07: contenuti identici alla feature `8479f975618034abfcfaeb4c9e47ba925d5e356e` e
+405 file MATCH con la consegna approvata. Push non verificato; nessuna nuova fase avviata.
 
 1. [Draft preliminare della proposta discussa](architecture/preliminary-draft.md).
 2. [Registro delle decisioni architetturali](decisions/README.md).

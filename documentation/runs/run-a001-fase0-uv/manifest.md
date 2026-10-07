@@ -2,8 +2,11 @@
 
 - Obiettivo/fase: toolchain Python uv, packaging e verifiche legacy, fase0.1.
 - Base/HEAD alla chiusura tecnica:66ba82200e5def5a4db76f9bafccb0731b506091;
-  feature/run-a001-uv. Commit e integrazione in dev **non ancora eseguiti**.
-- Esito: **GO / READY_FOR_MANUAL_INTEGRATION**, arbitrato implementazione r003.
+  feature/run-a001-uv. Feature commit `8479f975618034abfcfaeb4c9e47ba925d5e356e`;
+  squash in dev `b90c6d4c00aed5ceb9122f6f42544736de7ff35a`, genitore uguale alla base.
+  Integrazione manuale verificata il 2026-10-07: 405 file MATCH, alberi identici.
+  Working tree e indice puliti alla ricezione, push non verificato.
+- Esito: **GO / INTEGRATED**, arbitrato implementazione r003.
 - Data/responsabile:2026-10-07, supervisore Codex/OpenAI. Nessun deploy/main/cleanup.
 - Oggetto review finale:final-s003 SHA
   6295835b1407ea44f6c49780d38061c0fd5d6389a2ef1e096da9dd260f778962.
@@ -45,5 +48,5 @@ qui; gli script di evidenza sono conservati come dati storici.
 Integrità delle copie, adattamento dei link, delta documentale rispetto al GO e
 git diff --check verificati dal supervisore; ricevuta di chiusura in temp.
 Nessuna nuova esecuzione delle prove, commit/merge/push o pulizia. Tutti i payload
-non selezionati e gli originali rimangono nella run locale. Registrare i commit
-reali dopo l'integrazione manuale; non dichiarare già completata la fase in dev.
+non selezionati e gli originali rimangono nella run locale. I commit reali sono registrati sopra dopo la verifica
+dell'integrazione; nessun rilascio o collaudo fuori dal perimetro è implicito.

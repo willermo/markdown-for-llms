@@ -9,6 +9,25 @@ La [roadmap](roadmap.md) descrive il percorso previsto, gli
 [archivio delle run](runs/README.md) conserva le evidenze permanenti. Il contesto
 operativo corrente rimane in `temp/`, esclusa da Git.
 
+## 2026-10-07 — Run a001: integrazione manuale verificata in dev
+
+**Fase/run:** 0.1, `run-a001-fase0-uv`. **Stato:** INTEGRATED.
+L'utente ha creato la feature `8479f975618034abfcfaeb4c9e47ba925d5e356e` e lo squash commit
+`b90c6d4c00aed5ceb9122f6f42544736de7ff35a` su `dev`, entrambi con genitore/base
+`66ba82200e5def5a4db76f9bafccb0731b506091`. Verifica indipendente sul commit dev:
+405 file MATCH con il risultato GO e i registri di chiusura; confronto integrale
+degli alberi feature/dev senza differenze. Controllo whitespace PASS con la sola
+esclusione del patch storico `targeted-delta.diff`, le cui nove righe vuote di
+contesto unified diff restano identiche all'evidenza originale. Working tree e
+indice puliti alla ricezione, branch attivo `dev`.
+
+Registrati gli SHA nell'[archivio](runs/run-a001-fase0-uv/manifest.md) e aggiornati
+solo gli stati documentali. Quote temporali NON PASS e limiti del GO conservati;
+nessuna nuova suite, build, installazione o rete necessaria per questa verifica.
+Il supervisore non ha eseguito Git di scrittura. Prossimo passo: commit manuale
+di questi soli registri, poi eventuale push di dev; push non verificato, nessuna
+promozione a main, deploy, pulizia o nuova fase avviata.
+
 ## 2026-10-07 — Run a001: GO finale e integrazione manuale preparata
 
 Ricevute review r003 indipendenti ChatGPT/Claude GO/GO sullo stesso final-s003,
