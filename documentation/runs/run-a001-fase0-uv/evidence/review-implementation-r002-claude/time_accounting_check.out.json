@@ -1,0 +1,47 @@
+{
+ "clock_offset_entry": 1790078850.1850781,
+ "clock_offset_approval": 1790078850.1850772,
+ "excluded_wait_from_files": 27.52434992790222,
+ "points": {
+  "proof-V1-r003/result.json": {
+   "mtime": 1791367828.2494106,
+   "cumulative_formula": 8251.363
+  },
+  "matrix-final.json": {
+   "mtime": 1791367862.0447927,
+   "cumulative_formula": 8285.159
+  },
+  "checkpoint-before-r019-final.md": {
+   "mtime": 1791367862.1982656,
+   "cumulative_formula": 8285.312
+  },
+  "final-checks.json": {
+   "mtime": 1791367898.2778928,
+   "cumulative_formula": 8321.392
+  },
+  "delivery.json": {
+   "mtime": 1791367898.2792406,
+   "cumulative_formula": 8321.393
+  },
+  "manifest.json": {
+   "mtime": 1791367898.304797,
+   "cumulative_formula": 8321.419
+  },
+  "../../../implementation/report-r019.md": {
+   "mtime": 1791367898.2793815,
+   "cumulative_formula": 8321.393
+  },
+  "../../../handovers/implementation-r001.md": {
+   "mtime": 1791367898.2794507,
+   "cumulative_formula": 8321.393
+  }
+ },
+ "declared_cumulative": 8285.28744326299,
+ "declared_wall_equivalent": 1791367862.1736512,
+ "V1_declared": 8251.006317519117,
+ "lower_bound_overrun_at_last_delivery_write": 41.419,
+ "deliver_r002_writes_time_compliance": false,
+ "deliver_r002_writes_overrun_field": false,
+ "manifest_final_checks_matches": true,
+ "seconds": 0.0012526761274784803
+}

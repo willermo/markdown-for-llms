@@ -1,0 +1,9 @@
+{
+  "source": "Osservazione effettiva della chiamata strumenti iniziale di questa chat, registrata successivamente nel solo output reviewer",
+  "argv": ["/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12", "-I", "-B", "scripts/run_context.py", "verify", "run-a001-fase0-uv", "--label", "impl-r001-stage-final-s002"],
+  "exit_code": 0,
+  "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n",
+  "snapshot_sha256": "e0cb33d16a5766f653923c2d25cf365f910d7e738d542893db2a1ac589272c1d",
+  "snapshot_bytes": 1152887,
+  "worktree_sha256": "361da83746c2b0c088cbe7ad5126890f2b91e345da408a1616c766e6ee866142"
+}

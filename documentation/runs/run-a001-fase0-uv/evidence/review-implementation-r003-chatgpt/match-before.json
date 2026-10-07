@@ -1,0 +1,115 @@
+{
+  "identity": {
+    "path": "temp/run-a001-fase0-uv/snapshots/impl-r001-stage-final-s003.json",
+    "bytes": 1204624,
+    "sha256": "6295835b1407ea44f6c49780d38061c0fd5d6389a2ef1e096da9dd260f778962",
+    "worktree_sha256": "ee433d5be9d4d151d1a2fa8e958e9ca526f8b10c540ffbf5d6d0d93b882a2af2",
+    "file_count": 133,
+    "artifact_count": 4245,
+    "label": "impl-r001-stage-final-s003",
+    "creation_stdout": "Snapshot: temp/run-a001-fase0-uv/snapshots/impl-r001-stage-final-s003.json\nWorking tree SHA-256: ee433d5be9d4d151d1a2fa8e958e9ca526f8b10c540ffbf5d6d0d93b882a2af2\n"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/scripts/run_context.py",
+        "verify",
+        "run-a001-fase0-uv",
+        "--label",
+        "impl-r001-stage-final-s003"
+      ],
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "exit": 0,
+      "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n",
+      "stderr": "",
+      "seconds": 1.1407778300344944
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "exit": 0,
+      "stdout": "66ba82200e5def5a4db76f9bafccb0731b506091\n",
+      "stderr": "",
+      "seconds": 0.0012564260978251696
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "dev"
+      ],
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "exit": 0,
+      "stdout": "66ba82200e5def5a4db76f9bafccb0731b506091\n",
+      "stderr": "",
+      "seconds": 0.0010142989922314882
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "HEAD",
+        "dev"
+      ],
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "exit": 0,
+      "stdout": "66ba82200e5def5a4db76f9bafccb0731b506091\n",
+      "stderr": "",
+      "seconds": 0.0009590380359441042
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "exit": 0,
+      "stdout": "feature/run-a001-uv\n",
+      "stderr": "",
+      "seconds": 0.0009058329742401838
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "seconds": 0.0010845211800187826
+    }
+  ],
+  "ledger": {
+    "logical": 834845428,
+    "allocated": 913969152,
+    "H": 913969152,
+    "Hentry": 553541632,
+    "delta": 360427520,
+    "remaining": 8671232,
+    "with_reserves": 939417600,
+    "roots": [
+      "temp/run-a001-fase0-uv",
+      ".venv-python",
+      ".venv",
+      "/tmp/run-a001-product-wheel-env-r001"
+    ],
+    "exclusions": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001"
+    ],
+    "repo_free": 126174056448,
+    "tmp_free": 497078272,
+    "admitted": true
+  }
+}

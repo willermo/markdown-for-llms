@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "generator_sha256": "f2e96506ed7c0bc01ad89db4340b3d1b2f7820197d77f9c1d4110b79fcb84c84",
+  "author": "Codex/OpenAI, famiglia GPT-6",
+  "date_context": "2026-10-03",
+  "origin": "sintetica, generata nel repository",
+  "rights": "fixture originali per il repository con licenza MIT; nessun contenuto di terzi",
+  "files": [
+    {
+      "path": "f1-stable.md",
+      "bytes": 984,
+      "sha256": "5dad5fc822c8792039e4b170ff85d8b3307654de1bef744db620f25722222b38"
+    },
+    {
+      "path": "f2-sensitive.md",
+      "bytes": 942,
+      "sha256": "4d98c92b134cd2855825d8d5abe639a2dc844cfc534c8939e853be64cfc81521"
+    },
+    {
+      "path": "f3-cleaned-stable.md",
+      "bytes": 984,
+      "sha256": "5dad5fc822c8792039e4b170ff85d8b3307654de1bef744db620f25722222b38"
+    },
+    {
+      "path": "f3-cleaned-sensitive.md",
+      "bytes": 942,
+      "sha256": "4d98c92b134cd2855825d8d5abe639a2dc844cfc534c8939e853be64cfc81521"
+    },
+    {
+      "path": "f4-pandoc.html",
+      "bytes": 562,
+      "sha256": "e708d0f40b7bf899115b38df445e0f8632b1f20460986549dc59b9ca8c8476d6"
+    },
+    {
+      "path": "f5-asset.md",
+      "bytes": 469,
+      "sha256": "e7e42804a139d3682cf0f0fa6bde57079bc416829cdccd4c22bb4fbb99bb7014"
+    },
+    {
+      "path": "assets/f5.png",
+      "bytes": 74,
+      "sha256": "1a70ac3221f27cbc82a2e30a6f4b7310b540b9d2dc81e0e5131a2877f30b9ad1"
+    },
+    {
+      "path": "f6-multichunk.md",
+      "bytes": 46996,
+      "sha256": "48863c5fecec5d693d937102fd48389a2a606d9b7943b3a24e50d933a4298350"
+    },
+    {
+      "path": "fixture-config.json",
+      "bytes": 1148,
+      "sha256": "c09093745f85d087ee88716e0106404890cdae5fa6e606e6ddeb931d834d402b"
+    },
+    {
+      "path": "dotenv-1200-80.txt",
+      "bytes": 32,
+      "sha256": "d691503bdd2ba90ca2d46eaef17b73605152b8dec06beb9f96e078f62021b75f"
+    }
+  ],
+  "F6": {
+    "paragraphs": 160,
+    "section_count": 16,
+    "target_llm": "custom",
+    "chunk_size": 1000,
+    "overlap": 100,
+    "token_count": null,
+    "multi_chunk_status": "NON_ESEGUITA, attende R e stage"
+  },
+  "F3": "Copie dirette F1/F2 per validation; nessuna normalizzazione",
+  "limits": [
+    "Soglie configurate e costanti effettive legacy saranno caratterizzate in V0.",
+    "F5 verifica riferimento e hash; copia asset non garantita dal legacy."
+  ]
+}

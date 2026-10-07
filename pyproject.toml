@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "markdown-for-llms"
+version = "1.0.0"
+description = "A pipeline for converting documents to LLM-ready Markdown"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "requests>=2.31.0",
+    "tiktoken>=0.5.1",
+    "tqdm>=4.66.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+marker-server = ["fastapi", "uvicorn", "python-multipart"]
+marker-cpu = ["marker-pdf[full]==1.10.2", "surya-ocr==0.17.1", "torch==2.7.1", "beautifulsoup4"]
+marker-cu126 = ["marker-pdf[full]==1.10.2", "surya-ocr==0.17.1", "torch==2.7.1", "beautifulsoup4"]
+
+[project.scripts]
+markdown-pipeline = "master_workflow:main"
+markdown-config = "config:main"
+markdown-clean = "clean_markdown:main"
+markdown-validate = "validate_markdown:main"
+markdown-chunk = "chunk_markdown:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=7.4.0", "pytest-cov>=4.1.0", "pytest-mock>=3.11.0",
+    "black>=23.0.0", "flake8>=6.0.0", "mypy>=1.5.0", "httpx",
+]
+
+[tool.setuptools]
+py-modules = [
+    "config", "logging_config", "exceptions", "unified_converter", "master_workflow",
+    "clean_markdown", "validate_markdown", "chunk_markdown", "batch_monitor", "marker_api_server",
+]
+packages = []
+include-package-data = false
+
+[tool.uv]
+required-version = "==0.10.10"
+python-downloads = "manual"
+default-groups = []
+build-constraint-dependencies = ["setuptools==84.0.0"]
+reinstall-package = ["markdown-for-llms"]
+no-build-package = ["marker-pdf"]
+conflicts = [[{ extra = "marker-cpu" }, { extra = "marker-cu126" }]]
+
+[tool.uv.sources]
+torch = [
+    { index = "torch-cpu", extra = "marker-cpu" },
+    { index = "torch-cu126", extra = "marker-cu126" },
+]
+
+[[tool.uv.index]]
+name = "torch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "torch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/integration", "tests/governance"]
+addopts = "--ignore=test_pipeline.py --ignore=test_conversion.py"
+norecursedirs = [
+    ".*", "build", "dist", "CVS", "_darcs", "{arch}", "*.egg", "venv", "node_modules",
+    "temp", "tmp", "documentation/runs", ".venv", ".venv-python", ".venv-marker",
+    ".venv-marker-gpu", ".cache", "__pycache__", ".git", "source_pdfs", "source_documents",
+    "source_ebooks", "converted_markdown", "cleaned_markdown", "validated_markdown",
+    "chunked_markdown", "docker-data", ".docker",
+]
+
+# Metadati EbookLib0.18 osservati in due wheel; ADR0006 e addendum r008.
+[[tool.uv.dependency-metadata]]
+name = "ebooklib"
+version = "0.18"
+requires-dist = ["lxml", "six"]

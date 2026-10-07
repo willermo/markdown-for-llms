@@ -1,6 +1,6 @@
 # Roadmap del convertitore
 
-Aggiornata al 2026-10-02. Le fasi descrivono il percorso fino al prodotto; non sono una
+Aggiornata al 2026-10-07. Le fasi descrivono il percorso fino al prodotto; non sono una
 stima temporale né un'autorizzazione ad avviare ogni attività in anticipo. Dipendenze,
 hardware e corpus determineranno dimensione e durata degli incrementi.
 
@@ -8,8 +8,8 @@ hardware e corpus determineranno dimensione e durata degli incrementi.
 
 | Fase | Risultato verificabile | Dipendenze | Stato |
 | --- | --- | --- | --- |
-| 0 | Governance, decisioni e documentazione iniziale | Nessuna | Completata con questo intervento |
-| 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | Approvata, da pianificare |
+| 0 | Governance, decisioni e documentazione iniziale | Nessuna | Bootstrap integrato in dev a `66ba822` |
+| 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio e Git manuale preparati; commit/integrazione in dev ancora pendenti |
 | 1 | Corpus, benchmark e scelta motivata dei motori | Fase 0.1, campioni e profili hardware | Da iniziare |
 | 2 | Package applicativo, contratti, configurazione, DB e worker | Risultati essenziali della fase 1 | Da iniziare |
 | 3 | Prima applicazione completa con FastAPI e Web UI minima | Fase 2 e scelta frontend | Da iniziare |
@@ -32,8 +32,9 @@ riscrittura completa accompagna lo sviluppo.
 ## Fase 0.1 — Toolchain Python riproducibile
 
 Decisione [ADR 0006](decisions/0006-python-toolchain-uv.md), run iniziale
-`run-a001-fase0-uv`. Dopo l'integrazione manuale del bootstrap in `dev`, creare il
-feature branch dedicato e applicare il [ciclo supervisionato](development/run-lifecycle.md):
+`run-a001-fase0-uv`. Bootstrap integrato manualmente in `dev` a `66ba822`;
+branch `feature/run-a001-uv` verificato con quella base, come registrato nel
+[changelog](CHANGELOG.md). Applicare il [ciclo supervisionato](development/run-lifecycle.md):
 piano, due review, arbitrato, implementazione, due review e arbitrato finale.
 
 Introdurre pyproject, lockfile, versione Python e ambiente locale; separare dipendenze

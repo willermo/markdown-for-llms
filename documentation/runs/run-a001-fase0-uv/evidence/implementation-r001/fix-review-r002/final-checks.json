@@ -1,0 +1,149 @@
+{
+  "status": "COMPLETE_IMPLEMENTATION_NO_FINAL_GO",
+  "core_cap_seconds": 8280,
+  "core_cumulative_seconds": 8285.28744326299,
+  "remaining_seconds": 0,
+  "core_ledger": {
+    "roots": {
+      "temp/run-a001-fase0-uv": {
+        "logical": 708549061,
+        "allocated": 773976064,
+        "files": 26446,
+        "directories": 6252,
+        "links": 822,
+        "vanished": 0
+      },
+      ".venv-python": {
+        "logical": 96548400,
+        "allocated": 106401792,
+        "files": 3726,
+        "directories": 204,
+        "links": 1049,
+        "vanished": 0
+      },
+      ".venv": {
+        "logical": 9547889,
+        "allocated": 10203136,
+        "files": 257,
+        "directories": 41,
+        "links": 4,
+        "vanished": 0
+      },
+      "/tmp/run-a001-product-wheel-env-r001": {
+        "logical": 12750663,
+        "allocated": 15405056,
+        "files": 1069,
+        "directories": 283,
+        "links": 4,
+        "vanished": 0
+      }
+    },
+    "logical": 827396013,
+    "allocated": 905986048,
+    "repository_free": 126155264000,
+    "tmp_free": 497266688
+  },
+  "core_gate": {
+    "H": 905986048,
+    "Hentry": 553541632,
+    "delta": 352444416,
+    "remaining": 16654336,
+    "total_with_reserves": 939417600,
+    "admitted": true
+  },
+  "snapshot_verify": {
+    "argv": [
+      "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/run_context.py",
+      "verify",
+      "run-a001-fase0-uv",
+      "--label",
+      "impl-r001-stage-product-s060"
+    ],
+    "exit": 0,
+    "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n"
+  },
+  "current_S": {
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/S-s060.json",
+    "bytes": 18395,
+    "sha256": "636804e688cf00fcd2c140310f0c194a072a3b1f65cae01a16a2edd1012d4d10"
+  },
+  "snapshot": {
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-product-s060.json",
+    "bytes": 30641,
+    "sha256": "42bcfbb1f825ff849967629747d372b284ad34c1446d4578c8ec6bd288e95c00"
+  },
+  "B56": {
+    "sdist": {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0.tar.gz",
+      "bytes": 46160,
+      "sha256": "a6a85fe172249982229d9df770856c27a76fa59dd2109f1f5efb8191267fa357"
+    },
+    "wheel": {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0-py3-none-any.whl",
+      "bytes": 47514,
+      "sha256": "6fff8af117ef40ee2872ebb4d81295bd3421144a3a7adc2905555cb7e7bf001c"
+    }
+  },
+  "all_own_processes_collected": true,
+  "collections": 17,
+  "tests": {
+    "proof-discovery-default-r001": {
+      "collected": 137,
+      "skipped": 0,
+      "exit": 0,
+      "postcheck": true
+    },
+    "proof-discovery-tests-r002": {
+      "collected": 156,
+      "skipped": 0,
+      "exit": 0,
+      "postcheck": true
+    },
+    "proof-discovery-root-r002": {
+      "collected": 156,
+      "skipped": 0,
+      "exit": 0,
+      "postcheck": true
+    },
+    "proof-fast-r001": {
+      "collected": 137,
+      "skipped": 0,
+      "exit": 0,
+      "postcheck": true
+    },
+    "proof-discovery-tests-r001": {
+      "collected": 149,
+      "skipped": 0,
+      "exit": 2,
+      "postcheck": true
+    },
+    "proof-packaging-r001": {
+      "collected": 11,
+      "skipped": 0,
+      "exit": 0,
+      "postcheck": true
+    },
+    "proof-api-r001": {
+      "collected": 7,
+      "skipped": 0,
+      "exit": 0,
+      "postcheck": true
+    }
+  },
+  "Docker": {
+    "seconds": 872.2351763881743,
+    "storage_upper": 15861197984,
+    "network_upper": 496040215,
+    "new_seconds": 0,
+    "new_network": 0,
+    "wire_not_measured": true
+  },
+  "paid": 0,
+  "no_final_GO": true,
+  "last_workload_cumulative_seconds": 8251.006317519117,
+  "delivery_accounting_overrun_seconds": 5.287443262990564,
+  "time_compliance": "All actual workloads completed under8280; conservative delivery preparation/verification accounting exceeds cap by5.287443s; no reset or PASS on budget compliance"
+}

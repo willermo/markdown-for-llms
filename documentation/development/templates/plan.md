@@ -27,3 +27,6 @@ Compatibilità, dati interessati, interruzioni, possibilità di ripristino e inc
 ## Consegne e handover
 
 Report, evidenze e aggiornamenti documentali attesi; prossimo ruolo: review del piano.
+
+Questo piano non è autorizzazione a implementare. Correzioni locali di review
+possono essere recepite come errata verificate nell’arbitrato, senza riscriverlo.

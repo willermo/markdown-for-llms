@@ -1,35 +1,38 @@
+# Percorso CPU alternativo conservato, stesso lock e stessa build.
 services:
   marker-api:
+    image: ${RUN_IMAGE_TAG:-markdown-for-llms-marker:cpu}
     build:
-      context: .
+      context: ${RUN_IMAGE_CONTEXT:?contesto pubblico preparato richiesto}
       dockerfile: Dockerfile
-    container_name: marker-api-build
+      network: none
+      additional_contexts:
+        verified-wheels: ${RUN_VERIFIED_WHEELS:?wheel ABI hash-locked verificate richieste}
+        verified-apt: ${RUN_VERIFIED_APT:?repository APT firmato verificato richiesto}
+      args:
+        PYTHON_IMAGE: ${RUN_PYTHON_IMAGE:?digest Python verificato richiesto}
+        UV_IMAGE: ${RUN_UV_IMAGE:?digest uv verificato richiesto}
+        APT_SNAPSHOT: ${RUN_APT_SNAPSHOT:?timestamp apt verificato richiesto}
+        MARKER_EXTRA: marker-cpu
+        HOST_NETNS: ${RUN_HOST_NETNS:?namespace host richiesto per R/D4 build}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
-      - TORCH_DEVICE=cpu # Change to 'cuda' if you have GPU support
-      - MAX_PAGES=0 # 0 = no limit
-      - WORKER_MULTIPLIER=1
-      - LOG_LEVEL=INFO
+      TORCH_DEVICE: cpu
+      TMPDIR: /data/tmp
     volumes:
-      - ./temp_processing:/app/temp # Temporary processing directory
-      - marker_models:/root/.cache/datalab/models # Persist ML models
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 120s # Longer start period for build
-    restart: unless-stopped
+      - marker_tmp:/data/tmp
+      - marker_cache:/data/cache
+      - marker_fonts:/data/fonts
+      - ${RUN_DATA_ROOT:-.}/source_documents:/data/input:ro
+    restart: "no"
     deploy:
       resources:
         limits:
           memory: 8G
         reservations:
           memory: 4G
-
 volumes:
-  marker_models:
-    driver: local
-  temp_processing:
-    driver: local
+  marker_tmp:
+  marker_cache:
+  marker_fonts:

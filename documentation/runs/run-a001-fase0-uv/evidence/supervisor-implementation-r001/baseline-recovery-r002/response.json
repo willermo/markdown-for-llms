@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "captured_at_utc": "2026-10-03T18:15:19.549494+00:00",
+  "run_id": "run-a001-fase0-uv",
+  "role": "supervisor",
+  "status": "BASELINE_V0_FAIL_WAITING_FOR_STAGE_PREPARATION",
+  "disposition": "IMPL-V0-004_ACCEPTED_PREPARE_S005_ONLY",
+  "context": {
+    "path": "temp/run-a001-fase0-uv/snapshots/baseline-recovery-context-r002.json",
+    "bytes": 217889,
+    "sha256": "81d6f349860bf797c0dcad3a828cf370398cd370025ffeefead2e9187f7ccff3"
+  },
+  "worktree_sha256": "5f3b51d5d532c43275c0f4a81de911f16422d84a87ca3086ebfcebed240428aa",
+  "files": 96,
+  "artifacts": 718,
+  "next_prompt": {
+    "path": "temp/run-a001-fase0-uv/prompts/13-implementation-r001-prepare-baseline-s005.md",
+    "bytes": 16880,
+    "sha256": "bc1c3a04499dfcc37c6b7b346f4d130fe8ea36b52859f2aee02f3d2b76445577"
+  },
+  "checkpoint": {
+    "path": "temp/run-a001-fase0-uv/handovers/supervisor-baseline-recovery-r002.md",
+    "bytes": 4889,
+    "sha256": "5ed4c996e5c2d9d4c248360d98dfe80dcbc36c7c908c63f13bf02eaa083e2742"
+  },
+  "decision": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/decision.md",
+    "bytes": 7951,
+    "sha256": "4b79ff17adf7d333ac252ed35127e93eb1a769e11c3c67a0c30de76341745ad6"
+  },
+  "sources": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/sources.json",
+    "bytes": 1924,
+    "sha256": "0a2ed545e903e8f7c3bd02a5661d006f9473de63f29408a28e2cb591acd0cbb3"
+  },
+  "proposed_commands": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/proposed-commands-baseline-s005.json",
+    "bytes": 14210,
+    "sha256": "b6dacd938bd5839404111c6d918f6c259f3de29648bbb5ea3ad35d78bbab8a17"
+  },
+  "reception": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/reception.json",
+    "bytes": 10268,
+    "sha256": "cc5e4f0279fcaa1ac0a5f038c19ada9fd7abdd243caa31a5ed89a41e10278a46"
+  },
+  "received_report": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/report-received-s004.md",
+    "bytes": 49541,
+    "sha256": "8c7f2bb5bebdd3571dc129b8511127659982ead77be31efab297014f1780311b"
+  },
+  "received_handover": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/handover-received-s004.md",
+    "bytes": 5763,
+    "sha256": "e7ba937359a7934669f650ea6b7cdb50d22317b0fb25b26dde6bde0d87b7e72a"
+  },
+  "received_changelog": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/changelog-received-s004.md",
+    "bytes": 55734,
+    "sha256": "a83cee46ac441f6ddccde986af25b86baa79ae5653618ce212ad704f18a53fdd"
+  },
+  "received_driver": {
+    "path": "temp/run-a001-fase0-uv/evidence/supervisor-implementation-r001/baseline-recovery-r002/run_baseline-received-s004.py",
+    "bytes": 34940,
+    "sha256": "bf7fd085fade82061da92d24c86f69831a7c9d13b624c89fd1443adeffb2b022"
+  },
+  "plan": {
+    "path": "temp/run-a001-fase0-uv/plans/plan-r003.md",
+    "bytes": 107103,
+    "sha256": "462dc1f4bca35d15df1a1005c60d8418d8c25540569fc6ab35e0277a2066f38b"
+  },
+  "arbitration": {
+    "path": "temp/run-a001-fase0-uv/arbitrations/arbitration-plan-r003.md",
+    "bytes": 24194,
+    "sha256": "f14ebe2fe15957ce3e8754bbc3f1111659875760e3666afeb10b562a4540df0d"
+  },
+  "historical_stage": {
+    "path": "temp/run-a001-fase0-uv/snapshots/impl-r001-stage-baseline-s004.json",
+    "bytes": 142958,
+    "sha256": "0540c6a2a9e1bd2acf94710cda39a7f388a0e55d6200cc5bbf35526aa781e7ae"
+  },
+  "V0_s004": "FAIL/exit2",
+  "suite_s004": "FAIL/exit1_62pass_5fail_67observed_201events",
+  "s005_request_or_stage_created": false,
+  "runtime_executed_by_supervisor": false,
+  "code_GO": false,
+  "no_self_hash": true
+}

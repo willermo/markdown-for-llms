@@ -1,0 +1,290 @@
+{
+  "schema": 1,
+  "captured_at_utc": "2026-10-07T11:46:01.077695+00:00",
+  "runner_candidate": "firejail",
+  "wrapper_sha256": "ea1d85b3278f4e1fcbf69b8e3fb97063f52bb8de5e5a6da5bdafe593a01ce700",
+  "diagnostic_sha256": "a1058dcca25a12aa9ea1b9d0a3960c7ee82966f238e672c3726ab3f76853dc88",
+  "target_sha256": "ee7043bf9ac03ac7971b77e16341a099a65a64965f2836b945aaea77847cd94e",
+  "status": "PASS",
+  "host_netns": "net:[4026531833]",
+  "binding_before": {
+    "argv": [
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/run_context.py",
+      "verify",
+      "run-a001-fase0-uv",
+      "--label",
+      "impl-r001-stage-launcher-s076"
+    ],
+    "exit_code": 0,
+    "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n",
+    "stderr": "",
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-launcher-s076.json",
+    "sha256": "a351ef30334b769544e15add4f92b9b7ffa5e276afb4863c35ebf5af098ca971",
+    "worktree_sha256": "1ce644fd14e17fe8862eb2e00aea4506d48443594cb3682ac57b54047277a028",
+    "label": "impl-r001-stage-launcher-s076"
+  },
+  "host_daemons_before": [
+    {
+      "path": "/run/containerd/containerd.sock",
+      "exists": true,
+      "canonical": "/run/containerd/containerd.sock",
+      "probe": {
+        "family": 1,
+        "address": "/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      }
+    },
+    {
+      "path": "/run/dbus/system_bus_socket",
+      "exists": true,
+      "canonical": "/run/dbus/system_bus_socket",
+      "probe": {
+        "family": 1,
+        "address": "/run/dbus/system_bus_socket",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/docker.sock",
+      "exists": true,
+      "canonical": "/run/docker.sock",
+      "probe": {
+        "family": 1,
+        "address": "/run/docker.sock",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/snapd.socket",
+      "exists": true,
+      "canonical": "/run/snapd.socket",
+      "probe": {
+        "family": 1,
+        "address": "/run/snapd.socket",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/user/1000/bus",
+      "exists": true,
+      "canonical": "/run/user/1000/bus",
+      "probe": {
+        "family": 1,
+        "address": "/run/user/1000/bus",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/user/1000/keyring/ssh",
+      "exists": true,
+      "canonical": "/run/user/1000/keyring/ssh",
+      "probe": {
+        "family": 1,
+        "address": "/run/user/1000/keyring/ssh",
+        "connected": true
+      }
+    },
+    {
+      "path": "/var/run/containerd/containerd.sock",
+      "exists": true,
+      "canonical": "/run/containerd/containerd.sock",
+      "probe": {
+        "family": 1,
+        "address": "/var/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      }
+    },
+    {
+      "path": "/var/run/docker.sock",
+      "exists": true,
+      "canonical": "/run/docker.sock",
+      "probe": {
+        "family": 1,
+        "address": "/var/run/docker.sock",
+        "connected": true
+      }
+    }
+  ],
+  "synthetic_socket": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+  "synthetic_host_before": {
+    "family": 1,
+    "address": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+    "connected": true
+  },
+  "invocation": {
+    "argv": [
+      "/usr/bin/firejail",
+      "--noprofile",
+      "--net=none",
+      "--env=TMPDIR=/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+      "--blacklist=/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+      "--blacklist=/run/containerd/containerd.sock",
+      "--blacklist=/run/dbus/system_bus_socket",
+      "--blacklist=/run/docker.sock",
+      "--blacklist=/run/podman/podman.sock",
+      "--blacklist=/run/snapd.socket",
+      "--blacklist=/run/user/1000/bus",
+      "--blacklist=/run/user/1000/docker.sock",
+      "--blacklist=/run/user/1000/keyring/ssh",
+      "--blacklist=/run/user/1000/podman/podman.sock",
+      "--blacklist=/var/run/containerd/containerd.sock",
+      "--blacklist=/var/run/docker.sock",
+      "--",
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+      "--inside",
+      "--python",
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "--repo",
+      "/home/davide/workarea/markdown-for-llms",
+      "--target",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/effective-target.json",
+      "--output",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/wrapper",
+      "--cwd",
+      "/home/davide/workarea/markdown-for-llms",
+      "--host-netns",
+      "net:[4026531833]",
+      "--synthetic-socket",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+      "--expected-exit",
+      "0",
+      "--timeout",
+      "60.0",
+      "--snapshot",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-launcher-s076.json",
+      "--preflight-config",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/preflight.json",
+      "--",
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "-c",
+      "import sys,time;assert sys.flags.isolated and sys.dont_write_bytecode;print('SYNTHETIC_OFFLINE_ONLY');time.sleep(.3)"
+    ],
+    "exit_code": 0,
+    "stdout": "runner-stdout.txt",
+    "stderr": "runner-stderr.txt"
+  },
+  "synthetic_host_after": {
+    "family": 1,
+    "address": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+    "connected": true
+  },
+  "host_daemons_after": [
+    {
+      "path": "/run/containerd/containerd.sock",
+      "exists": true,
+      "canonical": "/run/containerd/containerd.sock",
+      "probe": {
+        "family": 1,
+        "address": "/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      }
+    },
+    {
+      "path": "/run/dbus/system_bus_socket",
+      "exists": true,
+      "canonical": "/run/dbus/system_bus_socket",
+      "probe": {
+        "family": 1,
+        "address": "/run/dbus/system_bus_socket",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/docker.sock",
+      "exists": true,
+      "canonical": "/run/docker.sock",
+      "probe": {
+        "family": 1,
+        "address": "/run/docker.sock",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/snapd.socket",
+      "exists": true,
+      "canonical": "/run/snapd.socket",
+      "probe": {
+        "family": 1,
+        "address": "/run/snapd.socket",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/user/1000/bus",
+      "exists": true,
+      "canonical": "/run/user/1000/bus",
+      "probe": {
+        "family": 1,
+        "address": "/run/user/1000/bus",
+        "connected": true
+      }
+    },
+    {
+      "path": "/run/user/1000/keyring/ssh",
+      "exists": true,
+      "canonical": "/run/user/1000/keyring/ssh",
+      "probe": {
+        "family": 1,
+        "address": "/run/user/1000/keyring/ssh",
+        "connected": true
+      }
+    },
+    {
+      "path": "/var/run/containerd/containerd.sock",
+      "exists": true,
+      "canonical": "/run/containerd/containerd.sock",
+      "probe": {
+        "family": 1,
+        "address": "/var/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      }
+    },
+    {
+      "path": "/var/run/docker.sock",
+      "exists": true,
+      "canonical": "/run/docker.sock",
+      "probe": {
+        "family": 1,
+        "address": "/var/run/docker.sock",
+        "connected": true
+      }
+    }
+  ],
+  "binding_after": {
+    "argv": [
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/run_context.py",
+      "verify",
+      "run-a001-fase0-uv",
+      "--label",
+      "impl-r001-stage-launcher-s076"
+    ],
+    "exit_code": 0,
+    "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n",
+    "stderr": "",
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-launcher-s076.json",
+    "sha256": "a351ef30334b769544e15add4f92b9b7ffa5e276afb4863c35ebf5af098ca971",
+    "worktree_sha256": "1ce644fd14e17fe8862eb2e00aea4506d48443594cb3682ac57b54047277a028",
+    "label": "impl-r001-stage-launcher-s076"
+  },
+  "inputs_unchanged": true,
+  "temporary_socket_cleaned": true
+}

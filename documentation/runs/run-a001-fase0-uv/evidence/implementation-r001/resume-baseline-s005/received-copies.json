@@ -1,0 +1,17 @@
+[
+  {
+    "source": "temp/run-a001-fase0-uv/implementation/report-r001.md",
+    "copy": "report-received.md",
+    "sha256": "6e647218f96843f6b8382647febb72a4acf1b420f66c7c7a9759b787281ad165"
+  },
+  {
+    "source": "temp/run-a001-fase0-uv/handovers/implementation-r001.md",
+    "copy": "checkpoint-received.md",
+    "sha256": "3b2f9c6b10b256ef4711eff00af436636f51e3895c3115313329f814fa997f35"
+  },
+  {
+    "source": "documentation/CHANGELOG.md",
+    "copy": "CHANGELOG-received.md",
+    "sha256": "357b9f1a8d89b045fd8ae855f457b04d604920c1e19d81d62571493d19cd873d"
+  }
+]

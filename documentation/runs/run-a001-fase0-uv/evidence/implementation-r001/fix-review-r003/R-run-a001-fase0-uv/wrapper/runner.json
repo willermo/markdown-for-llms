@@ -1,0 +1,1117 @@
+{
+  "schema": 1,
+  "captured_at_utc": "2026-10-07T11:46:02.911497+00:00",
+  "status": "PASS",
+  "host_netns": "net:[4026531833]",
+  "diagnostic_sha256": "a1058dcca25a12aa9ea1b9d0a3960c7ee82966f238e672c3726ab3f76853dc88",
+  "target_sha256": "ee7043bf9ac03ac7971b77e16341a099a65a64965f2836b945aaea77847cd94e",
+  "parent": {
+    "pid": 4,
+    "ppid": 3,
+    "uid": 1000,
+    "gid": 1000,
+    "cwd": "/home/davide/workarea/markdown-for-llms",
+    "executable": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+    "realpath": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+    "prefix": "/tmp/run-a001-product-wheel-env-r001",
+    "base_prefix": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu",
+    "stdlib": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/os.py",
+    "version": "3.12.13 (main, Mar 10 2026, 18:17:25) [Clang 21.1.4 ]",
+    "status": "PASS",
+    "internet_probes": [
+      {
+        "family": 2,
+        "address": [
+          "192.0.2.1",
+          9
+        ],
+        "connected": false,
+        "errno": 101,
+        "error": "OSError"
+      },
+      {
+        "family": 10,
+        "address": [
+          "2001:db8::1",
+          9,
+          0,
+          0
+        ],
+        "connected": false,
+        "errno": 101,
+        "error": "OSError"
+      }
+    ],
+    "daemon_probes": [
+      {
+        "path": "/run/containerd/containerd.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/dbus/system_bus_socket",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/dbus/system_bus_socket",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/docker.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/docker.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/podman/podman.sock",
+        "exists_on_target": false,
+        "exists_inside": false,
+        "connected": false,
+        "absent": true,
+        "blacklist_demonstrated": false
+      },
+      {
+        "path": "/run/snapd.socket",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/snapd.socket",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/user/1000/bus",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/user/1000/bus",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/user/1000/docker.sock",
+        "exists_on_target": false,
+        "exists_inside": false,
+        "connected": false,
+        "absent": true,
+        "blacklist_demonstrated": false
+      },
+      {
+        "path": "/run/user/1000/keyring/ssh",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/user/1000/keyring/ssh",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/user/1000/podman/podman.sock",
+        "exists_on_target": false,
+        "exists_inside": false,
+        "connected": false,
+        "absent": true,
+        "blacklist_demonstrated": false
+      },
+      {
+        "path": "/var/run/containerd/containerd.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/var/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/var/run/docker.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/var/run/docker.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      }
+    ],
+    "network": {
+      "netns": "net:[4026533887]",
+      "links": [
+        {
+          "index": 1,
+          "name": "lo",
+          "flags": 65609,
+          "up": true
+        }
+      ],
+      "addresses": [
+        {
+          "index": 1,
+          "address": "127.0.0.1",
+          "prefix": 8,
+          "scope": 254
+        },
+        {
+          "index": 1,
+          "address": "127.0.0.1",
+          "prefix": 8,
+          "scope": 254
+        },
+        {
+          "index": 1,
+          "address": "::1",
+          "prefix": 128,
+          "scope": 254
+        }
+      ],
+      "routes": [
+        {
+          "family": 2,
+          "prefix": 8,
+          "dst": "127.0.0.0",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 2
+        },
+        {
+          "family": 2,
+          "prefix": 32,
+          "dst": "127.0.0.1",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 2
+        },
+        {
+          "family": 2,
+          "prefix": 32,
+          "dst": "127.255.255.255",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 3
+        },
+        {
+          "family": 10,
+          "prefix": 128,
+          "dst": "::1",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 2
+        }
+      ],
+      "proc": {
+        "/proc/net/dev": "Inter-|   Receive                                                |  Transmit\n face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed\n    lo:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0\n",
+        "/proc/net/route": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \n",
+        "/proc/net/ipv6_route": "00000000000000000000000000000000 00 00000000000000000000000000000000 00 00000000000000000000000000000000 ffffffff 00000001 00000000 00200200       lo\n00000000000000000000000000000001 80 00000000000000000000000000000000 00 00000000000000000000000000000000 00000000 00000002 00000000 80200001       lo\n00000000000000000000000000000000 00 00000000000000000000000000000000 00 00000000000000000000000000000000 ffffffff 00000001 00000000 00200200       lo\n",
+        "/proc/net/if_inet6": "00000000000000000000000000000001 01 80 10 80       lo\n"
+      },
+      "no_external_routes_or_addresses": true
+    },
+    "socketpair_positive": true,
+    "synthetic_probe": {
+      "family": 1,
+      "address": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+      "connected": false,
+      "errno": 13,
+      "error": "PermissionError"
+    },
+    "prerequisites": [
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/os.py",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/.local/bin/uv",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/pyvenv.cfg",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/certifi-2026.7.22.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/charset_normalizer-3.5.2.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/python_dotenv-1.2.4.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/regex-2024.11.6.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/requests-2.34.2.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/tiktoken-0.14.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/tqdm-4.70.1.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/urllib3-2.8.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/unshare",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/firejail",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/git",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/pandoc",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache/9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/S.json",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/I.json",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/execute.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-chunk",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-clean",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-config",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-pipeline",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-validate",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/batch_monitor.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/chunk_markdown.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/clean_markdown.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/config.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/exceptions.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/logging_config.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/INSTALLER",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/RECORD",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/REQUESTED",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/WHEEL",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/direct_url.json",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/entry_points.txt",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/licenses/LICENSE",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/top_level.txt",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/uv_cache.json",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/marker_api_server.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/master_workflow.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/unified_converter.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/validate_markdown.py",
+        "matches": true
+      },
+      {
+        "package": "certifi",
+        "version": "2026.7.22",
+        "matches": true
+      },
+      {
+        "package": "charset-normalizer",
+        "version": "3.5.2",
+        "matches": true
+      },
+      {
+        "package": "idna",
+        "version": "3.20",
+        "matches": true
+      },
+      {
+        "package": "markdown-for-llms",
+        "version": "1.0.0",
+        "matches": true
+      },
+      {
+        "package": "python-dotenv",
+        "version": "1.2.4",
+        "matches": true
+      },
+      {
+        "package": "regex",
+        "version": "2024.11.6",
+        "matches": true
+      },
+      {
+        "package": "requests",
+        "version": "2.34.2",
+        "matches": true
+      },
+      {
+        "package": "tiktoken",
+        "version": "0.14.0",
+        "matches": true
+      },
+      {
+        "package": "tqdm",
+        "version": "4.70.1",
+        "matches": true
+      },
+      {
+        "package": "urllib3",
+        "version": "2.8.0",
+        "matches": true
+      },
+      {
+        "python": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+        "matches": true
+      },
+      {
+        "isolated_no_bytecode": true,
+        "matches": true
+      },
+      {
+        "startup": [
+          {
+            "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+            "bytes": 18,
+            "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+          }
+        ],
+        "matches": true
+      },
+      {
+        "writable_directory": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+        "matches": true
+      },
+      {
+        "writable_directory": "/home/davide/workarea/markdown-for-llms",
+        "matches": true
+      }
+    ],
+    "environment": {
+      "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+      "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+      "PYENV_VERSION": null,
+      "VIRTUAL_ENV": null,
+      "PYTHONPATH": null,
+      "PYTHONHOME": null
+    },
+    "fds": [
+      "/dev/null",
+      "/dev/urandom",
+      "pipe:[117697757]",
+      "pipe:[117697758]"
+    ],
+    "binary_checks": [
+      {
+        "argv": [
+          "/usr/bin/pandoc",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "pandoc 3.1.3\nFeatures: -server +lua\nScripting engine: Lua 5.4\nUser data directory: /home/davide/.local/share/pandoc\nCopyright (C) 2006-2023 John MacFarlane. Web: https://pandoc.org\nThis is free software; see the source for copying conditions. There is no\nwarranty, not even for merchantability or fitness for a particular purpose.\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/usr/bin/git",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "git version 2.43.0\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "child": {
+    "pid": 11,
+    "ppid": 4,
+    "uid": 1000,
+    "gid": 1000,
+    "cwd": "/home/davide/workarea/markdown-for-llms",
+    "executable": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+    "realpath": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+    "prefix": "/tmp/run-a001-product-wheel-env-r001",
+    "base_prefix": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu",
+    "stdlib": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/os.py",
+    "version": "3.12.13 (main, Mar 10 2026, 18:17:25) [Clang 21.1.4 ]",
+    "status": "PASS",
+    "internet_probes": [
+      {
+        "family": 2,
+        "address": [
+          "192.0.2.1",
+          9
+        ],
+        "connected": false,
+        "errno": 101,
+        "error": "OSError"
+      },
+      {
+        "family": 10,
+        "address": [
+          "2001:db8::1",
+          9,
+          0,
+          0
+        ],
+        "connected": false,
+        "errno": 101,
+        "error": "OSError"
+      }
+    ],
+    "daemon_probes": [
+      {
+        "path": "/run/containerd/containerd.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/dbus/system_bus_socket",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/dbus/system_bus_socket",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/docker.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/docker.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/podman/podman.sock",
+        "exists_on_target": false,
+        "exists_inside": false,
+        "connected": false,
+        "absent": true,
+        "blacklist_demonstrated": false
+      },
+      {
+        "path": "/run/snapd.socket",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/snapd.socket",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/user/1000/bus",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/user/1000/bus",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/user/1000/docker.sock",
+        "exists_on_target": false,
+        "exists_inside": false,
+        "connected": false,
+        "absent": true,
+        "blacklist_demonstrated": false
+      },
+      {
+        "path": "/run/user/1000/keyring/ssh",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/run/user/1000/keyring/ssh",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/run/user/1000/podman/podman.sock",
+        "exists_on_target": false,
+        "exists_inside": false,
+        "connected": false,
+        "absent": true,
+        "blacklist_demonstrated": false
+      },
+      {
+        "path": "/var/run/containerd/containerd.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/var/run/containerd/containerd.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      },
+      {
+        "path": "/var/run/docker.sock",
+        "exists_on_target": true,
+        "exists_inside": true,
+        "family": 1,
+        "address": "/var/run/docker.sock",
+        "connected": false,
+        "errno": 13,
+        "error": "PermissionError"
+      }
+    ],
+    "network": {
+      "netns": "net:[4026533887]",
+      "links": [
+        {
+          "index": 1,
+          "name": "lo",
+          "flags": 65609,
+          "up": true
+        }
+      ],
+      "addresses": [
+        {
+          "index": 1,
+          "address": "127.0.0.1",
+          "prefix": 8,
+          "scope": 254
+        },
+        {
+          "index": 1,
+          "address": "127.0.0.1",
+          "prefix": 8,
+          "scope": 254
+        },
+        {
+          "index": 1,
+          "address": "::1",
+          "prefix": 128,
+          "scope": 254
+        }
+      ],
+      "routes": [
+        {
+          "family": 2,
+          "prefix": 8,
+          "dst": "127.0.0.0",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 2
+        },
+        {
+          "family": 2,
+          "prefix": 32,
+          "dst": "127.0.0.1",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 2
+        },
+        {
+          "family": 2,
+          "prefix": 32,
+          "dst": "127.255.255.255",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 3
+        },
+        {
+          "family": 10,
+          "prefix": 128,
+          "dst": "::1",
+          "gateway": null,
+          "oif": 1,
+          "multipath": false,
+          "table": 255,
+          "type": 2
+        }
+      ],
+      "proc": {
+        "/proc/net/dev": "Inter-|   Receive                                                |  Transmit\n face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed\n    lo:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0\n",
+        "/proc/net/route": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \n",
+        "/proc/net/ipv6_route": "00000000000000000000000000000000 00 00000000000000000000000000000000 00 00000000000000000000000000000000 ffffffff 00000001 00000000 00200200       lo\n00000000000000000000000000000001 80 00000000000000000000000000000000 00 00000000000000000000000000000000 00000000 00000002 00000000 80200001       lo\n00000000000000000000000000000000 00 00000000000000000000000000000000 00 00000000000000000000000000000000 ffffffff 00000001 00000000 00200200       lo\n",
+        "/proc/net/if_inet6": "00000000000000000000000000000001 01 80 10 80       lo\n"
+      },
+      "no_external_routes_or_addresses": true
+    },
+    "socketpair_positive": true,
+    "synthetic_probe": {
+      "family": 1,
+      "address": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+      "connected": false,
+      "errno": 13,
+      "error": "PermissionError"
+    },
+    "prerequisites": [
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/os.py",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/.local/bin/uv",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/pyvenv.cfg",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/certifi-2026.7.22.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/charset_normalizer-3.5.2.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/python_dotenv-1.2.4.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/regex-2024.11.6.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/requests-2.34.2.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/tiktoken-0.14.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/tqdm-4.70.1.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/urllib3-2.8.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/unshare",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/firejail",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/git",
+        "matches": true
+      },
+      {
+        "path": "/usr/bin/pandoc",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache/9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/S.json",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/I.json",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+        "matches": true
+      },
+      {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/execute.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-chunk",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-clean",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-config",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-pipeline",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/bin/markdown-validate",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/batch_monitor.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/chunk_markdown.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/clean_markdown.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/config.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/exceptions.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/logging_config.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/INSTALLER",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/METADATA",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/RECORD",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/REQUESTED",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/WHEEL",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/direct_url.json",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/entry_points.txt",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/licenses/LICENSE",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/top_level.txt",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/markdown_for_llms-1.0.0.dist-info/uv_cache.json",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/marker_api_server.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/master_workflow.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/unified_converter.py",
+        "matches": true
+      },
+      {
+        "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/validate_markdown.py",
+        "matches": true
+      },
+      {
+        "package": "certifi",
+        "version": "2026.7.22",
+        "matches": true
+      },
+      {
+        "package": "charset-normalizer",
+        "version": "3.5.2",
+        "matches": true
+      },
+      {
+        "package": "idna",
+        "version": "3.20",
+        "matches": true
+      },
+      {
+        "package": "markdown-for-llms",
+        "version": "1.0.0",
+        "matches": true
+      },
+      {
+        "package": "python-dotenv",
+        "version": "1.2.4",
+        "matches": true
+      },
+      {
+        "package": "regex",
+        "version": "2024.11.6",
+        "matches": true
+      },
+      {
+        "package": "requests",
+        "version": "2.34.2",
+        "matches": true
+      },
+      {
+        "package": "tiktoken",
+        "version": "0.14.0",
+        "matches": true
+      },
+      {
+        "package": "tqdm",
+        "version": "4.70.1",
+        "matches": true
+      },
+      {
+        "package": "urllib3",
+        "version": "2.8.0",
+        "matches": true
+      },
+      {
+        "python": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+        "matches": true
+      },
+      {
+        "isolated_no_bytecode": true,
+        "matches": true
+      },
+      {
+        "startup": [
+          {
+            "path": "/tmp/run-a001-product-wheel-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+            "bytes": 18,
+            "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+          }
+        ],
+        "matches": true
+      },
+      {
+        "writable_directory": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+        "matches": true
+      },
+      {
+        "writable_directory": "/home/davide/workarea/markdown-for-llms",
+        "matches": true
+      }
+    ],
+    "environment": {
+      "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+      "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+      "PYENV_VERSION": null,
+      "VIRTUAL_ENV": null,
+      "PYTHONPATH": null,
+      "PYTHONHOME": null
+    },
+    "fds": [
+      "/dev/null",
+      "/dev/urandom",
+      "pipe:[117697814]",
+      "pipe:[117697815]"
+    ],
+    "binary_checks": [
+      {
+        "argv": [
+          "/usr/bin/pandoc",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "pandoc 3.1.3\nFeatures: -server +lua\nScripting engine: Lua 5.4\nUser data directory: /home/davide/.local/share/pandoc\nCopyright (C) 2006-2023 John MacFarlane. Web: https://pandoc.org\nThis is free software; see the source for copying conditions. There is no\nwarranty, not even for merchantability or fitness for a particular purpose.\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/usr/bin/git",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "git version 2.43.0\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "child_command": {
+    "argv": [
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/check_runner.py",
+      "--target",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-a001-fase0-uv/effective-target.json",
+      "--host-netns",
+      "net:[4026531833]",
+      "--repo",
+      "/home/davide/workarea/markdown-for-llms",
+      "--synthetic-socket",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/r/s-0e_ji5kz/s",
+      "--child"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  "same_namespace": true,
+  "limits": "Solo fixture fidate e canali inventariati; nessuna sandbox generale."
+}

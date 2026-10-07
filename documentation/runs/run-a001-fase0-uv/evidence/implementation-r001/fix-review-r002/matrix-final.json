@@ -1,0 +1,51 @@
+{
+  "CLA-I001": {
+    "status": "PASS_REAL_CURRENT_HOST_AND_STANDALONE",
+    "evidence": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-standalone-runid-r003/workload.json",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-fast-r001/E-pytest.json"
+    ],
+    "missing": []
+  },
+  "CLA-I002": {
+    "status": "PASS_REAL_COMPOSE_WITH_EXACT_INPUT_EQUIVALENCE",
+    "image": "sha256:b3db6dc22d92d7771aba40013bab4281ebe9f68188d5c46fc2617136b7d2c3a8",
+    "evidence": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/compose-r004/result.json",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004.receipt.json"
+    ],
+    "note": "two CPU build configs exact; GPU config only; all native/public input payloads verified, no new acquisition"
+  },
+  "CLA-I003": {
+    "status": "PASS_REAL_VERSIONED_C_DOCKER",
+    "evidence": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/C-docker-r002/result.json",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/C-docker-r002/contract/result.json"
+    ],
+    "nodeid": "tests/docker/test_marker_contract.py::test_marker_contract",
+    "nine_offline_subcases": true
+  },
+  "CLA-I004": {
+    "status": "PASS_STATIC_INDIVIDUAL74_PLUS9",
+    "evidence": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/readme-reconciliation-verified.json",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/final-static.json"
+    ]
+  },
+  "CLA-I005": {
+    "status": "PASS_DURABLE_DOCUMENTATION",
+    "evidence": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/final-static.json"
+    ],
+    "README_before_B56": true
+  },
+  "GPT-I001": {
+    "status": "PASS_TARGETED_AND_REAL_R",
+    "evidence": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/launcher-targeted.json",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/proof-source-s059-r001/wrapper/runner.json",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-source-s060-r001/wrapper/runner.json"
+    ],
+    "note": "actual socket s; primary preserved; cleanup secondary separate; receipt even cleanup FAIL; no R weakening"
+  }
+}

@@ -1,0 +1,3 @@
+2026-10-07T12:33:17+02:00
+MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.
+e0cb33d16a5766f653923c2d25cf365f910d7e738d542893db2a1ac589272c1d  temp/run-a001-fase0-uv/snapshots/impl-r001-stage-final-s002.json

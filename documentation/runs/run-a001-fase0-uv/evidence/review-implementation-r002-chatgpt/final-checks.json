@@ -1,0 +1,97 @@
+{
+  "snapshot": {
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-final-s002.json",
+    "bytes": 1152887,
+    "sha256": "e0cb33d16a5766f653923c2d25cf365f910d7e738d542893db2a1ac589272c1d",
+    "worktree_sha256": "361da83746c2b0c088cbe7ad5126890f2b91e345da408a1616c766e6ee866142"
+  },
+  "verify_after": {
+    "argv": [
+      "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/run_context.py",
+      "verify",
+      "run-a001-fase0-uv",
+      "--label",
+      "impl-r001-stage-final-s002"
+    ],
+    "exit": 0,
+    "stdout": "MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.\n",
+    "stderr": ""
+  },
+  "git_diff_check_exit": 0,
+  "own_local_links": [
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../prompts/57-review-implementation-r002-chatgpt.md",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../prompts/review-implementation-r002-common.md",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../evidence/review-implementation-r002-chatgpt/match-before.json",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../evidence/review-implementation-r002-chatgpt/final-checks.json",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../evidence/review-implementation-r002-chatgpt/read-inventory.json",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../evidence/review-implementation-r002-chatgpt/",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../evidence/review-implementation-r002-chatgpt/static-audit.json",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../evidence/review-implementation-r002-chatgpt/probe-run-identity.json",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../evidence/review-implementation-r002-chatgpt/probe-run-identity.json",
+      "exists": true
+    },
+    {
+      "file": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/reviews/review-implementation-r002-chatgpt.md",
+      "target": "../handovers/review-implementation-r002-chatgpt.md",
+      "exists": true
+    }
+  ],
+  "probe_internal_seconds_cumulative": 0.013100852025672793,
+  "probe_wall_seconds_cumulative_observed": 0.774540503,
+  "probe_quota_seconds": 30,
+  "probe_real_subprocesses": 0,
+  "output_file_count": 14,
+  "output_logical_bytes": 1142037,
+  "output_allocated_bytes_before_receipt": 1171456,
+  "output_limit_bytes": 2097152,
+  "core_ledger": {
+    "logical": 830490912,
+    "allocated": 909180928,
+    "H": 909180928,
+    "delta": 355639296,
+    "remaining_bytes": 13459456,
+    "total_with_reserve": 939417600,
+    "measurement_before_this_small_receipt": true
+  },
+  "product_workloads_executed": 0,
+  "docker_commands_executed": 0,
+  "network_commands_executed": 0,
+  "other_r002_report_read": false
+}

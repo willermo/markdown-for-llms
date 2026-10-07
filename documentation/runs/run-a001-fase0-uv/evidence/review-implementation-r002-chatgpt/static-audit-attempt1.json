@@ -1,0 +1,3981 @@
+{
+  "scope": "READ_HASH_AST_ONLY_NOT_NEW_PRODUCT_PASS",
+  "seconds": 0.7310445799957961,
+  "checks": {
+    "identity": {
+      "freeze": {
+        "role": "supervisor",
+        "date": "2026-10-07",
+        "run_id": "run-a001-fase0-uv",
+        "label": "impl-r001-stage-final-s002",
+        "snapshot": {
+          "path": "temp/run-a001-fase0-uv/snapshots/impl-r001-stage-final-s002.json",
+          "bytes": 1152887,
+          "sha256": "e0cb33d16a5766f653923c2d25cf365f910d7e738d542893db2a1ac589272c1d"
+        },
+        "worktree_sha256": "361da83746c2b0c088cbe7ad5126890f2b91e345da408a1616c766e6ee866142",
+        "files": 133,
+        "artifacts": 4050,
+        "status": "COMMON_FIX_OBJECT_FOR_TWO_INDEPENDENT_R002_REVIEWS_NOT_GO",
+        "live_author_checkpoint_excluded": true,
+        "future_review_outputs_excluded": true,
+        "execution_stage_s060_historical_due_only_supervisor_docs": true,
+        "time_overrun_not_erased_seconds": 5.287443262990564
+      },
+      "git": {
+        "head": {
+          "exit": 0,
+          "stdout": "66ba82200e5def5a4db76f9bafccb0731b506091\n",
+          "stderr": ""
+        },
+        "dev": {
+          "exit": 0,
+          "stdout": "66ba82200e5def5a4db76f9bafccb0731b506091\n",
+          "stderr": ""
+        },
+        "branch": {
+          "exit": 0,
+          "stdout": "feature/run-a001-uv\n",
+          "stderr": ""
+        },
+        "index": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "whitespace": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      },
+      "delta": {
+        "basis": "first code-review snapshot; reception before supervisor docs",
+        "initial_base": "66ba82200e5def5a4db76f9bafccb0731b506091",
+        "changes": [
+          {
+            "path": "AGENTS.md",
+            "before": {
+              "path": "AGENTS.md",
+              "kind": "file",
+              "sha256": "0aed525e3153353b842f89fe63fac95e623ec51b1ac168e9142cc002baa3c266",
+              "executable": false
+            },
+            "current": {
+              "path": "AGENTS.md",
+              "kind": "file",
+              "sha256": "377986dec083266db1cf3aaeb0a06d3ee5296db4d09b3d32fc76d1614247a207",
+              "executable": false
+            }
+          },
+          {
+            "path": "Dockerfile",
+            "before": {
+              "path": "Dockerfile",
+              "kind": "file",
+              "sha256": "fd806a0dfdedefb582ea60996988b7d76fe2903bbaad2549d6a93bf724dbef9d",
+              "executable": false
+            },
+            "current": {
+              "path": "Dockerfile",
+              "kind": "file",
+              "sha256": "88b369ad301d158e4d132f0c8bef2e7f2f496a5f619d51ef2712e3e64941c0d9",
+              "executable": false
+            }
+          },
+          {
+            "path": "README.md",
+            "before": {
+              "path": "README.md",
+              "kind": "file",
+              "sha256": "00993af35d06a63dc89abba00aed5256ac943cbe013dba001c6727ca668bc873",
+              "executable": false
+            },
+            "current": {
+              "path": "README.md",
+              "kind": "file",
+              "sha256": "33ce6c4b41780abfbca27e0cf0e1166db25fd095b70aa268e2c8919f5a13942f",
+              "executable": false
+            }
+          },
+          {
+            "path": "docker-compose-build.yml",
+            "before": {
+              "path": "docker-compose-build.yml",
+              "kind": "file",
+              "sha256": "c5b2373a3967e307d8a9bcde667af9a2519796379e6315ffbc4096a1930068ba",
+              "executable": false
+            },
+            "current": {
+              "path": "docker-compose-build.yml",
+              "kind": "file",
+              "sha256": "2dd2539db4c8cb3cac2c2519838ff5c7388042b5e5d7b349212e1e30e8b3a2f5",
+              "executable": false
+            }
+          },
+          {
+            "path": "docker-compose.yml",
+            "before": {
+              "path": "docker-compose.yml",
+              "kind": "file",
+              "sha256": "4d73d530edbbf9fbcd46adc4c6c5c6629c59dd89dfc19127ef47e9d84772a735",
+              "executable": false
+            },
+            "current": {
+              "path": "docker-compose.yml",
+              "kind": "file",
+              "sha256": "4a323bc54b0f5e15bc713c761a65795591fb2817220edc3515b58a882c42aa00",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/README.md",
+            "before": {
+              "path": "docs/README.md",
+              "kind": "file",
+              "sha256": "da15afb1dde40faa4d3b472004690ea0afff6ab3ea3c8a81a70160d8f5b51b9e",
+              "executable": false
+            },
+            "current": {
+              "path": "docs/README.md",
+              "kind": "file",
+              "sha256": "817f42c52dd7f39ece04adf4828e34014bb149c68732591678a5b1ce8b2f6817",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/how-to/README.md",
+            "before": {
+              "path": "docs/how-to/README.md",
+              "kind": "file",
+              "sha256": "f6f07fc68432f8e7b7b373da72b2dbeb452b442d0dc817189f15697b5e292a50",
+              "executable": false
+            },
+            "current": {
+              "path": "docs/how-to/README.md",
+              "kind": "file",
+              "sha256": "cc2452f3efe919d359732f2216e698d7b4139ad36bb1a3a501e09fad20269625",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/how-to/ambiente-uv.md",
+            "before": {
+              "path": "docs/how-to/ambiente-uv.md",
+              "kind": "file",
+              "sha256": "0cad914b1dd2522ee5a7ffcc612318f00d704de7bb8bd589b0b474886f6a9f89",
+              "executable": false
+            },
+            "current": {
+              "path": "docs/how-to/ambiente-uv.md",
+              "kind": "file",
+              "sha256": "25018a1c1ccc6e06f291223720c2973e66428be5c48617b4c083fe8bf0375646",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/how-to/marker-legacy-docker.md",
+            "before": {
+              "path": "docs/how-to/marker-legacy-docker.md",
+              "kind": "file",
+              "sha256": "f7bbb71c511dbf99eeb4dc6bde27ee1824e83d2ea72439bd40a1f3801fa88819",
+              "executable": false
+            },
+            "current": {
+              "path": "docs/how-to/marker-legacy-docker.md",
+              "kind": "file",
+              "sha256": "8568eb57776e9be9a81845099c81418ab3bd5ae994ec1f96e2a23b878a0c9eb4",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/how-to/pipeline-backends.md",
+            "before": null,
+            "current": {
+              "path": "docs/how-to/pipeline-backends.md",
+              "kind": "file",
+              "sha256": "47043f039d258875b6ccc8a0e2e78525316fa2f52e3a9e25b3796e352e2cc2b1",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/reference/README.md",
+            "before": {
+              "path": "docs/reference/README.md",
+              "kind": "file",
+              "sha256": "2f89d974aa338776a4c2b0140bef84199a8743c24006ea0fee02070eb46d7199",
+              "executable": false
+            },
+            "current": {
+              "path": "docs/reference/README.md",
+              "kind": "file",
+              "sha256": "24588d863827d8375ebb9623f832219d635f758eafe6178020e0c46d51ad4512",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/reference/pipeline-config.md",
+            "before": null,
+            "current": {
+              "path": "docs/reference/pipeline-config.md",
+              "kind": "file",
+              "sha256": "fff448d43d57c125a8e728f20a2f822376f21195eb4a6e26ef945656a8df2279",
+              "executable": false
+            }
+          },
+          {
+            "path": "docs/reference/toolchain-legacy.md",
+            "before": {
+              "path": "docs/reference/toolchain-legacy.md",
+              "kind": "file",
+              "sha256": "9a82dd621994868f926ff62f7888cb9519df3719f9993b3d018e33fb3acb87b7",
+              "executable": false
+            },
+            "current": {
+              "path": "docs/reference/toolchain-legacy.md",
+              "kind": "file",
+              "sha256": "40241f0f76fb007eaa05934dd5858690dde1d85a9ddbac47ecab68b0ff57d2ff",
+              "executable": false
+            }
+          },
+          {
+            "path": "documentation/CHANGELOG.md",
+            "before": {
+              "path": "documentation/CHANGELOG.md",
+              "kind": "file",
+              "sha256": "0f2184fab3f53ba71b74629bf167ce1e38bf86f907ffd4ab4e14586e782862ea",
+              "executable": false
+            },
+            "current": {
+              "path": "documentation/CHANGELOG.md",
+              "kind": "file",
+              "sha256": "6cbc3c0c2caac1dcd0aafacfaa16b0d744d65b055d13c99dfb87d580619d1068",
+              "executable": false
+            }
+          },
+          {
+            "path": "documentation/README.md",
+            "before": {
+              "path": "documentation/README.md",
+              "kind": "file",
+              "sha256": "d28f346b3964a6966fc16ac378ee28ab604318f93e37e73db55757f2e83a0826",
+              "executable": false
+            },
+            "current": {
+              "path": "documentation/README.md",
+              "kind": "file",
+              "sha256": "2bc8de075aacc6977007dd3092cfa9e7b39255e7da84889ba40f0615de219612",
+              "executable": false
+            }
+          },
+          {
+            "path": "documentation/decisions/0006-python-toolchain-uv.md",
+            "before": {
+              "path": "documentation/decisions/0006-python-toolchain-uv.md",
+              "kind": "file",
+              "sha256": "8c6a6cac2a621a0e9b9565bb7b3bfcdfc341d74e30b55fcd8bf24868f214aac7",
+              "executable": false
+            },
+            "current": {
+              "path": "documentation/decisions/0006-python-toolchain-uv.md",
+              "kind": "file",
+              "sha256": "c3a436cd494b73234ea09c78fcb931b5bdde7b217be2a4f8f2fcfaff17553934",
+              "executable": false
+            }
+          },
+          {
+            "path": "documentation/decisions/README.md",
+            "before": {
+              "path": "documentation/decisions/README.md",
+              "kind": "file",
+              "sha256": "fb36c2347d38cc22642a4e762fec556f567ba2c6b65c14d98ca80f3f774d6262",
+              "executable": false
+            },
+            "current": {
+              "path": "documentation/decisions/README.md",
+              "kind": "file",
+              "sha256": "7b266f3a46390276bb408cfa0db21657980c07e180f47d423b8b7a2f85d88aa8",
+              "executable": false
+            }
+          },
+          {
+            "path": "documentation/roadmap.md",
+            "before": {
+              "path": "documentation/roadmap.md",
+              "kind": "file",
+              "sha256": "603d320aec48bb02a7ca97e3a0b81437837b2b07d8506d55ec95352cee1481af",
+              "executable": false
+            },
+            "current": {
+              "path": "documentation/roadmap.md",
+              "kind": "file",
+              "sha256": "f68dd03165ecdeb793a1745105c8e80df2f6cc276a0286cdc044aae0da4586c4",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/check_preflight.py",
+            "before": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/check_preflight.py",
+              "kind": "file",
+              "sha256": "ea992f6559664d5ba8219095d160dede8c4268f3783613f39a7a30e53a2f5099",
+              "executable": false
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/check_preflight.py",
+              "kind": "file",
+              "sha256": "c86e2389eb283ccbfb9f7a53b8ca81c5392470bc28f47931ce9384c26bfba749",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+            "before": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+              "kind": "file",
+              "sha256": "0546f88a506cf249aa88f094183218ed0eed80477042614eff063bc2753f6ec4",
+              "executable": false
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+              "kind": "file",
+              "sha256": "6265063d6ced39afc949c47a75dbb0dba89622961d3b4f62f7b83b913d50b60e",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/make_input_inventory.py",
+            "before": null,
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/make_input_inventory.py",
+              "kind": "file",
+              "sha256": "3a46ee10eab008af9660ce4b1c02be9669e707f5b1837f9250d6898557d15e6f",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+            "before": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+              "kind": "file",
+              "sha256": "c276b01169a68aa4473a6534821d175b825c60285d45f0278361b0b7dd22e474",
+              "executable": false
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+              "kind": "file",
+              "sha256": "4bd91afef7be9ac467eb3fe2762c839f90f4541cfce7cf3df76367ebed06ec19",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/prepare_docker_inputs.py",
+            "before": null,
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/prepare_docker_inputs.py",
+              "kind": "file",
+              "sha256": "2e8df0dad65fa47a883daf7e449123dd71707c405be1ccc18c314fe33248d1a8",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/run_docker_contract.py",
+            "before": null,
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/run_docker_contract.py",
+              "kind": "file",
+              "sha256": "60ae6c3ae888ced84dddc8763f803042b989bc097b8eb692a9a18e20c79bdc82",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+            "before": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+              "kind": "file",
+              "sha256": "860d3b6a2c9f54f1b3b39f0bfb58564882bf22593789a97a0845399f366e6c83",
+              "executable": false
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+              "kind": "file",
+              "sha256": "2946aa1673b515f1186b6cdbf8483342c013205ce837f000e43d66fff4afcefd",
+              "executable": false
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/run_tests.py",
+            "before": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/run_tests.py",
+              "kind": "file",
+              "sha256": "115d100b0bd70bfd5187af10c268958fba53b8272488dd0e35205e2f12b5569b",
+              "executable": false
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/run_tests.py",
+              "kind": "file",
+              "sha256": "3cf0ec0903caaba3efd735db3a29b4a186dfa21f400c1c74092684aa348e4442",
+              "executable": false
+            }
+          },
+          {
+            "path": "tests/conftest.py",
+            "before": {
+              "path": "tests/conftest.py",
+              "kind": "file",
+              "sha256": "9f73c6fcec06075c30fc1e6fa2d94b8866c79a838352f536e3394debc9d3106e",
+              "executable": false
+            },
+            "current": {
+              "path": "tests/conftest.py",
+              "kind": "file",
+              "sha256": "1176bde0d2791e77c436e7908ba4562377258e7fd6f09c02ef9f56fe1ede5d22",
+              "executable": false
+            }
+          },
+          {
+            "path": "tests/docker/test_marker_contract.py",
+            "before": {
+              "path": "tests/docker/test_marker_contract.py",
+              "kind": "file",
+              "sha256": "e3d929c0f88fac31afdd814d2851885a0745fb0a2200bc0ab12714e63605fc0c",
+              "executable": false
+            },
+            "current": {
+              "path": "tests/docker/test_marker_contract.py",
+              "kind": "file",
+              "sha256": "8182a0c1f63ea99f482af74f780348028398c6e3643a62044f80b644a536320a",
+              "executable": false
+            }
+          },
+          {
+            "path": "tests/unit/test_core_diagnostics.py",
+            "before": {
+              "path": "tests/unit/test_core_diagnostics.py",
+              "kind": "file",
+              "sha256": "2749fc91fb68653cc02814bc574227539dbb3481bc284888293726178fecb211",
+              "executable": false
+            },
+            "current": {
+              "path": "tests/unit/test_core_diagnostics.py",
+              "kind": "file",
+              "sha256": "9edb4450b82a631b5f29860983f5f9e03ed2261524f91a5a35bc88c1fa3b1bd2",
+              "executable": false
+            }
+          },
+          {
+            "path": "tests/unit/test_package_diagnostics.py",
+            "before": {
+              "path": "tests/unit/test_package_diagnostics.py",
+              "kind": "file",
+              "sha256": "71cbadac5da8cc3393a9e554660df5fda53040e4a5fce701294de5d1e25a8384",
+              "executable": false
+            },
+            "current": {
+              "path": "tests/unit/test_package_diagnostics.py",
+              "kind": "file",
+              "sha256": "6be11a5598bb1eedf90b1fca0ff8c48a1c5cff7b320075947315060b00f940f1",
+              "executable": false
+            }
+          }
+        ]
+      }
+    },
+    "host": {
+      "audit_error": "FileNotFoundError(2, 'No such file or directory')"
+    },
+    "reuse": {
+      "context_files_exact": 24,
+      "C_docker_objects_exact": 5,
+      "canonical": {
+        "sdist": {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0.tar.gz",
+          "bytes": 46160,
+          "sha256": "a6a85fe172249982229d9df770856c27a76fa59dd2109f1f5efb8191267fa357"
+        },
+        "wheel": {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/build/dist-r001/markdown_for_llms-1.0.0-py3-none-any.whl",
+          "bytes": 47514,
+          "sha256": "6fff8af117ef40ee2872ebb4d81295bd3421144a3a7adc2905555cb7e7bf001c"
+        }
+      },
+      "modules_exact": [
+        "batch_monitor.py",
+        "chunk_markdown.py",
+        "clean_markdown.py",
+        "config.py",
+        "exceptions.py",
+        "logging_config.py",
+        "marker_api_server.py",
+        "master_workflow.py",
+        "unified_converter.py",
+        "validate_markdown.py"
+      ],
+      "README_in_sdist_and_METADATA_exact": true,
+      "previous_equivalence": {
+        "status": "PASS_INPUT_EQUIVALENCE_ONLY",
+        "B46": [
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r006/dist-r002/markdown_for_llms-1.0.0.tar.gz",
+            "bytes": 46250,
+            "sha256": "46dd6d0f07025d21306a4491eb495a5220a33c4bd4aebb456a747976ed630aa0"
+          },
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r006/dist-r002/markdown_for_llms-1.0.0-py3-none-any.whl",
+            "bytes": 47560,
+            "sha256": "d93bca679d7488ead87efab8059c3c6cff26c884798a4fb239bc531b88d92f8e"
+          }
+        ],
+        "current_S": {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/S-s055.json",
+          "bytes": 17430,
+          "sha256": "cfd4aca2e385de712f2e595d2286c1d10e564ba5d1ab5c3520a29200178bf5ee"
+        },
+        "build_modules_inputs_exact": true,
+        "wheel_B20_to_B46": {
+          "exact_payload_and_entrypoints": [
+            "batch_monitor.py",
+            "chunk_markdown.py",
+            "clean_markdown.py",
+            "config.py",
+            "exceptions.py",
+            "logging_config.py",
+            "marker_api_server.py",
+            "master_workflow.py",
+            "unified_converter.py",
+            "validate_markdown.py",
+            "markdown_for_llms-1.0.0.dist-info/entry_points.txt"
+          ],
+          "all_metadata_headers_equal": true,
+          "description_body_equal": false,
+          "changed_body": "README documentation only",
+          "old_archive": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r003/dist/markdown_for_llms-1.0.0-py3-none-any.whl",
+            "bytes": 47506,
+            "sha256": "f585c53df5960625d27a0aa94136b205c5d2c35f9041dae6e8a02e175f331ac5"
+          },
+          "new_archive": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r006/dist-r002/markdown_for_llms-1.0.0-py3-none-any.whl",
+            "bytes": 47560,
+            "sha256": "d93bca679d7488ead87efab8059c3c6cff26c884798a4fb239bc531b88d92f8e"
+          }
+        },
+        "tests_conftest_exact": [
+          "tests/api/test_marker_wrapper.py",
+          "tests/conftest.py",
+          "tests/docker/test_marker_contract.py",
+          "tests/fixtures/run-a001-fase0-uv/assets/f5.png",
+          "tests/fixtures/run-a001-fase0-uv/dotenv-1200-80.txt",
+          "tests/fixtures/run-a001-fase0-uv/f1-stable.md",
+          "tests/fixtures/run-a001-fase0-uv/f2-sensitive.md",
+          "tests/fixtures/run-a001-fase0-uv/f3-cleaned-sensitive.md",
+          "tests/fixtures/run-a001-fase0-uv/f3-cleaned-stable.md",
+          "tests/fixtures/run-a001-fase0-uv/f4-pandoc.html",
+          "tests/fixtures/run-a001-fase0-uv/f5-asset.md",
+          "tests/fixtures/run-a001-fase0-uv/f6-multichunk.md",
+          "tests/fixtures/run-a001-fase0-uv/fixture-config.json",
+          "tests/fixtures/run-a001-fase0-uv/provenance.json",
+          "tests/governance/test_run_context.py",
+          "tests/integration/test_pipeline.py",
+          "tests/packaging/test_installed_distribution.py",
+          "tests/unit/test_chunking.py",
+          "tests/unit/test_cleaning.py",
+          "tests/unit/test_config_cli.py",
+          "tests/unit/test_core_diagnostics.py",
+          "tests/unit/test_package_diagnostics.py",
+          "tests/unit/test_phase_launch.py",
+          "tests/unit/test_uv_diagnostics.py",
+          "tests/unit/test_validation.py"
+        ],
+        "profiles": [
+          {
+            "name": "root",
+            "dependency_versions_exact": true,
+            "I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/I-root-s055.json",
+              "bytes": 14242,
+              "sha256": "1ef53ad4f902464f429a08ee6faa3d12fff3c78ee97052e8e2ed29324462279a"
+            },
+            "previous_I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-root-s045.json",
+              "bytes": 14218,
+              "sha256": "9e1e4eb4e1c0f8f7f8399dc5c05aaac48c7815cd26a1dd819a02702452ca12e6"
+            }
+          },
+          {
+            "name": "base-a",
+            "dependency_versions_exact": true,
+            "I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/I-base-a-s055.json",
+              "bytes": 15946,
+              "sha256": "908c0d2a152f5b548e281e3b9110fda5bbd00b3164b2aeb218afb64cf6d4e23f"
+            },
+            "previous_I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-base-a-s045.json",
+              "bytes": 15968,
+              "sha256": "fdc69d23a511cdb55b4669e942eeb5560f108b8d11e5ae57f3f0755937f7860b"
+            }
+          },
+          {
+            "name": "base-b",
+            "dependency_versions_exact": true,
+            "I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/I-base-b-s055.json",
+              "bytes": 15946,
+              "sha256": "90b6eb16421e9066899eb76b06d487e8a5296bf165fc263f04bb22d761bfdf11"
+            },
+            "previous_I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-base-b-s045.json",
+              "bytes": 15968,
+              "sha256": "eba196478889ad1c348433ff04a6ac3dd74884ec4f9a42c2f7e20028f3d339a6"
+            }
+          },
+          {
+            "name": "external",
+            "dependency_versions_exact": true,
+            "I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/I-external-s055.json",
+              "bytes": 13910,
+              "sha256": "4aefd6931e6fb767f99860c1fc7876c79377831b74f0aa95bdb3f0903daaf59c"
+            },
+            "previous_I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-external-s045.json",
+              "bytes": 13880,
+              "sha256": "76807efbefde50ff97afe8f909c596e5840784a604e4072eb179bc4abf18fbcf"
+            }
+          },
+          {
+            "name": "dev",
+            "dependency_versions_exact": true,
+            "I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/I-dev-s055.json",
+              "bytes": 17999,
+              "sha256": "27d25392dec608aa90df0f1f34b0466f99e634a123f4a9d3517255fb5ef46c49"
+            },
+            "previous_I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-dev-s045.json",
+              "bytes": 18020,
+              "sha256": "a3957ae6ee433cd7de13847b0da751db3097a4c068bb08cf57256cf3befaf7b6"
+            }
+          },
+          {
+            "name": "api",
+            "dependency_versions_exact": true,
+            "I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r003/I-api-s055.json",
+              "bytes": 18848,
+              "sha256": "a06cdc7a47984e3e072df9be423ab8095a853bb227b9660ac7b078f9fbad88a3"
+            },
+            "previous_I": {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/completion-r002/I-api-s045.json",
+              "bytes": 18869,
+              "sha256": "9e87fad47fec3f003522d40a4f68902095f195c894aaf50473bcdadc52a7f160"
+            }
+          }
+        ],
+        "input_inventory_verified": 806,
+        "diagnostic_delta_since_s045": [
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+            "old": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+              "kind": "file",
+              "bytes": 3046,
+              "sha256": "d1add9ddcaf14b099bf063855074a107fa3f4b2a02d1cbd7596d7124aed07dc1"
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+              "kind": "file",
+              "bytes": 3996,
+              "sha256": "e7986831f8f97984842e234beed4915cc9a0cc740ea449368c8df106898d830f"
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+            "old": null,
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+              "kind": "file",
+              "bytes": 9077,
+              "sha256": "0546f88a506cf249aa88f094183218ed0eed80477042614eff063bc2753f6ec4"
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py",
+            "old": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py",
+              "kind": "file",
+              "bytes": 7132,
+              "sha256": "7dbfebe3912369991fa53aed35f15405a7cb682624b264a139569a75d3ff48b4"
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py",
+              "kind": "file",
+              "bytes": 7992,
+              "sha256": "2e499342d0098ba66843ea19e5455b63d90c971ca67c03d4a63bbdf1226f324b"
+            }
+          },
+          {
+            "path": "scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+            "old": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+              "kind": "file",
+              "bytes": 22009,
+              "sha256": "2d6147f5a40e7eaac47b11ea0d90d350aaf122ebe82c91445a0dbe0f9e2506d4"
+            },
+            "current": {
+              "path": "scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+              "kind": "file",
+              "bytes": 22237,
+              "sha256": "a72698bfbffc44862256834c14603935415e043db0abacc1044d5e836f523fb5"
+            }
+          }
+        ],
+        "reuse": {
+          "API": "same7 tests/source/dependency versions; fresh I/E55 replaces earlier preflight attribution",
+          "discovery": "same test tree/conftest/selections;134/153/153 collections retained",
+          "CLI_fidelity": "same10 module bytes/entrypoints/metadata headers/runtime/fixtures/cache/Pandoc/baseline; new I/E validates canonical payload, README body not consumed",
+          "runner": "fresh R for all new workloads; historical R stays tied to original proof"
+        },
+        "docker": {
+          "image": "sha256:27b5f840f99007fdf7ed9b9478820a146b364cbf43433ad6a84b1cf4714d4b93",
+          "filtered_inputs": [
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/.dockerignore",
+              "bytes": 789,
+              "sha256": "60111a6ee46d8ad13a56ea48c982e59f8e51e462914e862dcf401d6dc6c2497d"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/.python-version",
+              "bytes": 8,
+              "sha256": "aa0d6581054e6e4ff3f91839deca7a854ad37221b8784d060b42d0f847ff1a3b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/Dockerfile",
+              "bytes": 3897,
+              "sha256": "fd806a0dfdedefb582ea60996988b7d76fe2903bbaad2549d6a93bf724dbef9d"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/LICENSE",
+              "bytes": 1091,
+              "sha256": "85979c43399acb91fab2769719101c0b1d7279da82230de246ebcb137e9a797c"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/MANIFEST.in",
+              "bytes": 675,
+              "sha256": "d0aade862edff8609519c2694901af53b552c6d99548ef3e943ca7d698d19527"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/README.md",
+              "bytes": 4058,
+              "sha256": "00993af35d06a63dc89abba00aed5256ac943cbe013dba001c6727ca668bc873"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/batch_monitor.py",
+              "bytes": 7939,
+              "sha256": "075e4b48cfd3d7811f2c44ef6d8e51c83e6c7ceaee4dd3fcbd3e5ef7682f4341"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/build-constraints.txt",
+              "bytes": 19,
+              "sha256": "5b96a1b3ab68ccbd56cda1f7d56e804b7ac05194b86762b3763c84c13a92cfeb"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/chunk_markdown.py",
+              "bytes": 33774,
+              "sha256": "bc12659b2b3e12d266d5e9489b1956bffb8c8e5e1ff1878bf31cedd8719cb36b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/clean_markdown.py",
+              "bytes": 10897,
+              "sha256": "14331c33d98292ea1401fb738b5be18c9ef1bd96e13f942301f55c8a7137c42f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/config.py",
+              "bytes": 14060,
+              "sha256": "bda2e2f5a05ff30d1f361c0dc3cb921b3aaed0c37889311f04a3ca09fb77890f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/exceptions.py",
+              "bytes": 3283,
+              "sha256": "7a7a2c1253887ddfc8d959e1c006550df044dcb39dab594cd2930a98f82741fd"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/image-source-s053.json",
+              "bytes": 2776,
+              "sha256": "81d4aac33e57a27b82b10404e49449762082b71c30067cc9a3a667855328fce3"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/logging_config.py",
+              "bytes": 8416,
+              "sha256": "4974330828f68ac51cbda940e5951c30754fc81513ef6d362840db00b5b2b961"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/marker_api_server.py",
+              "bytes": 5769,
+              "sha256": "8b957f0dc3ae47c7103959aaeb868d23c522a7ac3ea1912a96d7babbbd383d89"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/master_workflow.py",
+              "bytes": 27078,
+              "sha256": "69246d83dbbb40750228cd0c14f31414b8c79e42897150777979c7e91b6884e1"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/pyproject.toml",
+              "bytes": 2737,
+              "sha256": "60ef6f17da3f6787b14137749c5143323117dd2e9b257748cc556def5060b856"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py",
+              "bytes": 2451,
+              "sha256": "996f22d2ab1b4478677957001144735bef6e75de3777db3052b3c54360200c53"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/image_package.py",
+              "bytes": 3996,
+              "sha256": "e7986831f8f97984842e234beed4915cc9a0cc740ea449368c8df106898d830f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/image_prepare.py",
+              "bytes": 9077,
+              "sha256": "0546f88a506cf249aa88f094183218ed0eed80477042614eff063bc2753f6ec4"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+              "bytes": 18079,
+              "sha256": "c276b01169a68aa4473a6534821d175b825c60285d45f0278361b0b7dd22e474"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py",
+              "bytes": 22237,
+              "sha256": "a72698bfbffc44862256834c14603935415e043db0abacc1044d5e836f523fb5"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/unified_converter.py",
+              "bytes": 32495,
+              "sha256": "ea215d4640fac724392ef0ef66a0979e67d721d6cda7892f6106759d5d4420ee"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/uv.lock",
+              "bytes": 287148,
+              "sha256": "b3288f1d51b880d9c683a43607d9eedc5b8c87465c8a1d357818c6b61d12f05f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/validate_markdown.py",
+              "bytes": 18936,
+              "sha256": "5f9fef017a9d29b4e0b197a14c1dd85b17a9655433b1b4bea3eafb7863f95771"
+            }
+          ],
+          "embedded_image_source_equivalent_to_current_modules_and_build_inputs": true,
+          "stdin": {
+            "bytes": 12758,
+            "sha256": "f33587f5da90e466dc455faa3bb2d868be264bd05050761286ecefe1e1267ddd",
+            "probe_file": "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/probe_image_contract.py",
+            "probe_sha256": "2e499342d0098ba66843ea19e5455b63d90c971ca67c03d4a63bbdf1226f324b",
+            "expected": {
+              "schema": 1,
+              "S_id": "sha256:2dfc3bab6a2786d6ea2e54d7086b9884fbe4256ea2b660a5fa2ddb028d3cab1b",
+              "S_sha256": "3027256223dbfcd0a47bc137ae7f3b6d906d599b36cb81df115727ae1c00d4bb",
+              "modules": [
+                {
+                  "name": "batch_monitor.py",
+                  "bytes": 7939,
+                  "sha256": "075e4b48cfd3d7811f2c44ef6d8e51c83e6c7ceaee4dd3fcbd3e5ef7682f4341"
+                },
+                {
+                  "name": "chunk_markdown.py",
+                  "bytes": 33774,
+                  "sha256": "bc12659b2b3e12d266d5e9489b1956bffb8c8e5e1ff1878bf31cedd8719cb36b"
+                },
+                {
+                  "name": "clean_markdown.py",
+                  "bytes": 10897,
+                  "sha256": "14331c33d98292ea1401fb738b5be18c9ef1bd96e13f942301f55c8a7137c42f"
+                },
+                {
+                  "name": "config.py",
+                  "bytes": 14060,
+                  "sha256": "bda2e2f5a05ff30d1f361c0dc3cb921b3aaed0c37889311f04a3ca09fb77890f"
+                },
+                {
+                  "name": "exceptions.py",
+                  "bytes": 3283,
+                  "sha256": "7a7a2c1253887ddfc8d959e1c006550df044dcb39dab594cd2930a98f82741fd"
+                },
+                {
+                  "name": "logging_config.py",
+                  "bytes": 8416,
+                  "sha256": "4974330828f68ac51cbda940e5951c30754fc81513ef6d362840db00b5b2b961"
+                },
+                {
+                  "name": "marker_api_server.py",
+                  "bytes": 5769,
+                  "sha256": "8b957f0dc3ae47c7103959aaeb868d23c522a7ac3ea1912a96d7babbbd383d89"
+                },
+                {
+                  "name": "master_workflow.py",
+                  "bytes": 27078,
+                  "sha256": "69246d83dbbb40750228cd0c14f31414b8c79e42897150777979c7e91b6884e1"
+                },
+                {
+                  "name": "unified_converter.py",
+                  "bytes": 32495,
+                  "sha256": "ea215d4640fac724392ef0ef66a0979e67d721d6cda7892f6106759d5d4420ee"
+                },
+                {
+                  "name": "validate_markdown.py",
+                  "bytes": 18936,
+                  "sha256": "5f9fef017a9d29b4e0b197a14c1dd85b17a9655433b1b4bea3eafb7863f95771"
+                }
+              ],
+              "build_inputs": [
+                {
+                  "name": ".python-version",
+                  "bytes": 8,
+                  "sha256": "aa0d6581054e6e4ff3f91839deca7a854ad37221b8784d060b42d0f847ff1a3b"
+                },
+                {
+                  "name": "LICENSE",
+                  "bytes": 1091,
+                  "sha256": "85979c43399acb91fab2769719101c0b1d7279da82230de246ebcb137e9a797c"
+                },
+                {
+                  "name": "MANIFEST.in",
+                  "bytes": 675,
+                  "sha256": "d0aade862edff8609519c2694901af53b552c6d99548ef3e943ca7d698d19527"
+                },
+                {
+                  "name": "README.md",
+                  "bytes": 4058,
+                  "sha256": "00993af35d06a63dc89abba00aed5256ac943cbe013dba001c6727ca668bc873"
+                },
+                {
+                  "name": "build-constraints.txt",
+                  "bytes": 19,
+                  "sha256": "5b96a1b3ab68ccbd56cda1f7d56e804b7ac05194b86762b3763c84c13a92cfeb"
+                },
+                {
+                  "name": "pyproject.toml",
+                  "bytes": 2737,
+                  "sha256": "60ef6f17da3f6787b14137749c5143323117dd2e9b257748cc556def5060b856"
+                },
+                {
+                  "name": "uv.lock",
+                  "bytes": 287148,
+                  "sha256": "b3288f1d51b880d9c683a43607d9eedc5b8c87465c8a1d357818c6b61d12f05f"
+                }
+              ],
+              "host_netns": "net:[4026531833]"
+            }
+          },
+          "compose_Dockerfile_ignore_exact": true,
+          "supply_locked": [
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/EbookLib-0.18.tar.gz",
+              "bytes": 115484,
+              "sha256": "38562643a7bc94d9bf56e9930b4927e4e93b5d1d0917f697a6454db5a1c1a533"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_doc-0.0.5-py3-none-any.whl",
+              "bytes": 5302,
+              "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_types-0.8.0-py3-none-any.whl",
+              "bytes": 13427,
+              "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anthropic-0.46.0-py3-none-any.whl",
+              "bytes": 223228,
+              "sha256": "1445ec9be78d2de7ea51b4d5acd3574e414aea97ef903d0ecbb57bec806aaa49"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anyio-4.15.1-py3-none-any.whl",
+              "bytes": 132079,
+              "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/beautifulsoup4-4.15.0-py3-none-any.whl",
+              "bytes": 109924,
+              "sha256": "d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+              "bytes": 1419762,
+              "sha256": "072e7624b1fc4d601036ab3f4f27942ef772887e876beff0301d261210bca97f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/certifi-2026.7.22-py3-none-any.whl",
+              "bytes": 136983,
+              "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+              "bytes": 221822,
+              "sha256": "c1453022f490d2459a11819d83ad1d586e9ff65a12ac3e705ffebd46d3685dcf"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cfgv-3.5.0-py2.py3-none-any.whl",
+              "bytes": 7445,
+              "sha256": "a8dc6b26ad22ff227d2634a65cb388215ce6cc96bbcc5cfde7641ae87e8dacc0"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+              "bytes": 257601,
+              "sha256": "3d31298449090ab8d47b7b1b2a555ff73cac7ed438a08b7ac160980c7ebed649"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/click-8.5.0-py3-none-any.whl",
+              "bytes": 125251,
+              "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cloudpickle-3.1.2-py3-none-any.whl",
+              "bytes": 22228,
+              "sha256": "9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cobble-0.1.4-py3-none-any.whl",
+              "bytes": 3984,
+              "sha256": "36c91b1655e599fd428e2b95fdd5f0da1ca2e9f1abb0bc871dec21a0e78a2b44"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cryptography-50.0.2-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+              "bytes": 4719841,
+              "sha256": "630ebfea3bf689d075f82316324ff7433dc447fe6bc1bfc76524b74b4a9567d2"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cssselect2-0.10.1-py3-none-any.whl",
+              "bytes": 15489,
+              "sha256": "25cc4494d55985d6a6da359be48da6ce98c28dcbafa2314c383ace3fc32ec868"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distlib-0.4.3-py2.py3-none-any.whl",
+              "bytes": 470628,
+              "sha256": "4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distro-1.9.0-py3-none-any.whl",
+              "bytes": 20277,
+              "sha256": "7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/einops-0.8.2-py3-none-any.whl",
+              "bytes": 65638,
+              "sha256": "54058201ac7087911181bfec4af6091bb59380360f069276601256a76af08193"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/et_xmlfile-2.0.0-py3-none-any.whl",
+              "bytes": 18059,
+              "sha256": "7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fastapi-0.142.2-py3-none-any.whl",
+              "bytes": 144409,
+              "sha256": "bd5f4d81f1e93a88bcd77caf4dfe3c2dbffc3805407a0007e9a114c18b3a670b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filelock-4.0.12-py3-none-any.whl",
+              "bytes": 111732,
+              "sha256": "5f17ee83ecee8a6f3e389c75822fb70a1c2f0506b99438a6dffa1d56793588c8"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filetype-1.2.0-py2.py3-none-any.whl",
+              "bytes": 19970,
+              "sha256": "7ce71b6880181241cf7ac8697a2f1eb6a8bd9b429f7ad6d27b8db9ba5f1c2d25"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fonttools-4.66.1-py3-none-any.whl",
+              "bytes": 1202222,
+              "sha256": "7234ae9e28db64273fbbfa72caebd0a97e3bdba6b05064114741b9539ef339d0"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fsspec-2026.9.0-py3-none-any.whl",
+              "bytes": 221738,
+              "sha256": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/ftfy-6.3.1-py3-none-any.whl",
+              "bytes": 44821,
+              "sha256": "7c70eb532015cd2f9adb53f101fb6c7945988d023a085d127d1573dc49dd0083"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/google_auth-2.60.0-py3-none-any.whl",
+              "bytes": 264569,
+              "sha256": "e78414cd2e22cc02884768707def024ca32da17695f2c0e6194cdbe1316c4cd4"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/google_genai-1.75.0-py3-none-any.whl",
+              "bytes": 793726,
+              "sha256": "8dc4c096e7d6288c3087f6893f582fe52468932464781edb8193bd92b9fefb2c"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/h11-0.16.0-py3-none-any.whl",
+              "bytes": 37515,
+              "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+              "bytes": 4464663,
+              "sha256": "d62671bb130879cef0ee4c9ebe47a14af6c66ec53e6d84dc15936e5ffdfac82f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/httpcore-1.0.9-py3-none-any.whl",
+              "bytes": 78784,
+              "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/httpx-0.28.1-py3-none-any.whl",
+              "bytes": 73517,
+              "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/huggingface_hub-0.36.2-py3-none-any.whl",
+              "bytes": 566395,
+              "sha256": "48f0c8eac16145dfce371e9d2d7772854a4f591bcb56c9cf548accf531d54270"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/identify-2.6.20-py2.py3-none-any.whl",
+              "bytes": 99506,
+              "sha256": "6a16b69b93187244e0548cbfd25b3e4a6f9a7a2ad784625c3bec2b8d27b81aaa"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/idna-3.20-py3-none-any.whl",
+              "bytes": 69583,
+              "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/jinja2-3.1.6-py3-none-any.whl",
+              "bytes": 134899,
+              "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/jiter-0.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 345025,
+              "sha256": "8c21265b251d99bbb40080d178a8953e35601d3a1564e05c4de4c0d2ca616797"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/joblib-1.6.0-py3-none-any.whl",
+              "bytes": 306115,
+              "sha256": "3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/lxml-6.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+              "bytes": 5105247,
+              "sha256": "379f8a75cf6eb7eef0af074b55f49ab73b868388a98de14646abcdfa4564bb11"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/mammoth-1.13.0-py2.py3-none-any.whl",
+              "bytes": 55228,
+              "sha256": "dd7629fa9d0a5e82207b3f481a9dcb8308fb43f6206258e062f11121efba9991"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markdown2-2.5.5-py3-none-any.whl",
+              "bytes": 56250,
+              "sha256": "be798587e09d1f52d2e4d96a649c4b82a778c75f9929aad52a2c95747fa26941"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markdownify-1.2.3-py3-none-any.whl",
+              "bytes": 15732,
+              "sha256": "a189a0bedfd14009030fde5f85bb6f77c56897cb839b5c25315dd7d4e3e290ba"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/marker_pdf-1.10.2-py3-none-any.whl",
+              "bytes": 195706,
+              "sha256": "f631737dd46d3927142b4b14c7b488962c5af278dc2c3ae7dc5b03a47f5909fb"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+              "bytes": 22985,
+              "sha256": "8e124f974786f831d6043728e38296969d3579db8896fe004682f5758e613581"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/mpmath-1.3.0-py3-none-any.whl",
+              "bytes": 536198,
+              "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/narwhals-2.26.0-py3-none-any.whl",
+              "bytes": 474034,
+              "sha256": "29326d74f107c347fd1009bd58e38d9f7c7c5b51e6de97bc93dbc325d9038b54"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/networkx-3.7-py3-none-any.whl",
+              "bytes": 2142205,
+              "sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/nodeenv-1.11.0-py2.py3-none-any.whl",
+              "bytes": 34277,
+              "sha256": "edaa16e6c14d7cf395d75d4bbd5a26390f4dc06501a33b4e76282b02cc688a25"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+              "bytes": 16717410,
+              "sha256": "b7e18c623bb5c95acb3b3328861272816ba199fb531921c5d6d0b675f1fde9e3"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/openai-1.109.1-py3-none-any.whl",
+              "bytes": 948627,
+              "sha256": "6bcaf57086cf59159b8e27447e4e7dd019db5d29a438072fbd49c290c7e65315"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 49969856,
+              "sha256": "0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/openpyxl-3.1.5-py2.py3-none-any.whl",
+              "bytes": 250910,
+              "sha256": "5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/opentelemetry_api-1.45.0-py3-none-any.whl",
+              "bytes": 60020,
+              "sha256": "80e068aba7cd56c8b58512d6a36f8d25cb1dfaa0c0a4cc1c938ccf9f362d9cb3"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/packaging-26.3-py3-none-any.whl",
+              "bytes": 129956,
+              "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pdftext-0.6.3-py3-none-any.whl",
+              "bytes": 23693,
+              "sha256": "528431ed8bdce39d74372cd3d27e8544af812f1f1adc81db229cf9fb48dacacb"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pillow-10.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 4459973,
+              "sha256": "bf2342ac639c4cf38799a44950bbc2dfcb685f052b9e262f446482afaf4bffca"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/platformdirs-4.12.3-py3-none-any.whl",
+              "bytes": 32493,
+              "sha256": "080f3b39423b5abfca9a23d84c4e9795f54d395cd8459867a8ded44084fcd5f8"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pre_commit-4.6.2-py2.py3-none-any.whl",
+              "bytes": 226202,
+              "sha256": "e2dde9a75d3bce11bd3831c26d134df00a2803c1d818be6a0383c3dcda25dc4e"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyasn1-0.6.4-py3-none-any.whl",
+              "bytes": 84410,
+              "sha256": "deda9277cfd454080ec40b207fb6df82206a3a2688735233cdcd8d3d565f088b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyasn1_modules-0.4.2-py3-none-any.whl",
+              "bytes": 181259,
+              "sha256": "29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pycparser-3.0-py3-none-any.whl",
+              "bytes": 48172,
+              "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic-2.13.5-py3-none-any.whl",
+              "bytes": 472589,
+              "sha256": "346a034f080da3755d8e9cb5e00e8b07de1d39e4f6e2c87d8ab7cafa0b269a73"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 2066284,
+              "sha256": "0fc5be0abd4a407e200d844b404e33639a554e7bd0d448e7b9ae181be4789ac2"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic_settings-2.15.0-py3-none-any.whl",
+              "bytes": 69413,
+              "sha256": "0ba092c291c94baceb5eff768aa0d56400a457585bc0175925a5a5510303da42"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydyf-0.12.1-py3-none-any.whl",
+              "bytes": 8028,
+              "sha256": "ea25b4e1fe7911195cb57067560daaa266639184e8335365cc3ee5214e7eaadc"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pypdfium2-4.30.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 2812008,
+              "sha256": "f1f78d2189e0ddf9ac2b7a9b9bd4f0c66f54d1389ff6c17e9fd9dc034d06eb3f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyphen-0.18.1-py3-none-any.whl",
+              "bytes": 2116143,
+              "sha256": "0aa9051e15928cecadd4c632cea0258ba57215b2a197a39baa46abcdb0f47e84"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_discovery-1.6.1-py3-none-any.whl",
+              "bytes": 38664,
+              "sha256": "d43fcdef879fe795352bd13ccf8d185ba5a9f86f36cfcd00529f596e737442b3"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_dotenv-1.2.4-py3-none-any.whl",
+              "bytes": 23266,
+              "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_multipart-0.0.32-py3-none-any.whl",
+              "bytes": 30042,
+              "sha256": "ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_pptx-1.0.2-py3-none-any.whl",
+              "bytes": 472788,
+              "sha256": "160838e0b8565a8b1f67947675886e9fea18aa5e795db7ae531606d68e785cba"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+              "bytes": 807870,
+              "sha256": "ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/rapidfuzz-3.14.6-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+              "bytes": 3168023,
+              "sha256": "0debb5f43662ea84d2f0228a0c7407ff647f9c3d13f3b692efff0cde46eebce0"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/regex-2024.11.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 796896,
+              "sha256": "70b7fa6606c2881c1db9479b0eaa11ed5dfa11c8d60a474ff0e095099f39d98e"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/requests-2.34.2-py3-none-any.whl",
+              "bytes": 73075,
+              "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 516040,
+              "sha256": "fd6f3f93c9a0a7cc2788ee63fb763353d4bd2e89b0751bc78fcf7dda00bea774"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/scikit_learn-1.9.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+              "bytes": 9166043,
+              "sha256": "e5d7b18a5b9dca241a74695f3275fa4c895a9dadc72b3d8df5fa9d1083c9b83e"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+              "bytes": 35344199,
+              "sha256": "f55fa87b6c612ecd6b058f167c53231b1d14e412efe361d3d6e38b3631c73218"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/setuptools-84.0.0-py3-none-any.whl",
+              "bytes": 818216,
+              "sha256": "51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/six-1.17.0-py2.py3-none-any.whl",
+              "bytes": 11050,
+              "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/sniffio-1.3.1-py3-none-any.whl",
+              "bytes": 10235,
+              "sha256": "2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/soupsieve-2.10-py3-none-any.whl",
+              "bytes": 38019,
+              "sha256": "8596eb8967d744174820280fa62b4542a2e955bfaccca73ed8a13c6eb8e9b502"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/starlette-1.7.0-py3-none-any.whl",
+              "bytes": 78980,
+              "sha256": "67f8e99895493dd2911a03f11314af6ceebeae4e704bb9f43dfc6a9db151c93e"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/surya_ocr-0.17.1-py3-none-any.whl",
+              "bytes": 189881,
+              "sha256": "74c331ccb9be2d0c6a774122e572b85abdddf2982ecf6d11c1d83b3a0c9ae19d"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/sympy-1.14.0-py3-none-any.whl",
+              "bytes": 6299353,
+              "sha256": "e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tenacity-9.1.4-py3-none-any.whl",
+              "bytes": 28926,
+              "sha256": "6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/threadpoolctl-3.7.0-py3-none-any.whl",
+              "bytes": 26362,
+              "sha256": "cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tiktoken-0.14.0-cp312-cp312-manylinux_2_28_x86_64.whl",
+              "bytes": 1204197,
+              "sha256": "7896eea257fe497a2b7134474d909156c6744ce8da35bce88011a960e008aa0d"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tinycss2-1.5.1-py3-none-any.whl",
+              "bytes": 28404,
+              "sha256": "3415ba0f5839c062696996998176c4a3751d18b7edaaeeb658c9ce21ec150661"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tinyhtml5-2.1.0-py3-none-any.whl",
+              "bytes": 39686,
+              "sha256": "6e11cfff38515834268daf89d5f85bbde0b6dd02e8d9e212d1385c2289b89f0a"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "bytes": 3274982,
+              "sha256": "369cc9fc8cc10cb24143873a0d95438bb8ee257bb80c71989e3ee290e8d72c67"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/torch-2.7.1+cpu-cp312-cp312-manylinux_2_28_x86_64.whl",
+              "bytes": 175833687,
+              "sha256": "8f8b3cfc53010a4b4a3c7ecb88c212e9decc4f5eeb6af75c3c803937d2d60947"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tqdm-4.70.1-py3-none-any.whl",
+              "bytes": 80199,
+              "sha256": "c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/transformers-4.57.6-py3-none-any.whl",
+              "bytes": 11993498,
+              "sha256": "4c9e9de11333ddfe5114bc872c9f370509198acf0b87a832a0ab9458e2bd0550"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/typing_extensions-4.16.0-py3-none-any.whl",
+              "bytes": 45571,
+              "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/typing_inspection-0.4.4-py3-none-any.whl",
+              "bytes": 14750,
+              "sha256": "65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/urllib3-2.8.0-py3-none-any.whl",
+              "bytes": 135717,
+              "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/uvicorn-0.54.0-py3-none-any.whl",
+              "bytes": 87427,
+              "sha256": "505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/virtualenv-21.14.5-py3-none-any.whl",
+              "bytes": 5487482,
+              "sha256": "b0651e0174982bba17cc6f0aaa2ef496730cb85a3f35eb5d1119d1c904f7d1da"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/wcwidth-0.9.2-py3-none-any.whl",
+              "bytes": 301667,
+              "sha256": "89ca642c5bf0101157a09366be69fad0379db1f700ae39a920e103234573670e"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/weasyprint-63.1-py3-none-any.whl",
+              "bytes": 299994,
+              "sha256": "9d0319fe3ba553c9a77dc43a2d35b64a70c2b8809ad55a139a214803fde62bce"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/webencodings-0.6.1-py3-none-any.whl",
+              "bytes": 8745,
+              "sha256": "7fab6269c8bf237c657876b52058ccb182e861518d1c695c1a9aaa8c1c105d5b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/websockets-16.1.1-py3-none-any.whl",
+              "bytes": 173814,
+              "sha256": "6abbd3e82c731c8e531714466acd5d87b5e88ac3243465337ba71d68e23ae7e3"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/xlsxwriter-3.2.9-py3-none-any.whl",
+              "bytes": 175315,
+              "sha256": "9a5db42bc5dff014806c58a20b9eae7322a134abb6fce3c92c181bfb275ec5b3"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/zopfli-0.4.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+              "bytes": 829354,
+              "sha256": "769875152d0625c46707bcca57d4b2233fe653482067acd55fbf6ec525cb9bdc"
+            }
+          ],
+          "native_signed_selection": [
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian-security/pool/updates/main/c/ca-certificates/ca-certificates_20250419~deb12u1_all.deb",
+              "bytes": 161988,
+              "sha256": "62b08a77d985d4253894b1f69aebda5925034ca4e294add364167fad8cb64a44"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/b/brotli/libbrotli1_1.0.9-2+b6_amd64.deb",
+              "bytes": 275248,
+              "sha256": "563b4caec1aa5e876bd3355b36e7a38e1484baf5a293b48d1e8bd22db786e4d7"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/c/cyrus-sasl2/libsasl2-modules-db_2.1.28+dfsg-10_amd64.deb",
+              "bytes": 20336,
+              "sha256": "3ac4fd6cbe3b3b06e68d24b931bf3eb9385b42f15604a37ed25310e948ca0ee6"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/c/cyrus-sasl2/libsasl2-2_2.1.28+dfsg-10_amd64.deb",
+              "bytes": 59712,
+              "sha256": "11ee190ad39f8d7af441d2c8347388b9449434c73acc67b4b372445ac4152efa"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/o/openldap/libldap-2.5-0_2.5.13+dfsg-5_amd64.deb",
+              "bytes": 183248,
+              "sha256": "4b6c30f6554149c594628d945edc6003f0eea8d0cc1341638c0e71375db147ed"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1+deb12u3_amd64.deb",
+              "bytes": 72404,
+              "sha256": "5a5736cee57e51c1baed869979e6ecdbc6495e939e33203d6cfe3b6e5a149e3f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/libp/libpsl/libpsl5_0.21.2-1_amd64.deb",
+              "bytes": 58684,
+              "sha256": "4f0d35610204e4e754b057748719744114621f2f6f4202d846c314860a981afb"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/r/rtmpdump/librtmp1_2.4+20151223.gitfa8646d.1-2+b2_amd64.deb",
+              "bytes": 60824,
+              "sha256": "e1f69020dc2c466e421ec6a58406b643be8b5c382abf0f8989011c1d3df91c87"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian-security/pool/updates/main/libs/libssh2/libssh2-1_1.10.0-3+deb12u1_amd64.deb",
+              "bytes": 175976,
+              "sha256": "fff72a194e493f88e100a2567e22472bb4ab828d429c2956965c6f2f134f1b3a"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/c/curl/libcurl4_7.88.1-10+deb12u15_amd64.deb",
+              "bytes": 392184,
+              "sha256": "3042904de01f9c4fbdcf1452b8f81abedcf2b015f9b9deba109063322b5bd68b"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/c/curl/curl_7.88.1-10+deb12u15_amd64.deb",
+              "bytes": 315764,
+              "sha256": "0dd9b6bf7a0bd11af2d68a52ec44c2a223fa7c11f9104c36ce1047e1137d4a8f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian-security/pool/updates/main/e/expat/libexpat1_2.5.0-1+deb12u4_amd64.deb",
+              "bytes": 105852,
+              "sha256": "ed010cc41577d75ab01cccc6afa93496d9a99f1e16bd469caf58e1b81fddae80"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/libp/libpng1.6/libpng16-16_1.6.39-2+deb12u5_amd64.deb",
+              "bytes": 276660,
+              "sha256": "a56d64bfaa9da12aafb83347909e62e6fd5fd251e6b34c194065911a30359978"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/f/freetype/libfreetype6_2.12.1+dfsg-5+deb12u4_amd64.deb",
+              "bytes": 397736,
+              "sha256": "8043e479f73f29992d652e3f9dfe8b17f9780c7ea6330afe379ec5f9f188ac44"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/f/fonts-dejavu/fonts-dejavu-core_2.37-6_all.deb",
+              "bytes": 1067728,
+              "sha256": "8892669e51aab4dc56682c8e39d8ddb7d70fad83c369344e1e240bf3ca22bb76"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/f/fontconfig/fontconfig-config_2.14.1-4_amd64.deb",
+              "bytes": 314864,
+              "sha256": "281c66e46b95f045a0282a6c7a03b33de0e9a08d016897a759aaf4a04adfddbe"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/f/fontconfig/libfontconfig1_2.14.1-4_amd64.deb",
+              "bytes": 385664,
+              "sha256": "16ee38d374e064f534116dc442b086ef26f9831f1c0af7e5fb4fe4512e700649"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/f/fontconfig/fontconfig_2.14.1-4_amd64.deb",
+              "bytes": 449212,
+              "sha256": "010e57c24a983eecc39aab8a84219a716c10901e03bacd1927331388656f890f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/libd/libdatrie/libdatrie1_0.2.13-2+b1_amd64.deb",
+              "bytes": 43320,
+              "sha256": "f021f193384929989b2dfd19f606a8cebe54b5f209fe387fc40683e810e01ebe"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/f/fribidi/libfribidi0_1.0.8-2.1_amd64.deb",
+              "bytes": 64952,
+              "sha256": "87fce56627aab7b2968501d370aa3ed6d1c792119efa765e71a690bdfe570e62"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/g/glib2.0/libglib2.0-0_2.74.6-2+deb12u9_amd64.deb",
+              "bytes": 1403216,
+              "sha256": "7ff85197685d89e150e342b29a59aab1beee400050ba7da73de81cd999ffee5a"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/g/gcc-12/libgomp1_12.2.0-14+deb12u1_amd64.deb",
+              "bytes": 115772,
+              "sha256": "48fec46bda7f5b1638b9e959889bfbc20491247d402d120bb152687eb48143d7"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/g/graphite2/libgraphite2-3_1.3.14-1+deb12u1_amd64.deb",
+              "bytes": 74564,
+              "sha256": "c19a7f6ba9298db7eef041ae27b08985f2c02009e418063f8bccdb5bc5e858dc"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/h/harfbuzz/libharfbuzz0b_6.0.0+dfsg-3_amd64.deb",
+              "bytes": 1945396,
+              "sha256": "bfce132b7ee67b9c2d2166075b1936a25c8cc6866b6a049f99b8e94baa916e71"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/h/harfbuzz/libharfbuzz-subset0_6.0.0+dfsg-3_amd64.deb",
+              "bytes": 1931236,
+              "sha256": "020de1eeba5fb56052a6ca71b259f8cbe3f6fce5038f4caca751c7e4867ca33f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/libt/libthai/libthai-data_0.1.29-1_all.deb",
+              "bytes": 176200,
+              "sha256": "eed65a75269411e47d7b393d82bc30471da5c499e9f311abbfd8c54ca1a42d9e"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/libt/libthai/libthai0_0.1.29-1_amd64.deb",
+              "bytes": 57468,
+              "sha256": "37cd66bef851ea0e4af807797ba3ad14d43226f7c4954c1d0a19478e11815bae"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/p/pango1.0/libpango-1.0-0_1.50.12+ds-1_amd64.deb",
+              "bytes": 211788,
+              "sha256": "851720de07441ae6bb6a7f51fc0f2edb4db7aa6f25b5bf1bf7b72dcab8947b7f"
+            },
+            {
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/pool/main/p/pango1.0/libpangoft2-1.0-0_1.50.12+ds-1_amd64.deb",
+              "bytes": 47384,
+              "sha256": "78da3f494109f6e7a39c4626aaae7571c600c5854cecda0bc0c902224986a63b"
+            }
+          ],
+          "build_result": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/build-r005/result.json",
+            "bytes": 36756,
+            "sha256": "7a1d38ef136d31e9c036839141dc290a01a1c088305822dcdf4166e2ded31854"
+          },
+          "probe_result": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/probe-r003/result.json",
+            "bytes": 13950,
+            "sha256": "16a8112418d5e7dab3165163aebc9b5648b5d3ea3f231759babda15e8da76700"
+          },
+          "reused_without_reexecution": true
+        },
+        "charged_seconds": 1.1938305541407317
+      }
+    },
+    "docker": {
+      "CPU_build_equal": true,
+      "build": {
+        "context": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004",
+        "dockerfile": "Dockerfile",
+        "args": {
+          "APT_SNAPSHOT": "20261005T000000Z",
+          "HOST_NETNS": "net:[4026531833]",
+          "MARKER_EXTRA": "marker-cpu",
+          "PYTHON_IMAGE": "registry-1.docker.io/library/python@sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af",
+          "UV_IMAGE": "ghcr.io/astral-sh/uv@sha256:8c3f6f394b761c2caec8112a076b946274311347f6ba1a3d3d28a79aefdaefd5"
+        },
+        "additional_contexts": {
+          "verified-apt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository",
+          "verified-wheels": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels"
+        },
+        "network": "none"
+      },
+      "GPU_extra": "marker-cu126",
+      "image": "sha256:b3db6dc22d92d7771aba40013bab4281ebe9f68188d5c46fc2617136b7d2c3a8",
+      "history": [
+        {
+          "cached_steps": 4,
+          "completed_at": "2026-10-07T08:54:01.986071988Z",
+          "completed_steps": 27,
+          "created_at": "2026-10-07T08:53:37.844102359Z",
+          "name": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-context-r004",
+          "ref": "default/default/opeytbcp4zot2bwx0eb70or1b",
+          "status": "Completed",
+          "total_steps": 27
+        }
+      ],
+      "native_completion_historical": false,
+      "native_calls": [
+        {
+          "argv": [
+            "/usr/bin/docker",
+            "--host",
+            "unix:///var/run/docker.sock",
+            "image",
+            "inspect",
+            "run-a001-marker-cpu:r007"
+          ],
+          "exit": 0,
+          "stdout": "[\n    {\n        \"Id\": \"sha256:b3db6dc22d92d7771aba40013bab4281ebe9f68188d5c46fc2617136b7d2c3a8\",\n        \"RepoTags\": [\n            \"run-a001-marker-cpu:r007\"\n        ],\n        \"RepoDigests\": [],\n        \"Comment\": \"buildkit.dockerfile.v0\",\n        \"Created\": \"2026-10-07T10:53:57.686462476+02:00\",\n        \"Config\": {\n            \"ExposedPorts\": {\n                \"8000/tcp\": {}\n            },\n            \"Env\": [\n                \"PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",\n                \"LANG=C.UTF-8\",\n                \"GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305\",\n                \"PYTHON_VERSION=3.12.13\",\n                \"PYTHON_SHA256=c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684\",\n                \"PYTHONDONTWRITEBYTECODE=1\",\n                \"TMPDIR=/data/tmp\",\n                \"TORCH_DEVICE=cpu\",\n                \"MODEL_CACHE_DIR=/data/cache/models\",\n                \"HF_HOME=/data/cache/huggingface\",\n                \"XDG_CACHE_HOME=/data/cache\",\n                \"FONT_DIR=/data/fonts\",\n                \"FONT_PATH=/data/fonts/GoNotoCurrent-Regular.ttf\",\n                \"RECOGNITION_RENDER_FONTS={\\\"all\\\":\\\"/data/fonts/GoNotoCurrent-Regular.ttf\\\",\\\"zh\\\":\\\"/data/fonts/GoNotoCJKCore.ttf\\\",\\\"ja\\\":\\\"/data/fonts/GoNotoCJKCore.ttf\\\",\\\"ko\\\":\\\"/data/fonts/GoNotoCJKCore.ttf\\\"}\"\n            ],\n            \"Cmd\": [\n                \"/opt/venv/bin/python\",\n                \"-I\",\n                \"-B\",\n                \"-m\",\n                \"marker_api_server\"\n            ],\n            \"WorkingDir\": \"/data\",\n            \"Labels\": {\n                \"com.docker.compose.project\": \"run-a001-fix-r007\",\n                \"com.docker.compose.service\": \"marker-api\",\n                \"com.docker.compose.version\": \"5.6.0\"\n            },\n            \"ArgsEscaped\": true,\n            \"Healthcheck\": {\n                \"Test\": [\n                    \"CMD-SHELL\",\n                    \"curl -f http://localhost:8000/health || exit 1\"\n                ],\n                \"Interval\": 30000000000,\n                \"Timeout\": 10000000000,\n                \"StartPeriod\": 120000000000,\n                \"Retries\": 3\n            }\n        },\n        \"Architecture\": \"amd64\",\n        \"Os\": \"linux\",\n        \"Size\": 1396495099,\n        \"GraphDriver\": {\n            \"Data\": {\n                \"LowerDir\": \"/var/lib/docker/overlay2/5deu6mz8aocv0yo6h38ppvmxe/diff:/var/lib/docker/overlay2/niej8q8h0fp8zsqo8hcgmtetw/diff:/var/lib/docker/overlay2/cpakb3cp6o35wpvlu50xkbz7s/diff:/var/lib/docker/overlay2/wqxobeio7egey4469gu5fkg7y/diff:/var/lib/docker/overlay2/87sy1k28t33h1z4dqrtcibtgm/diff:/var/lib/docker/overlay2/02e32c252cf321cca2899bcc0cdf5fc73c0e176dee01204da9cfdef259702f29/diff:/var/lib/docker/overlay2/b8e463490ce79759091d7e500d90317b9b479442e20ce046fb6d93703f630f7e/diff:/var/lib/docker/overlay2/1a0df3273ec9873efc140917752e6598e107164266a9effa419c304bc53b4527/diff:/var/lib/docker/overlay2/e42960493584a249dca9e52ba7077bf30ba0ad850826bd3db8d701c250c95d0e/diff\",\n                \"MergedDir\": \"/var/lib/docker/overlay2/9gbsjdpn3aitmx9mhiwwrsgiw/merged\",\n                \"UpperDir\": \"/var/lib/docker/overlay2/9gbsjdpn3aitmx9mhiwwrsgiw/diff\",\n                \"WorkDir\": \"/var/lib/docker/overlay2/9gbsjdpn3aitmx9mhiwwrsgiw/work\"\n            },\n            \"Name\": \"overlay2\"\n        },\n        \"RootFS\": {\n            \"Type\": \"layers\",\n            \"Layers\": [\n                \"sha256:66462cc862fe2053b9863fefa3866e07bb5dfb06f6b3ce3177cc096e4021aabe\",\n                \"sha256:bbbb19fa59e928e9d2412742b476b97f157cd95304b1f9fd3a82d221f661acde\",\n                \"sha256:0632d0601fca2055c070f7382e63078c292b98d8fa4a5388ee04bd6b1ea0582e\",\n                \"sha256:da835b7922cb8503b751d1cd1a3ac2309a9608198554e43fdd225591a1ec16f4\",\n                \"sha256:d28c7099c584f383f69e378f478b4737370977b4633a407682a59cdd3ef3d531\",\n                \"sha256:276b1b0af109be74595d8c3fc782a0f050f6bb1b9d3b887ff71b9774d4011203\",\n                \"sha256:60375b3eca3a89afd471e3f93a15ab46e7ea936941513deb7dceb2003a07a2f7\",\n                \"sha256:3a1382e7bc71446a817416898a0574045fb3df0894b4ace81465cb6424a989cc\",\n                \"sha256:ab4a018d8de8009c8ef18c26010321edf98ecfc364695ea49c8f5b6e5368cc66\",\n                \"sha256:468dd636c1a40379cb6d0d3f2a91f8c5dd6a3b778961f97e21842f9d9e289840\"\n            ]\n        },\n        \"Metadata\": {\n            \"LastTagTime\": \"2026-10-07T10:54:01.967613221+02:00\"\n        }\n    }\n]\n",
+          "stderr": ""
+        }
+      ],
+      "supply_status": "PASS_PREPARATION_ONLY",
+      "supply_network": 0,
+      "wheels_checked": 105,
+      "debs_checked": 29,
+      "APT_bindings": [
+        {
+          "repository": "debian",
+          "suite": "bookworm",
+          "snapshot": "20261005T000000Z",
+          "InRelease": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian/dists/bookworm/InRelease",
+            "bytes": 151075,
+            "sha256": "77737fa4b34f2693e982cc9ee35736816c35a7778fc2d326cc1bbf5b301fe1aa"
+          },
+          "Packages": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian/dists/bookworm/main/binary-amd64/Packages.xz",
+            "bytes": 8790396,
+            "sha256": "9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5"
+          },
+          "signature": "[GNUPG:] NEWSIG\n[GNUPG:] KEY_CONSIDERED B8B80B5B623EAB6AD8775C45B7C5D7D6350947F8 0\n[GNUPG:] SIG_ID AgpdPZ7z8h3tPdbJ5G8ASdhxELQ 2026-07-11 1783765031\n[GNUPG:] GOODSIG 6ED0E7B82643E131 Debian Archive Automatic Signing Key (12/bookworm) <ftpmaster@debian.org>\n[GNUPG:] VALIDSIG 4CB50190207B4758A3F73A796ED0E7B82643E131 2026-07-11 1783765031 0 4 0 1 8 01 B8B80B5B623EAB6AD8775C45B7C5D7D6350947F8\n[GNUPG:] NEWSIG\n[GNUPG:] KEY_CONSIDERED 04B54C3CDCA79751B16BC6B5225629DF75B188BD 0\n[GNUPG:] SIG_ID TQxV8Cnwv/qDvqns4Br64vioxl0 2026-07-11 1783765032\n[GNUPG:] GOODSIG 78DBA3BC47EF2265 Debian Archive Automatic Signing Key (13/trixie) <ftpmaster@debian.org>\n[GNUPG:] VALIDSIG B8E5F13176D2A7A75220028078DBA3BC47EF2265 2026-07-11 1783765032 0 4 0 1 8 01 04B54C3CDCA79751B16BC6B5225629DF75B188BD\n[GNUPG:] NEWSIG\n[GNUPG:] KEY_CONSIDERED 4D64FEC119C2029067D6E791F8D2585B8783D481 0\n[GNUPG:] SIG_ID Gl4sdUCMYWRx29C3McjkiwtuFHQ 2026-07-11 1783765141\n[GNUPG:] GOODSIG F8D2585B8783D481 Debian Stable Release Key (12/bookworm) <debian-release@lists.debian.org>\n[GNUPG:] VALIDSIG 4D64FEC119C2029067D6E791F8D2585B8783D481 2026-07-11 1783765141 0 4 0 22 8 01 4D64FEC119C2029067D6E791F8D2585B8783D481\n",
+          "keyring": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/debian-archive-keyring.gpg",
+            "bytes": 55918,
+            "sha256": "506b815cbb32d9b6066b4a2aa524071e071761e7e7f68c3ac74f3061ba852017"
+          }
+        },
+        {
+          "repository": "debian-security",
+          "suite": "bookworm-security",
+          "snapshot": "20261005T000000Z",
+          "InRelease": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian-security/dists/bookworm-security/InRelease",
+            "bytes": 34770,
+            "sha256": "9e410c84fe36cff1047b97277bf37bfa3f8fff578eba22acda1f307cded000eb"
+          },
+          "Packages": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian-security/dists/bookworm-security/main/binary-amd64/Packages.xz",
+            "bytes": 345800,
+            "sha256": "0f93fdcaaa31d94a709590f802edaa6b2101db69427c0e39282e71bde3f79fc6"
+          },
+          "signature": "[GNUPG:] NEWSIG\n[GNUPG:] KEY_CONSIDERED AC530D520F2F3269F5E98313A48449044AAD5C5D 0\n[GNUPG:] SIG_ID kOhIOTwlAoLTHEp97R8sqMhhie0 2026-10-04 1791151535\n[GNUPG:] GOODSIG 54404762BBB6E853 Debian Security Archive Automatic Signing Key (11/bullseye) <ftpmaster@debian.org>\n[GNUPG:] VALIDSIG ED541312A33F1128F10B1C6C54404762BBB6E853 2026-10-04 1791151535 0 4 0 1 8 01 AC530D520F2F3269F5E98313A48449044AAD5C5D\n[GNUPG:] NEWSIG\n[GNUPG:] KEY_CONSIDERED 05AB90340C0C5E797F44A8C8254CF3B5AEC0A8F0 0\n[GNUPG:] SIG_ID 23Qvctj16ngJIYfkG+WunGYNx5c 2026-10-04 1791151535\n[GNUPG:] GOODSIG BDE6D2B9216EC7A8 Debian Security Archive Automatic Signing Key (12/bookworm) <ftpmaster@debian.org>\n[GNUPG:] VALIDSIG B0CAB9266E8C3929798B3EEEBDE6D2B9216EC7A8 2026-10-04 1791151535 0 4 0 1 8 01 05AB90340C0C5E797F44A8C8254CF3B5AEC0A8F0\n",
+          "keyring": {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/debian-archive-keyring.gpg",
+            "bytes": 55918,
+            "sha256": "506b815cbb32d9b6066b4a2aa524071e071761e7e7f68c3ac74f3061ba852017"
+          }
+        }
+      ],
+      "C_docker": {
+        "status": "PASS",
+        "subcases": [
+          "installed_hashes_RECORD",
+          "imports_versions_CPU",
+          "signature",
+          "providers_full",
+          "weasyprint_native",
+          "MarkdownOutput_wrapper",
+          "wrapper_error",
+          "constructor_mock",
+          "cache_font_paths"
+        ],
+        "collected": true,
+        "startup": {
+          "status": "PASS",
+          "export_argv": [
+            "/usr/bin/docker",
+            "--host",
+            "unix:///var/run/docker.sock",
+            "export",
+            "43a0d36fb2dbdc83e22c71082bf9929867ebda9f24676b2304c3844c4ee8331c"
+          ],
+          "export_exit": 0,
+          "seconds": 4.09662135085091,
+          "pth": [
+            "opt/venv/lib/python3.12/site-packages/_virtualenv.pth",
+            "opt/venv/lib/python3.12/site-packages/distutils-precedence.pth"
+          ],
+          "customize": [],
+          "backend_wheel_sha256": "51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670",
+          "backend_files_verified": [
+            "_distutils_hack/__init__.py",
+            "_distutils_hack/override.py",
+            "distutils-precedence.pth",
+            "setuptools/__init__.py",
+            "setuptools/_core_metadata.py",
+            "setuptools/_discovery.py",
+            "setuptools/_distutils/__init__.py",
+            "setuptools/_distutils/_dataclass.py",
+            "setuptools/_distutils/_log.py",
+            "setuptools/_distutils/_macos_compat.py",
+            "setuptools/_distutils/_modified.py",
+            "setuptools/_distutils/_msvccompiler.py",
+            "setuptools/_distutils/archive_util.py",
+            "setuptools/_distutils/ccompiler.py",
+            "setuptools/_distutils/cmd.py",
+            "setuptools/_distutils/command/__init__.py",
+            "setuptools/_distutils/command/_framework_compat.py",
+            "setuptools/_distutils/command/bdist.py",
+            "setuptools/_distutils/command/bdist_dumb.py",
+            "setuptools/_distutils/command/bdist_rpm.py",
+            "setuptools/_distutils/command/build.py",
+            "setuptools/_distutils/command/build_clib.py",
+            "setuptools/_distutils/command/build_ext.py",
+            "setuptools/_distutils/command/build_py.py",
+            "setuptools/_distutils/command/build_scripts.py",
+            "setuptools/_distutils/command/check.py",
+            "setuptools/_distutils/command/clean.py",
+            "setuptools/_distutils/command/config.py",
+            "setuptools/_distutils/command/install.py",
+            "setuptools/_distutils/command/install_data.py",
+            "setuptools/_distutils/command/install_egg_info.py",
+            "setuptools/_distutils/command/install_headers.py",
+            "setuptools/_distutils/command/install_lib.py",
+            "setuptools/_distutils/command/install_scripts.py",
+            "setuptools/_distutils/command/sdist.py",
+            "setuptools/_distutils/compat/__init__.py",
+            "setuptools/_distutils/compat/numpy.py",
+            "setuptools/_distutils/compat/py310.py",
+            "setuptools/_distutils/compilers/C/base.py",
+            "setuptools/_distutils/compilers/C/cygwin.py",
+            "setuptools/_distutils/compilers/C/errors.py",
+            "setuptools/_distutils/compilers/C/msvc.py",
+            "setuptools/_distutils/compilers/C/py.typed",
+            "setuptools/_distutils/compilers/C/unix.py",
+            "setuptools/_distutils/compilers/C/zos.py",
+            "setuptools/_distutils/compilers/_modified.py",
+            "setuptools/_distutils/compilers/_util.py",
+            "setuptools/_distutils/compilers/errors.py",
+            "setuptools/_distutils/compilers/logging.py",
+            "setuptools/_distutils/compilers/platform/detect.py",
+            "setuptools/_distutils/compilers/platform/macos.py",
+            "setuptools/_distutils/core.py",
+            "setuptools/_distutils/cygwinccompiler.py",
+            "setuptools/_distutils/debug.py",
+            "setuptools/_distutils/dep_util.py",
+            "setuptools/_distutils/dir_util.py",
+            "setuptools/_distutils/dist.py",
+            "setuptools/_distutils/errors.py",
+            "setuptools/_distutils/extension.py",
+            "setuptools/_distutils/fancy_getopt.py",
+            "setuptools/_distutils/file_util.py",
+            "setuptools/_distutils/filelist.py",
+            "setuptools/_distutils/log.py",
+            "setuptools/_distutils/py.typed",
+            "setuptools/_distutils/spawn.py",
+            "setuptools/_distutils/sysconfig.py",
+            "setuptools/_distutils/text_file.py",
+            "setuptools/_distutils/unixccompiler.py",
+            "setuptools/_distutils/util.py",
+            "setuptools/_distutils/version.py",
+            "setuptools/_distutils/versionpredicate.py",
+            "setuptools/_distutils/zosccompiler.py",
+            "setuptools/_entry_points.py",
+            "setuptools/_imp.py",
+            "setuptools/_importlib.py",
+            "setuptools/_itertools.py",
+            "setuptools/_normalization.py",
+            "setuptools/_path.py",
+            "setuptools/_reqs.py",
+            "setuptools/_scripts.py",
+            "setuptools/_shutil.py",
+            "setuptools/_static.py",
+            "setuptools/_vendor/.lock",
+            "setuptools/_vendor/autocommand/__init__.py",
+            "setuptools/_vendor/autocommand/autoasync.py",
+            "setuptools/_vendor/autocommand/autocommand.py",
+            "setuptools/_vendor/autocommand/automain.py",
+            "setuptools/_vendor/autocommand/autoparse.py",
+            "setuptools/_vendor/autocommand/errors.py",
+            "setuptools/_vendor/autocommand-2.2.2.dist-info/INSTALLER",
+            "setuptools/_vendor/autocommand-2.2.2.dist-info/LICENSE",
+            "setuptools/_vendor/autocommand-2.2.2.dist-info/METADATA",
+            "setuptools/_vendor/autocommand-2.2.2.dist-info/REQUESTED",
+            "setuptools/_vendor/autocommand-2.2.2.dist-info/WHEEL",
+            "setuptools/_vendor/autocommand-2.2.2.dist-info/top_level.txt",
+            "setuptools/_vendor/backports/__init__.py",
+            "setuptools/_vendor/backports/tarfile/__init__.py",
+            "setuptools/_vendor/backports/tarfile/__main__.py",
+            "setuptools/_vendor/backports/tarfile/compat/__init__.py",
+            "setuptools/_vendor/backports/tarfile/compat/py38.py",
+            "setuptools/_vendor/backports.tarfile-1.2.0.dist-info/INSTALLER",
+            "setuptools/_vendor/backports.tarfile-1.2.0.dist-info/LICENSE",
+            "setuptools/_vendor/backports.tarfile-1.2.0.dist-info/METADATA",
+            "setuptools/_vendor/backports.tarfile-1.2.0.dist-info/REQUESTED",
+            "setuptools/_vendor/backports.tarfile-1.2.0.dist-info/WHEEL",
+            "setuptools/_vendor/backports.tarfile-1.2.0.dist-info/top_level.txt",
+            "setuptools/_vendor/importlib_metadata/__init__.py",
+            "setuptools/_vendor/importlib_metadata/_adapters.py",
+            "setuptools/_vendor/importlib_metadata/_collections.py",
+            "setuptools/_vendor/importlib_metadata/_compat.py",
+            "setuptools/_vendor/importlib_metadata/_functools.py",
+            "setuptools/_vendor/importlib_metadata/_itertools.py",
+            "setuptools/_vendor/importlib_metadata/_meta.py",
+            "setuptools/_vendor/importlib_metadata/_text.py",
+            "setuptools/_vendor/importlib_metadata/_typing.py",
+            "setuptools/_vendor/importlib_metadata/compat/__init__.py",
+            "setuptools/_vendor/importlib_metadata/compat/py311.py",
+            "setuptools/_vendor/importlib_metadata/compat/py39.py",
+            "setuptools/_vendor/importlib_metadata/diagnose.py",
+            "setuptools/_vendor/importlib_metadata/py.typed",
+            "setuptools/_vendor/importlib_metadata-8.7.1.dist-info/INSTALLER",
+            "setuptools/_vendor/importlib_metadata-8.7.1.dist-info/METADATA",
+            "setuptools/_vendor/importlib_metadata-8.7.1.dist-info/REQUESTED",
+            "setuptools/_vendor/importlib_metadata-8.7.1.dist-info/WHEEL",
+            "setuptools/_vendor/importlib_metadata-8.7.1.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/importlib_metadata-8.7.1.dist-info/top_level.txt",
+            "setuptools/_vendor/jaraco/context/__init__.py",
+            "setuptools/_vendor/jaraco/context/py.typed",
+            "setuptools/_vendor/jaraco/functools/__init__.py",
+            "setuptools/_vendor/jaraco/functools/__init__.pyi",
+            "setuptools/_vendor/jaraco/functools/py.typed",
+            "setuptools/_vendor/jaraco/text/Lorem ipsum.txt",
+            "setuptools/_vendor/jaraco/text/__init__.py",
+            "setuptools/_vendor/jaraco/text/layouts.py",
+            "setuptools/_vendor/jaraco/text/show-newlines.py",
+            "setuptools/_vendor/jaraco/text/strip-prefix.py",
+            "setuptools/_vendor/jaraco/text/to-dvorak.py",
+            "setuptools/_vendor/jaraco/text/to-qwerty.py",
+            "setuptools/_vendor/jaraco.text-4.0.0.dist-info/INSTALLER",
+            "setuptools/_vendor/jaraco.text-4.0.0.dist-info/LICENSE",
+            "setuptools/_vendor/jaraco.text-4.0.0.dist-info/METADATA",
+            "setuptools/_vendor/jaraco.text-4.0.0.dist-info/REQUESTED",
+            "setuptools/_vendor/jaraco.text-4.0.0.dist-info/WHEEL",
+            "setuptools/_vendor/jaraco.text-4.0.0.dist-info/top_level.txt",
+            "setuptools/_vendor/jaraco_context-6.1.0.dist-info/INSTALLER",
+            "setuptools/_vendor/jaraco_context-6.1.0.dist-info/METADATA",
+            "setuptools/_vendor/jaraco_context-6.1.0.dist-info/REQUESTED",
+            "setuptools/_vendor/jaraco_context-6.1.0.dist-info/WHEEL",
+            "setuptools/_vendor/jaraco_context-6.1.0.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/jaraco_context-6.1.0.dist-info/top_level.txt",
+            "setuptools/_vendor/jaraco_functools-4.4.0.dist-info/INSTALLER",
+            "setuptools/_vendor/jaraco_functools-4.4.0.dist-info/METADATA",
+            "setuptools/_vendor/jaraco_functools-4.4.0.dist-info/REQUESTED",
+            "setuptools/_vendor/jaraco_functools-4.4.0.dist-info/WHEEL",
+            "setuptools/_vendor/jaraco_functools-4.4.0.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/jaraco_functools-4.4.0.dist-info/top_level.txt",
+            "setuptools/_vendor/more_itertools/__init__.py",
+            "setuptools/_vendor/more_itertools/__init__.pyi",
+            "setuptools/_vendor/more_itertools/more.py",
+            "setuptools/_vendor/more_itertools/more.pyi",
+            "setuptools/_vendor/more_itertools/py.typed",
+            "setuptools/_vendor/more_itertools/recipes.py",
+            "setuptools/_vendor/more_itertools/recipes.pyi",
+            "setuptools/_vendor/more_itertools-10.8.0.dist-info/INSTALLER",
+            "setuptools/_vendor/more_itertools-10.8.0.dist-info/METADATA",
+            "setuptools/_vendor/more_itertools-10.8.0.dist-info/REQUESTED",
+            "setuptools/_vendor/more_itertools-10.8.0.dist-info/WHEEL",
+            "setuptools/_vendor/more_itertools-10.8.0.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/packaging/__init__.py",
+            "setuptools/_vendor/packaging/_elffile.py",
+            "setuptools/_vendor/packaging/_manylinux.py",
+            "setuptools/_vendor/packaging/_musllinux.py",
+            "setuptools/_vendor/packaging/_parser.py",
+            "setuptools/_vendor/packaging/_structures.py",
+            "setuptools/_vendor/packaging/_tokenizer.py",
+            "setuptools/_vendor/packaging/licenses/__init__.py",
+            "setuptools/_vendor/packaging/licenses/_spdx.py",
+            "setuptools/_vendor/packaging/markers.py",
+            "setuptools/_vendor/packaging/metadata.py",
+            "setuptools/_vendor/packaging/py.typed",
+            "setuptools/_vendor/packaging/pylock.py",
+            "setuptools/_vendor/packaging/requirements.py",
+            "setuptools/_vendor/packaging/specifiers.py",
+            "setuptools/_vendor/packaging/tags.py",
+            "setuptools/_vendor/packaging/utils.py",
+            "setuptools/_vendor/packaging/version.py",
+            "setuptools/_vendor/packaging-26.0.dist-info/INSTALLER",
+            "setuptools/_vendor/packaging-26.0.dist-info/METADATA",
+            "setuptools/_vendor/packaging-26.0.dist-info/REQUESTED",
+            "setuptools/_vendor/packaging-26.0.dist-info/WHEEL",
+            "setuptools/_vendor/packaging-26.0.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/packaging-26.0.dist-info/licenses/LICENSE.APACHE",
+            "setuptools/_vendor/packaging-26.0.dist-info/licenses/LICENSE.BSD",
+            "setuptools/_vendor/platformdirs/__init__.py",
+            "setuptools/_vendor/platformdirs/__main__.py",
+            "setuptools/_vendor/platformdirs/android.py",
+            "setuptools/_vendor/platformdirs/api.py",
+            "setuptools/_vendor/platformdirs/macos.py",
+            "setuptools/_vendor/platformdirs/py.typed",
+            "setuptools/_vendor/platformdirs/unix.py",
+            "setuptools/_vendor/platformdirs/version.py",
+            "setuptools/_vendor/platformdirs/windows.py",
+            "setuptools/_vendor/platformdirs-4.4.0.dist-info/INSTALLER",
+            "setuptools/_vendor/platformdirs-4.4.0.dist-info/METADATA",
+            "setuptools/_vendor/platformdirs-4.4.0.dist-info/REQUESTED",
+            "setuptools/_vendor/platformdirs-4.4.0.dist-info/WHEEL",
+            "setuptools/_vendor/platformdirs-4.4.0.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/tomli/__init__.py",
+            "setuptools/_vendor/tomli/_parser.py",
+            "setuptools/_vendor/tomli/_re.py",
+            "setuptools/_vendor/tomli/_types.py",
+            "setuptools/_vendor/tomli/py.typed",
+            "setuptools/_vendor/tomli-2.4.0.dist-info/INSTALLER",
+            "setuptools/_vendor/tomli-2.4.0.dist-info/METADATA",
+            "setuptools/_vendor/tomli-2.4.0.dist-info/REQUESTED",
+            "setuptools/_vendor/tomli-2.4.0.dist-info/WHEEL",
+            "setuptools/_vendor/tomli-2.4.0.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/wheel/__init__.py",
+            "setuptools/_vendor/wheel/__main__.py",
+            "setuptools/_vendor/wheel/_bdist_wheel.py",
+            "setuptools/_vendor/wheel/_commands/__init__.py",
+            "setuptools/_vendor/wheel/_commands/convert.py",
+            "setuptools/_vendor/wheel/_commands/pack.py",
+            "setuptools/_vendor/wheel/_commands/tags.py",
+            "setuptools/_vendor/wheel/_commands/unpack.py",
+            "setuptools/_vendor/wheel/_metadata.py",
+            "setuptools/_vendor/wheel/_setuptools_logging.py",
+            "setuptools/_vendor/wheel/bdist_wheel.py",
+            "setuptools/_vendor/wheel/macosx_libfile.py",
+            "setuptools/_vendor/wheel/metadata.py",
+            "setuptools/_vendor/wheel/wheelfile.py",
+            "setuptools/_vendor/wheel-0.46.3.dist-info/INSTALLER",
+            "setuptools/_vendor/wheel-0.46.3.dist-info/METADATA",
+            "setuptools/_vendor/wheel-0.46.3.dist-info/REQUESTED",
+            "setuptools/_vendor/wheel-0.46.3.dist-info/WHEEL",
+            "setuptools/_vendor/wheel-0.46.3.dist-info/entry_points.txt",
+            "setuptools/_vendor/wheel-0.46.3.dist-info/licenses/LICENSE.txt",
+            "setuptools/_vendor/zipp/__init__.py",
+            "setuptools/_vendor/zipp/_functools.py",
+            "setuptools/_vendor/zipp/compat/__init__.py",
+            "setuptools/_vendor/zipp/compat/overlay.py",
+            "setuptools/_vendor/zipp/compat/py310.py",
+            "setuptools/_vendor/zipp/compat/py313.py",
+            "setuptools/_vendor/zipp/glob.py",
+            "setuptools/_vendor/zipp-3.23.0.dist-info/INSTALLER",
+            "setuptools/_vendor/zipp-3.23.0.dist-info/METADATA",
+            "setuptools/_vendor/zipp-3.23.0.dist-info/REQUESTED",
+            "setuptools/_vendor/zipp-3.23.0.dist-info/WHEEL",
+            "setuptools/_vendor/zipp-3.23.0.dist-info/licenses/LICENSE",
+            "setuptools/_vendor/zipp-3.23.0.dist-info/top_level.txt",
+            "setuptools/archive_util.py",
+            "setuptools/build_meta.py",
+            "setuptools/cli-32.exe",
+            "setuptools/cli-64.exe",
+            "setuptools/cli-arm64.exe",
+            "setuptools/cli.exe",
+            "setuptools/command/__init__.py",
+            "setuptools/command/_requirestxt.py",
+            "setuptools/command/alias.py",
+            "setuptools/command/bdist_egg.py",
+            "setuptools/command/bdist_rpm.py",
+            "setuptools/command/bdist_wheel.py",
+            "setuptools/command/build.py",
+            "setuptools/command/build_clib.py",
+            "setuptools/command/build_ext.py",
+            "setuptools/command/build_py.py",
+            "setuptools/command/develop.py",
+            "setuptools/command/dist_info.py",
+            "setuptools/command/easy_install.py",
+            "setuptools/command/editable_wheel.py",
+            "setuptools/command/egg_info.py",
+            "setuptools/command/install.py",
+            "setuptools/command/install_egg_info.py",
+            "setuptools/command/install_lib.py",
+            "setuptools/command/install_scripts.py",
+            "setuptools/command/rotate.py",
+            "setuptools/command/saveopts.py",
+            "setuptools/command/sdist.py",
+            "setuptools/command/setopt.py",
+            "setuptools/command/test.py",
+            "setuptools/compat/__init__.py",
+            "setuptools/compat/py310.py",
+            "setuptools/compat/py311.py",
+            "setuptools/compat/py312.py",
+            "setuptools/compat/py39.py",
+            "setuptools/config/NOTICE",
+            "setuptools/config/__init__.py",
+            "setuptools/config/_apply_pyprojecttoml.py",
+            "setuptools/config/_validate_pyproject/NOTICE",
+            "setuptools/config/_validate_pyproject/__init__.py",
+            "setuptools/config/_validate_pyproject/error_reporting.py",
+            "setuptools/config/_validate_pyproject/extra_validations.py",
+            "setuptools/config/_validate_pyproject/fastjsonschema_exceptions.py",
+            "setuptools/config/_validate_pyproject/fastjsonschema_validations.py",
+            "setuptools/config/_validate_pyproject/formats.py",
+            "setuptools/config/distutils.schema.json",
+            "setuptools/config/expand.py",
+            "setuptools/config/pyprojecttoml.py",
+            "setuptools/config/setupcfg.py",
+            "setuptools/config/setuptools.schema.json",
+            "setuptools/depends.py",
+            "setuptools/discovery.py",
+            "setuptools/dist.py",
+            "setuptools/errors.py",
+            "setuptools/extension.py",
+            "setuptools/glob.py",
+            "setuptools/gui-32.exe",
+            "setuptools/gui-64.exe",
+            "setuptools/gui-arm64.exe",
+            "setuptools/gui.exe",
+            "setuptools/installer.py",
+            "setuptools/launch.py",
+            "setuptools/launcher manifest.xml",
+            "setuptools/logging.py",
+            "setuptools/modified.py",
+            "setuptools/monkey.py",
+            "setuptools/msvc.py",
+            "setuptools/namespaces.py",
+            "setuptools/script (dev).tmpl",
+            "setuptools/script.tmpl",
+            "setuptools/unicode_utils.py",
+            "setuptools/version.py",
+            "setuptools/warnings.py",
+            "setuptools/wheel.py",
+            "setuptools/windows_support.py",
+            "setuptools-84.0.0.dist-info/METADATA",
+            "setuptools-84.0.0.dist-info/WHEEL",
+            "setuptools-84.0.0.dist-info/entry_points.txt",
+            "setuptools-84.0.0.dist-info/licenses/LICENSE",
+            "setuptools-84.0.0.dist-info/top_level.txt"
+          ],
+          "python_links": {
+            "opt/venv/bin/python": {
+              "link": "/usr/local/bin/python",
+              "symlink": true
+            },
+            "opt/venv/bin/python3": {
+              "link": "python",
+              "symlink": true
+            },
+            "opt/venv/bin/python3.12": {
+              "link": "python",
+              "symlink": true
+            }
+          },
+          "pyvenv_cfg": "home = /usr/local/bin\nimplementation = CPython\nuv = 0.10.10\nversion_info = 3.12.13\ninclude-system-site-packages = false\n",
+          "python_binary": {
+            "bytes": 14480,
+            "sha256": "4dbf3143240288fb2170257ffaa7bd030cdda5d2703d1f5f30b627042267e2e3"
+          },
+          "image": "sha256:b3db6dc22d92d7771aba40013bab4281ebe9f68188d5c46fc2617136b7d2c3a8",
+          "no_interpreter_started_yet": true
+        },
+        "hostconfig": {
+          "Binds": null,
+          "ContainerIDFile": "",
+          "LogConfig": {
+            "Type": "json-file",
+            "Config": {}
+          },
+          "NetworkMode": "none",
+          "PortBindings": {},
+          "RestartPolicy": {
+            "Name": "no",
+            "MaximumRetryCount": 0
+          },
+          "AutoRemove": false,
+          "VolumeDriver": "",
+          "VolumesFrom": null,
+          "ConsoleSize": [
+            0,
+            0
+          ],
+          "CapAdd": null,
+          "CapDrop": [
+            "ALL"
+          ],
+          "CgroupnsMode": "private",
+          "Dns": null,
+          "DnsOptions": [],
+          "DnsSearch": [],
+          "ExtraHosts": null,
+          "GroupAdd": null,
+          "IpcMode": "private",
+          "Cgroup": "",
+          "Links": null,
+          "OomScoreAdj": 0,
+          "PidMode": "",
+          "Privileged": false,
+          "PublishAllPorts": false,
+          "ReadonlyRootfs": false,
+          "SecurityOpt": [
+            "no-new-privileges"
+          ],
+          "UTSMode": "",
+          "UsernsMode": "",
+          "ShmSize": 67108864,
+          "Runtime": "runc",
+          "Isolation": "",
+          "CpuShares": 0,
+          "Memory": 2147483648,
+          "NanoCpus": 2000000000,
+          "CgroupParent": "",
+          "BlkioWeight": 0,
+          "BlkioWeightDevice": [],
+          "BlkioDeviceReadBps": [],
+          "BlkioDeviceWriteBps": [],
+          "BlkioDeviceReadIOps": [],
+          "BlkioDeviceWriteIOps": [],
+          "CpuPeriod": 0,
+          "CpuQuota": 0,
+          "CpuRealtimePeriod": 0,
+          "CpuRealtimeRuntime": 0,
+          "CpusetCpus": "",
+          "CpusetMems": "",
+          "Devices": [],
+          "DeviceCgroupRules": null,
+          "DeviceRequests": null,
+          "MemoryReservation": 0,
+          "MemorySwap": 4294967296,
+          "MemorySwappiness": null,
+          "OomKillDisable": false,
+          "PidsLimit": 128,
+          "Ulimits": null,
+          "CpuCount": 0,
+          "CpuPercent": 0,
+          "IOMaximumIOps": 0,
+          "IOMaximumBandwidth": 0,
+          "MaskedPaths": [
+            "/proc/acpi",
+            "/proc/asound",
+            "/proc/interrupts",
+            "/proc/kcore",
+            "/proc/keys",
+            "/proc/latency_stats",
+            "/proc/sched_debug",
+            "/proc/scsi",
+            "/proc/timer_list",
+            "/proc/timer_stats",
+            "/sys/devices/virtual/powercap",
+            "/sys/firmware",
+            "/sys/devices/system/cpu/cpu0/thermal_throttle",
+            "/sys/devices/system/cpu/cpu1/thermal_throttle",
+            "/sys/devices/system/cpu/cpu2/thermal_throttle",
+            "/sys/devices/system/cpu/cpu3/thermal_throttle",
+            "/sys/devices/system/cpu/cpu4/thermal_throttle",
+            "/sys/devices/system/cpu/cpu5/thermal_throttle",
+            "/sys/devices/system/cpu/cpu6/thermal_throttle",
+            "/sys/devices/system/cpu/cpu7/thermal_throttle"
+          ],
+          "ReadonlyPaths": [
+            "/proc/bus",
+            "/proc/fs",
+            "/proc/irq",
+            "/proc/sys",
+            "/proc/sysrq-trigger"
+          ]
+        }
+      },
+      "ledger": {
+        "status": "PASS_LEDGER_NATIVE",
+        "H_upper": 15861197984,
+        "remaining_bytes": 1318671200,
+        "historical_entry_floor": 11247782439,
+        "files": [
+          {
+            "logical": 735578392,
+            "allocated": 737316864
+          },
+          {
+            "logical": 9410611,
+            "allocated": 12357632
+          }
+        ],
+        "own_images_whole_upper": 6108900000,
+        "positive_unshared_cache_upper": 9002623488,
+        "positive_all_cache_upper": 14094697607,
+        "native_shared_cache_delta_records": [
+          {
+            "CreatedAt": "2026-10-07 07:41:00.679344426 +0000 UTC",
+            "Description": "from local ",
+            "ID": "51uo8p63925a0cd3vh7r2zmp3",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "ia9bg9hh195c0w6gi6bq0z65r"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:05:52.127269507 +0000 UTC",
+            "Description": "from local ",
+            "ID": "5i94d5kjq2qujjrl6fotpp6tm",
+            "LastUsedAt": "26 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "k7flc777nvfj80lqtarfzny2u"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 3,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:31:07.42813526 +0000 UTC",
+            "Description": "[runtime 4/5] WORKDIR /data",
+            "ID": "81wu5btyhs4a2liv92x29y5a0",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "42qkvv6tiga65jqylkrj6e9wb"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:31:07.567821095 +0000 UTC",
+            "Description": "mount / from exec /bin/sh -c mkdir -p /data/tmp /data/input /data/cache/models /data/fonts",
+            "ID": "8bpao1qpvw3wsn204p11zocvx",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "81wu5btyhs4a2liv92x29y5a0"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 07:41:00.711304015 +0000 UTC",
+            "Description": "from local ",
+            "ID": "8uds2ai9ggg4qybde7syjta8p",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "imev50yu1u00xckuz0684ckhq"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 2,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 08:53:57.686462476 +0000 UTC",
+            "Description": "mount / from exec /bin/sh -c mkdir -p /data/tmp /data/input /data/cache/models /data/fonts",
+            "ID": "cpkr8zx42e8875u06x9t3wvns",
+            "LastUsedAt": "22 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "o7jgnkdis39zs3y12uyl1chji"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 08:50:02.113779553 +0000 UTC",
+            "Description": "[runtime 4/5] WORKDIR /data",
+            "ID": "hgszzbbef00w9rtta9fb7l4gb",
+            "LastUsedAt": "26 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "oqr15c5pp6zib9o4y4w528kp3"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 08:50:02.220952319 +0000 UTC",
+            "Description": "mount / from exec /bin/sh -c mkdir -p /data/tmp /data/input /data/cache/models /data/fonts",
+            "ID": "i735nu7xrz5ms3mb81wz2r09c",
+            "LastUsedAt": "26 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "hgszzbbef00w9rtta9fb7l4gb"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 07:41:00.663496216 +0000 UTC",
+            "Description": "from local ",
+            "ID": "ia9bg9hh195c0w6gi6bq0z65r",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "zlwopi0qgvw0gks6cfefpyor6"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 07:41:00.695430252 +0000 UTC",
+            "Description": "from local ",
+            "ID": "imev50yu1u00xckuz0684ckhq",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "51uo8p63925a0cd3vh7r2zmp3"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 07:41:00.631383472 +0000 UTC",
+            "Description": "from local ",
+            "ID": "jd4x4dcjynfv7l5fgpm4p3xbr",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "kwdcr6dxxp5nj6gp8a66tkb3f"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:05:52.115225975 +0000 UTC",
+            "Description": "from local ",
+            "ID": "k7flc777nvfj80lqtarfzny2u",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": null,
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:05:52.212035843 +0000 UTC",
+            "Description": "from local ",
+            "ID": "kwdcr6dxxp5nj6gp8a66tkb3f",
+            "LastUsedAt": "26 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "ncnpzt6b4va3q79fit8p1pgsr"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 4,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:05:52.182963567 +0000 UTC",
+            "Description": "from local ",
+            "ID": "ncnpzt6b4va3q79fit8p1pgsr",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "ugxc0i1lu50y58oz4tl3rnlm4"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 2,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 08:53:57.590934208 +0000 UTC",
+            "Description": "[runtime 4/5] WORKDIR /data",
+            "ID": "o7jgnkdis39zs3y12uyl1chji",
+            "LastUsedAt": "22 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "bvmcz51grm6x4qertpdaqczh2"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:24:01.93680582 +0000 UTC",
+            "Description": "[runtime 4/5] WORKDIR /data",
+            "ID": "pnahyrii9q69qg9sq2q90vfnb",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "7pnpf68lmk5iuk0rti4kmpqnr"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:24:02.030881916 +0000 UTC",
+            "Description": "mount / from exec /bin/sh -c mkdir -p /data/tmp /data/input /data/cache/models /data/fonts",
+            "ID": "q2b2utwp3ga6ihedts93vjbir",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "pnahyrii9q69qg9sq2q90vfnb"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:05:52.16666183 +0000 UTC",
+            "Description": "from local ",
+            "ID": "ugxc0i1lu50y58oz4tl3rnlm4",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "ry6cjd4ulu2ma9y8ak8ls1rjo"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 2,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-07 07:41:00.647676494 +0000 UTC",
+            "Description": "from local ",
+            "ID": "zlwopi0qgvw0gks6cfefpyor6",
+            "LastUsedAt": "2 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "jd4x4dcjynfv7l5fgpm4p3xbr"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "0B",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1
+          },
+          {
+            "CreatedAt": "2026-10-06 21:24:01.83613144 +0000 UTC",
+            "Description": "[runtime 2/5] COPY --from=builder /opt/build-proof /opt/build-proof",
+            "ID": "6o5nt1gz64bm7uedhbhoufx6t",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "uxav8ghw87s1e5y9bsfie5unx"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "165.2kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 165300
+          },
+          {
+            "CreatedAt": "2026-10-06 21:31:07.291270151 +0000 UTC",
+            "Description": "[runtime 2/5] COPY --from=builder /opt/build-proof /opt/build-proof",
+            "ID": "kf95wf648bttqo54si43ugswa",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "1ba6kqxcb51mgyrpji5xqicuh"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "165.3kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 165400
+          },
+          {
+            "CreatedAt": "2026-10-07 08:53:57.471681006 +0000 UTC",
+            "Description": "[runtime 2/5] COPY --from=builder /opt/build-proof /opt/build-proof",
+            "ID": "w6ghdepz8j0b1arfrt3tl5nkn",
+            "LastUsedAt": "22 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "lxmp2jft9seqn4tw4tcme4p29"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "166.1kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 166200
+          },
+          {
+            "CreatedAt": "2026-10-07 08:50:02.015811753 +0000 UTC",
+            "Description": "[runtime 2/5] COPY --from=builder /opt/build-proof /opt/build-proof",
+            "ID": "skrw2reen8svk1o3xg6u8pitk",
+            "LastUsedAt": "26 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "rye2rr74d79t51w6t3evg47fz"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "166.5kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 166600
+          },
+          {
+            "CreatedAt": "2026-10-07 08:50:02.0702332 +0000 UTC",
+            "Description": "[runtime 3/5] COPY --from=builder /opt/prepare-proof /opt/prepare-proof",
+            "ID": "oqr15c5pp6zib9o4y4w528kp3",
+            "LastUsedAt": "26 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "skrw2reen8svk1o3xg6u8pitk"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "534.9kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 535000
+          },
+          {
+            "CreatedAt": "2026-10-07 08:53:57.548844872 +0000 UTC",
+            "Description": "[runtime 3/5] COPY --from=builder /opt/prepare-proof /opt/prepare-proof",
+            "ID": "bvmcz51grm6x4qertpdaqczh2",
+            "LastUsedAt": "22 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "w6ghdepz8j0b1arfrt3tl5nkn"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "534.9kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 535000
+          },
+          {
+            "CreatedAt": "2026-10-06 21:24:01.893488501 +0000 UTC",
+            "Description": "[runtime 3/5] COPY --from=builder /opt/prepare-proof /opt/prepare-proof",
+            "ID": "7pnpf68lmk5iuk0rti4kmpqnr",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "6o5nt1gz64bm7uedhbhoufx6t"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "535.1kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 535200
+          },
+          {
+            "CreatedAt": "2026-10-06 21:31:07.369244701 +0000 UTC",
+            "Description": "[runtime 3/5] COPY --from=builder /opt/prepare-proof /opt/prepare-proof",
+            "ID": "42qkvv6tiga65jqylkrj6e9wb",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "kf95wf648bttqo54si43ugswa"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "535.3kB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 535400
+          },
+          {
+            "CreatedAt": "2026-10-06 21:06:02.778843313 +0000 UTC",
+            "Description": "mount / from exec /bin/sh -c test -n \"$APT_SNAPSHOT\" && test \"$(cat /verified-apt/snapshot.txt)\" = \"$APT_SNAPSHOT\" &&     rm /etc/apt/sources.list.d/debian.sources &&     printf 'deb [check-valid-until=no] file:/verified-apt/debian bookworm main\\ndeb [check-valid-until=no] file:/verified-apt/debian-security bookworm-security main\\n' > /etc/apt/sources.list &&     apt-get -o Acquire::Languages=none -o Acquire::By-Hash=false update &&     apt-get install -y --no-install-recommends ca-certificates curl libpango-1.0-0       libpangoft2-1.0-0 libharfbuzz-subset0 fontconfig fonts-dejavu-core libgomp1 &&     rm -rf /var/lib/apt/lists/*",
+            "ID": "a8gghvklow7h3x4xiw1dsz0d4",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "71uasoq4q9bx89tir3kmau77g"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "19.02MB",
+            "Type": "regular",
+            "UsageCount": 4,
+            "positive_upper": 19030000
+          },
+          {
+            "CreatedAt": "2026-10-06 21:30:48.192876666 +0000 UTC",
+            "Description": "mount / from exec /bin/sh -c test -n \"$APT_SNAPSHOT\" && test \"$(cat /verified-apt/snapshot.txt)\" = \"$APT_SNAPSHOT\" &&     rm /etc/apt/sources.list.d/debian.sources &&     printf 'deb [check-valid-until=no] file:/verified-apt/debian bookworm main\\ndeb [check-valid-until=no] file:/verified-apt/debian-security bookworm-security main\\n' > /etc/apt/sources.list &&     apt-get -o Acquire::Languages=none -o Acquire::By-Hash=false update &&     apt-get install -y --no-install-recommends ca-certificates curl libpango-1.0-0       libpangoft2-1.0-0 libharfbuzz-subset0 fontconfig fonts-dejavu-core libgomp1 &&     rm -rf /var/lib/apt/lists/*",
+            "ID": "o63k81e2n7kaoxk6fowrk4afz",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "kwdcr6dxxp5nj6gp8a66tkb3f"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "19.02MB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 19030000
+          },
+          {
+            "CreatedAt": "2026-10-07 08:49:34.938580818 +0000 UTC",
+            "Description": "mount / from exec /bin/sh -c test -n \"$APT_SNAPSHOT\" && test \"$(cat /verified-apt/snapshot.txt)\" = \"$APT_SNAPSHOT\" &&     rm /etc/apt/sources.list.d/debian.sources &&     printf 'deb [check-valid-until=no] file:/verified-apt/debian bookworm main\\ndeb [check-valid-until=no] file:/verified-apt/debian-security bookworm-security main\\n' > /etc/apt/sources.list &&     apt-get -o Acquire::Languages=none -o Acquire::By-Hash=false update &&     apt-get install -y --no-install-recommends ca-certificates curl libpango-1.0-0       libpangoft2-1.0-0 libharfbuzz-subset0 fontconfig fonts-dejavu-core libgomp1 &&     rm -rf /var/lib/apt/lists/*",
+            "ID": "wjl0a55v2s1d0votj2gxykkjh",
+            "LastUsedAt": "22 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "kwdcr6dxxp5nj6gp8a66tkb3f"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "19.02MB",
+            "Type": "regular",
+            "UsageCount": 2,
+            "positive_upper": 19030000
+          },
+          {
+            "CreatedAt": "2026-10-06 21:05:53.517725196 +0000 UTC",
+            "Description": "[native 2/3] COPY --from=verified-inputs /apt-repository /verified-apt",
+            "ID": "71uasoq4q9bx89tir3kmau77g",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "kwdcr6dxxp5nj6gp8a66tkb3f"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "20.17MB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 20180000
+          },
+          {
+            "CreatedAt": "2026-10-06 21:24:01.784164159 +0000 UTC",
+            "Description": "[runtime 1/5] COPY --from=builder /opt/venv /opt/venv",
+            "ID": "uxav8ghw87s1e5y9bsfie5unx",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "a8gghvklow7h3x4xiw1dsz0d4"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "1.252GB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1253000000
+          },
+          {
+            "CreatedAt": "2026-10-06 21:31:07.229584208 +0000 UTC",
+            "Description": "[runtime 1/5] COPY --from=builder /opt/venv /opt/venv",
+            "ID": "1ba6kqxcb51mgyrpji5xqicuh",
+            "LastUsedAt": "12 hours ago",
+            "Mutable": false,
+            "Parents": [
+              "o63k81e2n7kaoxk6fowrk4afz"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "1.252GB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1253000000
+          },
+          {
+            "CreatedAt": "2026-10-07 08:53:57.418989492 +0000 UTC",
+            "Description": "[runtime 1/5] COPY --from=builder /opt/venv /opt/venv",
+            "ID": "lxmp2jft9seqn4tw4tcme4p29",
+            "LastUsedAt": "22 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "wjl0a55v2s1d0votj2gxykkjh"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "1.252GB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1253000000
+          },
+          {
+            "CreatedAt": "2026-10-07 08:50:01.96194397 +0000 UTC",
+            "Description": "[runtime 1/5] COPY --from=builder /opt/venv /opt/venv",
+            "ID": "rye2rr74d79t51w6t3evg47fz",
+            "LastUsedAt": "26 minutes ago",
+            "Mutable": false,
+            "Parents": [
+              "wjl0a55v2s1d0votj2gxykkjh"
+            ],
+            "Reclaimable": true,
+            "Shared": true,
+            "Size": "1.252GB",
+            "Type": "regular",
+            "UsageCount": 1,
+            "positive_upper": 1253000000
+          }
+        ],
+        "share_rule": "native Shared cache already represented by own/public images charged whole; no shrink/cleanup/reset; retain historical floor",
+        "storage_cap": 17179869184,
+        "time_entry": 568.7285651748534,
+        "new_preparation_conservative_seconds": 180.0,
+        "preparation_includes": "unrecorded failed driver setup/admission/cache-only two reviewer invocations/public read-only preflight/final delivery; excludes recorded supply/build/contracts",
+        "supply": [
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003.receipt.json",
+            "seconds": 3.018097755033523
+          },
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002.receipt.json",
+            "seconds": 2.647572649177164
+          },
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001.receipt.json",
+            "seconds": 0.4445941378362477
+          },
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004.receipt.json",
+            "seconds": 14.100535560166463
+          }
+        ],
+        "builds": [
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/compose-r004/result.json",
+            "seconds": 25.432977060088888
+          },
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/compose-r002/result.json",
+            "seconds": 46.50880492501892
+          },
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/compose-r003/result.json",
+            "seconds": 0
+          }
+        ],
+        "contracts": [
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/C-docker-r001/result.json",
+            "seconds": 8.136394469067454
+          },
+          {
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/C-docker-r002/result.json",
+            "seconds": 23.125633355928585
+          }
+        ],
+        "cumulative_seconds": 872.2351763881743,
+        "network_upper": 496040215,
+        "new_network_bytes": 0,
+        "wire_measured": false,
+        "no_own_active_container_or_build": true
+      }
+    },
+    "docs": {
+      "blocks": [
+        {
+          "id": "R003-B001",
+          "first_line": 70,
+          "planning_text_sha256": "c6585a7ab2319b868bac715ebdf5e12fe3e70629d8f369af558bd1eb59366418",
+          "actual_text_sha256": "c6585a7ab2319b868bac715ebdf5e12fe3e70629d8f369af558bd1eb59366418",
+          "reason": "Installazione clone con managed uv e canonica",
+          "disposition": "modificato",
+          "destination": "docs/how-to/ambiente-uv.md"
+        },
+        {
+          "id": "R003-B002",
+          "first_line": 89,
+          "planning_text_sha256": "53c4d40afd49a8b6304992a78f8a07dbebfb4b452ebb9aec4724ace01a837374",
+          "actual_text_sha256": "53c4d40afd49a8b6304992a78f8a07dbebfb4b452ebb9aec4724ace01a837374",
+          "reason": "Uso base con CLI reali e directory pubbliche",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B003",
+          "first_line": 110,
+          "planning_text_sha256": "8752041ab9f768592ae77871b22a15e939696f3fe695408ce8a3fe7e901e3253",
+          "actual_text_sha256": "8752041ab9f768592ae77871b22a15e939696f3fe695408ce8a3fe7e901e3253",
+          "reason": "Directory reali documentate",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B004",
+          "first_line": 141,
+          "planning_text_sha256": "4af2303d61c48420758416cb0278afe45f5f657c51516260bd687dd5723e82e6",
+          "actual_text_sha256": "4af2303d61c48420758416cb0278afe45f5f657c51516260bd687dd5723e82e6",
+          "reason": "venv generica sostituita da managed pin",
+          "disposition": "modificato",
+          "destination": "docs/how-to/ambiente-uv.md"
+        },
+        {
+          "id": "R003-B005",
+          "first_line": 159,
+          "planning_text_sha256": "ae9a00b619ea3b8f6ddc276b917ecbd6e7ef7c4e2ac03817d8d32c3028eecd21",
+          "actual_text_sha256": "ae9a00b619ea3b8f6ddc276b917ecbd6e7ef7c4e2ac03817d8d32c3028eecd21",
+          "reason": "pip globale non riproducibile rimosso",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B006",
+          "first_line": 175,
+          "planning_text_sha256": "139ae00ef23c920775a7a73fbc2722181b953c37786c719894f203fac0bccd0d",
+          "actual_text_sha256": "139ae00ef23c920775a7a73fbc2722181b953c37786c719894f203fac0bccd0d",
+          "reason": "Poetry non appartiene alla toolchain scelta",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B007",
+          "first_line": 194,
+          "planning_text_sha256": "e4b4337bdf3eb757c73465999962959729b22f1e85f54e08a5bbefba354fd16f",
+          "actual_text_sha256": "e4b4337bdf3eb757c73465999962959729b22f1e85f54e08a5bbefba354fd16f",
+          "reason": "Creazione config CLI conservata",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B008",
+          "first_line": 199,
+          "planning_text_sha256": "9752c8f4e60cb79ccacf4c5395aae8eaf39e7bbba7d4aa7129c67e77cc8f404b",
+          "actual_text_sha256": "9752c8f4e60cb79ccacf4c5395aae8eaf39e7bbba7d4aa7129c67e77cc8f404b",
+          "reason": "JSON completo ricondotto alle chiavi effettive",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B009",
+          "first_line": 290,
+          "planning_text_sha256": "408cf0d0c04cea9605dec284d611b66680455797ec7413d18da44c0785223fbe",
+          "actual_text_sha256": "408cf0d0c04cea9605dec284d611b66680455797ec7413d18da44c0785223fbe",
+          "reason": "Metodo locale esplicito",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B010",
+          "first_line": 301,
+          "planning_text_sha256": "76dfc5b11236bab6542ad8cc166031649b0fb1d31183893c852ccc8d7651b6b5",
+          "actual_text_sha256": "76dfc5b11236bab6542ad8cc166031649b0fb1d31183893c852ccc8d7651b6b5",
+          "reason": "Metodo cloud esplicito e privacy",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B011",
+          "first_line": 323,
+          "planning_text_sha256": "a45c5dbcf2955a571b18d7d2c9b53b8cb73a8768e3685fdecbc8462a2040ac8c",
+          "actual_text_sha256": "a45c5dbcf2955a571b18d7d2c9b53b8cb73a8768e3685fdecbc8462a2040ac8c",
+          "reason": "Template env senza segreti",
+          "disposition": "modificato",
+          "destination": "docs/how-to/ambiente-uv.md"
+        },
+        {
+          "id": "R003-B012",
+          "first_line": 329,
+          "planning_text_sha256": "e4f2d855a43f928a973edc14eda63da898796953cb0ab1dbdf76fb4dda0ef9e5",
+          "actual_text_sha256": "e4f2d855a43f928a973edc14eda63da898796953cb0ab1dbdf76fb4dda0ef9e5",
+          "reason": "Variabili reali e precedenza",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B013",
+          "first_line": 364,
+          "planning_text_sha256": "e0571cfe40de53d64e2023a397932db0aba9b8ea73396ea1eaf4dc42122401d4",
+          "actual_text_sha256": "e0571cfe40de53d64e2023a397932db0aba9b8ea73396ea1eaf4dc42122401d4",
+          "reason": "Opt-in Marker multi-formato e fallback Pandoc",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B014",
+          "first_line": 379,
+          "planning_text_sha256": "1e4ec6233fdf276447a8bba37a10ef41551ce650b017c9ae31f4c08684fb89d1",
+          "actual_text_sha256": "1e4ec6233fdf276447a8bba37a10ef41551ce650b017c9ae31f4c08684fb89d1",
+          "reason": "Servizio HTML non incluso nella verifica offline",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B015",
+          "first_line": 399,
+          "planning_text_sha256": "85a4ad406aac1ff37bf52034efb394dae2a6982484732487bd24606654e3dc1a",
+          "actual_text_sha256": "85a4ad406aac1ff37bf52034efb394dae2a6982484732487bd24606654e3dc1a",
+          "reason": "Polling cloud con limiti effettivi",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B016",
+          "first_line": 422,
+          "planning_text_sha256": "d728b3c9cb6aa1ae456ec0050e8138164c55ae0516e3d7ff699b8eb1037ec684",
+          "actual_text_sha256": "d728b3c9cb6aa1ae456ec0050e8138164c55ae0516e3d7ff699b8eb1037ec684",
+          "reason": "Sequenza completa reale",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B017",
+          "first_line": 438,
+          "planning_text_sha256": "1ff19ac890108a84cbf7963ba66ebfbf6f1f71e3e3945ddbbc45b82248354304",
+          "actual_text_sha256": "1ff19ac890108a84cbf7963ba66ebfbf6f1f71e3e3945ddbbc45b82248354304",
+          "reason": "Fasi selezionabili reali",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B018",
+          "first_line": 456,
+          "planning_text_sha256": "2ad724f9130071230f35ab0f40fd605e5597078cf7fe49f8eb56ba5e9fd4d877",
+          "actual_text_sha256": "2ad724f9130071230f35ab0f40fd605e5597078cf7fe49f8eb56ba5e9fd4d877",
+          "reason": "Input e output pubblici espliciti",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B019",
+          "first_line": 471,
+          "planning_text_sha256": "11b5c1a910156cbfaed08cad6c4e9abff4b1449d626ab843868b97516082205d",
+          "actual_text_sha256": "11b5c1a910156cbfaed08cad6c4e9abff4b1449d626ab843868b97516082205d",
+          "reason": "Avvio servizio implicito sostituito da build offline",
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md"
+        },
+        {
+          "id": "R003-B020",
+          "first_line": 490,
+          "planning_text_sha256": "6817b232f43919a3f1b3b7e2f51b2d892560a49d2e86f12adffeae6ddcb86f57",
+          "actual_text_sha256": "6817b232f43919a3f1b3b7e2f51b2d892560a49d2e86f12adffeae6ddcb86f57",
+          "reason": "Echo API key rimosso per non esporre segreti",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B021",
+          "first_line": 503,
+          "planning_text_sha256": "7553ab667d509dfa6f506c8e8e1c66e7e340cc4710eeb27bd4ec27dd26505b61",
+          "actual_text_sha256": "7553ab667d509dfa6f506c8e8e1c66e7e340cc4710eeb27bd4ec27dd26505b61",
+          "reason": "Argomenti reali unified_converter",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B022",
+          "first_line": 511,
+          "planning_text_sha256": "ed2fb5e3342295645efe7eae3b5e191f73a2edbae5fae3ffc79ce06a87bd0fa3",
+          "actual_text_sha256": "ed2fb5e3342295645efe7eae3b5e191f73a2edbae5fae3ffc79ce06a87bd0fa3",
+          "reason": "Strati pytest e preflight obbligatorio",
+          "disposition": "modificato",
+          "destination": "docs/reference/toolchain-legacy.md"
+        },
+        {
+          "id": "R003-B023",
+          "first_line": 615,
+          "planning_text_sha256": "bc7b37bfabff8046657949db309b2dae928045dd57354f34ef185e45b4b0a87e",
+          "actual_text_sha256": "bc7b37bfabff8046657949db309b2dae928045dd57354f34ef185e45b4b0a87e",
+          "reason": "Report validazione effettivo senza grading inventato",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B024",
+          "first_line": 635,
+          "planning_text_sha256": "b0cbe77cf7da9a6280c2fc9348a8bd6aa4156bc4fc4407eafcc5f33b29216d88",
+          "actual_text_sha256": "b0cbe77cf7da9a6280c2fc9348a8bd6aa4156bc4fc4407eafcc5f33b29216d88",
+          "reason": "Report chunking dipendente dalla modalit\u00e0",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B025",
+          "first_line": 657,
+          "planning_text_sha256": "af24fab71a8f1248a6519b38c6933b9b5dfa8bd45a64131421fd8365f97e9310",
+          "actual_text_sha256": "af24fab71a8f1248a6519b38c6933b9b5dfa8bd45a64131421fd8365f97e9310",
+          "reason": "Metadati chunk effettivi",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B026",
+          "first_line": 683,
+          "planning_text_sha256": "e885da3e6b24f6ef42b3394e7c9b3910f4e0ed7d41bdf0f3cddde0ed54ae53c3",
+          "actual_text_sha256": "e885da3e6b24f6ef42b3394e7c9b3910f4e0ed7d41bdf0f3cddde0ed54ae53c3",
+          "reason": "Editable pip sostituito da canonica uv",
+          "disposition": "modificato",
+          "destination": "docs/how-to/ambiente-uv.md"
+        },
+        {
+          "id": "R003-B027",
+          "first_line": 703,
+          "planning_text_sha256": "3b1cb7d8ea6948d5673e68f78bda91273493e736e74c5f85cbca1c1b59a735ac",
+          "actual_text_sha256": "3b1cb7d8ea6948d5673e68f78bda91273493e736e74c5f85cbca1c1b59a735ac",
+          "reason": "Discovery e suite distinte",
+          "disposition": "modificato",
+          "destination": "docs/reference/toolchain-legacy.md"
+        },
+        {
+          "id": "R003-B028",
+          "first_line": 734,
+          "planning_text_sha256": "302bbbcb881d99e6495093d3c4905076898f2fdcd80a30d484448a97f3a1ecb7",
+          "actual_text_sha256": "302bbbcb881d99e6495093d3c4905076898f2fdcd80a30d484448a97f3a1ecb7",
+          "reason": "Preparazione supply esplicita",
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md"
+        },
+        {
+          "id": "R003-B029",
+          "first_line": 744,
+          "planning_text_sha256": "700a3878c2bcdb946c9c1893948aa4133921d2a9bd0cf18e90c5feecb90530ec",
+          "actual_text_sha256": "700a3878c2bcdb946c9c1893948aa4133921d2a9bd0cf18e90c5feecb90530ec",
+          "reason": "up --build sostituito da Compose build offline",
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md"
+        },
+        {
+          "id": "R003-B030",
+          "first_line": 771,
+          "planning_text_sha256": "3945232623cd50c95521c03eb40cfe14bf358cb6374a3e4f057c244c7f78628a",
+          "actual_text_sha256": "3945232623cd50c95521c03eb40cfe14bf358cb6374a3e4f057c244c7f78628a",
+          "reason": "Healthcheck non prova conversione e non avviato",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B031",
+          "first_line": 784,
+          "planning_text_sha256": "18588f30ef69f631d25e9ec851dab9f8217a1da8f88d70aac5777573ba624020",
+          "actual_text_sha256": "18588f30ef69f631d25e9ec851dab9f8217a1da8f88d70aac5777573ba624020",
+          "reason": "Chiamata convert remota non prova contratto offline",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B032",
+          "first_line": 799,
+          "planning_text_sha256": "12a5a8dd203a33e95f91a9b55dac79dad10debf4c26afdeecffd5528f6e072f1",
+          "actual_text_sha256": "12a5a8dd203a33e95f91a9b55dac79dad10debf4c26afdeecffd5528f6e072f1",
+          "reason": "Manutenzione daemon esclusa dal contratto diagnostico",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B033",
+          "first_line": 815,
+          "planning_text_sha256": "a02758706feced76ad583b4f699daf92f4418ad1e5df99a05670e3ed77d4fc34",
+          "actual_text_sha256": "a02758706feced76ad583b4f699daf92f4418ad1e5df99a05670e3ed77d4fc34",
+          "reason": "Benchmark su PDF fittizio non dimostrato",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B034",
+          "first_line": 831,
+          "planning_text_sha256": "d0b2aa73863003ff777d5e8cf39b1cecb55f94db5e6c12aa52064659d97cce03",
+          "actual_text_sha256": "d0b2aa73863003ff777d5e8cf39b1cecb55f94db5e6c12aa52064659d97cce03",
+          "reason": "Import host sostituito da origine installata/preflight",
+          "disposition": "modificato",
+          "destination": "docs/reference/toolchain-legacy.md"
+        },
+        {
+          "id": "R003-B035",
+          "first_line": 857,
+          "planning_text_sha256": "d38754fc3d3046e5b5b6b1f84608b7ae65d7ee263fafcb31f0555f648a5965ac",
+          "actual_text_sha256": "d38754fc3d3046e5b5b6b1f84608b7ae65d7ee263fafcb31f0555f648a5965ac",
+          "reason": "GPU solo override config senza inferenza",
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md"
+        },
+        {
+          "id": "R003-B036",
+          "first_line": 875,
+          "planning_text_sha256": "c298fceda1dbd3e4225b29446a81e848a23cb68c339d6cdff68d9f38dafc501c",
+          "actual_text_sha256": "c298fceda1dbd3e4225b29446a81e848a23cb68c339d6cdff68d9f38dafc501c",
+          "reason": "sudo/NVIDIA modifica host fuori procedura",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B037",
+          "first_line": 895,
+          "planning_text_sha256": "b918e3bc3bd0ece7aed6bb67b4b99b55477057f9953572f8fca39893de9c901e",
+          "actual_text_sha256": "b918e3bc3bd0ece7aed6bb67b4b99b55477057f9953572f8fca39893de9c901e",
+          "reason": "Limiti Compose senza promesse throughput",
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md"
+        },
+        {
+          "id": "R003-B038",
+          "first_line": 905,
+          "planning_text_sha256": "31e4bb1fa4aff7c9a9d3ecab852fd09da41abb9079fb076c83830e53f6729506",
+          "actual_text_sha256": "31e4bb1fa4aff7c9a9d3ecab852fd09da41abb9079fb076c83830e53f6729506",
+          "reason": "Aggiornamento container operativo non autorizzato",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B039",
+          "first_line": 915,
+          "planning_text_sha256": "8a47460c8c48b110faeef2cedccde8418c596cb0437136b3146405f4a9ccdc5b",
+          "actual_text_sha256": "8a47460c8c48b110faeef2cedccde8418c596cb0437136b3146405f4a9ccdc5b",
+          "reason": "systemctl/restart modifica daemon esclusa",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B040",
+          "first_line": 930,
+          "planning_text_sha256": "2393c9ed3f35a5c3c294b96109c4294e02a47ee55e3336e3016b312399966109",
+          "actual_text_sha256": "2393c9ed3f35a5c3c294b96109c4294e02a47ee55e3336e3016b312399966109",
+          "reason": "prune globale vietato e non necessario",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B041",
+          "first_line": 943,
+          "planning_text_sha256": "3bd26173a2270cf287afcefa6bb9fb2cb178ed55cea05d42dd9c4eaa62792771",
+          "actual_text_sha256": "3bd26173a2270cf287afcefa6bb9fb2cb178ed55cea05d42dd9c4eaa62792771",
+          "reason": "Endpoint non equivale a verifica offline",
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md"
+        },
+        {
+          "id": "R003-B042",
+          "first_line": 956,
+          "planning_text_sha256": "669430b3ab4d5f3a67851f725c94f2e8c5671da4f967586d64b3644f0c9c1244",
+          "actual_text_sha256": "669430b3ab4d5f3a67851f725c94f2e8c5671da4f967586d64b3644f0c9c1244",
+          "reason": "stats non attesta prestazioni o fedelt\u00e0",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B043",
+          "first_line": 967,
+          "planning_text_sha256": "c58953495927a1da7b1ecfb2994e948fca003c6aee14a5b00ff1ddca8815c37c",
+          "actual_text_sha256": "c58953495927a1da7b1ecfb2994e948fca003c6aee14a5b00ff1ddca8815c37c",
+          "reason": "daemon.json modifica policy host esclusa",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B044",
+          "first_line": 989,
+          "planning_text_sha256": "e8b634f8dbeabd062ca3c40b14ccbcda2a38b2f1a6e541ba3f968bd5d08f57d4",
+          "actual_text_sha256": "e8b634f8dbeabd062ca3c40b14ccbcda2a38b2f1a6e541ba3f968bd5d08f57d4",
+          "reason": "OOM distinto da PASS e limiti risorse espliciti",
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md"
+        },
+        {
+          "id": "R003-B045",
+          "first_line": 1027,
+          "planning_text_sha256": "ffa17784f6a480045cdbc18c5f81ce3df2f6dbdc4ccf09bc639cffcf87aacbda",
+          "actual_text_sha256": "ffa17784f6a480045cdbc18c5f81ce3df2f6dbdc4ccf09bc639cffcf87aacbda",
+          "reason": "Lifecycle servizi e rimozione volumi fuori contratto",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B046",
+          "first_line": 1054,
+          "planning_text_sha256": "e07e6b04cfd51cbaabf06aaceca9fde01a5751f6290a2a628525147fa1f97db5",
+          "actual_text_sha256": "e07e6b04cfd51cbaabf06aaceca9fde01a5751f6290a2a628525147fa1f97db5",
+          "reason": "pip Marker host non locked sostituito da profilo CPU",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B047",
+          "first_line": 1073,
+          "planning_text_sha256": "70c78a6d6d266ff637e1a4d1baaf1a30b741af523de418135a269e075a77d10e",
+          "actual_text_sha256": "70c78a6d6d266ff637e1a4d1baaf1a30b741af523de418135a269e075a77d10e",
+          "reason": "Cloud esplicito senza echo segreti",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B048",
+          "first_line": 1114,
+          "planning_text_sha256": "e6dd8d5fda671d78baaadf5cf16b9596f7156282d666d8230714511493079ba1",
+          "actual_text_sha256": "e6dd8d5fda671d78baaadf5cf16b9596f7156282d666d8230714511493079ba1",
+          "reason": "Markdown completo con asset per consumo esterno",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B049",
+          "first_line": 1133,
+          "planning_text_sha256": "9b7cd3836f2eb396880c2773ecbfd82948ddb185eab0af61e48e9b1c77b04349",
+          "actual_text_sha256": "9b7cd3836f2eb396880c2773ecbfd82948ddb185eab0af61e48e9b1c77b04349",
+          "reason": "prepare_training_data inesistente rimosso",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B050",
+          "first_line": 1157,
+          "planning_text_sha256": "12b2ba3d3bb1555405508e9c77b958505f776ab52b76e2dd261274e0a54a1b40",
+          "actual_text_sha256": "12b2ba3d3bb1555405508e9c77b958505f776ab52b76e2dd261274e0a54a1b40",
+          "reason": "RAG scenario derivato senza strumenti inesistenti",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B051",
+          "first_line": 1190,
+          "planning_text_sha256": "039b9b7fa19699be45b5f8f0c60d64b90ba7aa2dc8e0ca5ecd44f06f982c66dd",
+          "actual_text_sha256": "039b9b7fa19699be45b5f8f0c60d64b90ba7aa2dc8e0ca5ecd44f06f982c66dd",
+          "reason": "Filtri Grade A/B e upload automatico non implementati",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B052",
+          "first_line": 1198,
+          "planning_text_sha256": "3044d42577be04f7b4f38fd485b7ddb46f78355b85500f8998d95b1ef5847708",
+          "actual_text_sha256": "3044d42577be04f7b4f38fd485b7ddb46f78355b85500f8998d95b1ef5847708",
+          "reason": "create_embeddings.py inesistente rimosso",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B053",
+          "first_line": 1212,
+          "planning_text_sha256": "a7d1bda06bd644ace072709865f311889a3a91e209e21251c6cad33f737615d1",
+          "actual_text_sha256": "a7d1bda06bd644ace072709865f311889a3a91e209e21251c6cad33f737615d1",
+          "reason": "Integrazione fine-tuning pseudocodice non operativa",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B054",
+          "first_line": 1248,
+          "planning_text_sha256": "d67bf4d2b3342fe720938896f3889acedc0fab9b7a200aa4fbc532bbd8ba1126",
+          "actual_text_sha256": "d67bf4d2b3342fe720938896f3889acedc0fab9b7a200aa4fbc532bbd8ba1126",
+          "reason": "Timeout configurato nel template",
+          "disposition": "modificato",
+          "destination": "docs/reference/toolchain-legacy.md"
+        },
+        {
+          "id": "R003-B055",
+          "first_line": 1260,
+          "planning_text_sha256": "7d701f2cc708aba38028bbd86cabe515167bd9a65078568264eae41bf0d50253",
+          "actual_text_sha256": "7d701f2cc708aba38028bbd86cabe515167bd9a65078568264eae41bf0d50253",
+          "reason": "Timeout finito distinto dal polling",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B056",
+          "first_line": 1273,
+          "planning_text_sha256": "97bd6abc3dac1560291eafdfbf11a740530d4d9bb89b1c2712db4d0cab2ecc57",
+          "actual_text_sha256": "97bd6abc3dac1560291eafdfbf11a740530d4d9bb89b1c2712db4d0cab2ecc57",
+          "reason": "JSON timeout reale",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B057",
+          "first_line": 1290,
+          "planning_text_sha256": "896f3dfe14a4ee9d7a7467448e5670c6f1d7f6280e4697dcd9b25f46033cb475",
+          "actual_text_sha256": "896f3dfe14a4ee9d7a7467448e5670c6f1d7f6280e4697dcd9b25f46033cb475",
+          "reason": "Monitor CLI reale",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B058",
+          "first_line": 1303,
+          "planning_text_sha256": "7d953307941bb00faac40d4f122c5ee7c9420942eb608461cf285a9e499926cd",
+          "actual_text_sha256": "7d953307941bb00faac40d4f122c5ee7c9420942eb608461cf285a9e499926cd",
+          "reason": "Log daemon operativi fuori verifica offline",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B059",
+          "first_line": 1324,
+          "planning_text_sha256": "006b09cd20d2c0d04733abc1eb32f8ed469cfda4965a088dd3d44d9e6549cd98",
+          "actual_text_sha256": "006b09cd20d2c0d04733abc1eb32f8ed469cfda4965a088dd3d44d9e6549cd98",
+          "reason": "Budget esteso esplicito non default infinito",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B060",
+          "first_line": 1335,
+          "planning_text_sha256": "ccc8d37935a9a9bda73293516d554183ef9c9d70f6a1858a0b91d038760f9b71",
+          "actual_text_sha256": "ccc8d37935a9a9bda73293516d554183ef9c9d70f6a1858a0b91d038760f9b71",
+          "reason": "Attesa infinita solo scelta esplicita documentata",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B061",
+          "first_line": 1342,
+          "planning_text_sha256": "bd1535a4f6e41fa1b12cc7add31e09cdb194714aff6c8ad5db881cf87bd5b27e",
+          "actual_text_sha256": "bd1535a4f6e41fa1b12cc7add31e09cdb194714aff6c8ad5db881cf87bd5b27e",
+          "reason": "Smoke radice escluso da C-fast e inferenza",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B062",
+          "first_line": 1349,
+          "planning_text_sha256": "b3311cd3bf10a874e7e4c5cd483757d39929be2ea7dd6e4f3dd3fde41d2cdc5a",
+          "actual_text_sha256": "b3311cd3bf10a874e7e4c5cd483757d39929be2ea7dd6e4f3dd3fde41d2cdc5a",
+          "reason": "check-queue reale",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B063",
+          "first_line": 1367,
+          "planning_text_sha256": "1c46e3159e3869a243111a72e3ab6d0539b92f15306e380b641d50a1ced98c8d",
+          "actual_text_sha256": "fba37cc34fbe5ad13a4f96e321c6583c56a6ea940995014457ebe9c72018ed29",
+          "reason": "Timeout7200 esempio di budget esplicito",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B064",
+          "first_line": 1373,
+          "planning_text_sha256": "a35dbc50e96d66be3db03d2b77883faa3ff836a2257557bfc7cd6883b799d2b9",
+          "actual_text_sha256": "a667f0c5069488250cc3ef4e88dc0c25c44a3521c0fc7c53c21f424dc03682f6",
+          "reason": "Timeout0 esplicitamente illimitato non default",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B065",
+          "first_line": 1380,
+          "planning_text_sha256": "ede52409a38b3ef19ce3e45bc472fdd6ae7102907119301707f2a20f084eeccb",
+          "actual_text_sha256": "4190ff4b960637ad21ecffc232760596e34b19e0dd67485c20bae47d894be443",
+          "reason": "MAX_WORKERS nella configurazione reale",
+          "disposition": "spostato",
+          "destination": "docs/reference/pipeline-config.md"
+        },
+        {
+          "id": "R003-B066",
+          "first_line": 1386,
+          "planning_text_sha256": "13e479b42738f993527cf2ef2f843c5b06363eaff68dab7a766d3130d8e3d3a4",
+          "actual_text_sha256": "241b29fc97238ddff56c92111a10d5b8a3169f9762b5a6c0b5a6e916fccf11d8",
+          "reason": "stats non \u00e8 benchmark",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B067",
+          "first_line": 1392,
+          "planning_text_sha256": "4cd0a6f106a1f51b5574ebb14087fe34d5ead9a8e57eae295cdb86a2f4e22817",
+          "actual_text_sha256": "e31bf8457200026264094af19b9d51b05c0990254581cdc97824afdf889bd74a",
+          "reason": "Seguire servizio operativo escluso dalla verifica",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B068",
+          "first_line": 1409,
+          "planning_text_sha256": "3eae41d9c79aa967fc7e2ee4fb47feaf9e1d3f1e45c144116ad3919fb11c2c7a",
+          "actual_text_sha256": "3eae41d9c79aa967fc7e2ee4fb47feaf9e1d3f1e45c144116ad3919fb11c2c7a",
+          "reason": "Percorsi source_documents e report reali",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B069",
+          "first_line": 1422,
+          "planning_text_sha256": "8d88a2032180ca607271bffe7630e48cfb6b970e8b873b656d10bac66831b720",
+          "actual_text_sha256": "8d88a2032180ca607271bffe7630e48cfb6b970e8b873b656d10bac66831b720",
+          "reason": "Posizione report validazione corretta",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B070",
+          "first_line": 1432,
+          "planning_text_sha256": "3bb189d36bcbcb0fdcc182fb30c1104efe99dd47a1275a6bde9b1932fcc78f9b",
+          "actual_text_sha256": "3bb189d36bcbcb0fdcc182fb30c1104efe99dd47a1275a6bde9b1932fcc78f9b",
+          "reason": "Flag chunking-strategy inesistente sostituito da JSON",
+          "disposition": "modificato",
+          "destination": "docs/how-to/pipeline-backends.md"
+        },
+        {
+          "id": "R003-B071",
+          "first_line": 1442,
+          "planning_text_sha256": "6560764a26e1eea3385c99d6f5762ab80d218a7aaf466c37ab81928a2bc0d064",
+          "actual_text_sha256": "6560764a26e1eea3385c99d6f5762ab80d218a7aaf466c37ab81928a2bc0d064",
+          "reason": "Echo segreti rimosso",
+          "disposition": "rimosso",
+          "destination": null
+        },
+        {
+          "id": "R003-B072",
+          "first_line": 1452,
+          "planning_text_sha256": "17b6c761d2e6da3fbaede3cd28c0e1402a32b877e0f8f1bd223d7467a174c358",
+          "actual_text_sha256": "17b6c761d2e6da3fbaede3cd28c0e1402a32b877e0f8f1bd223d7467a174c358",
+          "reason": "Log level reale con limiti",
+          "disposition": "modificato",
+          "destination": "docs/reference/toolchain-legacy.md"
+        },
+        {
+          "id": "R003-B073",
+          "first_line": 1497,
+          "planning_text_sha256": "9eae7eea82903d95e3e4eb093ceaefa21e3de50587ccaf72c15c25e45390cd29",
+          "actual_text_sha256": "9eae7eea82903d95e3e4eb093ceaefa21e3de50587ccaf72c15c25e45390cd29",
+          "reason": "Clone/feature branch manuale e toolchain uv",
+          "disposition": "modificato",
+          "destination": "docs/how-to/ambiente-uv.md"
+        },
+        {
+          "id": "R003-B074",
+          "first_line": 1515,
+          "planning_text_sha256": "ce7cd636940841b858aa9d1992c30b3169d7249f9f6f93811b0d5d09b695c570",
+          "actual_text_sha256": "ce7cd636940841b858aa9d1992c30b3169d7249f9f6f93811b0d5d09b695c570",
+          "reason": "Strumenti dev distinti dalle prove runtime",
+          "disposition": "modificato",
+          "destination": "docs/reference/toolchain-legacy.md"
+        }
+      ],
+      "inline": [
+        {
+          "source": "README.md",
+          "line": 872,
+          "text": "docker compose",
+          "status": "illustrativo",
+          "executed": false,
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md",
+          "reason": "Compose config/build offline su contesto preparato; nessun avvio implicito",
+          "text_sha256": "75ddf920195c71e24d06ce1c6d248e491f442fc1c1f3e6060cf07d0438baa857",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 883,
+          "text": "docker compose",
+          "status": "illustrativo",
+          "executed": false,
+          "disposition": "modificato",
+          "destination": "docs/how-to/marker-legacy-docker.md",
+          "reason": "Compose config/build offline su contesto preparato; nessun avvio implicito",
+          "text_sha256": "75ddf920195c71e24d06ce1c6d248e491f442fc1c1f3e6060cf07d0438baa857",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 889,
+          "text": "docker stats marker-api",
+          "status": "illustrativo",
+          "executed": false,
+          "disposition": "rimosso",
+          "reason": "Operazioni daemon normali non parte delle prove offline e nessun throughput dedotto",
+          "text_sha256": "ad5c607c82c9959ee47126e44e31bf8a5e9b814a71f947165237bd8c64e20107",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 889,
+          "text": "docker compose logs -f marker-api",
+          "status": "illustrativo",
+          "executed": false,
+          "disposition": "rimosso",
+          "reason": "Operazioni daemon normali non parte delle prove offline e nessun throughput dedotto",
+          "text_sha256": "9406eec2ca03b39451d86f05a62dfcbee4b832b38b627338d98ac1b524967c8b",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 1007,
+          "text": "docker compose up -d --force-recreate marker-api",
+          "status": "illustrativo",
+          "executed": false,
+          "disposition": "rimosso",
+          "reason": "Operazioni daemon normali non parte delle prove offline e nessun throughput dedotto",
+          "text_sha256": "ab1770966fba736d905eb8d39b140140e6fd83c8861fed06568116f4999777ad",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 1011,
+          "text": "docker stats marker-api",
+          "status": "illustrativo",
+          "executed": false,
+          "disposition": "rimosso",
+          "reason": "Operazioni daemon normali non parte delle prove offline e nessun throughput dedotto",
+          "text_sha256": "ad5c607c82c9959ee47126e44e31bf8a5e9b814a71f947165237bd8c64e20107",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 1012,
+          "text": "docker compose logs -f marker-api",
+          "status": "illustrativo",
+          "executed": false,
+          "disposition": "rimosso",
+          "reason": "Operazioni daemon normali non parte delle prove offline e nessun throughput dedotto",
+          "text_sha256": "9406eec2ca03b39451d86f05a62dfcbee4b832b38b627338d98ac1b524967c8b",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 1540,
+          "text": "pytest tests/ -v",
+          "status": "da correggere",
+          "executed": false,
+          "disposition": "modificato",
+          "destination": "docs/reference/toolchain-legacy.md",
+          "reason": "Suite selezionate con I/E e R prima collection",
+          "text_sha256": "91b01d41408838d5d4880bf3c4a30c6877840f7b30211e044d04c84daf29ea27",
+          "original_verified": true
+        },
+        {
+          "source": "README.md",
+          "line": 1538,
+          "text": "git checkout -b feature-name",
+          "status": "da correggere",
+          "executed": false,
+          "reason": "Git manuale feature branch da dev",
+          "disposition": "modificato",
+          "destination": "documentation/development/run-lifecycle.md",
+          "text_sha256": "bcee32c89e5c1f71c8d9db3ae1731485dad74663de7b7265e2ef6e09aee582d9",
+          "original_verified": true
+        }
+      ],
+      "links": [
+        {
+          "file": "README.md",
+          "line": 9,
+          "target": "documentation/README.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 13,
+          "target": "docs/how-to/ambiente-uv.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 14,
+          "target": "docs/reference/toolchain-legacy.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 15,
+          "target": "docs/how-to/marker-legacy-docker.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 16,
+          "target": "docs/reference/pipeline-config.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 17,
+          "target": "docs/how-to/pipeline-backends.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 18,
+          "target": "documentation/roadmap.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 18,
+          "target": "AGENTS.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 66,
+          "target": "LICENSE",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 67,
+          "target": "docs/README.md",
+          "exists": true
+        },
+        {
+          "file": "README.md",
+          "line": 68,
+          "target": "documentation/README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/README.md",
+          "line": 4,
+          "target": "../README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/README.md",
+          "line": 10,
+          "target": "tutorials/README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/README.md",
+          "line": 11,
+          "target": "how-to/README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/README.md",
+          "line": 12,
+          "target": "reference/README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/README.md",
+          "line": 13,
+          "target": "explanation/README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/README.md",
+          "line": 16,
+          "target": "../documentation/README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/explanation/README.md",
+          "line": 11,
+          "target": "../README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/README.md",
+          "line": 3,
+          "target": "ambiente-uv.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/README.md",
+          "line": 4,
+          "target": "marker-legacy-docker.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/README.md",
+          "line": 5,
+          "target": "pipeline-backends.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/README.md",
+          "line": 10,
+          "target": "../README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/ambiente-uv.md",
+          "line": 113,
+          "target": "../../.vscode/settings.uv.example.json",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/ambiente-uv.md",
+          "line": 146,
+          "target": "../reference/toolchain-legacy.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/ambiente-uv.md",
+          "line": 147,
+          "target": "marker-legacy-docker.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/ambiente-uv.md",
+          "line": 147,
+          "target": "../README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/marker-legacy-docker.md",
+          "line": 49,
+          "target": "ambiente-uv.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/marker-legacy-docker.md",
+          "line": 122,
+          "target": "ambiente-uv.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/marker-legacy-docker.md",
+          "line": 122,
+          "target": "../reference/toolchain-legacy.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/marker-legacy-docker.md",
+          "line": 122,
+          "target": "../README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/pipeline-backends.md",
+          "line": 3,
+          "target": "ambiente-uv.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/pipeline-backends.md",
+          "line": 4,
+          "target": "../reference/pipeline-config.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/pipeline-backends.md",
+          "line": 23,
+          "target": "../../unified_converter.py",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/pipeline-backends.md",
+          "line": 23,
+          "target": "../../config.py",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/pipeline-backends.md",
+          "line": 60,
+          "target": "../reference/toolchain-legacy.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/pipeline-backends.md",
+          "line": 63,
+          "target": "marker-legacy-docker.md",
+          "exists": true
+        },
+        {
+          "file": "docs/how-to/pipeline-backends.md",
+          "line": 67,
+          "target": "README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/README.md",
+          "line": 3,
+          "target": "toolchain-legacy.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/README.md",
+          "line": 4,
+          "target": "pipeline-config.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/README.md",
+          "line": 7,
+          "target": "../README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/pipeline-config.md",
+          "line": 6,
+          "target": "../../config.py",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/pipeline-config.md",
+          "line": 66,
+          "target": "toolchain-legacy.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/pipeline-config.md",
+          "line": 67,
+          "target": "../../.env.example",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/pipeline-config.md",
+          "line": 74,
+          "target": "../how-to/pipeline-backends.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/pipeline-config.md",
+          "line": 74,
+          "target": "README.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/toolchain-legacy.md",
+          "line": 124,
+          "target": "../../documentation/development/run-lifecycle.md",
+          "exists": true
+        },
+        {
+          "file": "docs/reference/toolchain-legacy.md",
+          "line": 126,
+          "target": "../how-to/ambiente-uv.md",
+          "exists": true
+        },
+        {
+          "file": "docs/tutorials/README.md",
+          "line": 10,
+          "target": "../README.md",
+          "exists": true
+        }
+      ],
+      "missing_links": [],
+      "verify_distribution_literal_options": [
+        "--profile",
+        "--archives-only"
+      ],
+      "standalone_option_accepted": false
+    },
+    "costs": {
+      "entry": {
+        "core_entry_seconds": 7194.886280257022,
+        "core_preparation_before_entry_seconds": 45.0,
+        "monotonic_start": 1287939.063062153,
+        "wall_start": 1791366789.2481403,
+        "core_cap_seconds": 8100,
+        "source": "R019/mandato56",
+        "user_wait_not_charged": true
+      },
+      "authorization": {
+        "source": "Explicit user approval +180s core",
+        "cap": 8280,
+        "wait_excluded_seconds": 27.52434803196229,
+        "wall": 1791367731.2563887
+      },
+      "latest_workload_cumulative": 8251.006317519117,
+      "final_cumulative": 8285.28744326299,
+      "overrun": 5.287443262990564,
+      "time_quota_PASS": false,
+      "accounting_formula": "7194.886280257022 + 45 + monotonic-now - 1287939.063062153 - 27.52434803196229",
+      "logical_now": 829340175,
+      "allocated_now": 907976704,
+      "H_now": 907976704,
+      "delta_now": 354435072,
+      "remaining_bytes": 14663680,
+      "reserve_included_total": 939417600,
+      "storage_admitted": true
+    }
+  }
+}

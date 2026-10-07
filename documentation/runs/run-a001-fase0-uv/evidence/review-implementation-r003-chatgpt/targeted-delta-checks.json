@@ -1,0 +1,27 @@
+[
+  {
+    "path": "scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+    "before_exact": true,
+    "after_exact": true
+  },
+  {
+    "path": "tests/unit/test_core_diagnostics.py",
+    "before_exact": true,
+    "after_exact": true
+  },
+  {
+    "path": "docs/how-to/ambiente-uv.md",
+    "before_exact": true,
+    "after_exact": true
+  },
+  {
+    "path": "docs/how-to/marker-legacy-docker.md",
+    "before_exact": true,
+    "after_exact": true
+  },
+  {
+    "path": "docs/reference/toolchain-legacy.md",
+    "before_exact": true,
+    "after_exact": true
+  }
+]

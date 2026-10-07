@@ -1,0 +1,114 @@
+{
+  "operation": {
+    "id": "run-b002-fase0-uv",
+    "R_python": "/tmp/run-a001-product-wheel-env-r001/bin/python",
+    "environment": {
+      "HOME": "/home/davide",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/davide/.pyenv/versions/3.12.3/bin:/usr/bin:/bin",
+      "PIP_CONFIG_FILE": "/dev/null",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "TZ": "UTC",
+      "TMPDIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/tmp",
+      "TIKTOKEN_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/baseline-recovery-install-r003/tiktoken-cache",
+      "UV_CACHE_DIR": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+      "UV_PYTHON_DOWNLOADS": "never",
+      "XDG_CACHE_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/metadata-cache-r001",
+      "XDG_CONFIG_HOME": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+      "XDG_CONFIG_DIRS": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/config",
+      "UV_PYTHON_INSTALL_DIR": "/home/davide/workarea/markdown-for-llms/.venv-python",
+      "UV_HTTP_RETRIES": "0",
+      "UV_CONCURRENT_DOWNLOADS": "1",
+      "UV_PROJECT_ENVIRONMENT": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r001/runtime-acquisition"
+    },
+    "cwd": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002",
+    "backend_preimport": false,
+    "argv": [
+      "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "-I",
+      "-B",
+      "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+      "--runner",
+      "firejail",
+      "--python",
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "--repo",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002",
+      "--target",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-b002-fase0-uv/effective-target.json",
+      "--snapshot",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002/temp/run-b002-fase0-uv/snapshots/launcher-r021-s001.json",
+      "--output",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-b002-fase0-uv/wrapper",
+      "--cwd",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/clone-b002",
+      "--preflight-config",
+      "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r003/R-run-b002-fase0-uv/preflight.json",
+      "--timeout",
+      "60",
+      "--",
+      "/tmp/run-a001-product-wheel-env-r001/bin/python",
+      "-I",
+      "-B",
+      "-c",
+      "import sys,time;assert sys.flags.isolated and sys.dont_write_bytecode;print('SYNTHETIC_OFFLINE_ONLY');time.sleep(.3)"
+    ],
+    "shell": false,
+    "close_fds": true,
+    "child_seconds": 60,
+    "outer_seconds": 240,
+    "monitor_seconds": 153.67780505213886
+  },
+  "started": "2026-10-07T11:46:07.985864+00:00",
+  "before": {
+    "roots": {
+      "temp/run-a001-fase0-uv": {
+        "logical": 713588834,
+        "allocated": 779407360,
+        "files": 26604,
+        "directories": 6290,
+        "links": 822,
+        "vanished": 0
+      },
+      ".venv-python": {
+        "logical": 96548400,
+        "allocated": 106401792,
+        "files": 3726,
+        "directories": 204,
+        "links": 1049,
+        "vanished": 0
+      },
+      ".venv": {
+        "logical": 9547889,
+        "allocated": 10203136,
+        "files": 257,
+        "directories": 41,
+        "links": 4,
+        "vanished": 0
+      },
+      "/tmp/run-a001-product-wheel-env-r001": {
+        "logical": 12750663,
+        "allocated": 15405056,
+        "files": 1069,
+        "directories": 283,
+        "links": 4,
+        "vanished": 0
+      }
+    },
+    "logical": 832435786,
+    "allocated": 911417344,
+    "repository_free": 126167699456,
+    "tmp_free": 475320320
+  },
+  "gate": {
+    "H": 911417344,
+    "Hentry": 553541632,
+    "delta": 357875712,
+    "remaining": 11223040,
+    "total_with_reserves": 939417600,
+    "admitted": true
+  }
+}

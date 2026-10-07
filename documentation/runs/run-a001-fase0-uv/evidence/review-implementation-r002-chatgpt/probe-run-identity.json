@@ -1,0 +1,39 @@
+{
+  "scope": "MOCK_ONLY_NOT_PRODUCT_PASS",
+  "cases": [
+    {
+      "run_id": "run-a001-fase0-uv",
+      "accepted": true,
+      "result": {
+        "argv": [
+          "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "-I",
+          "-B",
+          "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/review-implementation-r002-chatgpt/probe-31e79qk8/scripts/run_context.py",
+          "verify",
+          "run-a001-fase0-uv",
+          "--label",
+          "review-valid"
+        ],
+        "exit_code": 0,
+        "stdout": "MATCH synthetic verifier",
+        "stderr": "",
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/review-implementation-r002-chatgpt/probe-31e79qk8/temp/run-a001-fase0-uv/snapshots/review-valid.json",
+        "sha256": "12b373eeb7aac6ff277fd98b98b4bdd4c56dff7fc049036c4478bd12437b115f",
+        "worktree_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "label": "review-valid"
+      },
+      "verifier_called": true
+    },
+    {
+      "run_id": "run-b002-fase0-uv",
+      "accepted": false,
+      "error": "Snapshot/schema non valido",
+      "verifier_called": false
+    }
+  ],
+  "seconds": 0.0063737668097019196,
+  "timeout_seconds": 10,
+  "temporary_files_collected": true,
+  "subprocess_calls_real": 0
+}

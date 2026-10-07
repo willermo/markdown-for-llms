@@ -1,7 +1,7 @@
 # Archivio permanente delle run
 
 Qui si conservano piani, review, arbitrati, evidenze e sintesi utili dopo la pulizia
-del contesto locale. Non sono ancora presenti run completate con il nuovo ciclo.
+del contesto locale. La prima run ha concluso la revisione tecnica; l’integrazione Git è ancora pendente.
 
 Ogni run archiviata ha una directory `<run-id>/`, un `manifest.md` derivato dal
 [template](../development/templates/archive-manifest.md) e sottocartelle per report,
@@ -15,3 +15,10 @@ cartella contiene documentazione ed evidenze, non dipendenze eseguibili del prod
 I file di questa cartella sono esclusi dall'impronta del codice del helper di run
 per consentire l'archiviazione dei report dopo le review. L'integrità dell'archivio
 va verificata separatamente e registrata nel manifest.
+
+## Run archiviate
+
+- [run-a001-fase0-uv](run-a001-fase0-uv/manifest.md): toolchain uv, fase0.1;
+  GO finale r003 dopo review GO/GO, quote temporali NON PASS conservate.
+  Archivio selettivo verificato; commit e integrazione manuale in dev pendenti,
+  nessun deploy/main o pulizia della run effettuati.

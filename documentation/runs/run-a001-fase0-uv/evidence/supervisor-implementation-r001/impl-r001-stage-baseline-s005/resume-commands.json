@@ -1,0 +1,351 @@
+{
+  "schema": 1,
+  "run_id": "run-a001-fase0-uv",
+  "revision": "r001",
+  "label": "impl-r001-stage-baseline-s005",
+  "stage": "baseline",
+  "status": "STAGE_SNAPSHOT_READY",
+  "snapshot": {
+    "path": "temp/run-a001-fase0-uv/snapshots/impl-r001-stage-baseline-s005.json",
+    "bytes": 262858,
+    "sha256": "aba4fc260a9e3de766bd5a5022bac60f9703881f128a443c61671015fc627ed0"
+  },
+  "snapshot_sha256": "aba4fc260a9e3de766bd5a5022bac60f9703881f128a443c61671015fc627ed0",
+  "worktree_sha256": "2213067cf2a0d74c07c44dbfa4d717fb93fa43f8ccdba4cfffa1fcff32fffc71",
+  "request": {
+    "path": "temp/run-a001-fase0-uv/implementation/stages/impl-r001-stage-baseline-s005/request.json",
+    "bytes": 406562,
+    "sha256": "2d82e003935a2936fd1c200027f3d860ea6bdf5e21887b3584864c489929a324"
+  },
+  "wrapper": {
+    "path": "scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+    "bytes": 13665,
+    "sha256": "a937e0067f81f9d09c2fec49f4b47de00eb9a8b254b64d75caed1029b3c71018"
+  },
+  "baseline_driver": {
+    "path": "scripts/diagnostics/run-a001-fase0-uv/run_baseline.py",
+    "bytes": 39888,
+    "sha256": "750e120edca98f00c543e497218d8f56cb7cfac56d90859292f83753f3ad2e44"
+  },
+  "profiles": {
+    "firejail": {
+      "eligibility": "Stesso host/binario/ramo/blacklist dopo negativo unshare s002, scelta soltanto; nuove R complete obbligatorie",
+      "commands": [
+        {
+          "step": "R-bootstrap",
+          "depends_on": [
+            "snapshot MATCH"
+          ],
+          "argv": [
+            "/home/davide/.pyenv/versions/3.12.3/bin/python3",
+            "-I",
+            "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+            "--runner",
+            "firejail",
+            "--python",
+            "/home/davide/.pyenv/versions/3.12.3/bin/python3",
+            "--repo",
+            "/home/davide/workarea/markdown-for-llms",
+            "--target",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/preparation-baseline-s005/runner-target-bootstrap.json",
+            "--snapshot",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-baseline-s005.json",
+            "--output",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-bootstrap-r-firejail-s005",
+            "--cwd",
+            "/home/davide/workarea/markdown-for-llms",
+            "--timeout",
+            "300"
+          ],
+          "cwd": "/home/davide/workarea/markdown-for-llms",
+          "output_directory": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-bootstrap-r-firejail-s005",
+          "wrapper_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-bootstrap-r-firejail-s005/receipt.json",
+          "R_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-bootstrap-r-firejail-s005/runner.json",
+          "expected_exit": 0,
+          "timeout_seconds": 480,
+          "execution_profile": "require_escalated",
+          "preparation_may_execute_now": false,
+          "preparation_admission": "Only proposed; real preparation request s005, supervisor stage freeze and new resume prompt required",
+          "admission_after_freeze": "Only this step after preceding real gates, current stage identity and automatic tool review; no permission for another candidate or host"
+        },
+        {
+          "step": "R-baseline",
+          "depends_on": [
+            "R-bootstrap PASS del candidato"
+          ],
+          "argv": [
+            "/home/davide/.pyenv/versions/3.12.3/bin/python3",
+            "-I",
+            "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+            "--runner",
+            "firejail",
+            "--python",
+            "/tmp/a001-uv-baseline-pi8cvs6x/venv/bin/python",
+            "--repo",
+            "/home/davide/workarea/markdown-for-llms",
+            "--target",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/preparation-baseline-s005/runner-target-baseline.json",
+            "--snapshot",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-baseline-s005.json",
+            "--output",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-r-firejail-s005",
+            "--cwd",
+            "/tmp/a001-uv-baseline-pi8cvs6x/workspace",
+            "--timeout",
+            "300"
+          ],
+          "cwd": "/home/davide/workarea/markdown-for-llms",
+          "output_directory": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-r-firejail-s005",
+          "wrapper_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-r-firejail-s005/receipt.json",
+          "R_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-r-firejail-s005/runner.json",
+          "expected_exit": 0,
+          "timeout_seconds": 480,
+          "execution_profile": "require_escalated",
+          "preparation_may_execute_now": false,
+          "preparation_admission": "Only proposed; real preparation request s005, supervisor stage freeze and new resume prompt required",
+          "admission_after_freeze": "Only this step after preceding real gates, current stage identity and automatic tool review; no permission for another candidate or host"
+        },
+        {
+          "step": "S-baseline",
+          "depends_on": [
+            "R-baseline PASS",
+            "sources.json assente"
+          ],
+          "argv": [
+            "/home/davide/.pyenv/versions/3.12.3/bin/python3",
+            "-I",
+            "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+            "--runner",
+            "firejail",
+            "--python",
+            "/tmp/a001-uv-baseline-pi8cvs6x/venv/bin/python",
+            "--repo",
+            "/home/davide/workarea/markdown-for-llms",
+            "--target",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/preparation-baseline-s005/runner-target-baseline.json",
+            "--snapshot",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-baseline-s005.json",
+            "--output",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-sources-firejail-s005",
+            "--cwd",
+            "/home/davide/workarea/markdown-for-llms",
+            "--timeout",
+            "300",
+            "--",
+            "/tmp/a001-uv-baseline-pi8cvs6x/venv/bin/python",
+            "-I",
+            "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py",
+            "--repo",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-originals",
+            "--host-repo",
+            "/home/davide/workarea/markdown-for-llms",
+            "--snapshot",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-baseline-s005.json",
+            "--input-inventory",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/preparation-baseline-s005/baseline-inputs.json",
+            "--output",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/implementation/stages/impl-r001-stage-baseline-s005/sources.json"
+          ],
+          "cwd": "/home/davide/workarea/markdown-for-llms",
+          "output_directory": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-sources-firejail-s005",
+          "wrapper_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-sources-firejail-s005/receipt.json",
+          "R_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-sources-firejail-s005/runner.json",
+          "expected_exit": 0,
+          "timeout_seconds": 480,
+          "execution_profile": "require_escalated",
+          "preparation_may_execute_now": false,
+          "preparation_admission": "Only proposed; real preparation request s005, supervisor stage freeze and new resume prompt required",
+          "admission_after_freeze": "Only this step after preceding real gates, current stage identity and automatic tool review; no permission for another candidate or host"
+        },
+        {
+          "step": "V0-originals",
+          "depends_on": [
+            "S v1 corrente",
+            "runner/preflight ripetuti nella stessa invocazione"
+          ],
+          "argv": [
+            "/home/davide/.pyenv/versions/3.12.3/bin/python3",
+            "-I",
+            "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_offline.py",
+            "--runner",
+            "firejail",
+            "--python",
+            "/tmp/a001-uv-baseline-pi8cvs6x/venv/bin/python",
+            "--repo",
+            "/home/davide/workarea/markdown-for-llms",
+            "--target",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/preparation-baseline-s005/runner-target-baseline.json",
+            "--snapshot",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/snapshots/impl-r001-stage-baseline-s005.json",
+            "--output",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-v0-firejail-s005",
+            "--cwd",
+            "/tmp/a001-uv-baseline-pi8cvs6x/workspace",
+            "--timeout",
+            "1200",
+            "--",
+            "/tmp/a001-uv-baseline-pi8cvs6x/venv/bin/python",
+            "-I",
+            "/home/davide/workarea/markdown-for-llms/scripts/diagnostics/run-a001-fase0-uv/run_baseline.py",
+            "--modules",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-originals",
+            "--fixtures",
+            "/home/davide/workarea/markdown-for-llms/tests/fixtures/run-a001-fase0-uv",
+            "--repo",
+            "/home/davide/workarea/markdown-for-llms",
+            "--source-manifest",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/implementation/stages/impl-r001-stage-baseline-s005/sources.json",
+            "--runner-receipt",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-v0-firejail-s005/runner.json",
+            "--output",
+            "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/baseline-results-s005",
+            "--workspaces",
+            "/tmp/a001-uv-baseline-pi8cvs6x/workspace/v0-s005"
+          ],
+          "cwd": "/home/davide/workarea/markdown-for-llms",
+          "output_directory": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-v0-firejail-s005",
+          "wrapper_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-v0-firejail-s005/receipt.json",
+          "R_receipt": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/runner-baseline-v0-firejail-s005/runner.json",
+          "expected_exit": 0,
+          "timeout_seconds": 1380,
+          "execution_profile": "require_escalated",
+          "preparation_may_execute_now": false,
+          "preparation_admission": "Only proposed; real preparation request s005, supervisor stage freeze and new resume prompt required",
+          "admission_after_freeze": "Only this step after preceding real gates, current stage identity and automatic tool review; no permission for another candidate or host"
+        }
+      ]
+    }
+  },
+  "step_tool_profiles": [
+    {
+      "candidate": "firejail",
+      "step": "R-bootstrap",
+      "tool": "exec_command",
+      "sandbox_permissions": "require_escalated",
+      "prefix_rule": null,
+      "justification_after_freeze": "Eseguire il solo bootstrap R nel perimetro host D4 congelato: socket sintetico proprio e connect/close diagnostici ai path noti, senza richieste daemon; isolamento e gate completi prima di prove applicative.",
+      "argv_source": "profiles.firejail.commands step R-bootstrap",
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "timeout_seconds": 480,
+      "automatic_review_required_each_time": true,
+      "launch_rule": "Argv JSON dati fidati, subprocess shell=False; nessun eval o shell ricomposta con valori non fidati.",
+      "preparation_may_execute_now": false,
+      "admission_after_freeze": "New supervisor s005 resume prompt and automatic review for this command; no runtime now"
+    },
+    {
+      "candidate": "firejail",
+      "step": "R-baseline",
+      "tool": "exec_command",
+      "sandbox_permissions": "require_escalated",
+      "prefix_rule": null,
+      "justification_after_freeze": "Verificare solo R con interprete/cache baseline nel candidato già validato e stesso perimetro D4, conservando socketpair/sintetico/daemon/origine e hash; nessun fetch o operazione daemon.",
+      "argv_source": "profiles.firejail.commands step R-baseline",
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "timeout_seconds": 480,
+      "automatic_review_required_each_time": true,
+      "launch_rule": "Argv JSON dati fidati, subprocess shell=False; nessun eval o shell ricomposta con valori non fidati.",
+      "preparation_may_execute_now": false,
+      "admission_after_freeze": "New supervisor s005 resume prompt and automatic review for this command; no runtime now"
+    },
+    {
+      "candidate": "firejail",
+      "step": "S-baseline",
+      "tool": "exec_command",
+      "sandbox_permissions": "require_escalated",
+      "prefix_rule": null,
+      "justification_after_freeze": "Dopo R PASS e freeze, generare solo S baseline tramite wrapper che ripete R nel medesimo namespace, usando input congelati; nessuna installazione o rete.",
+      "argv_source": "profiles.firejail.commands step S-baseline",
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "timeout_seconds": 480,
+      "automatic_review_required_each_time": true,
+      "launch_rule": "Argv JSON dati fidati, subprocess shell=False; nessun eval o shell ricomposta con valori non fidati.",
+      "preparation_may_execute_now": false,
+      "admission_after_freeze": "New supervisor s005 resume prompt and automatic review for this command; no runtime now"
+    },
+    {
+      "candidate": "firejail",
+      "step": "V0-originals",
+      "tool": "exec_command",
+      "sandbox_permissions": "require_escalated",
+      "prefix_rule": null,
+      "justification_after_freeze": "Dopo R/S correnti, eseguire solo V0 su fixture sintetiche nel runner validato con gate/preflight ripetuti nella stessa invocazione; nessun download o richiesta daemon.",
+      "argv_source": "profiles.firejail.commands step V0-originals",
+      "cwd": "/home/davide/workarea/markdown-for-llms",
+      "timeout_seconds": 1380,
+      "automatic_review_required_each_time": true,
+      "launch_rule": "Argv JSON dati fidati, subprocess shell=False; nessun eval o shell ricomposta con valori non fidati.",
+      "preparation_may_execute_now": false,
+      "admission_after_freeze": "New supervisor s005 resume prompt and automatic review for this command; no runtime now"
+    }
+  ],
+  "internal_suite": {
+    "path": "temp/run-a001-fase0-uv/evidence/implementation-r001/preparation-baseline-s005/internal-suite-commands.json",
+    "kind": "file",
+    "bytes": 6503,
+    "sha256": "bf6ba2de47cea0689a365fe2e9aca1de60b2af5296d74d8f3da47bd798a4aee9"
+  },
+  "sequence": [
+    "R-bootstrap",
+    "R-baseline",
+    "S-baseline",
+    "V0-originals"
+  ],
+  "scope": "Only R/S/V0 and complete audit, then supervisor handoff with prompt05; P1-P3 require subsequent mandate",
+  "runtime_states": {
+    "R_s005": "NON_ESEGUITA",
+    "S_s005": "NON_GENERATO",
+    "V0_s005": "NON_ESEGUITA",
+    "collection_s005": "NON_ESEGUITA",
+    "suite_s005": "NON_ESEGUITA",
+    "R_s004": "PASS_HISTORICAL_ONLY",
+    "S_s004": "VERIFIED_HISTORICAL_ONLY",
+    "V0_s004": "FAIL_EXIT2_UNCHANGED",
+    "legacy_suite_s004": "FAIL_EXIT1_62PASS_5FAIL_67OBSERVED_201EVENTS"
+  },
+  "outputs_excluded_from_stage": true,
+  "per_command_automatic_review_required": true,
+  "no_runtime_or_tool_approval_in_advance": true,
+  "costs": {
+    "network_for_stage_bytes": 0,
+    "acquisitions": 0,
+    "filesystem_free_bytes_observed_host": 302866432,
+    "observed_at": "2026-10-04T07:01:23.174109+00:00",
+    "estimated_incremental_output_disk_bytes": 50000000,
+    "estimated_time_minutes": {
+      "R_and_S": 2,
+      "V0_with_collection_and_audit": 35
+    },
+    "outer_timeout_seconds": [
+      480,
+      480,
+      480,
+      1380
+    ],
+    "internal_command_timeout_seconds": 300,
+    "manual_audit_outside_driver_timeout": true,
+    "estimates_not_results": true,
+    "V7_V8_separate_cost_required": true
+  },
+  "invalidations": [
+    {
+      "trigger": "Any fixture/diagnostic/input/interpreter/deps/cache/host change or retry after freeze",
+      "action": "New request baseline s006 or later; preserve all previous outputs, repeat dependent proofs"
+    },
+    {
+      "trigger": "Hash/S/snapshot mismatch",
+      "action": "FAIL before imports/collection; no repair/fetch"
+    },
+    {
+      "trigger": "Runner incomplete or policy denial",
+      "action": "IMPEDITA, report action/reason to supervisor; no bypass or host modification"
+    },
+    {
+      "trigger": "Unexpected suite mapping/result or missing provenance",
+      "action": "FAIL characterization; return to supervisor, no xfail/skip/test repair"
+    },
+    {
+      "trigger": "Product/build/toolchain changes",
+      "action": "P1-P3 require adequate baseline and subsequent mandate/stages; no automatic continuation now"
+    }
+  ]
+}

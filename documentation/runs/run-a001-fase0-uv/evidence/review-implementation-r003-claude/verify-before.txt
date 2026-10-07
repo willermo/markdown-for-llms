@@ -1,0 +1,9 @@
+2026-10-07T14:04:19+02:00
+argv: /home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12 -I -B scripts/run_context.py verify run-a001-fase0-uv --label impl-r001-stage-final-s003
+MATCH: oggetti invariati. Questo controllo non costituisce una review o un GO.
+exit=0
+66ba82200e5def5a4db76f9bafccb0731b506091
+66ba82200e5def5a4db76f9bafccb0731b506091
+cached-diff-lines=0
+/dev/nvme0n1p2 501809635328 350067728384 126176104448  74% /
+1400213494

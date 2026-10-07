@@ -11,8 +11,8 @@ decisione. Data iniziale del registro: 2026-10-02.
 | [0003](0003-persistence.md) | SQLite e storage su filesystem | Accettata per la prima versione locale | Da realizzare |
 | [0004](0004-execution-and-configuration.md) | Locale/remoto, profili hardware, configurazione `.env` | Accettata come indirizzo | Motori e profili da verificare |
 | [0005](0005-documentation-and-governance.md) | Governance locale e documentazione Diátaxis | Accettata | Struttura iniziale presente |
-| [0006](0006-python-toolchain-uv.md) | Toolchain Python uv prima dei benchmark | Accettata | Autorizzata, da pianificare nella run a001 |
-| [0007](0007-supervised-development-runs.md) | Run supervisionate, doppie review e handover | Accettata | Protocollo e bootstrap presenti |
+| [0006](0006-python-toolchain-uv.md) | Toolchain Python uv prima dei benchmark | Accettata | GO finale implementazione r003 dopo GO/GO; archivio e Git manuale preparati, quote temporali NON PASS conservate; commit/integrazione in dev pendenti |
+| [0007](0007-supervised-development-runs.md) | Run supervisionate, doppie review e handover | Accettata | Protocollo iniziale integrato a66ba822; implementazione continua adottata nel working tree il 2026-10-06: fix e snapshot di esecuzione autonomi, freeze del supervisore alla consegna per le due review; arbitrati e Git manuale conservati |
 
 Usare [template.md](template.md) per il prossimo numero libero. Collegare alternative,
 conseguenze e prove utili; evitare un ADR per ogni dettaglio di implementazione.

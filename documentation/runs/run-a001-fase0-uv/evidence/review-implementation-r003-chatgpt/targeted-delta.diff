@@ -1,0 +1,152 @@
+--- s002/scripts/diagnostics/run-a001-fase0-uv/run_offline.py
++++ s003/scripts/diagnostics/run-a001-fase0-uv/run_offline.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ """R, preflight e comando in una sola invocazione non interattiva del runner.
+ 
+-Non prepara dipendenze e non crea snapshot. Richiede lo stage del supervisore.
++Non prepara dipendenze e non crea snapshot. Richiede uno snapshot identificato.
+ La receipt distingue il processo del comando e i discendenti osservati; quelli
+ troppo brevi per /proc richiedono anche le receipt del relativo harness.
+ """
+@@ -13,6 +13,7 @@
+ import json
+ import os
+ import resource
++import re
+ import signal
+ from pathlib import Path
+ import shutil
+@@ -93,9 +94,21 @@
+ 
+ 
+ def snapshot_check(repo, snapshot, python):
++    # Stesso contratto del produttore S; controlli locali prima del verificatore.
++    if (not repo.is_absolute() or not snapshot.is_absolute() or
++            '..' in repo.parts or '..' in snapshot.parts or
++            any(p.is_symlink() for p in (snapshot, *snapshot.parents, repo, *repo.parents))):
++        raise ValueError('Path snapshot/clone assoluto senza symlink richiesto')
+     data = json.loads(snapshot.read_text())
+-    if data.get("schema") != 1 or data.get("run_id") != "run-a001-fase0-uv":
++    required = {'schema', 'run_id', 'label', 'head', 'branch', 'files', 'artifacts', 'worktree_sha256'}
++    if (not isinstance(data, dict) or not required <= data.keys() or
++            type(data['schema']) is not int or data['schema'] != 1):
+         raise ValueError("Snapshot/schema non valido")
++    if (not isinstance(data['run_id'], str) or
++            re.fullmatch(r'run-[a-z][0-9]{3,}-fase[a-z0-9]+-[a-z0-9]+(?:-[a-z0-9]+)*', data['run_id']) is None or
++            not isinstance(data['label'], str) or
++            re.fullmatch(r'[a-z0-9][a-z0-9-]{0,79}', data['label']) is None):
++        raise ValueError('Run ID/label snapshot non validi')
+     expected = repo / "temp" / data["run_id"] / "snapshots" / (data["label"] + ".json")
+     if expected != snapshot or snapshot.is_symlink():
+         raise ValueError("Snapshot non appartenente al clone/stage")
+--- s002/tests/unit/test_core_diagnostics.py
++++ s003/tests/unit/test_core_diagnostics.py
+@@ -112,4 +112,49 @@
+         self.exercise(PermissionError('synthetic runner EACCES'),cleanup_fails=True)
+ 
+ 
++class LauncherSnapshots(unittest.TestCase):
++    """Validation mocks only; real R is exercised separately in run evidence."""
++    def setUp(self):
++        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
++        self.repo=Path(self.tmp.name);self.tool=load('run_offline')
++        self.data=dict(schema=1,run_id='run-a001-fase0-uv',label='test-s001',
++                       head='a'*40,branch='synthetic',files=[],artifacts=[],worktree_sha256='b'*64)
++    def snapshot(self, data=None):
++        value=self.data if data is None else data
++        path=self.repo/'temp'/self.data['run_id']/'snapshots'/(self.data['label']+'.json')
++        path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(value));return path
++    def test_both_valid_run_ids_invoke_verifier_with_target_python(self):
++        for run_id in ('run-a001-fase0-uv','run-b002-fase0-uv'):
++            with self.subTest(run_id=run_id):
++                self.data['run_id']=run_id;path=self.snapshot()
++                with patch.object(self.tool.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout='MATCH',stderr='')) as run:
++                    result=self.tool.snapshot_check(self.repo,path,'/verified/python')
++                self.assertEqual(run.call_args.args[0],['/verified/python','-I','-B',str(self.repo/'scripts/run_context.py'),'verify',run_id,'--label','test-s001'])
++                self.assertEqual(result['sha256'],hashlib.sha256(path.read_bytes()).hexdigest())
++    def test_invalid_schema_id_label_and_path_stop_before_verifier(self):
++        for key,value in [('schema',True),('schema',2),('schema',1.0),('run_id','../escape'),('run_id','run-x'),('label','../escape'),('label','/absolute'),('label','UPPER')]:
++            with self.subTest(key=key,value=value):
++                path=self.snapshot(dict(self.data,**{key:value}))
++                with patch.object(self.tool.subprocess,'run') as run,self.assertRaises(ValueError):
++                    self.tool.snapshot_check(self.repo,path,'/verified/python')
++                run.assert_not_called()
++        path=self.snapshot();wrong=path.parent/'wrong.json';wrong.write_bytes(path.read_bytes())
++        with patch.object(self.tool.subprocess,'run') as run,self.assertRaises(ValueError):self.tool.snapshot_check(self.repo,wrong,'/verified/python')
++        run.assert_not_called()
++    def test_snapshot_and_parent_symlinks_rejected_before_verifier(self):
++        path=self.snapshot();original=path.parent/'original';path.rename(original);path.symlink_to(original)
++        with patch.object(self.tool.subprocess,'run') as run,self.assertRaises(ValueError):self.tool.snapshot_check(self.repo,path,'/verified/python')
++        run.assert_not_called();path.unlink();original.rename(path)
++        parent=path.parent;parent.rename(parent.with_name('real'));parent.symlink_to(parent.with_name('real'),target_is_directory=True)
++        with patch.object(self.tool.subprocess,'run') as run,self.assertRaises(ValueError):self.tool.snapshot_check(self.repo,path,'/verified/python')
++        run.assert_not_called()
++    def test_stale_stops_before_socket_or_workload_and_has_receipt(self):
++        path=self.snapshot();target=self.repo/'target.json';target.write_text('{}');out=self.repo/'output'
++        args=SimpleNamespace(snapshot=path,bundle=None,repo=self.repo,python='/verified/python',target=target,output=out,runner='firejail')
++        with patch.object(self.tool.subprocess,'run',return_value=SimpleNamespace(returncode=2,stdout='STALE',stderr='')) as run,patch.object(self.tool.tempfile,'mkdtemp') as socket_dir:
++            self.assertEqual(self.tool.outside(args,{}),2)
++        self.assertEqual(run.call_count,1);socket_dir.assert_not_called()
++        receipt=json.loads((out/'receipt.json').read_text());self.assertEqual(receipt['status'],'FAIL');self.assertIn('STALE',receipt['error']);self.assertNotIn('invocation',receipt)
++
++
+ if __name__=='__main__':unittest.main()
+--- s002/docs/how-to/ambiente-uv.md
++++ s003/docs/how-to/ambiente-uv.md
+@@ -129,7 +129,8 @@
+ Generare S con `make_source_manifest.py --standalone --repo "$RUN_REPO"
+ --input-inventory "$RUN_PROOF/package-inputs.json" --uv "$RUN_UV" --output
+ "$RUN_PROOF/S.json"`. Ricostruire sdist/wheel, fare audit, installare la canonica
+-e creare I con `verify_distribution.py --standalone` e gli stessi repo/S/archivi.
++e creare I con `verify_distribution.py` e gli stessi repo/S/archivi:
++I deriva lo scope da S, senza un flag `--standalone` del verificatore.
+ Il Git locale del clone è registrato anche se non esiste una branch dev;
+ una copia sintetica inizializzata senza commit registra HEAD/dev null.
+ 
+@@ -143,5 +144,10 @@
+ S o I stantii/mismatched fermano la prova prima degli import applicativi:
+ ricostruire e verificare esplicitamente, senza sync nascosto nella collection.
+ 
++Per **C-docker** selezionare invece `RUN_TEST_MODE=official|standalone`
++nell'ambiente: il solo flag pytest `--test-mode` non seleziona la modalità
++del driver Docker. Scelte discordanti restano errori. Prerequisiti e procedura
++sono nella [guida Docker CPU](marker-legacy-docker.md).
++
+ [Reference e test](../reference/toolchain-legacy.md),
+ [Docker](marker-legacy-docker.md), [indice](../README.md).
+--- s002/docs/how-to/marker-legacy-docker.md
++++ s003/docs/how-to/marker-legacy-docker.md
+@@ -88,7 +88,10 @@
+ RUN_IMAGE_MANIFEST=image-source.json della copia, RUN_IMAGE_INPUTS=receipt supply,
+ RUN_BACKEND_WHEEL, RUN_IMAGE_CONTEXT_RECEIPT (receipt del producer contesto), RUN_TEST_OUTPUT (output nuovo), RUN_SOURCE_MANIFEST e
+ RUN_INSTALLATION_RECEIPT correnti. Nel clone normale selezionare
+-RUN_TEST_MODE=standalone; official richiede snapshot corrente. Il daemon locale
++RUN_TEST_MODE=standalone; official richiede snapshot corrente. Per C-docker
++la selezione è `RUN_TEST_MODE=official|standalone` nell’ambiente: il solo flag
++pytest `--test-mode` non seleziona il driver Docker. Scelte discordanti
++sono rifiutate. Il daemon locale
+ è un perimetro esplicito distinto dal runner che lo maschera nei test host.
+ 
+ ```bash
+--- s002/docs/reference/toolchain-legacy.md
++++ s003/docs/reference/toolchain-legacy.md
+@@ -106,13 +106,17 @@
+ Per Docker, fuori dal runner che maschera il daemon, RUN_IMAGE è ID locale,
+ RUN_IMAGE_MANIFEST è image-source.json prodotto dal tool di contesto,
+ RUN_IMAGE_INPUTS è la receipt del tool supply, RUN_BACKEND_WHEEL è la wheel84
+-hash-pinned, RUN_TEST_OUTPUT è una directory
++hash-pinned, RUN_IMAGE_CONTEXT_RECEIPT è la receipt del producer di contesto,
++RUN_TEST_OUTPUT è una directory
+ nuova. C-docker richiede immagine CPU V7 già preparata: pull never/network none,
+ Python venv -I -B su stdin, senza mount o startup ordinario. Il test invoca
+ run_docker_contract.py versionato: cap-drop ALL/no-new-privileges, healthcheck
+ disabilitato, memoria/pids finiti, export filesystem del container fermo prima
+ di Python, full I e nove sottocasi. Preflight host corrente S/I, con modalità
+ official o standalone esplicita; nessun riferimento a snapshot storico fisso.
++Per C-docker impostare `RUN_TEST_MODE=official|standalone` nell'ambiente:
++il solo flag pytest `--test-mode` non seleziona il driver Docker; scelte
++discordanti sono rifiutate.
+ 
+ ```bash
+ "$RUN_DEV_PY" -I -B -m pytest tests/docker/test_marker_contract.py -q

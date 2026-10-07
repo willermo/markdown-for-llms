@@ -1,0 +1,1461 @@
+{
+  "status": "COMPLETE_IMPLEMENTATION_NO_FINAL_GO",
+  "proofs": [
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-api-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 10.510505434125662,
+      "spent_before": 7867.569478112971,
+      "cumulative_after": 7878.079983547097,
+      "remaining_after": 221.92001645290293,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 697636160,
+            "allocated": 760852480,
+            "files": 25493,
+            "directories": 6066,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 816483112,
+        "allocated": 892862464,
+        "repository_free": 126131453952,
+        "tmp_free": 502083584
+      },
+      "gate": {
+        "H": 892862464,
+        "Hentry": 553541632,
+        "delta": 339320832,
+        "remaining": 29777920,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 8.298247028840706
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-base-a-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 8.66585610806942,
+      "spent_before": 7829.366617254913,
+      "cumulative_after": 7838.032473362982,
+      "remaining_after": 261.9675266370177,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 696828150,
+            "allocated": 759877632,
+            "files": 25412,
+            "directories": 6054,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 815675102,
+        "allocated": 891887616,
+        "repository_free": 126140956672,
+        "tmp_free": 499105792
+      },
+      "gate": {
+        "H": 891887616,
+        "Hentry": 553541632,
+        "delta": 338345984,
+        "remaining": 30752768,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 6.655537430895492
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-base-b-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 8.335499837994576,
+      "spent_before": 7839.020880894037,
+      "cumulative_after": 7847.3563807320315,
+      "remaining_after": 252.64361926796846,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 697004627,
+            "allocated": 760094720,
+            "files": 25432,
+            "directories": 6057,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 815851579,
+        "allocated": 892104704,
+        "repository_free": 126140702720,
+        "tmp_free": 502095872
+      },
+      "gate": {
+        "H": 892104704,
+        "Hentry": 553541632,
+        "delta": 338563072,
+        "remaining": 30535680,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 6.653501749970019
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-dev-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 8.931418349035084,
+      "spent_before": 7857.6796612709295,
+      "cumulative_after": 7866.611079619965,
+      "remaining_after": 233.38892038003542,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 697387297,
+            "allocated": 760557568,
+            "files": 25472,
+            "directories": 6063,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 816234249,
+        "allocated": 892567552,
+        "repository_free": 126140002304,
+        "tmp_free": 502095872
+      },
+      "gate": {
+        "H": 892567552,
+        "Hentry": 553541632,
+        "delta": 339025920,
+        "remaining": 30072832,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 7.160113638965413
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-external-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 8.362020978005603,
+      "spent_before": 7848.322948132874,
+      "cumulative_after": 7856.68496911088,
+      "remaining_after": 243.31503088911995,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 697170506,
+            "allocated": 760299520,
+            "files": 25452,
+            "directories": 6060,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 816017458,
+        "allocated": 892309504,
+        "repository_free": 126140350464,
+        "tmp_free": 502095872
+      },
+      "gate": {
+        "H": 892309504,
+        "Hentry": 553541632,
+        "delta": 338767872,
+        "remaining": 30330880,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 6.659788075136021
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-root-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 7.332857060013339,
+      "spent_before": 7820.9717311770655,
+      "cumulative_after": 7828.304588237079,
+      "remaining_after": 271.69541176292114,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 696651192,
+            "allocated": 759656448,
+            "files": 25391,
+            "directories": 6051,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 815498144,
+        "allocated": 891666432,
+        "repository_free": 126141382656,
+        "tmp_free": 499105792
+      },
+      "gate": {
+        "H": 891666432,
+        "Hentry": 553541632,
+        "delta": 338124800,
+        "remaining": 30973952,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 5.707034518010914
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-V1-r003/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 52.757034708047286,
+      "spent_before": 8198.24928281107,
+      "cumulative_after": 8251.006317519117,
+      "remaining_after": 28.993682480882853,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 708543968,
+            "allocated": 773963776,
+            "files": 26444,
+            "directories": 6252,
+            "links": 822,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 827390920,
+        "allocated": 905973760,
+        "repository_free": 126155382784,
+        "tmp_free": 497291264
+      },
+      "gate": {
+        "H": 905973760,
+        "Hentry": 553541632,
+        "delta": 352432128,
+        "remaining": 16666624,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 50.74471995187923
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-api-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 10.358218789799139,
+      "spent_before": 7975.3320484878495,
+      "cumulative_after": 7985.690267277649,
+      "remaining_after": 114.30973272235133,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 698851932,
+            "allocated": 762200064,
+            "files": 25560,
+            "directories": 6078,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 817698884,
+        "allocated": 894210048,
+        "repository_free": 126125858816,
+        "tmp_free": 502083584
+      },
+      "gate": {
+        "H": 894210048,
+        "Hentry": 553541632,
+        "delta": 340668416,
+        "remaining": 28430336,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 8.656630573794246
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-default-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 9.698344421805814,
+      "spent_before": 7986.59787411103,
+      "cumulative_after": 7996.296218532836,
+      "remaining_after": 103.70378146716394,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 699107325,
+            "allocated": 762499072,
+            "files": 25582,
+            "directories": 6081,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 817954277,
+        "allocated": 894509056,
+        "repository_free": 126125543424,
+        "tmp_free": 502083584
+      },
+      "gate": {
+        "H": 894509056,
+        "Hentry": 553541632,
+        "delta": 340967424,
+        "remaining": 28131328,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 8.134207211900502
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-root-r002/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 13.09110884508118,
+      "spent_before": 8082.611802138854,
+      "cumulative_after": 8095.702910983935,
+      "remaining_after": 4.2970890160650015,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 699950192,
+            "allocated": 763461632,
+            "files": 25650,
+            "directories": 6090,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 818797144,
+        "allocated": 895471616,
+        "repository_free": 126176509952,
+        "tmp_free": 502075392
+      },
+      "gate": {
+        "H": 895471616,
+        "Hentry": 553541632,
+        "delta": 341929984,
+        "remaining": 27168768,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 11.17021935293451
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-tests-r001/result.json",
+      "status": "FAIL",
+      "error": null,
+      "charged_seconds": 9.376215700991452,
+      "spent_before": 7997.229523970978,
+      "cumulative_after": 8006.60573967197,
+      "remaining_after": 93.39426032803021,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 699367953,
+            "allocated": 762798080,
+            "files": 25604,
+            "directories": 6084,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 818214905,
+        "allocated": 894808064,
+        "repository_free": 126125244416,
+        "tmp_free": 502083584
+      },
+      "gate": {
+        "H": 894808064,
+        "Hentry": 553541632,
+        "delta": 341266432,
+        "remaining": 27832320,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 7.656759416917339
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-tests-r002/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 13.278444191906601,
+      "spent_before": 8068.176451287931,
+      "cumulative_after": 8081.454895479837,
+      "remaining_after": 18.545104520162567,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 699663900,
+            "allocated": 763133952,
+            "files": 25628,
+            "directories": 6087,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 818510852,
+        "allocated": 895143936,
+        "repository_free": 126103949312,
+        "tmp_free": 502075392
+      },
+      "gate": {
+        "H": 895143936,
+        "Hentry": 553541632,
+        "delta": 341602304,
+        "remaining": 27496448,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 11.157874034019187
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-fast-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 22.79768740502186,
+      "spent_before": 7879.036625162,
+      "cumulative_after": 7901.834312567022,
+      "remaining_after": 198.1656874329783,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 698090640,
+            "allocated": 761352192,
+            "files": 25515,
+            "directories": 6070,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 816937592,
+        "allocated": 893362176,
+        "repository_free": 126130446336,
+        "tmp_free": 502083584
+      },
+      "gate": {
+        "H": 893362176,
+        "Hentry": 553541632,
+        "delta": 339820544,
+        "remaining": 29278208,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 21.148709282977507
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-packaging-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 71.52293300698511,
+      "spent_before": 7902.918428747915,
+      "cumulative_after": 7974.4413617549,
+      "remaining_after": 125.55863824510016,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 698609340,
+            "allocated": 761913344,
+            "files": 25538,
+            "directories": 6074,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 817456292,
+        "allocated": 893923328,
+        "repository_free": 126126256128,
+        "tmp_free": 502083584
+      },
+      "gate": {
+        "H": 893923328,
+        "Hentry": 553541632,
+        "delta": 340381696,
+        "remaining": 28717056,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 69.66883495403454
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-seed-probe-r003/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 6.922689890023321,
+      "spent_before": 8190.370456839912,
+      "cumulative_after": 8197.293146729935,
+      "remaining_after": 82.70685327006504,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 704918448,
+            "allocated": 769368064,
+            "files": 26049,
+            "directories": 6204,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 823765400,
+        "allocated": 901378048,
+        "repository_free": 126159994880,
+        "tmp_free": 502075392
+      },
+      "gate": {
+        "H": 901378048,
+        "Hentry": 553541632,
+        "delta": 347836416,
+        "remaining": 21262336,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 5.145032135071233
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-source-s060-r001/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 5.14362133317627,
+      "spent_before": 7793.65610617795,
+      "cumulative_after": 7798.799727511127,
+      "remaining_after": 301.20027248887345,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 696485318,
+            "allocated": 759451648,
+            "files": 25370,
+            "directories": 6048,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 815332270,
+        "allocated": 891461632,
+        "repository_free": 126142046208,
+        "tmp_free": 478744576
+      },
+      "gate": {
+        "H": 891461632,
+        "Hentry": 553541632,
+        "delta": 337920000,
+        "remaining": 31178752,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 3.6699774980079383
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-standalone-runid-r003/result.json",
+      "status": "PASS",
+      "error": null,
+      "charged_seconds": 31.267158318078145,
+      "spent_before": 8158.150955739897,
+      "cumulative_after": 8189.418114057975,
+      "remaining_after": 90.58188594202511,
+      "ledger": {
+        "roots": {
+          "temp/run-a001-fase0-uv": {
+            "logical": 704314715,
+            "allocated": 768724992,
+            "files": 26030,
+            "directories": 6201,
+            "links": 814,
+            "vanished": 0
+          },
+          ".venv-python": {
+            "logical": 96548400,
+            "allocated": 106401792,
+            "files": 3726,
+            "directories": 204,
+            "links": 1049,
+            "vanished": 0
+          },
+          ".venv": {
+            "logical": 9547889,
+            "allocated": 10203136,
+            "files": 257,
+            "directories": 41,
+            "links": 4,
+            "vanished": 0
+          },
+          "/tmp/run-a001-product-wheel-env-r001": {
+            "logical": 12750663,
+            "allocated": 15405056,
+            "files": 1069,
+            "directories": 283,
+            "links": 4,
+            "vanished": 0
+          }
+        },
+        "logical": 823161667,
+        "allocated": 900734976,
+        "repository_free": 126160584704,
+        "tmp_free": 502075392
+      },
+      "gate": {
+        "H": 900734976,
+        "Hentry": 553541632,
+        "delta": 347193344,
+        "remaining": 21905408,
+        "total_with_reserves": 939417600,
+        "admitted": true
+      },
+      "monitor_included_seconds": 29.66913476213813
+    }
+  ],
+  "commands": [
+    {
+      "id": "I-root",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "I-root",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/rebind_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/.venv/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-root-r001\", \"error\": null, \"remaining\": 271.3759015761316}\n",
+      "stderr": ""
+    },
+    {
+      "id": "I-base-a",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "I-base-a",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/rebind_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r003/base-a/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-base-a-r001\", \"error\": null, \"remaining\": 261.6489263479598}\n",
+      "stderr": ""
+    },
+    {
+      "id": "I-base-b",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "I-base-b",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/rebind_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/product-sbi-r003/base-b/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-base-b-r001\", \"error\": null, \"remaining\": 252.35033215000294}\n",
+      "stderr": ""
+    },
+    {
+      "id": "I-external",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "I-external",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/rebind_s060.py",
+        "--python",
+        "/tmp/run-a001-product-wheel-env-r001/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-external-r001\", \"error\": null, \"remaining\": 243.0210282059852}\n",
+      "stderr": ""
+    },
+    {
+      "id": "I-dev",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "I-dev",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/rebind_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/dev/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-dev-r001\", \"error\": null, \"remaining\": 233.09055979014374}\n",
+      "stderr": ""
+    },
+    {
+      "id": "I-api",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "I-api",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/rebind_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/api/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-I-api-r001\", \"error\": null, \"remaining\": 221.61156134912744}\n",
+      "stderr": ""
+    },
+    {
+      "id": "fast",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "fast",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/suite_fast_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/dev/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-fast-r001\", \"error\": null, \"remaining\": 197.86458851094358}\n",
+      "stderr": ""
+    },
+    {
+      "id": "packaging",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "packaging",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/suite_packaging_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/dev/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-packaging-r001\", \"error\": null, \"remaining\": 125.28100434597582}\n",
+      "stderr": ""
+    },
+    {
+      "id": "api",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "api",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/suite_api_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/api/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-api-r001\", \"error\": null, \"remaining\": 114.02924888208508}\n",
+      "stderr": ""
+    },
+    {
+      "id": "discovery-default",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "discovery-default",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/suite_discovery-default_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/dev/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-default-r001\", \"error\": null, \"remaining\": 103.41444870410487}\n",
+      "stderr": ""
+    },
+    {
+      "id": "discovery-tests",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "discovery-tests",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/suite_discovery-tests_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/dev/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 1,
+      "stdout": "{\"status\": \"FAIL\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-tests-r001\", \"error\": null, \"remaining\": 93.10230466909707}\n",
+      "stderr": ""
+    },
+    {
+      "id": "discovery-tests",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "discovery-tests",
+        "--attempt",
+        "2",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/suite_discovery-tests_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/api/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-tests-r002\", \"error\": null, \"remaining\": 18.192617075983435}\n",
+      "stderr": ""
+    },
+    {
+      "id": "discovery-root",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "discovery-root",
+        "--attempt",
+        "2",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/suite_discovery-root_s060.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/api/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-discovery-root-r002\", \"error\": null, \"remaining\": 3.926669995067641}\n",
+      "stderr": ""
+    },
+    {
+      "id": "standalone-runid",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py",
+        "--id",
+        "standalone-runid",
+        "--attempt",
+        "2",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/standalone_and_runid.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/dev/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py\", line 104, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ^^^^^^\n  File \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof.py\", line 74, in main\n    remaining=8100-spent-(time.monotonic()-start);seconds=min(a.seconds,900,remaining-10);assert seconds>0\n                                                                                                 ^^^^^^^^^\nAssertionError\n"
+    },
+    {
+      "id": "standalone-runid",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof_r002.py",
+        "--id",
+        "standalone-runid",
+        "--attempt",
+        "3",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/standalone_and_runid.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-profiles-r001/dev/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-standalone-runid-r003\", \"error\": null, \"remaining\": 90.28582804603502}\n",
+      "stderr": ""
+    },
+    {
+      "id": "seed-probe",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof_r002.py",
+        "--id",
+        "seed-probe",
+        "--attempt",
+        "3",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/seed_probe.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/cache-discriminant-r001/env/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120",
+        "--backend"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-seed-probe-r003\", \"error\": null, \"remaining\": 82.4224720550701}\n",
+      "stderr": ""
+    },
+    {
+      "id": "V1",
+      "argv": [
+        "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-I",
+        "-B",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/run_core_proof_r002.py",
+        "--id",
+        "V1",
+        "--attempt",
+        "3",
+        "--script",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/cache_discriminant_proof.py",
+        "--python",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/cache-discriminant-r001/env/bin/python",
+        "--cwd",
+        "/home/davide/workarea/markdown-for-llms",
+        "--source-only",
+        "--seconds",
+        "120",
+        "--backend"
+      ],
+      "exit": 0,
+      "stdout": "{\"status\": \"PASS\", \"directory\": \"/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-V1-r003\", \"error\": null, \"remaining\": 28.63676539901644}\n",
+      "stderr": ""
+    }
+  ],
+  "matrix": {
+    "CLA-I001": {
+      "status": "PASS_REAL_CURRENT_HOST_AND_STANDALONE",
+      "evidence": [
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-standalone-runid-r003/workload.json",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-fast-r001/E-pytest.json"
+      ],
+      "missing": []
+    },
+    "CLA-I002": {
+      "status": "PASS_REAL_COMPOSE_WITH_EXACT_INPUT_EQUIVALENCE",
+      "image": "sha256:b3db6dc22d92d7771aba40013bab4281ebe9f68188d5c46fc2617136b7d2c3a8",
+      "evidence": [
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/compose-r004/result.json",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004.receipt.json"
+      ],
+      "note": "two CPU build configs exact; GPU config only; all native/public input payloads verified, no new acquisition"
+    },
+    "CLA-I003": {
+      "status": "PASS_REAL_VERSIONED_C_DOCKER",
+      "evidence": [
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/C-docker-r002/result.json",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/docker-cpu-r001/fix-review-r001/C-docker-r002/contract/result.json"
+      ],
+      "nodeid": "tests/docker/test_marker_contract.py::test_marker_contract",
+      "nine_offline_subcases": true
+    },
+    "CLA-I004": {
+      "status": "PASS_STATIC_INDIVIDUAL74_PLUS9",
+      "evidence": [
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/readme-reconciliation-verified.json",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/final-static.json"
+      ]
+    },
+    "CLA-I005": {
+      "status": "PASS_DURABLE_DOCUMENTATION",
+      "evidence": [
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/final-static.json"
+      ],
+      "README_before_B56": true
+    },
+    "GPT-I001": {
+      "status": "PASS_TARGETED_AND_REAL_R",
+      "evidence": [
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/launcher-targeted.json",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r001/proof-source-s059-r001/wrapper/runner.json",
+        "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/proof-source-s060-r001/wrapper/runner.json"
+      ],
+      "note": "actual socket s; primary preserved; cleanup secondary separate; receipt even cleanup FAIL; no R weakening"
+    }
+  },
+  "final_checks": {
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/final-checks.json",
+    "bytes": 4335,
+    "sha256": "1a9714f35414bc7462e2dcab776f0c1287f810163628983ac39c894b20e00283"
+  },
+  "equivalence": {
+    "path": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/fix-review-r002/equivalence-final.json",
+    "bytes": 18610,
+    "sha256": "1ed26c08de505186c779f108fbd0a90a37930d26f5e257d025cfc57ae8e0e1d8"
+  },
+  "historical_FAIL_immutable": true,
+  "time_compliance": "All actual workloads completed under8280; conservative delivery preparation/verification accounting exceeds cap by5.287443s; no reset or PASS on budget compliance"
+}

@@ -1,28 +1,39 @@
+# Configurazione statica candidata; V7/V8 e startup con pesi sono prove distinte.
 services:
   marker-api:
+    image: ${RUN_IMAGE_TAG:-markdown-for-llms-marker:cpu}
     build:
-      context: .
+      context: ${RUN_IMAGE_CONTEXT:?contesto pubblico preparato richiesto}
       dockerfile: Dockerfile
-    container_name: marker-api
+      network: none
+      additional_contexts:
+        verified-wheels: ${RUN_VERIFIED_WHEELS:?wheel ABI hash-locked verificate richieste}
+        verified-apt: ${RUN_VERIFIED_APT:?repository APT firmato verificato richiesto}
+      args:
+        PYTHON_IMAGE: ${RUN_PYTHON_IMAGE:?digest Python verificato richiesto}
+        UV_IMAGE: ${RUN_UV_IMAGE:?digest uv verificato richiesto}
+        APT_SNAPSHOT: ${RUN_APT_SNAPSHOT:?timestamp apt verificato richiesto}
+        MARKER_EXTRA: marker-cpu
+        HOST_NETNS: ${RUN_HOST_NETNS:?namespace host richiesto per R/D4 build}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
-      - TORCH_DEVICE=cpu # Change to 'cuda' if you have GPU support
-      - PYTHONUNBUFFERED=1
+      TORCH_DEVICE: cpu
+      TMPDIR: /data/tmp
     volumes:
-      - ./temp_processing:/app/temp # Temporary processing directory
-      - ./source_pdfs:/app/input # Mount input directory
-      - marker_models:/root/.cache/datalab/models # Persist ML models
+      - marker_tmp:/data/tmp
+      - marker_cache:/data/cache
+      - marker_fonts:/data/fonts
+      - ${RUN_DATA_ROOT:-.}/source_documents:/data/input:ro
+    # Path candidati da verificare sul codice installato in V8; nessuno startup implicito.
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 60s
       timeout: 20s
       retries: 5
-      start_period: 300s # Longer startup time for build
-    restart: unless-stopped
-
+      start_period: 300s
+    restart: "no"
 volumes:
-  temp_processing:
-    driver: local
-  marker_models:
-    driver: local
+  marker_tmp:
+  marker_cache:
+  marker_fonts:

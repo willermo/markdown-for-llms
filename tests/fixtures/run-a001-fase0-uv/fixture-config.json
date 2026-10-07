@@ -1,0 +1,47 @@
+{
+  "directories": {
+    "source_pdfs": "source_pdfs",
+    "source_documents": "source_documents",
+    "converted": "converted_markdown",
+    "cleaned": "cleaned_markdown",
+    "validated": "validated_markdown",
+    "chunked": "chunked_markdown",
+    "logs": "pipeline_logs"
+  },
+  "validation_thresholds": {
+    "min_content_length": 100,
+    "max_content_length": 10000000,
+    "min_words": 50,
+    "max_artifact_ratio": 0.05,
+    "min_readability_score": 20,
+    "min_structure_score": 50
+  },
+  "cleaning_settings": {
+    "aggressive_cleaning": true,
+    "preserve_tables": true,
+    "min_line_length": 3,
+    "remove_html_tags": true,
+    "normalize_whitespace": true
+  },
+  "chunking_settings": {
+    "target_llm": "custom",
+    "chunk_size": 1000,
+    "overlap": 100,
+    "min_chunk_size": 1000,
+    "max_chunk_size": 8000,
+    "strategy": "semantic"
+  },
+  "conversion_settings": {
+    "document_converter": "pandoc",
+    "supported_document_formats": [
+      "html"
+    ],
+    "marker_document_formats": [],
+    "use_llm": false
+  },
+  "pipeline_settings": {
+    "skip_existing": false,
+    "max_workers": 1,
+    "log_level": "INFO"
+  }
+}

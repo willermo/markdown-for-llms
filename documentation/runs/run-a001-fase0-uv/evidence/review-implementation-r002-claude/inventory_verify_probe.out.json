@@ -1,0 +1,33 @@
+{
+ "verify_input_inventory": "PASS",
+ "files": 3767,
+ "run_inventory_files": 809,
+ "tool_inventory_files": 3767,
+ "only_in_run": [
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/backend-input-inspection.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/runner-target-template.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/runtime-cache-sources-r004.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/runtime-inventory.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/runtime-origin.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/runtime-packages.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/runtime-startup-inspection.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/sequence-templates.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/product-inputs-r001/wheel-content-checks-r004.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/resume-package-s008/managed-identity.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/implementation-r001/resume-package-s008/managed-inventory.json",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/backend-env-r001/lib/python3.12/site-packages/_distutils_hack/__init__.py",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/backend-env-r001/lib/python3.12/site-packages/_distutils_hack/override.py",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/backend-env-r001/lib/python3.12/site-packages/_virtualenv.pth",
+  "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/work/core-completion-r001/backend-env-r001/lib/python3.12/site-packages/_virtualenv.py"
+ ],
+ "only_in_run_count": 765,
+ "only_in_tool_count": 3723,
+ "only_in_tool": [
+  "/home/davide/workarea/markdown-for-llms/.venv-python/.gitignore",
+  "/home/davide/workarea/markdown-for-llms/.venv-python/.lock",
+  "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/2to3-3.12",
+  "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/idle3.12",
+  "/home/davide/workarea/markdown-for-llms/.venv-python/cpython-3.12.13-linux-x86_64-gnu/bin/pip"
+ ],
+ "seconds": 0.49356042593717575
+}

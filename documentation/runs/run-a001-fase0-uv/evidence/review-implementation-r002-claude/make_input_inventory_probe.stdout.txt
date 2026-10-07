@@ -1,0 +1,3 @@
+{"status": "PASS_INPUT_CAPTURE_ONLY", "files": 3767, "output": "/home/davide/workarea/markdown-for-llms/temp/run-a001-fase0-uv/evidence/review-implementation-r002-claude/probe-package-inputs.json"}
+exit=0
+seconds=.835303554

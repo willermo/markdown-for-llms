@@ -22,13 +22,12 @@ from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Import new infrastructure
-from config import get_config_manager, get_config, apply_env_overrides
+from config import get_config_manager, get_config, apply_env_overrides, load_workspace_env
 from logging_config import get_orchestrator_logger, log_operation, ProgressLogger
 from exceptions import PipelineError, ConversionError, CleaningError, ValidationError, ChunkingError, error_context
 from unified_converter import UnifiedDocumentConverter
 
 # --- Configuration ---
-BASE_DIR = Path.cwd()
 
 # Default values for command line arguments
 DEFAULT_TARGET_LLM = 'custom'
@@ -36,13 +35,15 @@ DEFAULT_CHUNK_SIZE = 4000
 DEFAULT_OVERLAP = 200
 
 SCRIPTS = {
-    'clean': 'clean_markdown.py',
-    'validate': 'validate_markdown.py',
-    'chunk': 'chunk_markdown.py'
+    'clean': 'clean_markdown',
+    'validate': 'validate_markdown',
+    'chunk': 'chunk_markdown'
 }
 
 class PipelineOrchestrator:
     def __init__(self, config_manager=None):
+        self.workspace = Path.cwd().resolve()
+        load_workspace_env(self.workspace)
         # Initialize configuration
         self.config_manager = config_manager or get_config_manager()
         self.config = self.config_manager.config
@@ -79,21 +80,44 @@ class PipelineOrchestrator:
         self.config_manager.create_directories()
         self.logger.info("Pipeline directories created/verified from configuration")
     
+    @staticmethod
+    def phase_environment():
+        """Mantiene l'ambiente applicativo, escludendo override del path Python."""
+        return {key: value for key, value in os.environ.items()
+                if key not in {"PYTHONPATH", "PYTHONHOME"}}
+
     def check_prerequisites(self) -> bool:
         """Check if all required scripts and tools are available"""
         self.logger.info("Checking prerequisites...")
         
-        # Check for required scripts
-        missing_scripts = []
-        for script_name, script_file in SCRIPTS.items():
-            script_path = BASE_DIR / script_file
-            if not script_path.exists():
-                missing_scripts.append(script_file)
-        
-        if missing_scripts:
-            self.logger.error(f"Missing required scripts: {missing_scripts}")
+        # La sonda usa lo stesso interprete isolato delle fasi. Non importa i moduli.
+        probe = """
+import importlib.util, json, pathlib, sysconfig
+roots = {pathlib.Path(sysconfig.get_path(k)).resolve() for k in ('purelib', 'platlib')}
+origins = {}
+for name in ('clean_markdown', 'validate_markdown', 'chunk_markdown'):
+    spec = importlib.util.find_spec(name)
+    if spec is None or not spec.origin:
+        raise SystemExit('Modulo installato mancante: ' + name)
+    origin = pathlib.Path(spec.origin).resolve()
+    if not origin.is_file() or not any(origin.is_relative_to(root) for root in roots):
+        raise SystemExit('Origine non installata: ' + name + ': ' + str(origin))
+    origins[name] = str(origin)
+print(json.dumps(origins, sort_keys=True))
+"""
+        try:
+            result = subprocess.run(
+                [sys.executable, '-I', '-B', '-c', probe], cwd=self.workspace,
+                env=self.phase_environment(), capture_output=True, text=True, timeout=10,
+            )
+            if result.returncode:
+                self.logger.error("Progetto non installato nello stesso interprete: %s", result.stderr.strip())
+                return False
+            self.logger.info("Origini delle fasi installate: %s", result.stdout.strip())
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            self.logger.error("Preflight delle fasi fallito: %s", exc)
             return False
-        
+
         # Check for pandoc
         try:
             result = subprocess.run(['pandoc', '--version'], 
@@ -118,7 +142,10 @@ class PipelineOrchestrator:
         
         if missing_packages:
             self.logger.error(f"Missing Python packages: {missing_packages}")
-            self.logger.info("Install with: pip install " + " ".join(missing_packages))
+            self.logger.info("Preparare il progetto con uv sync --locked --no-default-groups "
+                             "--no-editable --reinstall-package markdown-for-llms --python 3.12.13 "
+                             "--managed-python --no-python-downloads, con UV_PYTHON_INSTALL_DIR "
+                             "assoluta al managed locale; poi verificare origine e distribuzione.")
             return False
         
         self.logger.info("✓ All prerequisites satisfied")
@@ -233,11 +260,11 @@ class PipelineOrchestrator:
             return True
         
         # Run cleaning script
-        script_path = BASE_DIR / SCRIPTS['clean']
         
         try:
-            result = subprocess.run([sys.executable, str(script_path)], 
-                                  cwd=Path.cwd(), 
+            result = subprocess.run([sys.executable, '-I', '-B', '-m', SCRIPTS['clean']],
+                                  cwd=self.workspace,
+                                  env=self.phase_environment(),
                                   capture_output=True, 
                                   text=True,
                                   timeout=1800)  # 30 minutes timeout
@@ -276,11 +303,11 @@ class PipelineOrchestrator:
             return True
         
         # Run validation script
-        script_path = BASE_DIR / SCRIPTS['validate']
         
         try:
-            result = subprocess.run([sys.executable, str(script_path)], 
-                                  cwd=Path.cwd(), 
+            result = subprocess.run([sys.executable, '-I', '-B', '-m', SCRIPTS['validate']],
+                                  cwd=self.workspace,
+                                  env=self.phase_environment(),
                                   capture_output=True, 
                                   text=True,
                                   timeout=900)  # 15 minutes timeout
@@ -292,7 +319,7 @@ class PipelineOrchestrator:
                 
                 # Load and report validation summary
                 try:
-                    with open(BASE_DIR / 'validation_report.json', 'r') as f:
+                    with open(self.workspace / 'validation_report.json', 'r') as f:
                         report = json.load(f)
                         summary = report.get('summary', {})
                         self.logger.info(f"Validation rate: {summary.get('validation_rate', 0)}%")
@@ -330,14 +357,13 @@ class PipelineOrchestrator:
             return True
         
         # Run chunking script with explicit parameters from configuration
-        chunk_script_path = BASE_DIR / SCRIPTS['chunk']
         try:
             validated_dir = self.config_manager.get_directory_path('validated')
             chunked_dir = self.config_manager.get_directory_path('chunked')
 
             cmd = [
                 sys.executable,
-                str(chunk_script_path),
+                '-I', '-B', '-m', SCRIPTS['chunk'],
                 '--input-dir', str(validated_dir),
                 '--output-dir', str(chunked_dir),
                 '--target-llm', self.config.chunking.target_llm.value,
@@ -347,7 +373,8 @@ class PipelineOrchestrator:
 
             result = subprocess.run(
                 cmd,
-                cwd=Path.cwd(),
+                cwd=self.workspace,
+                env=self.phase_environment(),
                 capture_output=True,
                 text=True,
                 timeout=1800  # 30 minutes timeout
@@ -512,12 +539,12 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python run_full_pipeline.py                          # Run with defaults
-  python run_full_pipeline.py --llm gpt-4             # Target GPT-4
-  python run_full_pipeline.py --chunk-size 5000       # Custom chunk size
-  python run_full_pipeline.py --force                 # Reprocess all files
-  python run_full_pipeline.py --config-only           # Just create config file
-  python run_full_pipeline.py --step validation       # Run single step
+  markdown-pipeline                          # Run with defaults
+  markdown-pipeline --llm gpt-4             # Target GPT-4
+  markdown-pipeline --chunk-size 5000       # Custom chunk size
+  markdown-pipeline --force                 # Reprocess all files
+  markdown-pipeline --config-only           # Just create config file
+  markdown-pipeline --step validation       # Run single step
         """
     )
     
