@@ -115,6 +115,11 @@ autonomamente, snapshot comune e due review alla consegna; nessun GO finale.
 
 ## Stato corrente2026-10-12
 
+A002 integrata manualmente in dev a `7caff336119b6d7d78978204142cfdc16d620fff`; corrispondenza
+dei contenuti verificata. [Ricevuta](runs/run-a002-fase1-corpus/evidence/integration-reception-2026-10-12.json).
+Registri e24log predisposti per commit amministrativo; nessun push/main/deploy.
+Il riepilogo di chiusura sotto è storico rispetto all’integrazione.
+
 A002 chiusa il2026-10-12 per accettazione esplicita del perimetro ridotto, con debito aperto. Reader r014 sperimentale; ClaudeNO_GO statico e reviewGPTincompleta conservati, nessun GOtecnico retroattivo. Corpus/raw/prove archiviati, parser mantenuto adottato come direzione (ADR0008), implementazione futura obbligatoria. Primo incremento fase1 concluso nel perimetro accettato; confronto/scelta motori e fase1 complessiva ancora aperti. Nessuna integrazione o UI dichiarata.
 
 [Archivio a002](runs/run-a002-fase1-corpus/manifest.md),

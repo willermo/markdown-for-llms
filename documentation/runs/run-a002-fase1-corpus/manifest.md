@@ -4,7 +4,9 @@
 - Esito: **CLOSED / ACCEPTED_REDUCED_SCOPE_WITH_DEBT**, accettazione utente12ott2026.
 - Review finale: ClaudeNO_GO statico,OpenAIINCOMPLETA; nessun GOtecnico retroattivo.
 - Branch/base: feature/run-a002-corpus da dev80c31da46e5caab990d3596c79c44e524ec1dc95.
-- Commit/merge/push/deploy: **non eseguiti**, integrazione manuale da registrare solo dopo verifica.
+- Commit applicativo e integrazione manuale in `dev`: **verificati** a `7caff336119b6d7d78978204142cfdc16d620fff`; feature e dev identiche alla ricezione.
+- Push/deploy/main: non eseguiti; origin/dev locale ancora a `80c31da46e5caab990d3596c79c44e524ec1dc95`, nessuna query remota.
+- Registri di integrazione e24log storici: predisposti per un successivo commit documentale, non ancora committati.
 - Archiviazione:2026-10-12,supervisore Codex/OpenAI, hoststdlib/hash solamente.
 
 [Sintesi della chiusura](closure.md),
@@ -52,3 +54,12 @@ runtime sono identificati, non migliorati dalla chiusura.
 Controllo aggiuntivo: 2886 hash originali/copie di lettura PASS; 11 collegamenti storici già indisponibili, elencati in [receipt](evidence/archive-integrity-check.json). Non sanati o trasformati in prove.
 
 Contesto vivo alla chiusura: [STATE](evidence/context-at-closure/STATE.md) e [HANDOVER](evidence/context-at-closure/HANDOVER.md). Le copie in reports/context sono la fotografia precedente alla finalizzazione; gli originali sono conservati.
+
+## Ricezione Git2026-10-12
+
+[Ricevuta](evidence/integration-reception-2026-10-12.json):352filegenerali e2artefatti
+identici alla consegna,soloHEAD/branch diversi. Workingtree pulito alla ricezione;
+24logarchiviati erano ignorati e assenti nel commit. RegolaGitignore corretta
+per il solo archivio,byte immutati; completamento con commitdocumentale.
+Nessun parser cambiato/test nuovo/GOtecnico. Commit amministrativi successivi
+possono avanzaredev senza cambiare il commit applicativo identificato qui.

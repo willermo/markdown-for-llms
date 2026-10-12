@@ -23,10 +23,11 @@ Il prodotto Web non è già disponibile.
 
 ## Ingresso e azione concreta
 
-Prima di aprire la nuova feature, eseguire il commit della consegna a002 e
-l'integrazione manuale in dev secondo i [comandi contestualizzati](../runs/run-a002-fase1-corpus/manual-integration.md).
-Il supervisore riceve output e SHA e registra l'integrazione reale; non
-considerarla già avvenuta dalla sola chiusura della run.
+A002 è già committata e integrata manualmente in dev a `7caff336119b6d7d78978204142cfdc16d620fff`,
+con corrispondenza dei352filegenerali/2artefatti verificata. Non ripetere il
+commit applicativo o il merge. Completare soltanto il [commit dei registri e24log](../runs/run-a002-fase1-corpus/manual-integration.md)
+predisposto dopo la ricezione; nessuna nuova review tecnica. Poi leggere la
+base dev effettiva, che può includere quel commit amministrativo successivo.
 
 1. Leggi [manifest a002](../runs/run-a002-fase1-corpus/manifest.md),
    [indice umano](../runs/run-a002-fase1-corpus/human-evaluation.md),
@@ -34,8 +35,9 @@ considerarla già avvenuta dalla sola chiusura della run.
    e [roadmap](../roadmap.md) nelle sezioni fase1–3. Storia originale archiviata,
    inventario integrità e dipendenze temp nel manifest; non leggere tutti i log.
 2. Verifica branch/HEAD/indice/delta, senza reset/checkout/query remota o Git
-   mutativo. A002 alla chiusura feature/run-a002-corpus, HEAD/dev/origin-dev
-   locale/merge-base80c31da46e5caab990d3596c79c44e524ec1dc95; non integrata.
+   mutativo. A002 integrata a 7caff336119b6d7d78978204142cfdc16d620fff; feature allo stesso SHA
+   alla ricezione, origin/dev locale ancora80c31da46e5caab990d3596c79c44e524ec1dc95.
+   La base precedente resta storica; verificare dev corrente e commit amministrativi.
    Commit/merge/push restano manuali dell’utente; integrare solo la consegna
    esplicitamente accettata e documentata, non presentarla comeGOtecnico.
    Una nuova feature deve partire dalla base dev effettiva: predisponi il

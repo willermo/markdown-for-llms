@@ -9,6 +9,18 @@ La [roadmap](roadmap.md) descrive il percorso previsto, gli
 [archivio delle run](runs/README.md) conserva le evidenze permanenti. Il contesto
 operativo corrente rimane in `temp/`, esclusa da Git.
 
+## 2026-10-12 — A002 integrata manualmente in dev
++
++Commit `7caff336119b6d7d78978204142cfdc16d620fff`, padre `80c31da46e5caab990d3596c79c44e524ec1dc95`:
+HEAD/dev/feature coincidono,workingtree pulito alla ricezione;352filegenerali
+e2artefatti identici alla consegna,soloHEAD/branch modificati. Integrazione
+manualeutente verificata;accettazione sperimentale con debito invariata,non
+GOtecnico. Origin/dev locale ancoraalla base,push/main/deploy non eseguiti.
+24log dell’archivio esclusi dal commit perignore storico:eccezione limitata
+all’archivio a002 predisposta,byte conservati;registri/log da committare
+separatamente. Controlli Git/hash/documenti;nessun test o conversione nuovo.
+Prossimo passo:a003 dalla base dev effettiva dopo il commit amministrativo.
+
 ## 2026-10-12 — A002 chiusa con debito accettato, parser mantenuto deciso
 
 A002 chiusa il2026-10-12 per accettazione esplicita del perimetro ridotto, con debito aperto. Reader r014 sperimentale; ClaudeNO_GO statico e reviewGPTincompleta conservati, nessun GOtecnico retroattivo. Corpus/raw/prove archiviati, parser mantenuto adottato come direzione (ADR0008), implementazione futura obbligatoria. Primo incremento fase1 concluso nel perimetro accettato; confronto/scelta motori e fase1 complessiva ancora aperti. Nessuna integrazione o UI dichiarata.

@@ -1,5 +1,27 @@
 # Integrazione manuale della consegna sperimentale a002
 
+**Sequenza applicativa già eseguita:** commit/fast-forward ricevuti e verificati
+a `7caff336119b6d7d78978204142cfdc16d620fff`. Non ripetere i comandi storici sotto.
+
+## Completare soltanto registri ed evidenze
+
+I24logarchiviati sono stati esclusi dal primo commit dal Gitignore storico.
+Eccezione limitata a quell’archivio e registri aggiornati sono già predisposti,
+nessuna modifica al parser. Sul branchdev corrente:
+
+```bash
+git add -- .gitignore documentation/
+git commit -m "Registra integrazione a002 e completa archivio"
+git status --short --branch
+```
+
+Questo commit amministrativo può avanzaredev rispetto alla feature a002:
+non richiede di ripetere merge o review. La nuova feature a003 partirà da
+dev aggiornata. Nessun push/main automatico; l’integrazione applicativa resta
+identificata dal commit7caff33, distinto dai registri successivi.
+
+## Istruzioni precedenti conservate
+
 Preparata il2026-10-12; nessun commit o merge eseguito dal supervisore.
 La consegna è accettata esplicitamente con debito, secondo il manifest;
 non dichiarare GO tecnico r014 o soluzione del parser.

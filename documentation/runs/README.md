@@ -30,3 +30,7 @@ va verificata separatamente e registrata nel manifest.
   reader sperimentale/debito obbligatorio ADR0008. Archivio selettivo verificato,
   64bundle eindice umano;ClaudeNO_GO/GPTINCOMPLETA conservati,nessunGOtecnico,
   integrazione o pulizia dichiarati. Fase1complessiva ancora aperta.
+
+Integrazione a002 ricevuta12ott2026: dev/feature a `7caff336119b6d7d78978204142cfdc16d620fff`,
+352filegenerali/2artefatti identici; [ricevuta](run-a002-fase1-corpus/evidence/integration-reception-2026-10-12.json).
+Registri/24log predisposti per commit amministrativo,push/main/deploy assenti.

@@ -113,3 +113,7 @@ docker-data/
 
 # Keep .gitkeep files in empty directories
 !**/.gitkeep
+
+# Preserve the selected a002 historical logs in the permanent archive only
+!/documentation/runs/run-a002-fase1-corpus/evidence/derived-r014/**/raw/pipeline_logs/
+!/documentation/runs/run-a002-fase1-corpus/evidence/derived-r014/**/raw/pipeline_logs/*.log

@@ -10,7 +10,7 @@ hardware e corpus determineranno dimensione e durata degli incrementi.
 | --- | --- | --- | --- |
 | 0 | Governance, decisioni e documentazione iniziale | Nessuna | Bootstrap integrato in dev a `66ba822` |
 | 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio verificato; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; push verificato a `80c31da` |
-| 1 | Corpus, benchmark e scelta motivata dei motori | Fase0.1, campioni e profili hardware | A002 chiusa con perimetro ridotto/debito accettato; parser futuro ADR0008. Fase1 ancora aperta: prossimo confronto motori con valutazione umana; nessuna scelta definitiva |
+| 1 | Corpus, benchmark e scelta motivata dei motori | Fase0.1, campioni e profili hardware | A002 chiusa con perimetro ridotto/debito accettato, integrata in dev a7caff33; parser futuro ADR0008. Fase1 ancora aperta: prossimo confronto motori con valutazione umana; nessuna scelta definitiva |
 | 2 | Package applicativo, contratti, configurazione, DB e worker | Risultati essenziali della fase 1 | Da iniziare |
 | 3 | Prima applicazione completa con FastAPI e Web UI minima | Fase 2 e scelta frontend | Da iniziare |
 | 4 | Formati richiesti, PDF scientifici, OCR e asset | Fasi 1–3 | Da iniziare |
@@ -49,6 +49,10 @@ espliciti, GO finale sullo snapshot e integrazione manuale. Questa fase anticipa
 la parte di packaging della fase 2; il nuovo dominio applicativo resta in fase 2.
 
 ## Fase 1 — Corpus e scelta dei motori
+
+Integrazione a002 verificata12ott2026 a `7caff336119b6d7d78978204142cfdc16d620fff`, contenuti
+identici; registri/log da committare separatamente. [Ricevuta](runs/run-a002-fase1-corpus/evidence/integration-reception-2026-10-12.json).
+Push/main/deploy non eseguiti; la chiusura con debito non completa la fase1.
 
 **Decisione corrente2026-10-12:** a002 chiusa per [accettazione utente della
 consegna sperimentale](runs/run-a002-fase1-corpus/manifest.md); primo incremento
