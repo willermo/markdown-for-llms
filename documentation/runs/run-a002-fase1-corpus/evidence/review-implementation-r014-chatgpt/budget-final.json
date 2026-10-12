@@ -1,0 +1,125 @@
+{
+  "at": "2026-10-12T07:54:38.327625+00:00",
+  "own_measured_CPU_lower_seconds": 41.042049000000006,
+  "records": [
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/adapter-audit.json",
+      "CPU_seconds": 0.164535,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/author-contracts.json",
+      "CPU_seconds": 0.161773,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/delta.json",
+      "CPU_seconds": 0.16493000000000002,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/historical-gpt.json",
+      "CPU_seconds": 0.16094999999999998,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/historical-reviews.json",
+      "CPU_seconds": 0.16167199999999998,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/inventory-read.json",
+      "CPU_seconds": 0.279563,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/mandate.json",
+      "CPU_seconds": 0.16924299999999998,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/output-diff-check.json",
+      "CPU_seconds": 0.194639,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/proof-details.json",
+      "CPU_seconds": 0.160871,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/proof-generators.json",
+      "CPU_seconds": 0.158725,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/protocol-guides.json",
+      "CPU_seconds": 0.176431,
+      "exit": 2
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/read-entry.json",
+      "CPU_seconds": 0.299942,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/reader-final.json",
+      "CPU_seconds": 0.159808,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/reader-first.json",
+      "CPU_seconds": 0.15854,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/reader-second.json",
+      "CPU_seconds": 0.167989,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/received-controls.json",
+      "CPU_seconds": 0.16771,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/static-check.json",
+      "CPU_seconds": 35.510746000000005,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/structure.json",
+      "CPU_seconds": 0.290371,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/verify-entry.json",
+      "CPU_seconds": 1.197736,
+      "exit": 0
+    },
+    {
+      "record": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/review-implementation-r014-chatgpt/verify-exit.json",
+      "CPU_seconds": 1.135875,
+      "exit": 0
+    }
+  ],
+  "received_visible_CPU_lower_seconds": 19648.249183999997,
+  "visible_CPU_lower_without_unknown_concurrent_costs_seconds": 19689.291232999996,
+  "CPU_stop_seconds": 19800,
+  "remaining_to_stop_without_unknown_concurrent_costs_seconds": 110.70876700000339,
+  "planning_cap_own_seconds": 10,
+  "planning_cap_exceeded": true,
+  "prudential_unmeasured_reservation_seconds": 120,
+  "additional_admin_planning_allowance_seconds": 5,
+  "planning_residual_after_reservations_without_unknown_concurrent_costs_seconds": -14.291232999996609,
+  "concurrent_reviewer_r014_cost": "UNKNOWN, not zero",
+  "unmeasured": "Initial shell/read commands, recorder creation, edits via tool, ps diagnostic, final accounting tail and platform/model work not measured. CPU lower and RSS sampled are not certified upper bounds. No sum of nested R/CLI/base costs.",
+  "network": 0,
+  "acquisitions": 0,
+  "sends": 0,
+  "services_eur": 0,
+  "own_pending": 0,
+  "own_retained_allocated_bytes_sample": 1212416,
+  "RSS_own_sample_max_KiB": 40876,
+  "disposition": "Return incomplete review to supervisor; no implicit extension, no technical GO/NO_GO."
+}

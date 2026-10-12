@@ -1,0 +1,311 @@
+{
+  "at": "2026-10-11T21:20:39.722079+00:00",
+  "entry": "2026-10-08T07:06:54.369068+00:00",
+  "wall_cumulative_seconds": 310425.29349,
+  "base_ledger": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/supervisor-author-transition-r014-r001/budget-final.json",
+  "received_visible_CPU_lower_seconds": 19411.022312999998,
+  "own_measured_CPU_lower_seconds": 228.422156,
+  "visible_CPU_lower_seconds": 19639.444469,
+  "CPU_stop_seconds": 19800,
+  "CPU_remaining_to_stop_seconds": 160.5555310000012,
+  "prudential_unmeasured_reservation_seconds": 120,
+  "planning_residual_after_reservation_seconds": 40.55553100000121,
+  "receipts": [
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/budget-progress-001.json",
+      "cpu_s": 2.333248,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-after-001-snapshot.json",
+      "cpu_s": 0.14656199999999997,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-after-001.json",
+      "cpu_s": 4.4033929999999994,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-before-001-snapshot.json",
+      "cpu_s": 0.14578799999999997,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-before-001.json",
+      "cpu_s": 4.600021,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/delivery-checks-001.json",
+      "cpu_s": 0.21801799999999993,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/delivery-checks-002.json",
+      "cpu_s": 0.22677399999999998,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/delivery-snapshot.json",
+      "cpu_s": 0.13487300000000002,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/delivery-verify.json",
+      "cpu_s": 0.14448399999999995,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/final-001-snapshot.json",
+      "cpu_s": 0.13918899999999995,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/final-001.json",
+      "cpu_s": 129.531915,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/finish-checks-001.json",
+      "cpu_s": 0.4201339999999999,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/finish-checks-002.json",
+      "cpu_s": 0.6354460000000001,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-negative-001-snapshot.json",
+      "cpu_s": 0.14722,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-negative-001.json",
+      "cpu_s": 4.6552679999999995,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-positive-001-snapshot.json",
+      "cpu_s": 0.14168299999999998,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-positive-001.json",
+      "cpu_s": 4.624053,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/hc2-001-snapshot.json",
+      "cpu_s": 0.123506,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/hc2-001.json",
+      "cpu_s": 4.4855599999999995,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/prepare-002.json",
+      "cpu_s": 16.724708000000003,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/publish-data-001.json",
+      "cpu_s": 0.15086499999999997,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/regressions-001-snapshot.json",
+      "cpu_s": 0.11970199999999996,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/regressions-001.json",
+      "cpu_s": 22.44141,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/after-001-snapshot.json",
+      "cpu_s": 0.12770700000000001,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/after-R-001-snapshot.json",
+      "cpu_s": 0.03519000000000001,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/baseline-R-001.json",
+      "cpu_s": 0.6185149999999999,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/baseline-R-002.json",
+      "cpu_s": 5.98982,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-archives.json",
+      "cpu_s": 1.348131,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-installed.json",
+      "cpu_s": 1.4061759999999994,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-origin-002.json",
+      "cpu_s": 0.17511300000000005,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-source-002.json",
+      "cpu_s": 1.521198,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/grammar-R-001.json",
+      "cpu_s": 4.895262,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/grammar-snapshot.json",
+      "cpu_s": 0.2006229999999999,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/input-snapshot.json",
+      "cpu_s": 0.10847799999999994,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/prepare-001.json",
+      "cpu_s": 11.940459,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/technical-snapshot.json",
+      "cpu_s": 0.12283900000000036,
+      "scope": "whole direct command including children once"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/verify-entry.json",
+      "cpu_s": 0.39077100000000003,
+      "scope": "entry verify"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-after-001/command-resources.json",
+      "cpu_s": 0.7201649999999999,
+      "scope": "contained workload only; wrapper receipt lost to filename collision, unmeasured wrapper excluded"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/budget-final.json",
+      "cpu_s": 2.1278889999999997,
+      "scope": "final disk/accounting command including children once"
+    }
+  ],
+  "allocated_scoped_bytes": 4667228160,
+  "logical_scoped_bytes": 4015758133,
+  "disk_stop_bytes": 5368709120,
+  "scopes": [
+    {
+      "scope": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus",
+      "unique_files": 237839,
+      "logical_bytes": 3899176581,
+      "allocated_bytes": 4482424832
+    },
+    {
+      "scope": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks",
+      "unique_files": 35,
+      "logical_bytes": 465142,
+      "allocated_bytes": 544768
+    },
+    {
+      "scope": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-corpus",
+      "unique_files": 129,
+      "logical_bytes": 3586210,
+      "allocated_bytes": 3928064
+    },
+    {
+      "scope": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks",
+      "unique_files": 29,
+      "logical_bytes": 34542502,
+      "allocated_bytes": 34615296
+    },
+    {
+      "scope": "/tmp/a002-r003/work",
+      "unique_files": 21131,
+      "logical_bytes": 77987698,
+      "allocated_bytes": 145715200
+    }
+  ],
+  "own_sampled_RSS_bytes": 691843072,
+  "received_historical_sampled_RSS_bytes": 749760512,
+  "RSS_stop_bytes": 6442450944,
+  "R_receipts": [
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-compound-before-001/command-resources.json",
+      "sampled_bytes": 65798144,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-positive-001/command-resources.json",
+      "sampled_bytes": 73547776,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-grammar-R-001/command-resources.json",
+      "sampled_bytes": 228306944,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-regressions-001/command-resources.json",
+      "sampled_bytes": 439029760,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-negative-001/command-resources.json",
+      "sampled_bytes": 74039296,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-compound-after-001/command-resources.json",
+      "sampled_bytes": 40665088,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-hc2-001/command-resources.json",
+      "sampled_bytes": 57671680,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-baseline-R-002/command-resources.json",
+      "sampled_bytes": 229236736,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-final-001/command-resources.json",
+      "sampled_bytes": 691843072,
+      "children_reaped": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-after-001/command-resources.json",
+      "sampled_bytes": 229199872,
+      "children_reaped": true
+    }
+  ],
+  "own_pending": 0,
+  "network": 0,
+  "acquisitions": 0,
+  "sends": 0,
+  "benchmark_services_eur": 0,
+  "engine_conversions": 0,
+  "new_human_V": 0,
+  "deadline": null,
+  "reset": false,
+  "limitations": "CPU lower, no upper certified; host startup/reads/edits and this write partly unmeasured. Parent command receipts contain descendants once; nested R/CLI/resources are not added again. 120 is a prudential reservation, not certified spend. Historical Claude r007 45s approximate remains separate. Disk is current scope5 deduplicated, never added to its historical measurement. RSS sampled can miss short peaks.",
+  "final_ledger_file_creation_verified": true
+}

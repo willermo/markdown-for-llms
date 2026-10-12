@@ -1,0 +1,687 @@
+{
+  "case": {
+    "id": "r014-compound-id-preservation",
+    "raw": "# Heading {#chapter1.xhtml#start}\n\n[span]{#chapter1.xhtml#span .noteref}\n\n[link](#chapter2.xhtml#n1){#chapter1.xhtml#call-n1 .noteref}\n",
+    "raw_sha256": "f4fa005450d9624d72c341b22261cb6df8a4f59ad2be2a957f6899c0c796c166",
+    "manual_expected_ids": [
+      "chapter1.xhtml#start",
+      "chapter1.xhtml#span",
+      "chapter1.xhtml#call-n1"
+    ],
+    "reason": "Discriminante del delta su 16 EPUB; identificatori e riferimenti devono conservare i byte interni #. AST pinned determina accettazione prima di correggere il prodotto.",
+    "case_count_total_including_hc2": 159
+  },
+  "phase": "before",
+  "original_observation": {
+    "schema_version": 1,
+    "reader": "observations-v13-ordered-guards-fences",
+    "raw_sha256": "f4fa005450d9624d72c341b22261cb6df8a4f59ad2be2a957f6899c0c796c166",
+    "raw_bytes": 135,
+    "nodes": [
+      {
+        "observation_id": "o0001",
+        "type": "heading",
+        "raw": "# Heading {#chapter1.xhtml#start}\n",
+        "offset": {
+          "char_start": 0,
+          "char_end": 34,
+          "byte_start": 0,
+          "byte_end": 34,
+          "line_start": 1,
+          "line_end": 1
+        },
+        "containers": [],
+        "landmark": "chapter1.xhtml#start",
+        "text": "Heading",
+        "references": [],
+        "formulas": [],
+        "anchors": [
+          "chapter1.xhtml#start"
+        ],
+        "body_text": "Heading",
+        "segments": [
+          {
+            "type": "text",
+            "text": "H",
+            "start": 0,
+            "end": 1,
+            "source_position": {
+              "char": 2,
+              "byte": 2,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "e",
+            "start": 1,
+            "end": 2,
+            "source_position": {
+              "char": 3,
+              "byte": 3,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "a",
+            "start": 2,
+            "end": 3,
+            "source_position": {
+              "char": 4,
+              "byte": 4,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "d",
+            "start": 3,
+            "end": 4,
+            "source_position": {
+              "char": 5,
+              "byte": 5,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "i",
+            "start": 4,
+            "end": 5,
+            "source_position": {
+              "char": 6,
+              "byte": 6,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "n",
+            "start": 5,
+            "end": 6,
+            "source_position": {
+              "char": 7,
+              "byte": 7,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "g",
+            "start": 6,
+            "end": 7,
+            "source_position": {
+              "char": 8,
+              "byte": 8,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "unknown": [],
+        "attrs": {
+          "id": "chapter1.xhtml#start"
+        },
+        "level": 1,
+        "block_syntax": "atx_heading"
+      },
+      {
+        "observation_id": "o0002",
+        "type": "paragraph",
+        "raw": "[span]{#chapter1.xhtml#span .noteref}\n",
+        "offset": {
+          "char_start": 35,
+          "char_end": 73,
+          "byte_start": 35,
+          "byte_end": 73,
+          "line_start": 3,
+          "line_end": 3
+        },
+        "containers": [],
+        "landmark": "chapter1.xhtml#start",
+        "text": "span",
+        "references": [],
+        "formulas": [],
+        "anchors": [
+          "chapter1.xhtml#span"
+        ],
+        "body_text": "span",
+        "segments": [
+          {
+            "type": "text",
+            "text": "s",
+            "start": 1,
+            "end": 2,
+            "attrs": {
+              "id": "chapter1.xhtml#span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 36,
+              "byte": 36,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "p",
+            "start": 2,
+            "end": 3,
+            "attrs": {
+              "id": "chapter1.xhtml#span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 37,
+              "byte": 37,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "a",
+            "start": 3,
+            "end": 4,
+            "attrs": {
+              "id": "chapter1.xhtml#span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 38,
+              "byte": 38,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "n",
+            "start": 4,
+            "end": 5,
+            "attrs": {
+              "id": "chapter1.xhtml#span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 39,
+              "byte": 39,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "unknown": [],
+        "reason": null
+      },
+      {
+        "observation_id": "o0003",
+        "type": "paragraph",
+        "raw": "[link](#chapter2.xhtml#n1){#chapter1.xhtml#call-n1 .noteref}\n",
+        "offset": {
+          "char_start": 74,
+          "char_end": 135,
+          "byte_start": 74,
+          "byte_end": 135,
+          "line_start": 5,
+          "line_end": 5
+        },
+        "containers": [],
+        "landmark": "chapter1.xhtml#start",
+        "text": "link",
+        "references": [
+          {
+            "kind": "link",
+            "text": "link",
+            "target": "#chapter2.xhtml#n1",
+            "title": null,
+            "target_raw": "#chapter2.xhtml#n1",
+            "start": 0,
+            "end": 26,
+            "attrs": {
+              "id": "chapter1.xhtml#call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 74,
+              "byte": 74,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "formulas": [],
+        "anchors": [
+          "chapter1.xhtml#call-n1"
+        ],
+        "body_text": "",
+        "segments": [
+          {
+            "type": "text",
+            "text": "l",
+            "start": 1,
+            "end": 2,
+            "in_link": true,
+            "attrs": {
+              "id": "chapter1.xhtml#call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 75,
+              "byte": 75,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "i",
+            "start": 2,
+            "end": 3,
+            "in_link": true,
+            "attrs": {
+              "id": "chapter1.xhtml#call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 76,
+              "byte": 76,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "n",
+            "start": 3,
+            "end": 4,
+            "in_link": true,
+            "attrs": {
+              "id": "chapter1.xhtml#call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 77,
+              "byte": 77,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "k",
+            "start": 4,
+            "end": 5,
+            "in_link": true,
+            "attrs": {
+              "id": "chapter1.xhtml#call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 78,
+              "byte": 78,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "unknown": [],
+        "reason": null
+      }
+    ],
+    "unknown": 0
+  },
+  "current_observation": {
+    "schema_version": 1,
+    "reader": "observations-v14-syntax-contracts",
+    "raw_sha256": "f4fa005450d9624d72c341b22261cb6df8a4f59ad2be2a957f6899c0c796c166",
+    "raw_bytes": 135,
+    "nodes": [
+      {
+        "observation_id": "o0001",
+        "type": "heading",
+        "raw": "# Heading {#chapter1.xhtml#start}\n",
+        "offset": {
+          "char_start": 0,
+          "char_end": 34,
+          "byte_start": 0,
+          "byte_end": 34,
+          "line_start": 1,
+          "line_end": 1
+        },
+        "containers": [],
+        "landmark": "start",
+        "text": "Heading",
+        "references": [],
+        "formulas": [],
+        "anchors": [
+          "start"
+        ],
+        "body_text": "Heading",
+        "segments": [
+          {
+            "type": "text",
+            "text": "H",
+            "start": 0,
+            "end": 1,
+            "source_position": {
+              "char": 2,
+              "byte": 2,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "e",
+            "start": 1,
+            "end": 2,
+            "source_position": {
+              "char": 3,
+              "byte": 3,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "a",
+            "start": 2,
+            "end": 3,
+            "source_position": {
+              "char": 4,
+              "byte": 4,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "d",
+            "start": 3,
+            "end": 4,
+            "source_position": {
+              "char": 5,
+              "byte": 5,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "i",
+            "start": 4,
+            "end": 5,
+            "source_position": {
+              "char": 6,
+              "byte": 6,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "n",
+            "start": 5,
+            "end": 6,
+            "source_position": {
+              "char": 7,
+              "byte": 7,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "g",
+            "start": 6,
+            "end": 7,
+            "source_position": {
+              "char": 8,
+              "byte": 8,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "unknown": [],
+        "attrs": {
+          "id": "start"
+        },
+        "level": 1,
+        "block_syntax": "atx_heading"
+      },
+      {
+        "observation_id": "o0002",
+        "type": "paragraph",
+        "raw": "[span]{#chapter1.xhtml#span .noteref}\n",
+        "offset": {
+          "char_start": 35,
+          "char_end": 73,
+          "byte_start": 35,
+          "byte_end": 73,
+          "line_start": 3,
+          "line_end": 3
+        },
+        "containers": [],
+        "landmark": "start",
+        "text": "span",
+        "references": [],
+        "formulas": [],
+        "anchors": [
+          "span"
+        ],
+        "body_text": "span",
+        "segments": [
+          {
+            "type": "text",
+            "text": "s",
+            "start": 1,
+            "end": 2,
+            "attrs": {
+              "id": "span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 36,
+              "byte": 36,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "p",
+            "start": 2,
+            "end": 3,
+            "attrs": {
+              "id": "span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 37,
+              "byte": 37,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "a",
+            "start": 3,
+            "end": 4,
+            "attrs": {
+              "id": "span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 38,
+              "byte": 38,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "n",
+            "start": 4,
+            "end": 5,
+            "attrs": {
+              "id": "span",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 39,
+              "byte": 39,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "unknown": [],
+        "reason": null
+      },
+      {
+        "observation_id": "o0003",
+        "type": "paragraph",
+        "raw": "[link](#chapter2.xhtml#n1){#chapter1.xhtml#call-n1 .noteref}\n",
+        "offset": {
+          "char_start": 74,
+          "char_end": 135,
+          "byte_start": 74,
+          "byte_end": 135,
+          "line_start": 5,
+          "line_end": 5
+        },
+        "containers": [],
+        "landmark": "start",
+        "text": "link",
+        "references": [
+          {
+            "kind": "link",
+            "text": "link",
+            "target": "#chapter2.xhtml#n1",
+            "title": null,
+            "target_raw": "#chapter2.xhtml#n1",
+            "start": 0,
+            "end": 26,
+            "attrs": {
+              "id": "call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 74,
+              "byte": 74,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "formulas": [],
+        "anchors": [
+          "call-n1"
+        ],
+        "body_text": "",
+        "segments": [
+          {
+            "type": "text",
+            "text": "l",
+            "start": 1,
+            "end": 2,
+            "in_link": true,
+            "attrs": {
+              "id": "call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 75,
+              "byte": 75,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "i",
+            "start": 2,
+            "end": 3,
+            "in_link": true,
+            "attrs": {
+              "id": "call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 76,
+              "byte": 76,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "n",
+            "start": 3,
+            "end": 4,
+            "in_link": true,
+            "attrs": {
+              "id": "call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 77,
+              "byte": 77,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          },
+          {
+            "type": "text",
+            "text": "k",
+            "start": 4,
+            "end": 5,
+            "in_link": true,
+            "attrs": {
+              "id": "call-n1",
+              "classes": [
+                "noteref"
+              ]
+            },
+            "source_position": {
+              "char": 78,
+              "byte": 78,
+              "basis": "raw-block-relative-inline-v1"
+            }
+          }
+        ],
+        "unknown": [],
+        "reason": null
+      }
+    ],
+    "unknown": 0
+  },
+  "current_reader_sha256": "613aaa996fcf02200bc6a8ad499ba0ebc044f44ed94deae3f7e638905215cefd",
+  "pandoc": {
+    "argv": [
+      "/usr/bin/pandoc",
+      "-f",
+      "markdown",
+      "-t",
+      "json"
+    ],
+    "cwd": "/home/davide/workarea/markdown-for-llms",
+    "exit": 0,
+    "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"start\",[],[]],[{\"t\":\"Str\",\"c\":\"Heading\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"span\",[\"noteref\"],[]],[{\"t\":\"Str\",\"c\":\"span\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Link\",\"c\":[[\"call-n1\",[\"noteref\"],[]],[{\"t\":\"Str\",\"c\":\"link\"}],[\"#chapter2.xhtml#n1\",\"\"]]}]}]}\n",
+    "stderr": ""
+  }
+}

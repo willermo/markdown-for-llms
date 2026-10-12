@@ -1,0 +1,118 @@
+# Checkpoint supervisore — ricezione completa e review implementazione r008
+
+2026-10-10 Europe/Rome. Supervisore Codex/OpenAI; deployment e ID chat
+precisi non esposti. Skill manage-implementation-run e verify-conversion-
+fidelity applicate; nessuna delega o simulazione di review.
+
+## Ricezione e decisione
+
+Letti report/checkpoint r008 integralmente, sezioni finali Consegna completa e
+Chiusura amministrativa finale autorevoli. Prompt27/arbitrato r007 e
+addendum risorse r008 r001 effettivo; F35–F38 dichiarati completati dall’autore,
+chiusure/regressioni da valutare. Ultimo arbitrato tecnico r007 NO_GO;
+nessuna review/arbitrato/GO r008 esistente. Stato **IMPLEMENTATION_REVIEW /
+FIX_REVIEW_PROMPTS_READY**. Git manuale dopo GO reale, fase1 non conclusa.
+
+Feature feature/run-a002-corpus; HEAD/dev/origin-dev locale/merge-base
+`80c31da46e5caab990d3596c79c44e524ec1dc95`, indice vuoto alla ricezione,
+nessuna query remota. Git soltanto in lettura, delta non committati inclusi.
+[Ricezione statica](../../../../../temp/run-a002-fase1-corpus/evidence/supervisor-implementation-review-r008/reception.json):
+67628 confronti hash,65763protetti invariati,130input/copie prima-dopo,
+77copie ricevute,205runtime S006→S007 equivalenti,124helper/test secondo
+l’equivalenza autore,10origini installate identiche ai sorgenti,206esterni
+S007 senza differenze prima dei registri.3813package-startup invariati
+secondo autore, nuovi S/B/I/installazione canonica e gate S007; stage/
+shebang/binding nuovi non dichiarati byte-identici. Tre pyc ricevuti
+storici non ripristinati né causa inventata.
+
+Delta7 autore:reader observations.py,PROTOCOL,nuovo test r008,due guide,
+nuovi report/dati permanenti. Reader observations-v8-progress-and-inline-domains,
+SHA256 `817852a8f8b2645a3bbc6212d982aca4546ab1c4b3f128374137313124aa6061`;
+scorer v4/audit/safety/adapter/R/resources/PATH/config/registry/writer/
+corpus invariati. Nuova collocazione dell’uso di PassiveHTML sulle aperture
+reali nel reader inclusa nei criteri. Nessuna build/suite/R/CLI/conversione/
+rescore/M/V del supervisore: letture/hash/manager stdlib soltanto.
+
+## Prove ricevute e perimetro delle review
+
+F35 progresso raw LaTeX dopo blank, F36 token realmente inerti dopo
+un delimitatore incompleto nello stesso blocco, F37 code soft-line nelle
+label fra scanner/consumer, F38 documenti/prove. Review sull’intero delta
+con dipendenze/trasporti raggiungibili, chiusure e regressioni pertinenti;
+profilo finito, nessun parser universale o voto medio/GO dal numero di test.
+
+1373mirati/16deselected (261nuovi),1530veloci+310subtest dichiarati PASS;
+25receipt selezionate23PASS+2FAIL H12 deliberati,10contratti conformi.
+Tre R FAIL TIMEOUT3s prima sul reader r007 e tre R PASS dopo su observe/
+audit/measure preservati; non attribuiti ai reviewer r007 solo statici.
+Matrice128prima non conformi/128dopo conformi (64F36+64F37),5Unicode e
+4tracce monotone,4fence positivi/2edge.57CLI sintetici/114exit OS reali,
+55+2image,writer sintetico/goldPROVISIONAL senza motori/V. AutomaticPASS
+con qualitàINDETERMINATE/evaluate5 resta distinto da V/qualità completa.
+Prima e dopo legati a copie/hash/snapshot; non broad campaign replicata.
+
+Rescore00264nuoviIDr008b:raw/source/gold/V13/run originali eold_* preservati,
+zero motori/nuoveV; ciascun set32 ha4PASS/28FAIL. Checker indipendente
+19campi/edit-distance/denominatori/legami:zero differenze numeriche/gate
+vsr007; non allineamento indipendente completo. Counts condizionati e
+bound globale distinti;TRIVIAL_ZERO non fullPASS. DOCX11/182(didascalie),
+RTF19/162 condizionale/13globale,EPUB8/186,TXT0/89,TeXfullNone/
+cond1/152/globale0. Conversion_final/run originali distinti dai derivati.
+
+Intermedi after-matrix001/targeted002/stageS004-S005/edge001/CLIimage002-003
+conservati,correzioni del fixture/harness proprie non gold canonici.
+H12/timeouts/errori receipt storici non riclassificati. Errore del checker
+supervisore001 (nome campo own_pending_processes invece di own_pending)
+conservato con byte/log; checker corretto PASS, nessun difetto prodotto.
+V13/A03 chiuso invariati,L04formule output UNAVAILABLE distinta;L01/L02/L05,
+ChromeNONPASS/helper12gap/H15/E9 e hardware non certificati, nessuna sanatoria.
+
+## Snapshot e output
+
+- [Prompt28 ChatGPT](../prompts/28-review-implementation-r008-chatgpt.md).
+- [Prompt29 Claude](../prompts/29-review-implementation-r008-claude.md).
+- [Comune r008](../../../../../temp/run-a002-fase1-corpus/snapshots/implementation-r008.json), non GO:
+  SHA256 `2f6d690a8f3db7af8f192f78a9e6f5c0e3704b9757256f9dfdf72e35ee3b4152`,
+  impronta `448b854a88dc3dc883f7337f6fe037fd27846513e3a19104fc88529841e07eda`,
+  325file generali/76333artefatti espliciti,20PDF nella fingerprint generale.
+- [Ricezione/inventario/receipt/transizione/controlli](../../../../../temp/run-a002-fase1-corpus/evidence/supervisor-implementation-review-r008).
+
+Transizione dal contesto fix-r007-resources-r001:7autore+4registri generali
+supervisore, nessun altro delta prodotto. Vecchi snapshot preservati.
+Registri vivi,prompt28/29,questoCP e nuovi output reviewer esclusi.
+Nuovi input outputr008/byte copie fisiche conservati nel comune; ambienti/
+cache terzi esclusi salvo dieci origini esplicite. Le 76mila voci non sono
+una lista di letture obbligatorie: i prompt selezionano le prove pertinenti.
+
+Stato/eventi/artefatti/handover/globalPROJECT e changelog/README/roadmap/
+next-run aggiornati. Prompt con criteri tecnici identici, output/ID/label
+separati, due NUOVE chat indipendenti richieste; nessun agente delegato.
+S007 integrale diventa STALE per i quattro documenti supervisore. Reviewer
+conservano FAIL e preparano gate/manifest/input circoscritti attuali prima
+del managed/R; non restaurano input vecchi o trasferiscono PASS generali.
+Piccole sonde proprie consentite entro limiti, snapshot autonomi senza
+freeze intermedio; niente suite/build/contratti/conversioni/M/V proprie.
+
+## Risorse e prossimo ruolo
+
+Disposizione24h già effettiva dalla conferma osservata
+2026-10-10T09:37:31Z,entry originale2026-10-08T07:06:54.369068Z/contatori
+senza reset. Stop nuovi workload2026-10-11T06:37:31Z =08:37:31 Europe/Rome,
+deadline09:37:31Z =11:37:31,riserva3h. Wall cumulativo268236,630932s/
+stop257436,630932s;CPU21600s/stop19800,disco6GiB/stop5GiB,RAM8GiB/
+stop sampled6GiB,riserva1800CPU-s/1GiB,R≤900s/1MiB stream/32MiB file,
+rete0/€0 invariati,stop al primo limite. Dopo stop nessun nuovo workload;
+completare consegna/letture/documenti nella riserva,entro deadline reale.
+
+Ledger autore storico51,500h wall/11610,304610CPU-s noti lower,45Claude r007
+approssimati separati(stop accounting11655,304610s),retained2384268251B/
+RSSsampled740855808B. **Wall ricezione 53.109h**,
+non saldo CPU/disco certificato; nuove attese incluse. Costi CPU di tutti i
+comandi amministrativi non integralmente misurati, nessun upper inventato.
+Vecchia quota/stop e NONPASS conservati,estensione non sanatoria.
+
+Nessun processo proprio pendente alla consegna dopo i controlli finali;
+nessun Git di scrittura/cleanup/fase2/ML/download/provider o nuova V.
+Prossimo ruolo: **due reviewer in nuove chat indipendenti**, poi supervisore
+per ricezione di entrambi i report r008 e arbitrato reale. Le conclusioni
+semantiche/runtime sono affidate alle review, non alla ricezione.

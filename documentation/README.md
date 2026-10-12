@@ -113,6 +113,15 @@ core+160MiB nel pool esistente e Docker CPU distinto16GiB/7200s/traffico1GiB,
 con preparazione e verifiche reali ancora da eseguire. Implementatore prosegue
 autonomamente, snapshot comune e due review alla consegna; nessun GO finale.
 
+## Stato corrente2026-10-12
+
+A002 chiusa il2026-10-12 per accettazione esplicita del perimetro ridotto, con debito aperto. Reader r014 sperimentale; ClaudeNO_GO statico e reviewGPTincompleta conservati, nessun GOtecnico retroattivo. Corpus/raw/prove archiviati, parser mantenuto adottato come direzione (ADR0008), implementazione futura obbligatoria. Primo incremento fase1 concluso nel perimetro accettato; confronto/scelta motori e fase1 complessiva ancora aperti. Nessuna integrazione o UI dichiarata.
+
+[Archivio a002](runs/run-a002-fase1-corpus/manifest.md),
+[debito](benchmarks/a002-residual-debt.md),
+[ADR0008](decisions/0008-maintained-parser-and-provisional-benchmark.md),
+[prossimo incremento fase1](development/next-run-a003-engine-comparison.md).
+
 ## Percorso di lettura
 
 Situazione corrente al 2026-10-07: **GO finale dell'implementazione a001**,
@@ -123,7 +132,7 @@ gate tardivo/FAIL ricostruito. Quote temporali NON PASS conservate, deviazione
 amministrativa accettata senza sanatoria. [Archivio permanente](runs/run-a001-fase0-uv/manifest.md)
 reale. Fase0.1 **integrata manualmente in dev** a `b90c6d4c00aed5ceb9122f6f42544736de7ff35a`
 il 2026-10-07: contenuti identici alla feature `8479f975618034abfcfaeb4c9e47ba925d5e356e` e
-405 file MATCH con la consegna approvata. Push non verificato; nessuna nuova fase avviata.
+Consegna completa r014 F58–F62 ricevuta: 157/157 contratti (159 input distinti), suite3156+310subtest, quattro controprove private,12 exit CLI e64 ricalcoli. Chiusure da giudicare, NO_GO r013 conservato; nuovo comune r014 e due NUOVE chat indipendenti ChatGPT/Claude. Zero delta numerici/gate,16 diagnosi EPUB eotto metadata TeX attribuiti. Nessuna deadline; limiti econtatori invariati, review mirate entro residuo corrente. Nessun GO codice o integrazione.
 
 1. [Draft preliminare della proposta discussa](architecture/preliminary-draft.md).
 2. [Registro delle decisioni architetturali](decisions/README.md).

@@ -21,5 +21,12 @@ va verificata separatamente e registrata nel manifest.
 - [run-a001-fase0-uv](run-a001-fase0-uv/manifest.md): toolchain uv, fase0.1;
   GO finale r003 dopo review GO/GO, quote temporali NON PASS conservate.
   Archivio selettivo verificato; feature `8479f97` integrata manualmente in dev
-  a `b90c6d4`, albero identico e 405 file MATCH. Push non verificato;
-  nessun deploy/main o pulizia della run effettuati.
+  a `b90c6d4`, albero identico e 405 file MATCH. Registri e push verificati
+  a `80c31da`; [pulizia selettiva manuale ricevuta](run-a001-fase0-uv/notes/cleanup-completion-2026-10-07.md)
+  (193 file e tre tag superati). Nessun deploy/main o pulizia generale della run.
+
+- [run-a002-fase1-corpus](run-a002-fase1-corpus/manifest.md): primo incremento
+  fase1, chiusa12ott2026 per accettazione esplicita del perimetro ridotto;
+  reader sperimentale/debito obbligatorio ADR0008. Archivio selettivo verificato,
+  64bundle eindice umano;ClaudeNO_GO/GPTINCOMPLETA conservati,nessunGOtecnico,
+  integrazione o pulizia dichiarati. Fase1complessiva ancora aperta.

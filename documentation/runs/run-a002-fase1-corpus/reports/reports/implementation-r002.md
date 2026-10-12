@@ -1,0 +1,236 @@
+# Consegna implementatore a002 r002
+
+Consegna completa del mandato prompt09: fix F01–F12, prove dipendenti,
+rettifica storica e nuova baseline. Questo report è dell'implementatore:
+non costituisce GO, review indipendente o arbitrato. La consegna r001 rimane
+NO_GO dopo le due review reali ChatGPT/Claude; il supervisore riceve r002 per
+nuovo snapshot comune, due nuove review mirate indipendenti e arbitrato.
+
+Feature `feature/run-a002-corpus`, HEAD/base/dev
+`80c31da46e5caab990d3596c79c44e524ec1dc95`; nessuna modifica in staging.
+Nessun commit, merge, push, cleanup, fase2 o aggiornamento dei registri comuni.
+
+## Ricezione e delta
+
+[Verifica d'ingresso](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/verify-entry.json):
+contesto fix MATCH prima degli interventi. [Ricezione dei PDF](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/ignored-pdf-entry-check.json):
+i 20 file reali coincidono con manifest e copie/hash del supervisore prima del
+fix Git. Rev4 integrale in `work/implementation-r002/canonical-revision-004`;
+[byte helper ricevuti](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/baseline-bytes.json)
+e [diff corrispondente](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/received-helper-delta-001.patch).
+Questo diff confronta i byte ricevuti r001, non ricostruisce helper storici mancanti.
+Snapshot r001 e contesto fix restano immutabili; non approvano i nuovi artefatti.
+
+Sono cambiati il reader/audit/scorer, monitor risorse e wrapper R, validator,
+guardia Pandoc/adapters/child, campaign/profile/inventory, M/comparison/checker,
+generator transcript; aggiunti helper invariance/metadata_revision/
+derive_verification/pandoc_guard e regressioni r002. La fixture di startup
+nei test diagnostici include ora il monitor obbligatorio e il suo negativo.
+Il codice prodotto della pipeline legacy, lock, pin, writer e registry restano
+quelli del mandato; nessun servizio dell'applicazione progettata è introdotto.
+
+[Delta metadati](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/metadata-revision-005.json):
+26 file, cioè 13 gold, due spec, due manifest e nove transcript. Gold/spec/manifest
+sono rev5 con header semantico esplicito. Canonici, PDF, raster, render, asset e
+include non sono stati rigenerati e mantengono byte/hash. Caption trascritte:
+11, già presenti nel gold. README corpus e guide/protocollo spiegano il nuovo
+contratto, inclusa l'eccezione Git circoscritta ai soli PDF sintetici del corpus.
+
+## Fix e prove discriminanti
+
+Le riproduzioni dei reviewer sono conservate; le prove usano copie proprie.
+Le nuove regressioni hanno attesi indipendenti per AST, WER, header,
+trascrizioni e sicurezza. Nessun confronto protetto è stato modificato.
+
+| Fix | Risultato | Prova effettiva |
+| --- | --- | --- |
+| F01 | Inline tipizzato/raw/offset/coordinate in celle pipe/HTML e caption; audit vede risorse una volta, scorer confronta aggiunte/perdite e contenuto asset atteso | K01 realmente vuota PASS; math aggiunto FAIL3; immagine mancante INCOMPLETE/run2/score3; immagine presente con alt vuoto aggiunta alla caption FAIL3. Contenuti leciti completi PASS, unknown localizzati, ordine caption HTML prima del corpo preservato |
+| F02 | Equivalenze AST finite E01 anche nell'alignment, raw e matching one-to-one conservati | FP01–FP13 observe→align→score: gate automatico PASS, frazione braced/unbraced inclusa. FN/FU/duplicati/ambiguità distinti; L04 resta UNAVAILABLE |
+| F03 | Supervisore stdlib proprio per comando, custody fino a deadline/reap/chiusura writer; pidfd con identità; nessun segnale/reap a processi concorrenti estranei | 18 casi resources.run/monitored_command corretti; otto R esterne complete: sei negativi FAIL e due positivi PASS a 200/400 ms. Writer stdout/stderr 1056768 B dopo 100/200 ms, setsid, timeout dopo leader, foreign late orphan; 20 contratti correnti corretti |
+| F04 | Subset passivo finito HTML/XHTML/CSS/SVG/ZIP, XML resource URI e xml:base; HTML travestito XML validato | Copie EPUB con srcset file/remoto, CSS escape, SVG script/resource, NCX src, OPF maiuscolo href, xml:base e HTML XML attivo: INVALID_INPUT4 prima di motore/estrazione; marker tool/target assenti. Positivi asset locali/link inerti e baseline canonica. Nessun tool/browser eseguito sui payload pericolosi |
+| F05 | Parole unmatched inserite nel WER sul denominatore atteso invariato; math raw equivalente fuori prosa | Known words. + Additional invented content.: 3/2, WER1.5; positivo0; omissioni/sostituzioni/misti e formule equivalenti. Rettifica DOCX0→11/182 e RTF14/162→19/162 |
+| F06 | Contratto Git dei PDF sintetici corretto, senza staging forzato | 20 check-ignore exit1, hash originali invariati; status-uall/ls-files-others mostrano tutti i 129 file corpus, asset/derivati inclusi. Nessuno staging/commit |
+| F07 | Header gold/spec da sorgente/policy; regioni header/body separate, placeholder solo pipe davvero vuota per gold headerless | Corpi DOCX9/9, RTF6/6, TeX9/9; numeri recuperati. Promozione indebita→header FAIL; header reale/vuoto, cella vuota/assente distinti. M415+93 PASS con 15 controlli header indipendenti |
+| F08 | exact-visible-unique-v1 attribuisce unknown solo localmente e con prova conservativa; missing/page loss prevalgono | K02 senza p2 + unknown estraneo→score3/missing_pagep2 e unavailable separato. Unknown specifico unico non copre altri mancanti; ripetuti, aggiunte e inversioni preservati. CER/WER completi unavailable dove l'attribuzione resta incerta |
+| F09 | Target/titolo separati, parentesi/escape nel profilo finito; raw inline unsupported distinto da code | Titoli doppi/singoli/parentetici, colon nel titolo, target bilanciato/escape, URI vietate; asset presente positivo/mancante run2; sintassi risorsa non supportata→INCOMPLETE. RawLaTeX conservato e localizzato |
+| F10 | Nove transcript completi, 11 caption nell'ordine e una volta | Golden generator indipendente; checker stdlib separato dimostra che i byte dei nove file sono esattamente rev4 più le 11 inserzioni caption, senza importare il generator; sorgenti invariati |
+| F11 | PATH effettivo chiuso /usr/bin, which/realpath/hash/versione prima/dopo e parent/legacy child coerenti | PATH falso/user/cwd/vuoto/relativo→4 prima del figlio; mutazione durante check rilevata. 28 tentativi Pandoc finali hanno proof coerenti; i 12 legacy hanno uguaglianza parent/child. Nuovi H10 corretti |
+| F12 | Byte helper/config/test e inventari prima/dopo ispezionabili, nuove identità | Baseline finale8×4 con 208 file in input-bytes-s013 e 230 input fisicamente preservati prima del workload, invariati alla fine; H06/H08 e 20 contratti nuovi. I vecchi 12 raw TXT/EPUB restano storici con limite helper bytes non sanato |
+
+Prove correnti: [247 test mirati](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/R-r002-tests-008/receipt.json),
+[guardie18](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/guards-current-004/summary.json),
+[otto R esterne](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/R-child-guards-summary-004.json),
+[20 contratti](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/contracts-007/summary.json),
+[PDF/set corpus](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/git-pdf-and-complete-corpus-001.json),
+[transcript indipendenti](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/transcript-invariance-001.json),
+[XML prima](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/xml-resource-validator-before-001.json)
+e [dopo](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/xml-resource-validator-after-001.json).
+Le guardie F03 usano lo stesso resources.py consegnato; M/V/rescore/contratti/
+baseline finale e suite conclusiva sono sullo stage corrente s013.
+
+H15 storico e Chrome NONPASS sono conservati. H15 corrente è R FAIL per
+STREAM_LIMIT anche quando il leader esce0: controllo cap indipendente dall'exit,
+con figli raccolti e writer chiusi. I negativi hanno expected R0 congelato;
+nessun expected-exit è stato scelto dopo il risultato.
+
+## M, V reale e receipt derivate
+
+[M corpus415 PASS](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/M-gold-007/M.json),
+[M controlli93 PASS](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/M-controls-007/M.json),
+[confronto completo](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/comparison-006/packet.json),
+[13 receipt derivate](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/verification-derived-002/summary.json).
+Schema3 `derived_reference_content_qualification` conserva risposta originale,
+vecchi pair/packet/gold/receipt V, delta, nuovo M sul sorgente e checker
+indipendente di vecchie e nuove viste complete. Tutti i contenuti approvati
+sono invarianti: testo/numeri/formule/ordine/celle/caption/asset/note/riferimenti.
+`new_human_confirmations=0`; header tecnico qualificato da M, non dall'utente.
+Non è stato copiato VERIFIED su nuovi hash né inventato un nuovo giudizio umano.
+
+Risposta reale SHA256 `2b34e76549d084988bb09ba56d121e66b0b20d81443e2922f01ef1a3cda87f9e`;
+packet originario `ac0921defac79ca063ef89fe270ed09e8d991e7dc17d9a0aeae3c2c4c06a5c6f`.
+I 260 minuti concordati sono storici, non tempo umano misurato.
+EPUB renderer storico NON_PASS_NESTED_NAMESPACE/Chrome resta NONPASS; byte
+capitoli ereditati solo con hash/invarianza, senza nuovo render. PDF/raster
+header usa policy manuale esplicita, senza attribuire proprietà encoded.
+
+L04 output typography/semantics UNAVAILABLE: AST e Vgold non sono quel giudizio.
+L01 PDF/OCR, L02 TeX compile, L05 hardware non misurati. Nessuna validazione
+GPU/altri OS o dell'architettura applicativa progettata.
+
+## Rettifica storica e nuova baseline
+
+[Manifest rettifica](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/rescore-input-002.json),
+[32 rescore correnti](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/rescore-historical-002/summary.json):
+12 raw campaign002 +20 campaign003 r001 copiati byte per byte; nuove
+observe/audit/metriche/final, nuove identità, **engine_runs0**. 606 file protetti
+invariati prima/dopo. I cinque gold rev4 nel manifest nuovo puntano a copie
+identiche di ricezione con descrittori originali conservati. Vecchi raw,
+osservazioni, audit, metriche, final e report rimangono immutabili.
+
+Esiti effettivi 4 PASS/28 FAIL, senza vincolare il risultato allo storico.
+Celle DOCX0→9/9, RTF0→6/6, TeX0→9/9; numeri DOCX8→12/13,
+RTF3→5/8, TeX4→8/9. WER DOCX0→11/182, RTF14/162→19/162;
+TeX completo UNAVAILABLE, errori certi lowerbound1/152 per raw inline/ref
+non risolto. TXT/EPUB invariati nei conteggi; provenance mancante dei 12 vecchi
+TXT/EPUB rimane esplicita e non sanata dal rescore.
+
+[Baseline finale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/baseline-003/summary.json),
+[manifest congelato](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/baseline-003/manifest.json):
+experiment `a002-r002-baseline-003`, otto percorsi ×4 attempt nuovi, sorgenti/
+writer/registry/opzioni uguali allo storico. 32 SUCCESS/COMPLETE, qualità
+4 PASS/28 FAIL; harness0 e R PASS per tutti i gruppi. A10 soddisfatto sui quattro
+percorsi DOCX/EPUB diretto/legacy con asset atteso referenziato e verificato.
+Le perdite effettive Pandoc, caption/anchor/ref/testo, restano pubblicate.
+
+| Percorso | Qualità ×4 | Celle | Numeri | Formule AST | Figure+caption | Riferimenti | WER |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| direct-txt | PASS:4 | 0/0 | 9/9 | 0/0 | 0/0 | 0/0 | 0.000000 |
+| direct-docx | FAIL:4 | 9/9 | 12/13 | 2/2 | 0/1 | 2/3 | 0.060440 |
+| direct-epub | FAIL:4 | 9/9 | 11/13 | 2/2 | 1/1 | 1/5 | 0.043011 |
+| direct-rtf | FAIL:4 | 6/6 | 5/8 | 0/0 | 0/0 | 1/2 | 0.117284 |
+| direct-tex | FAIL:4 | 9/9 | 8/9 | 5/5 | 1/1 | 0/3 | UNAVAILABLE |
+| legacy-docx | FAIL:4 | 9/9 | 12/13 | 2/2 | 0/1 | 2/3 | 0.060440 |
+| legacy-epub | FAIL:4 | 9/9 | 11/13 | 2/2 | 1/1 | 1/5 | 0.043011 |
+| legacy-rtf | FAIL:4 | 6/6 | 5/8 | 0/0 | 0/0 | 1/2 | 0.117284 |
+
+| Percorso | Conversione primo s | Mediana3 s (min–max) | Audit mediana s | Score mediana s | Evaluate mediana s | RSS motore sampled MiB |
+| --- | --- | --- | --- | --- | --- | --- |
+| direct-txt | 0.0947 | 0.1156 (0.0944–0.1489) | 0.0023 | 0.5629 | 2.9724 | 17.7 |
+| direct-docx | 0.0641 | 0.0649 (0.0640–0.0659) | 0.0083 | 0.6005 | 4.8363 | 120.1 |
+| direct-epub | 0.0648 | 0.0648 (0.0645–0.0651) | 0.0087 | 0.5341 | 4.7673 | 119.6 |
+| direct-rtf | 0.0543 | 0.0543 (0.0536–0.0658) | 0.0063 | 0.6716 | 5.0154 | 118.4 |
+| direct-tex | 0.0642 | 0.0644 (0.0644–0.0647) | 0.0096 | 0.5126 | 4.5304 | 119.0 |
+| legacy-docx | 1.9235 | 2.0167 (1.8868–2.0842) | 0.0084 | 0.5888 | 6.7491 | 225.2 |
+| legacy-epub | 1.8542 | 1.8394 (1.7225–1.9838) | 0.0088 | 0.5572 | 6.8285 | 225.3 |
+| legacy-rtf | 1.8010 | 2.0333 (1.9541–2.0793) | 0.0062 | 0.5449 | 6.6701 | 225.3 |
+
+0/0 significa fenomeno assente. AST esatto non qualifica L04. Figure+caption
+è distinto dai byte degli asset: A10 passa anche dove la caption non è fedele.
+Conversione misura il processo Pandoc diretto o child/API legacy; audit, score
+(con startup/check) ed evaluate completo restano separati. Primo avvio e tre
+ripetizioni hanno processo/workspace nuovi; cache OS non controllata, nessuna
+definizione di cold OS. RSS è sampled del sottoalbero, non hard cap aggregato.
+
+## Toolchain, provenienza e suite conclusiva
+
+Stage finale s013: managed CPython3.12.13 locale/origine verificata, nuovo S,
+sdist/wheel B, reinstall canonica ultima, I/dieci hash e startup/preflight/cache
+tokenizer/Pandoc pronti, R PASS prima di import e --no-sync. Figli usano lo stesso
+interprete/installazione. Byte helper/config/test nuovi conservati in
+[input208](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/input-bytes-s013.json),
+[prima230](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/baseline-input-bytes-before-003.json),
+[dopo230](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/baseline-input-bytes-after-003.json).
+Dati derivati dalle receipt in [delivery-data](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/delivery-data-001.json).
+
+Suite conclusiva prescritta: python -I -B -m pytest tests/ --ignore=tests/api
+--ignore=tests/packaging --ignore=tests/docker -q, basetemp proprio nuovo,
+**388 test e 310 subtest PASS** sotto
+[R finale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/R-r002-tests-fast-004/receipt.json).
+I due smoke radice sono esclusi selezionando tests/. Nessun Docker/API/campagna
+a001 globale, ML/OCR/Docling/Marker, install/fetch da provider o nuovi lock/pin.
+La suite selezionata è un collaudo parziale, non validazione della migrazione.
+
+[Controlli finali](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/final-checks-001.json):
+230 byte input invariati,19 receipt R PASS con binding prima/dopo, registry/
+writer/sourcehash uguali allo storico, branch/HEAD/indice corretti, nessun
+processo proprio pendente (scan host /proc readonly e custody/reap nelle receipt).
+Nessun segnale a processi estranei. Gli helper di amministrazione e i loro
+fallimenti sono conservati in work/evidence, non sostituiti con esiti verdi.
+
+## Errori ordinari conservati e recupero
+
+Il monitor vecchio è stato riprodotto su copie; glibc pidfd supplisce alle API
+Python assenti nel managed. EPERM del gate socket è conservato e recuperato
+con escalation autorizzata mantenendo R: nessun rifiuto automatico approvazione.
+Label uppercase e path relativo dei launcher sono corretti con nuove identità.
+I primi test225/3,231/1,235/1 e la fixture fast383/1 sono preservati; corretti
+ambiguità, attributo download, atteso spazio errato, CSS padding-left e fixture
+monitor. Nessun atteso richiesto è stato indebolito.
+
+Fast launcher1080>cap900 fallì prima di pytest; retry entrocap. Tre URI XML
+accettati nella sonda validator-only hanno motivato guardia aggiuntiva e quattro
+regressioni EPUB pre-tool, poi nuovo stage/test/20H/M/V/rescore/baseline/fast.
+Baseline001 valida su s011 e baseline002 su s012 rimangono storiche; rerun
+motivati da input test/helper cambiati, non nuovi writer/motori/sorgenti/quote.
+La derivazione tabelle ebbe un path raw relativo errato: vecchio helper/errore
+conservati, nuovo helper risolve rispetto al run record; dati ricalcolati.
+
+## Risorse, limiti e consegna al supervisore
+
+Quota unica dall'entry2026-10-08T07:06:54.369068Z, include attesa review, senza
+reset. Cap52h/21600CPU/6GiB nuovi; stop workload49h/19800CPU/5GiB,
+riserva3h/1800CPU/1GiB. Stop nuovi2026-10-10T08:06:54.369068Z;
+deadline11:06:54.369068Z. RAM operativa8GiB, stop RSS sampled6GiB.
+CPU resta lowerbound con amministrazione non interamente misurata; RSS10ms,
+shared pages/processi brevi/cacheOS sono limiti, non PASS universali di cap.
+R attesta rete/socket/namespace e custody, non sandbox universale filesystem.
+Network/acquisizioni/document-send0; nuovi servizi€0, nessun privilegio persistente.
+
+Nuovo [report permanente](../../../../benchmarks/2026-10-09-a002-r002-rettifica-e-baseline.md)
+rettifica esplicitamente i tre r001 immutati. Guide/protocollo/README corpus
+sono aggiornati. Il supervisore dovrà registrare in CHANGELOG/indici/STATE/
+HANDOVER: consegna r002, gold rev5/V inheritance, misure corrette e baseline
+finale, limiti conservati, snapshot comune e due review mirate indipendenti,
+poi arbitrato. Questi registri non sono aggiornati dall'implementatore.
+Prima della futura pulizia temp archiviare byte/evidenze necessari alla storia;
+nessuna pulizia eseguita. Checkpoint proprio r002 collega la storia r001.
+Commit/merge/push restano all'utente dopo GO del supervisore.
+
+Bilancio finale [append-only](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/delivery-budget-final-001.json):
+15,32h wall dall'entry unica, CPU nota lowerbound6195,769s, retained noto
+918503388B più 1890137B conservativi per il delta corrente nel repository;
+RSS sampled peak735604736B. Nessun workload residuo, riserva non consumata
+come nuova quota. [Delta esatto](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/implementation-delta-003.json):
+76 file rispetto al contesto ricevuto, incluse20 sole ammissioni Git PDF a hash
+invariato. Otto file comuni del supervisore confrontati identici;
+documentation/runs era esclusa dal contesto originale e non viene inventato
+un confronto hash. Nessuna scrittura eseguita sui registri comuni.
+[S](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/stage-s013/S.json),
+[B](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/stage-s013/B.json),
+[I](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/stage-s013/I.json),
+[inventario esterno](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r002/stage-s013/benchmark-inputs.json).
+
+Verifiche documentali:40link locali validi e git diff --check PASS; successivi
+link aggiunti alla chiusura ricontrollati prima della consegna. Correzioni
+amministrative dei report preservate: path raw relativo e confronto delta che
+includeva erroneamente il prefisso archivio escluso; delta003 identifica i byte finali, delta002 conserva il confronto prima degli ultimi dati editoriali.

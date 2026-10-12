@@ -36,7 +36,12 @@ class CoreBoundaries(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'a.pth';p.write_bytes(b'# benign\n')
             desc={'path':str(p),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}
-            target={'files':[desc],'startup':{'site_dirs':[d],'pth':[desc]}}
+            monitor=ROOT/'scripts/benchmarks/resources.py'
+            monitor_desc={'path':str(monitor),'bytes':monitor.stat().st_size,'sha256':hashlib.sha256(monitor.read_bytes()).hexdigest()}
+            target={'files':[desc,monitor_desc],'startup':{'site_dirs':[d],'pth':[desc]}}
+            # The startup check runs only after every consumed monitor is bound.
+            with self.assertRaisesRegex(ValueError,'Monitor dei figli'):
+                tool.target_files_check({**target,'files':[desc]})
             tool.target_files_check(target)
             (Path(d)/'evil.pth').write_bytes(b'import evil\n')
             with self.assertRaises(ValueError):tool.target_files_check(target)

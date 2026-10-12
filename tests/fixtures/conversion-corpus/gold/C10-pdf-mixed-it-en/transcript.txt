@@ -1,0 +1,113 @@
+[b01; pagina=1; tipo=heading]
+Pagina mista 1
+
+[b02; pagina=1; tipo=paragraph]
+Il laboratorio immaginario osserva tre campioni senza collegamenti a dati personali. Ogni campione riceve una descrizione leggibile e un valore scritto con la sua forma originale. La misura 0012 identifica una serie, mentre −7 indica un cambiamento con segno. La virgola in 123,45 rimane parte del dato. Una revisione può correggere una trascrizione soltanto conservando il documento di partenza e il motivo della modifica. Valore unico 17,03.
+
+[b03; pagina=1; tipo=formula]
+
+
+E=mc^{2}
+
+[b04; pagina=1; tipo=formula]
+
+
+\begin{aligned}a&=1\\b&=-2\end{aligned}
+
+[b05; pagina=1; tipo=table]
+
+
+Codice | Valore | Nota
+
+0012 | 0 | 
+
+Celle misurate
+
+[b06; pagina=1; tipo=figure]
+Figura 1 — Tre regioni e assi del laboratorio.
+
+[b07; pagina=1; tipo=paragraph]
+La fonte è visibile.
+
+link: fonte → https://example.invalid/ricerca?serie=0012&mode=a_b#nota
+
+note_call: nota → n1
+
+[b08; pagina=1; tipo=note]
+Nota esclusiva della regione 1: −5.
+
+[b09; pagina=2; tipo=heading]
+Mixed page 2
+
+[b10; pagina=2; tipo=paragraph]
+The imaginary laboratory records three samples without using personal records. Each sample has a readable description and a value in its original written form. The identifier 0012 names a series, while −7 records a signed change. The decimal point in 123.45 remains part of the observation. A revision can correct a transcription only while retaining the original document and a reason for the change. Unique value 73.02.
+
+[b11; pagina=2; tipo=formula]
+
+
+E=mc^{2}
+
+[b12; pagina=2; tipo=formula]
+
+
+\begin{bmatrix}0&-1\\2&3\end{bmatrix}
+
+[b13; pagina=2; tipo=table]
+
+
+Code | Value | Note
+
+0012 | 0 | 
+
+Measured cells
+
+[b14; pagina=2; tipo=figure]
+Figure 1 — Three regions and laboratory axes.
+
+[b15; pagina=2; tipo=paragraph]
+The source is visible.
+
+link: source → https://example.invalid/study?series=0012&mode=a_b#note
+
+note_call: note → n2
+
+[b16; pagina=2; tipo=note]
+A unique raster note 83.09.
+
+[b17; pagina=3; tipo=heading]
+Pagina mista 3
+
+[b18; pagina=3; tipo=paragraph]
+Il laboratorio immaginario osserva tre campioni senza collegamenti a dati personali. Ogni campione riceve una descrizione leggibile e un valore scritto con la sua forma originale. La misura 0012 identifica una serie, mentre −7 indica un cambiamento con segno. La virgola in 123,45 rimane parte del dato. Una revisione può correggere una trascrizione soltanto conservando il documento di partenza e il motivo della modifica. Valore unico 37,03.
+
+[b19; pagina=3; tipo=formula]
+
+
+E=mc^{2}
+
+[b20; pagina=3; tipo=formula]
+
+
+\begin{aligned}a&=1\\b&=-2\end{aligned}
+
+[b21; pagina=3; tipo=table]
+
+
+Codice | Valore | Nota
+
+0012 | 0 | 
+
+Celle misurate
+
+[b22; pagina=3; tipo=figure]
+Figura 1 — Tre regioni e assi del laboratorio.
+
+[b23; pagina=3; tipo=paragraph]
+La fonte è visibile.
+
+link: fonte → https://example.invalid/ricerca?serie=0012&mode=a_b#nota
+
+note_call: nota → n3
+
+[b24; pagina=3; tipo=note]
+Nota esclusiva della regione 3: −7.

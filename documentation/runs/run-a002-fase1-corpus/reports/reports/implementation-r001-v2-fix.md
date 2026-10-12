@@ -1,0 +1,128 @@
+# Consegna completa dell'implementazione r001 — V reale ricevuta
+
+2026-10-08, autore Codex/OpenAI, ruolo esclusivo implementatore.
+**A03/L03 chiuso: 13 documenti VERIFIED, M required PASS e V documentale reale.**
+Il presente aggiornamento prevale sullo storico sottostante. Consegna completa
+al supervisore secondo mandato05+06/addendum V; nessun GO codice, arbitrato,
+review indipendente o scrittura Git effettuati dall'autore.
+
+[Report permanente di completamento](../../../../benchmarks/2026-10-08-a002-verified-reference.md),
+[summary delle13 verifiche](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r001/verification-document-001/summary.json),
+[risposta originale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-received-chat-001.txt),
+[receipt V](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-response-document-001/response.json).
+
+L'utente della chat corrente dichiara: «Tutti  idocumenti corrispondono. Ad un
+esame visivo, valido le conversioni verificate.» Una sola dichiarazione
+collettiva originale, proiezione dichiarata sui13documenti del packet; nessuna
+riga originale per documento o firma atomica inventata. PacketSHA
+ac0921defac79ca063ef89fe270ed09e8d991e7dc17d9a0aeae3c2c4c06a5c6f immutato.
+Prima registrazione18:29:05.249323UTC, timestamp piattaforma indisponibile,
+autore attribuito al ruolo utente, inizio/durata attiva non comunicati.
+260min storico non trasferito. La conferma riguarda riferimento/canonici,
+non gli output dei motori né L04.
+
+Nuovo parser finito supporta la dichiarazione completa e conserva bytes e
+ambito; rifiuta accettazioni collettive vaghe, parziali o con eccezioni.
+Test positivi/negativi/stale/tampering e compilazione13documenti reali sottoR.
+Stage040 ricostruito/reinstallato S/B/I/diecihash/inventario/preflight;
+R-tests-comparison006163PASS6.77s; R-tests-fast004304PASS+310subtest20.21s.
+R-document-response001, R-document-verification001 e R-rescore-verified-reference002
+PASS, criteriR invariati. Suite selezionata, non collaudo completo.
+
+| Requisito | Chiusura e prove effettive |
+| --- | --- |
+| A01/E04 | Quota unica52h/21600CPU-s/6GiB e riserva invariati, entry/ledger cumulativi; branch feature e ruoli rispettati |
+| A02 | Corpus10 sintetici redistribuibili più3controlli manuali, provenance/NOTICE/copertura; rev4 due generazioni013/014 R PASS e confronto deterministico; captionfix contro specifica, rev3 preservata |
+| A03/E02/L03 | M403+89 required PASS, checker1906PASS, risposta collettiva reale,13VERIFIED; receipt separate sugli hash effettivi |
+| A04/E05 | Observe gold-blind sul profilo chiuso distinto da score, raw/offset e unknown conservati; digest invariato con gold alternativo e dopo V reale |
+| A05/E01 | Mathfinita/AST con attesi indipendenti e positivi alternativi/negativi;33formule reference viste, rawdiagnostico; L04output separato UNAVAILABLE |
+| A06 | Pagina/blocco/ordine/celle/asset/note/link e ambiguità con denominatori/diff completi; omissioni reali e mutazioni controllate |
+| A07/E03 | Schemi/manifest/final/harness edexit reali;20contratti actual storici conservati,32record iniziali,20dipendenti; mancanti/errori non all-green |
+| A08/E06 | Input4 prima del tool,outputunsafe2/score3; targetnonseguiti, confini/safety tipizzati, niente fallbackremoto |
+| A09/E08 | Nuovi snapshot/target S/B/I/wheel/diecihash/inventario eR PASS per workload; PATH/scratch legacy chiusi; criteriR invariati, rendererRFAIL storico visibile |
+| A10/E07 |32tentativi iniziali reali +20rerun dipendenti;4ripetizioni per percorso, figureDOCX/EPUB attese referenziate e contenuto verificato; score aggiornati su32raw validi,nessuna nuova conversione |
+| A11 | Test mirati reader/math/M/harness/safety/receipt163PASS e suite selezionata304+310PASS, preflight eR prima della collection; workflow completo/parziale/ambiguo/rejected/stale/tamper |
+| A12 | Guide/protocollo/report/ledger/checkpoint reali, batch/R/qualità/M/V distinti; costi€0 e limiti espliciti; consegna completa al supervisore per snapshot comune e due review |
+
+Scoring con V reale:12outputTXT/EPUB invariati campaign002 più20DOCX/RTF/TeX
+campaign003,8percorsi×4.356inputprotetti immutati, nessun motore avviato;
+raw/observations/audit/metriche/final precedenti non riscritti. Denominatori,
+totali/diff/ordine/CER/WER/asset identici; solo disponibilitàgold qualificata.
+**4TXT qualityPASS e28qualityFAIL**, batchqualitàFAIL. Formuleoutput restano
+UNAVAILABLE; perdita osservata non sanata dalla V del riferimento.
+Input/ricevute in evidence/implementation-r001/rescore-verified-reference-input-001.json
+e rescore-verified-reference-001/summary.json. Sei helperdelta storici dei
+vecchiTXT/EPUB esplicitati: non conversioni con codice corrente.
+
+Fallimenti amministrativi rescore conservati: prima assert indebito helper
+storici=current e primo snapshotartifactfuorirun; corretti autonomamente,
+nuovo snapshot002/R002PASS. Nessun R FAIL trasformato in PASS. Artefatti
+storici/report propri pre-ricezione preservati conhash prima dell'aggiornamento.
+
+L01PDF/OCR e L02TeXcompile NOT_MEASURED; L04output non assegnato;
+L05RAMsampled/CPUlowerbound/discoretained/cacheOS conlimiti. Nessun proprio
+workload pendente. Budget007~11h29wall dal07:06:54UTC, CPUnota1465.67s lowerbound,
+discoretained465121280B, acquisizioni/document-send0byte/servizi€0. Wall comprende
+attesa, non attribuisce tempo umano attivo. Ledger append-only e riserva intatti.
+
+Controllo amministrativo finale in
+[implementation-delivery-consistency-002.json](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r001/implementation-delivery-consistency-002.json):
+201input tecnici consumati immutati,33oggetti supervisore invariati e10hash
+origine installata uguali tra stage039/040; linklocali e gitdiffcheck.
+Documenti finali successivi alworkload non rendono current il vecchio preflight
+interoworktree; non sono stati avviati altri comandi ufficiali dopo i report.
+
+Prossimo ruolo **supervisore** per ricezione completa, aggiornamento dei propri
+registri, snapshot comune e due nuove chat review ChatGPT/Claude indipendenti.
+Nessuna fase2 o operazioneGit autorizzata da questo report.
+
+---
+
+## Storico precedente alla risposta V reale (non stato corrente)
+
+# Report del fix locale V documentale — implementazione r001
+
+Autore Codex/OpenAI, ruolo esclusivo implementatore. Mandato05 più
+[prompt06](../prompts/06-implementation-r001-human-usable-comparison.md) e
+[addendum V](../arbitrations/addendum-v-human-r001.md), contesto ingresso
+v-workflow-context-r001 verificato MATCH prima dei propri cambiamenti.
+Branch feature/run-a002-corpus, HEAD/dev80c31da46e5caab990d3596c79c44e524ec1dc95;
+indice vuoto, nessuna scrittura Git/review o modifica dei registri condivisi.
+
+**Fix tecnico concluso; A03/L03 PENDING: nessuna risposta documentale reale
+ricevuta.** Nessun documento VERIFIED. Report e checkpoint precedenti copiati
+immutati in evidence prima dell'aggiornamento; packet005/006, campagne001/002 e
+report benchmark storico non modificati.
+
+Il [report permanente completo](../../../../benchmarks/2026-10-08-a002-human-comparison.md)
+riporta cause, revisione, risultati20 tentativi, viewer/import/versioni,
+prove/fallimenti/costi e limiti. Il seguito è il riepilogo di ricezione.
+
+| Requisito interessato | Esito e attribuzione |
+| --- | --- |
+| A02/canonici | Rev4 generazioni013/014 R PASS; DOCX/RTF e include TeX ripristinano caption manuale, sette documenti e controlli invariati; rev3 integrale preservata |
+| A03/E02/L03 | M403+89 required PASS, tredici coppie complete e checker1906PASS; V documentale reale PENDING, nessuna firma atomica |
+| A04–A08 | 151 test mirati e 292 + 310 suite prescritta R PASS stage039; API legacy v1 conservate, v2 documentale con ricevuti originali/hash/history e indipendenza per documento |
+| A09/R | Stessi criteri; nuovi target/snapshot, S/B/I/wheel/preflight; rendererChromeRFAIL conservato, non sanato dal PASS composizione |
+| A10/E07 | Cinque percorsi dipendenti×4,20final validi,20 SUCCESS/COMPLETE e20 score3/FAIL; A10operativo DOCX diretto/legacy quattro figure reali, goldV ancora provvisorio |
+| E08 | Guide/protocollo aggiornati, report supplementare reale, storico conservato, ledger unicaquota; CPU lowerbound e retaineddisk con limiti |
+| L01/L02/L04 | PDF/OCR e TeXcompile NOT_MEASURED; L04output non assegnati, nuovo inventario36 occorrenze/72 giudizi potenziali/9 casi distinti R PASS |
+| A12 | Consegna completa al supervisore e snapshot comune per due review dopo vera V; nessun GO o revisore simulato |
+
+Risposte in chat per documento; materiale primario
+[C02 affiancato](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-comparison-001/C02-docx-it.html),
+[indice](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-comparison-001/index.html).
+Stima nuova 5–8 min C02/60–90 min totale, solo prospettica; 260 min storici, nessuna
+nuova durata accettata o attività umana misurata. Il feedback qualifica gold/
+canonico, non la fedeltà delle conversioni o le formule output.
+
+Ricezione futura: salvare byte originali, attribuire autore/ora reale con
+limiti, packet/pair/revisione/ambito; packet import-response v2 e verification
+per documento, --response ripetibile. Non autocompletare giudizi mancanti o
+vaghi. Un documento problematico non cancella feedback valido sugli altri.
+Dopo eventuali cambiamenti creare i nuovi input/S-B-I/snapshot autonomamente
+e ripetere solo prove dipendenti, senza richiedere approvazioni ordinarie.
+
+Prossimo attore: utente per V naturale sui documenti; questa chat implementatrice
+per import/fix e vera chiusura A03, quindi supervisore per ricezione completa e
+due chat nuove ChatGPT/Claude. Nessun ruolo di supervisore assunto qui.

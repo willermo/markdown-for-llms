@@ -1,0 +1,352 @@
+{
+  "status": "MATCH",
+  "runtime": "R-final-001",
+  "files": [
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/__init__.py",
+      "bytes": 69,
+      "sha256": "831264c5346054e80d0ec1a27c2b93b5c9170b6a3e3bc2f8b4e91750c405fe50"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/adapters.py",
+      "bytes": 8200,
+      "sha256": "d92df807f961964f5f51e23773b474a97fbb7e2214128a4b26f7b33e77ae71f1"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/audit.py",
+      "bytes": 2854,
+      "sha256": "fd2a29335cec8aaaf38c4dfa641ced82a16c8a6cc5dde61814e721a896c09f52"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/benchmark.py",
+      "bytes": 12339,
+      "sha256": "d54be0c2d8ac5ca2e11984b89c853c36ff914cb2045b3b2719318a3de600acea"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/campaign.py",
+      "bytes": 14098,
+      "sha256": "69296d61b3ae9b45e50074ba33ecad4517cfaf3798a13ca500743354542ac14e"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/comparison.py",
+      "bytes": 21258,
+      "sha256": "3bdf1c9e26ef2f8fffd61b8946dee3aad964181894f2900b9adda24e697dca1c"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/comparison_check.py",
+      "bytes": 15942,
+      "sha256": "5dbbf9aed6975da9df48946757d17b5658fe2495040c2be2cef75b74859a9016"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/contracts.py",
+      "bytes": 9612,
+      "sha256": "1ff88870393a7d1f0dbf32112e92379f5ea587681b1305f3a2f8bd1e4d8fb34a"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/controls.py",
+      "bytes": 2333,
+      "sha256": "63ac8e6823d2435835a50d6a7add927970f36805a82a61c8e14247a57ba97d78"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/corpus.py",
+      "bytes": 6773,
+      "sha256": "7d8cf7fd4c666254e8470cdedcc6033732762589d13f7c0fdb376d2c4bdfb6a0"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/data.py",
+      "bytes": 1899,
+      "sha256": "4e1d6052eeda6eb4b7fa9d0053ede04a23242e50201d3b0823c89b3bfca82e52"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/derive_verification.py",
+      "bytes": 5952,
+      "sha256": "67c0559faf68c36d5aae141aaba9cb73acbbe5d0e60ef1ea7f8a8e0a7e1073fb"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/document_response.py",
+      "bytes": 6373,
+      "sha256": "0b8a499a99b7e74eee40a0b04fe593c7e486cf18a6ee0810629ac6834f44e447"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/generate_corpus.py",
+      "bytes": 37277,
+      "sha256": "bb66ef7be0da9755c1fe659fcfa15f4c6c7f1f5d69437bceefc0f16085ca7fb9"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/invariance.py",
+      "bytes": 4156,
+      "sha256": "3538fbc206f21a618251b9632b6f00a04864a8904c2789713959ca5c43300b27"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/inventory.py",
+      "bytes": 2628,
+      "sha256": "f8c25a83ed8e1e17affca2028fe0918a73f392a311c3e855529b8f36ba88bc96"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/launch.py",
+      "bytes": 1202,
+      "sha256": "c4a73c5d81dc03243f69e9a73e2880603540d95ad1d160d1a38a8154411c86a4"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/legacy_child.py",
+      "bytes": 2944,
+      "sha256": "0403f920eb83cefa9793a8a937f0c54959d8882d776fcec8f69bfdc82bb01d86"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/literal_child.py",
+      "bytes": 711,
+      "sha256": "827d43191ee4233c28ca9649a43d8ff7d1dff09126db3ad89eb05e3850f02bcd"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/math_structure.py",
+      "bytes": 7023,
+      "sha256": "ee37bc64551885b9f5a653a4b4ba346571064db40cf9c2b58ef4fb7a9dc70d49"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/metadata_revision.py",
+      "bytes": 4884,
+      "sha256": "00de01f0243fd8c6434f5c9157dbc7b90a329c38159d0cbb1977b3f4d5571ff8"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/metrics.py",
+      "bytes": 35628,
+      "sha256": "1b056d641eee123ae9b57c971f595088cce92f1fe14aa14673065289e7565001"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/observations.py",
+      "bytes": 83734,
+      "sha256": "613aaa996fcf02200bc6a8ad499ba0ebc044f44ed94deae3f7e638905215cefd"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/output_packet.py",
+      "bytes": 5547,
+      "sha256": "64b2b7f0001dab342310aa581b289decdbb729e6ddf4f0fa21290a913933a176"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/packet.py",
+      "bytes": 19129,
+      "sha256": "b4276821796c98eb1d716accc9f979c07b407603f82997653821f52655ba33b7"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/pandoc_guard.py",
+      "bytes": 1478,
+      "sha256": "fe037322ad955b343523e5c2ab4f833a0d8ec2144387d68b827575c92a15c3a5"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/png_codec.py",
+      "bytes": 3906,
+      "sha256": "7824ae48d439230d7bba600d495e9fb3d013b27a7372b90935e47d5309ec4484"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/prepare.py",
+      "bytes": 11060,
+      "sha256": "7de030827d28d2b807b33c8397a76b9492c9cd179f3b1269e13b2b2989a1366e"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/profile.py",
+      "bytes": 2214,
+      "sha256": "7dd04311b906df780e37e16f1e7da1dd2a85176d9cde28096dba1097d042a4d9"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/reference_check.py",
+      "bytes": 44465,
+      "sha256": "b5278c1e10d9dac1d01cc5ebfa0f787bb9216454b44afcb23b9fd6968fff3af9"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/resources.py",
+      "bytes": 13837,
+      "sha256": "039f2bd9bee1535889ab8ece126861f87b4bec5f418e820d219eef766a17e8a3"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/safety.py",
+      "bytes": 13442,
+      "sha256": "974656f69e022fcaa810c0828079e8672f59db8e8f8131e0b923f38b4e2e32b2"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/verification.py",
+      "bytes": 9483,
+      "sha256": "340cc3e6142fe2165503d7ed5cc18d70814b6993ad8a261219e40c3f96bdfd33"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/api/test_marker_wrapper.py",
+      "bytes": 2680,
+      "sha256": "af4554f4cabee75b9e0728d80bdb0388ef6e565048d469eb01e30e79f1aa0a86"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/conftest.py",
+      "bytes": 9248,
+      "sha256": "1176bde0d2791e77c436e7908ba4562377258e7fd6f09c02ef9f56fe1ede5d22"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/docker/test_marker_contract.py",
+      "bytes": 1877,
+      "sha256": "8182a0c1f63ea99f482af74f780348028398c6e3643a62044f80b644a536320a"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-reader-r012.json",
+      "bytes": 468421,
+      "sha256": "8c9a14537d7daa6513e5bcd0691aae51b4e098fc912f9903c10ad21bcbb3d424"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-reader-r013-legacy-expectations.json",
+      "bytes": 3362,
+      "sha256": "db7efc55aab0e307de7234bd17a939a15592841829be62e9922483173b0f7d57"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-reader-r013-metadata.json",
+      "bytes": 4171,
+      "sha256": "93dae52b7ad97f839d46891b262d216d3679d33d3fee8a695fb348fdb3c95c00"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-reader-r013.json",
+      "bytes": 150524,
+      "sha256": "ed3afbf56235f0b4cc91478f65c4f643ab57b41a5f1edbfc0ea3998f777b4147"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-reader-r014-legacy-expectations.json",
+      "bytes": 1309,
+      "sha256": "e1043278ef90e8f28c66db85fa5844a6b2feec9e5449df777d4fc7ef70cb2a69"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-reader-r014.json",
+      "bytes": 91306,
+      "sha256": "06a367f9f5ba117b2bd2050762688774acb99d2d06baa4986fc7abe171dd94e6"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/governance/test_run_context.py",
+      "bytes": 5599,
+      "sha256": "b2c7a7a18e25015bff6c5d852d7a0307323cd1b9f578a3832276db19e5c862bf"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/integration/test_conversion_writer.py",
+      "bytes": 4387,
+      "sha256": "4732d4495e526a7976e156add8b045d0dceab3f85122a0479cade21dbe0dc398"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/integration/test_pipeline.py",
+      "bytes": 9346,
+      "sha256": "701a4e80420244be17e2204eeeab782e8f1a332b0fed835f5cf966b95b4cd2e8"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/packaging/test_installed_distribution.py",
+      "bytes": 8878,
+      "sha256": "29d9700a218812401118cc66814afcf35440c68d57e6d64ad86aec636a8840de"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_chunking.py",
+      "bytes": 13153,
+      "sha256": "ebcb3e5afef6b98194014125b660adc7e0b40aa2a2e78027ae2d717f7e4717d9"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_cleaning.py",
+      "bytes": 10862,
+      "sha256": "0deedb1471d8f465935134f320b0d492f199aa0be092cea0963f7570cf76850a"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_config_cli.py",
+      "bytes": 2153,
+      "sha256": "e8cf3b006b32e8e56b446fa1dcef43d2c2cd7567ae817aa0fd9be13722240678"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_benchmark.py",
+      "bytes": 29218,
+      "sha256": "e13d04a116447ae59903620c730adf4adce16c06be96812844365a8470454259"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_comparison.py",
+      "bytes": 19945,
+      "sha256": "7022afedceb21224a592c056d1b8b32d3ff5744b1e2356468438db834a82f9f6"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r002.py",
+      "bytes": 21199,
+      "sha256": "7fc013340987dc05513983a4176ad76e24bec3420251033d0cd9526421b71c62"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r003.py",
+      "bytes": 13356,
+      "sha256": "0e2f1d57632789a7ab7b268f4d4906dbffd46216409fc3286c4795826e358039"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r004.py",
+      "bytes": 12732,
+      "sha256": "d1471178ed5b331381b125ca4fe9fdb40a712e88d20fdec8d3cae3f596a49670"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r005.py",
+      "bytes": 10181,
+      "sha256": "6d1494ca3e7f2c61d749d8b20d7235a70872933d9d8ba0f9b58cecba162b14ef"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r006.py",
+      "bytes": 17377,
+      "sha256": "29a007244b80483f6ff8c177e89b1c910b2b8a7ce522f1c6ed837377cf479504"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r007.py",
+      "bytes": 11314,
+      "sha256": "d483806c7457163b6315a1c5e17ea5d9c9f647843b675db9380fac7f507d2ac7"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r008.py",
+      "bytes": 11285,
+      "sha256": "2587a3bd54e35833bf4343b5570116e9d09b4bd10b097afaf7d0e4c5be94ddaa"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r009.py",
+      "bytes": 16181,
+      "sha256": "a88cf7d5cded3dca9dacc16874dd5f8f000900028ac4ab5b78a534f57b69fc69"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r010.py",
+      "bytes": 11742,
+      "sha256": "56d02595309a6f22e755c283e582b7999a9d5db3c9a01babc987fccb9cf85879"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r011.py",
+      "bytes": 45558,
+      "sha256": "6b5ff7716ca71af5e72a2de10d44c3144d796ba733496df12f6a903ce3a7c68d"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r012.py",
+      "bytes": 5253,
+      "sha256": "d8acda3785589763317135d5e27a6eaf96d937d6bd3c397d558dd85b0cc9c613"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r013.py",
+      "bytes": 4145,
+      "sha256": "dddc3dfbdcfa9c0427696abdd64d2e0ecea74558ee8f0a42c7d3210b7efb9650"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_conversion_fix_r014.py",
+      "bytes": 4321,
+      "sha256": "d3b1915fe959b3de86a0308a5ebdf8537581a786699c0c59cfb4616e20a0784c"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_core_diagnostics.py",
+      "bytes": 10962,
+      "sha256": "0f44d3e1d2e3da6d60ebd1b192b83cb1412e622141e65b517ebaa732e6a539a5"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_package_diagnostics.py",
+      "bytes": 12723,
+      "sha256": "6be11a5598bb1eedf90b1fca0ff8c48a1c5cff7b320075947315060b00f940f1"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_phase_launch.py",
+      "bytes": 3116,
+      "sha256": "ff0a56c0aab70973e61e61be62d03fdb40f5cb75d9eee3047eb64a038f453080"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_uv_diagnostics.py",
+      "bytes": 28171,
+      "sha256": "4ee4c198de5fb148efad0de2dc7f8480e14d02611d3691ae54b16ac779e14d97"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/tests/unit/test_validation.py",
+      "bytes": 11985,
+      "sha256": "2ab0eab5d611a613c93f459cce818a6916e2d5bbf78594d3a66199c7f3a776f4"
+    }
+  ],
+  "report_only_updates_later_do_not_transfer_general_snapshot_PASS": true
+}

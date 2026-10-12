@@ -1,6 +1,6 @@
 # Roadmap del convertitore
 
-Aggiornata al 2026-10-07. Le fasi descrivono il percorso fino al prodotto; non sono una
+Aggiornata al 2026-10-12. Le fasi descrivono il percorso fino al prodotto; non sono una
 stima temporale né un'autorizzazione ad avviare ogni attività in anticipo. Dipendenze,
 hardware e corpus determineranno dimensione e durata degli incrementi.
 
@@ -9,8 +9,8 @@ hardware e corpus determineranno dimensione e durata degli incrementi.
 | Fase | Risultato verificabile | Dipendenze | Stato |
 | --- | --- | --- | --- |
 | 0 | Governance, decisioni e documentazione iniziale | Nessuna | Bootstrap integrato in dev a `66ba822` |
-| 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio verificato; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; push non verificato |
-| 1 | Corpus, benchmark e scelta motivata dei motori | Fase 0.1, campioni e profili hardware | Da iniziare |
+| 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio verificato; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; push verificato a `80c31da` |
+| 1 | Corpus, benchmark e scelta motivata dei motori | Fase0.1, campioni e profili hardware | A002 chiusa con perimetro ridotto/debito accettato; parser futuro ADR0008. Fase1 ancora aperta: prossimo confronto motori con valutazione umana; nessuna scelta definitiva |
 | 2 | Package applicativo, contratti, configurazione, DB e worker | Risultati essenziali della fase 1 | Da iniziare |
 | 3 | Prima applicazione completa con FastAPI e Web UI minima | Fase 2 e scelta frontend | Da iniziare |
 | 4 | Formati richiesti, PDF scientifici, OCR e asset | Fasi 1–3 | Da iniziare |
@@ -49,6 +49,56 @@ espliciti, GO finale sullo snapshot e integrazione manuale. Questa fase anticipa
 la parte di packaging della fase 2; il nuovo dominio applicativo resta in fase 2.
 
 ## Fase 1 — Corpus e scelta dei motori
+
+**Decisione corrente2026-10-12:** a002 chiusa per [accettazione utente della
+consegna sperimentale](runs/run-a002-fase1-corpus/manifest.md); primo incremento
+concluso nel perimetro ridotto, fase1 complessiva non conclusa. [Debito](benchmarks/a002-residual-debt.md)
+aperto con ripresa obbligatoria; [ADR0008](decisions/0008-maintained-parser-and-provisional-benchmark.md)
+adotta parser mantenuto da implementare. Segue [confronto a003](development/next-run-a003-engine-comparison.md)
+con raw/gold e valutazione umana, metriche provvisorie dove non convalidate.
+Storia sotto conservata: NO_GO e review incompleta non diventanoGO. Nessuna
+integrazione Git o benchmark ML/disponibilità hardware inventati.
+
+
+Incremento iniziale autorizzato il 2026-10-07: [run a002](development/next-run-a002-corpus.md),
+corpus di riferimento e misurazione della fedeltà. Piano r001 e review indipendenti
+ricevuti; errata E01–E08 verificate e arbitrato r002 GO del 2026-10-08, mandato
+completo con quota52h disposta. Consegna completa ricevuta:13riferimenti
+VERIFIED/A03 chiuso nelle receipt, confronto originale/Markdown e risposta V
+documentale reale. Due review r001 NO_GO/NO_GO e arbitrato locale conservati; consegna r002 completa
+ricevuta con rettifica celle/numeri/WER e nuova baseline. Due nuove review r002
+NO_GO/NO_GO e arbitrato locale conservati. Due nuove review r003 NO_GO/NO_GO e arbitrato locale conservati. Consegna
+r004 completa e due nuove review NO_GO ricevute, arbitrato locale conservato.
+Consegna r005 e due nuove review NO_GO ricevute, arbitrato locale conservato.
+Consegna r006 e due review NO_GO ricevute, arbitrato locale conservato.
+Consegna r007 e due review NO_GO statiche arbitrate, storia conservata.
+Consegna completa r008 e due review NO_GO ricevute, arbitrate tre cause:
+guardia HTML interrotta, falso tag incompleto e perdita link dopo stripping.
+F35/F36 chiusi nei domini verificati,F37/F38 parziali; F39–F42 per
+consolidamento locale in nuova chat autrice e nuova supervisione richieste
+dall’utente. Non nuovo piano/parser universale. Consegna r009 completa ora ricevuta: guardia indipendente, semantica lessicale
+condivisa e dominio/mapping producer;308/308matrice,1869fast+310subtest,70exitCLI
+e64derivati invarianti dichiarati dall'autore. Ricezione statica dei byte e
+legami; due review r009 NO_GO reali ora arbitrate, F40/F41 chiusi nei domini revisionati. F43/F44 bloccanti ereditati: tag reali persi nel fallback e falsi unsafe dai code letterali dopo HTML inline. F45 interazioni/documenti e limiteF36 non bloccante; mandato34 nella chat autrice per r010, poi nuovo comune e due NUOVE review alla consegna completa. Quota24h cumulativa invariata,stop11ott
+08:37:31 Europe/Rome/deadline11:37:31;V13/A03 e64misure preservati,nessun GO.
+
+Consegna completa r014 F58–F62 ricevuta: 157/157 contratti (159 input distinti), suite3156+310subtest, quattro controprove private,12 exit CLI e64 ricalcoli. Chiusure da giudicare, NO_GO r013 conservato; nuovo comune r014 e due NUOVE chat indipendenti ChatGPT/Claude. Zero delta numerici/gate,16 diagnosi EPUB eotto metadata TeX attribuiti. Nessuna deadline; limiti econtatori invariati, review mirate entro residuo corrente. Nessun GO codice o integrazione.
+
+Aggiornamento precedente2026-10-11: Consegna completa r013 ricevuta per review: F54–F57 dichiarati realizzati, reader observations-v13-ordered-guards-fences. 301 attesi (285+16 metadata multilinea),2997 test+310 subtest,102 exit CLI e64 ricalcoli con19 campi numerici/gate invariati. Censimento per fonte/callsite,AST Pandoc locale e due controprove su copie private ricevuti. Nuovo comune e prompt44/45 per due NUOVE chat indipendenti ChatGPT/Claude,poi arbitrato reale. Chiusure da giudicare;NO_GO r012 conservato,nessun GO codice. Nessuna deadline;limiti non temporali e contatori invariati.
+
+Aggiornamento precedente2026-10-11: Due review r012 reali NO_GO ricevute e arbitrate. F54:attributi Markdown attivi bypassano la sessione della prima unsafe e interrompono le guardie successive;F55:ownership errata del fence tilde dopo testo,con COMPLETE senza guardia/asset. Regressioni r012,rami ereditati della stessa classe inclusi senza parser universale. F56:censimento tuttefonti/callsite,AST Pandoc locale e due controprove prima della consegna;F57:documenti/coverage privata,non bloccante. Prompt43 completo nella chat autrice,stessa run/incremento. Nessuna deadline,altri limiti/contatori invariati;nessun GO codice.
+
+Aggiornamento precedente2026-10-11: Consegna completa r012 ricevuta per review: F50–F53 dichiarati implementati, reader observations-v12-shared-atoms. 350/350 attesi, regressioni153/303/308,2688 test+310subtest,134exitCLI e64ricalcoli con zero delta su19campi numerici/gate. Nuovo comune e prompt41/42 per due NUOVE chat indipendenti ChatGPT/Claude,poi arbitrato reale. Chiusure da giudicare,NO_GO r011 preservato,nessun GO codice. Nessuna deadline della run; limiti CPU/disco/RAM/rete/R e contatori invariati.
+
+Aggiornamento precedente2026-10-11: Disposizione utente: nessuna deadline, durata massima o stop temporale della run. NO_GO r011 tecnico invariato. Prompt40 r012 F50–F53 eseguibile nella chat autrice r009/r010/r011: consolidamento delle decisioni lessicali duplicate, copertura guardia esplicita e generazione finita indipendente prima della consegna. Limiti CPU/disco/RAM/rete/R invariati, contatori e storia senza reset.
+
+Aggiornamento precedente2026-10-11: Due review r011 reali statiche NO_GO ricevute e arbitrate: F50 bound math delle label accettate con escape+LF (alta,regressione r010 non chiusa),F51 raw fence nella quote esentata dal fallback (media,regressione r011),F52 raw inline nella label saltato e prima diagnosi persa (media,ereditato r010). F53 invarianti/prove/documenti; F46 chiuso nei domini esaminati,F47/F48/F49 parziali,F36 preservato. Prompt40 r012 completo nella chat autrice r009/r010/r011, esecuzione in attesa di disposizione temporale esplicita. Stop2026-10-11T06:37:31Z passato,deadline09:37:31Z=11:37:31Roma. Quota24h da10ott09:37:31Z ed entry08ott07:06:54.369068Z senza reset; nessuna risposta temporale assunta. CPU21600/stop19800s,disco6/stop5GiB,RAM8/stop sampled6GiB,riserva1800CPU-s/1GiB,R≤900s/stream1MiB/file32MiB,rete/acquisizioni/invii0/€0. Anche amministrazione inclusa e ferma alla deadline reale.
+
+Aggiornamento precedente2026-10-11: Consegna r011 completa ricevuta: reader v11/F46–F49 dichiarati verificati,153/153matrice,303/303r010 e308/308r009,2327fast+310subtest,74exitCLI e64misure senza delta numerico/gate. Byte/prove ricevuti; nuovo comune e prompt38/39 per due NUOVE review ChatGPT/Claude,poi arbitrato reale. Chiusure da giudicare,NO_GO r010 preservato,nessun GO codice. Stop nuovi workload11ott08:37:31Europe/Rome superato all’ingresso08:55:55; riserva amministrativa fino deadline11:37:31. Review statiche soltanto,nuove sonde R ferme senza disposizione temporale esplicita. Richiesta estensione presentata,nessuna risposta assunta. CPU/disco/RAM/rete0/€0 e contatori senza reset.
+
+Aggiornamento precedente2026-10-10: Due review r010 reali NO_GO arbitrate: F46 metadata inline ereditato e variante H2 regressiva; F47 falso unsafe nella math della label e F48 apertura reale saltata dentro owner HTML, regressioni r010 bloccanti. F49 invarianti finite/documenti, F36 e quattro osservazioni non bloccanti conservati. Mandato37 r011 nella chat autrice r009/r010, poi nuovo comune e due NUOVE review alla consegna completa; quota24h invariata, nessun GO codice. F43/F44 chiusure originali preservate ma invarianti complessive parziali; F45parziale,F40/F41nel perimetro,V13/A03/raw/limiti invariati.
+
+Aggiornamento precedente2026-10-10: Consegna r010 completa ricevuta: reader v10/F43–F45 dichiarati verificati,303/303matrice e308/308regressioni r009,2174veloci+310subtest,82exitCLI e64misure invarianti. Byte e legami verificati dal supervisore, nuovo comune r010 e prompt35/36 per due NUOVE review indipendenti, poi arbitrato. NO_GO r009 e limiteF36 preservati, nessun GO codice;quota24h/entry/contatori invariati. F40/F41 chiusi nel perimetro r009, F43–F45 da giudicare;stage-s009 e prove finali legate ai byte,nessuna nuovaV/motore.
 
 Costruire un corpus piccolo ma rappresentativo, con riferimenti verificati a mano:
 PDF testuali a una e più colonne, scansioni IT/EN, pagine miste, formule inline e
@@ -95,6 +145,13 @@ collidono; errori persistiti; un riavvio non perde la coda; DB e artefatti sono
 riconciliabili dopo scrittura interrotta; le opzioni effettive sono verificabili.
 
 ## Fase 3 — Primo percorso utilizzabile con Web UI
+
+**Obbligo di follow-up:** all’uscita di questa fase aprire la run dedicata al
+parser mantenuto e risolvere il [debito a002](benchmarks/a002-residual-debt.md).
+La prima app resta valutabile manualmente; il reader sperimentale non è una
+barriera di sicurezza o una certificazione automatica. Debito da chiudere
+prima di automatismi di attestazione e rilascio, con nuove prove e review.
+
 
 Esporre API FastAPI per upload, avvio, stato, archivio e download, con schema OpenAPI.
 Il worker esegue una conversione reale di un formato semplice, inizialmente TXT e/o

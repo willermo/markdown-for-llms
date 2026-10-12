@@ -174,3 +174,12 @@ mandato, mantenendo i gate della prova; il rifiuto effettivo o un nuovo confine
 restano arresti. R015 applica la distinzione senza nuovi privilegi persistenti,
 costi o riduzione R/D4. Regola adottata nel worktree, recupero operativo ancora
 da eseguire: nessun successo dell'approvazione o miglioramento misurato dichiarati.
+
+### Eccezione locale a002 — 2026-10-12
+
+L’utente accetta la chiusura della consegna sperimentale con debito aperto e
+risoluzione futura obbligatoria, [ADR0008](0008-maintained-parser-and-provisional-benchmark.md).
+È una variazione esplicita del perimetro a002, nonGOtecnico r014: una review
+NO_GO statica euna incompleta restano tali. Il ciclo ordinario delle nuove
+run e le operazioni Git manuali restano invariati; non estendere questa
+eccezione a future consegne. [Archivio](../runs/run-a002-fase1-corpus/manifest.md).

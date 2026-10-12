@@ -1,0 +1,240 @@
+# Review — implementazione — run-a002-fase1-corpus — r014 — Claude
+
+- **Ruolo e modello.** Reviewer Claude, Anthropic, Claude Opus 5.5 (`claude-opus-5-5[1m]`),
+  Claude Code nell'estensione VS Code. Effort e ID della chat non esposti. Chat nuova, distinta
+  da autore, supervisore e altro reviewer; nessuna delega, subagente o impersonificazione.
+- **Prompt.** `prompts/48-review-implementation-r014-claude.md`; mandato46 F58–F62 dopo NO_GO r013.
+- **Oggetto.** Comune `snapshots/implementation-r014-review-r002.json`, SHA256
+  `e0436b5ee2c1516beabfcaf5fd7c895f57c69ad5cecf71ea54a0d0c6b832cc56` (770964 B), impronta
+  `5e72dd4ea0204bd3b613338a2e6d603161e17c6a5616e4793806c937ffe79a5b`. Reader
+  `observations-v14-syntax-contracts` 83734 B `613aaa99…5cefd`; safety 13442 B `974656f6…32b2`;
+  V13+adapter originali in `evidence/implementation-r014/received-bytes/` `27d1b580…c43ad` /
+  `31aa1d14…31332d0`. Hash ricalcolati da me.
+- **Git.** `feature/run-a002-corpus`, HEAD `80c31da46e5caab990d3596c79c44e524ec1dc95`, indice vuoto
+  all'ingresso. Nessun comando Git mutativo o remoto.
+- **Verify d'ingresso.** 07:43:05Z, `python3 -I -B scripts/run_context.py verify
+  run-a002-fase1-corpus --label implementation-r014-review-r002`, cwd repository: **MATCH**, exit 0,
+  0,96 CPU-s. Verify finale in fondo.
+- **Indipendenza.** Non ho aperto report, evidenze o checkpoint ChatGPT r014. Un listing di
+  `evidence/` mostrava la cartella `review-implementation-r014-chatgpt`: non l'ho letta.
+- **Esito: NO_GO.** F58 (URI) è chiuso. F59 e gli originali di F60/F61 sono chiusi nei casi
+  ricevuti. Resta un rilievo bloccante sullo stato del blocco. Dopo un item di lista, lo scanner
+  forza la chiusura del paragrafo. Così heading, div, quote e note che in Pandoc continuano
+  l'item in modo lazy diventano blocchi: metadata accettati o fence iniziale rendono inerte HTML
+  reale, con **COMPLETE** (CLA-R014-I001). Ho poi tre premesse condizionate da un solo AST
+  (I002, O001, O002).
+
+## Letture
+
+- **Contesto.** AGENTS; temp/HANDOVER; HANDOVER, brief e intestazione STATE della run;
+  checkpoint supervisore r014; skill manage-implementation-run e verify-conversion-fidelity;
+  protocollo (sezioni review ed esiti); ADR0001; ledger `budget-final.json` corrente.
+- **Integrali.** Arbitrato r013, mandato46 e `notes/recovery-method-r014.md`; report r013
+  ChatGPT con il suo checkpoint e report r013 Claude; report e checkpoint autore r014;
+  `notes/implementation-r014-contracts.md`, inclusa la sezione finale distinta.
+- **Codice.** Diff completo V13→V14 di reader e adapter. Rami V14 letti integralmente: fence,
+  boundary, metadata, scanner, `attrs`/`peel_attrs`, InlineDecision/drain/report, HTMLGuard,
+  `html_nodes`, `observe` con `public` e `_observe` con tutti i producer. Letti anche `audit.py`
+  e i callsite `local_uri` in adapters, comparison_check e safety (ZIP/SVG). Test
+  `test_conversion_fix_r014.py` e overlay HC2; sezioni r014 di PROTOCOL, reference e how-to.
+- **Prove autore lette nei campi decisivi.** `cases-001/002/003`, AST `grammar-001` (31 righe),
+  AST di `baseline-001` (K2c, heading-attached, K1h), `expectations.py`, quattro diff di
+  mutazione e `mutations-results`, `metadata-preservation` (22 valori),
+  `cli-final/summary`, `H12-summary`, `derived-check-001`, `epub-delta-attribution`.
+  Ho confrontato una coppia di metriche EPUB r013/r014 e letto `runtime-byte-binding`, la
+  receipt `R-final-001`, la coda di `fast.stdout` e gli exit H01–H08. Gli artefatti citati sono
+  legati per hash nel comune r002.
+
+Non letti integralmente: permanente r014 e relativi dati, i 64 output, S/B/I e archivi, matrici
+r009–r012, report r013 GPT oltre i rilievi, freeze/after-final campo per campo. Per questi mi
+affido alle receipt ricevute e al controllo del supervisore, senza attribuirmene la verifica.
+
+## Metodo e prove proprie
+
+- **Statico.** Le premesse del reader sono ricavate dal codice, con riga e percorso in
+  [static-findings](../../evidence/review-implementation-r014-claude/static-findings.md). Le premesse
+  Pandoc sono inferenze dalla semantica pinned, sostenute dove indicato da AST **ricevuti**.
+- **Microcasi congelati.** 10 casi, al massimo 43 B, con attesi manuali condizionati dall'AST e
+  previsioni statiche V14 congelati prima di ogni esecuzione: `cases.py` e `freeze-receipt.json`,
+  07:55:00Z, SHA256 `c2faafa7…af350`.
+- **Sonda R `probe-001`: FAIL al preflight, errore mio.** Ho usato `stage-s002/preflight.json`.
+  `check_preflight` ha dato `Stage non MATCH: STALE … worktree_sha256, files`, cioè lo STALE
+  generale S002 che il prompt segnalava. Il comando non è partito e il prodotto non è stato
+  importato. Binding MATCH prima e dopo, `inputs_unchanged` true, socket pulito: Firejail e il
+  gate hanno funzionato.
+- **Mancata ripetizione.** Una ripetizione richiedeva un preflight corrente oppure R solo con
+  Pandoc: circa 3 CPU-s più il verify finale. Avrebbe superato in modo prevedibile il piano di
+  10 CPU-s, quindi non l'ho eseguita. **Nessuna mia prova runtime del reader o di Pandoc.**
+
+## Rilievi
+
+### CLA-R014-I001 — host lista: il paragrafo viene chiuso per ogni blocco successivo (media, bloccante)
+
+**Input** (sintetici, nel profilo). Prima colonna: input minimo.
+
+| Input | Pandoc 3.1.3 (inferito, vedi premessa) | V14 (traccia statica) |
+| --- | --- | --- |
+| `- item\n# H {k="<img src=../x.png>"}\n` | `BulletList[Para[…"#","H","{k=",RawInline img,…]]` | heading con attr `k`, nessuna visita, **COMPLETE** |
+| `- item\n# H {k='<img src="p.png">'}\n` | RawInline img sicura | COMPLETE, **assets []** |
+| `- item\n::: {k="<img src=../x.png>"}\nBody\n:::\n` | testo lazy dell'item, RawInline | container div con metadata, COMPLETE |
+| `- item\n[^n]: ~~~\n    <img src="../x.png">\n    ~~~\n` | testo lazy, RawInline | nota con fence iniziale `code`, COMPLETE |
+| `- item\n> ~~~\n> <img src="../x.png">\n> ~~~\n` | testo lazy (`+blank_before_blockquote`) | quote con fence iniziale `code`, COMPLETE |
+| `- item\n# H {onclick="x"}\n` | testo | **falso UNSAFE** `Active markdown attribute` (classe O001) |
+
+**Percorso.**
+
+1. `observations.py:412` forza `paragraph_open=False` su ogni riga con `physical_host=='list'`.
+   Vale per la riga dell'item e per le continuazioni indentate a 4 spazi (407–408).
+2. Per la riga successiva vale quindi `before=False`, e si attivano heading (399), div (401)
+   o container (404–406).
+3. Il producer radice consuma lo stesso record. Heading: `peel_attrs`, poi `trailing_metadata`,
+   poi `attrs` (1264–1266, 577–580, 554–575), e il valore quoted resta opaco. Quote e note:
+   `read_parts` con fence iniziale accettata dal container.
+4. Nessun `guard_event`; `audit.py:40–43` restituisce COMPLETE.
+
+**Premessa sintattica.** In Pandoc un item continua in modo lazy con ogni riga non vuota che non
+sia un nuovo item o un fenced code; il testo dell'item è poi letto con le estensioni pinned. AST
+ricevuti a sostegno di ciascun pezzo (`baseline-001.json`):
+
+- K2c: la fence chiude l'item e diventa `CodeBlock` radice. È l'unica eccezione e motiva il
+  commento a 412.
+- `heading-attached`/K1h: una riga `#` dopo del testo è `Str` nel `Para`.
+- HC2 overlay e K4: HTML in graffe non metadata è `RawInline`.
+
+Non ho eseguito l'AST della combinazione «lista + heading/div/quote/note».
+
+**Requisiti.**
+
+- C03: «Quote/list/note richiedono separazione pinned», «Heading attaccata non è attributo
+  attivo falso», anche per i caller.
+- Mandato46 F60: «un marker non termina automaticamente il paragrafo se quel blocco non è
+  ammesso».
+- F61/C04: metadata opachi solo dopo accettazione nel costrutto realmente riconosciuto.
+- ADR0001 e il divieto di COMPLETE vuoto.
+- PROTOCOL e reference r014 affermano: «heading/quote/list/note/div non interrompono un paragrafo
+  per il solo marker» e «Container: opener ammesso».
+
+**Impatto.** Falso COMPLETE: path evasivo non segnalato, asset sicuro perso, script o img
+inerti nella variante quote/note con fence. In più c'è un falso UNSAFE di fedeltà. È lo stesso
+tipo di esito arbitrato media/bloccante per F59–F61. Non ho osservato fetch o esecuzione.
+
+**Attribuzione.** Comportamento ereditato: V13 riconosceva heading e metadata a prescindere
+dallo stato. La regola r014 412 lo ricodifica esplicitamente, generalizzando la sola eccezione
+K2c a tutti i blocchi. Nessuno dei 157+2 casi ha una lista seguita da heading, div, quote o
+note. La controprova `caller` muta solo il default del producer radice: non poteva vederlo.
+
+**Chiusura attesa.**
+
+- L'eccezione dell'host lista vale solo per ciò che chiude davvero l'item: fenced code chiuso
+  e nuovo item.
+- Le altre righe non vuote continuano il paragrafo dell'item.
+- Servono casi AST per heading, div, quote e note dopo l'item e dopo la sua continuazione
+  indentata, con valore quoted HTML, asset sicuro e attributo attivo.
+
+### CLA-R014-I002 — opener div non chiuso azzera lo stato (condizionato, PLAUSIBLE)
+
+**Input.** U1 `::: x\n~~~\n<script>x</script>\n~~~\n\nEnd.\n`. U2 è la stessa con
+`<img src="p.png">`. U3 è `::: x\n# H {k="<img src=../x.png>"}\n\nEnd.\n`. Controllo C1: div
+chiuso.
+
+**Percorso.**
+
+1. `div_at` (142–150) accetta l'opener dalla sola riga; 401 e 409 chiudono il paragrafo.
+2. La fence successiva è `code` (381, 1246).
+3. Il residuo `unclosed div` (1313) non ha `raw`, né `unknown`, né `resource_syntax`, e salta il
+   fallback di guardia (1192). Ne segue `audit` COMPLETE.
+4. Dentro un container (`- ::: x\n    ~~~…`) manca anche il residuo.
+
+**Premessa da verificare.** In Pandoc 3.1.3 un fenced div senza riga di chiusura non è un Div:
+`::: x` resta paragrafo e la tilde non lo interrompe. Gli AST ricevuti `grammar-21–23` coprono
+solo div chiusi.
+
+**Esito condizionato.** Se un AST di U1 mostra `RawBlock`/`RawInline` e nessun `Div`, il rilievo
+è della stessa classe e severità di I001 (ereditato da V13). Se mostra `Div[CodeBlock]`, è da
+respingere. Il mio NO_GO non dipende da I002.
+
+### CLA-R014-O001 — token metadata più ampi delle partizioni provate (condizionato)
+
+`ATTRIBUTE_TOKEN` (42) accetta `+` in id e classi (`#a+b`, `.c+`) e classi con `_` iniziale
+(`._c`). `grammar-001` prova `#1`, `.1`, `_x=x`, `a=`, `#a.b`, `.a.b`, ma non questi casi.
+
+Se Pandoc li rifiuta, il gruppo non è un attributo. Allora l'HTML in un valore quoted (per
+esempio `[a]{.c+ k="<img src=../x.png>"}`) è `RawInline` reale, nascosto in tutti i producer
+che condividono `metadata_at`. In quel caso il rilievo è media/bloccante; altrimenti è nullo.
+
+È introdotto in r014, ma resta molto più stretto di `[^{}]*` di V13. Casi G1–G3 e controllo G4
+sono in `cases.py`.
+
+### CLA-R014-O002 — ATX con 1–3 spazi iniziali (condizionato)
+
+` # H` è heading per lo scanner e per il producer (` {0,3}#`, 399/1264), un comportamento
+ereditato da V13. Se Pandoc markdown richiede `#` in colonna 0, valgono gli stessi esiti di
+I001 (H1/H2 in `cases.py`). Nessun AST ricevuto lo copre.
+
+### CLA-R014-O003 — sovra-segnalazioni conservative (bassa, non bloccante)
+
+Inferenza statica, nessun occultamento:
+
+- La info fence V14 è più stretta di Pandoc, che accetta qualunque singolo token non-spazio
+  come lingua (es. `~~~.python`).
+- `- item\nlazy\n~~~…` è `CodeBlock` in Pandoc per la stessa regola di K2c, ma il reader
+  guarda il corpo.
+- I valori misti bare+quoted vengono rifiutati.
+
+L'esito è un INCOMPLETE/UNSAFE falso. È un limite di fedeltà da documentare, non una condizione
+del GO.
+
+## Chiusure dei criteri
+
+| ID | Esito | Motivo e prova |
+| --- | --- | --- |
+| C01 F58 URI | **PASS** (statico + ricevuto) | Il solo `urlsplit` è avvolto; `Unsafe` è una sottoclasse di `ValueError`, la whitelist è invariata (diff limitato a `local_uri`). Nel reader ogni validazione passa da `guard_event`/drain o da `report_unsafe`, quindi la prima causa resta e la coda viene visitata. `username`/`password` non sollevano nel 3.12 pinned. `audit` cattura `Unsafe` (INCOMPLETE/UNSAFE_REFERENCE); gli altri callsite (OPF, comparison_check, ZIP/SVG) ricevono ora `Unsafe` invece di `ValueError`, senza nuovo test end-to-end, come previsto da C01. Ricevuti: uri-113–120, test adapter, CLI exit 2/2, mutazione `uri`. |
+| C02 F59 info | **PASS** nei domini | La grammatica della info è un sottoinsieme di quella di Pandoc (lingua = qualunque token non-spazio), quindi non dà un owner falso. Sono preservati i controlli Code inline, raw esatto e K2c; mutazione `info` respinta. Limite: la info `{…}` eredita O001. |
+| C03 F60 stato | **FAIL** | Originali K1a–d, K2a/b/d/e e heading-attached chiusi; ledger condiviso tra scanner e producer radice. Restano I001 (host lista, bloccante) e i condizionati I002/O002. |
+| C04 F61 metadata | **FAIL** | Contratto unico `metadata_at` per tutti i consumer; K3/K4 chiusi; 22 valori e quoted HTML preservati. Ma un intervallo accettato rende opaco un costrutto che Pandoc non riconosce (I001), e O001 è condizionato. |
+| C05 F62 prove | **Parziale** | Nota scritta prima del codice; tre contratti; quattro copie private e sette discriminanti tutti respinti; AST obbligatorio. Gli attesi materializzati dopo after-001 (dichiarato) provengono da AST e regole, non da output del reader (`expectations.py` letto). Le partizioni non coprono lista→blocco non fence, div non chiuso, caratteri `+`/`_` né ATX indentata. |
+| C06 regressioni | **PASS** nei rami letti | Fast 3156+310 e matrici ricevute; HC2 overlay con AST; F29 ed EOF invariati. `paragraph_boundary` ristretta alla sola backtick fence, coerente con le estensioni pinned. Nessun nuovo controesempio in F31/F36/F40–F57 nei rami letti. |
+| C07 byte/uscite | **PASS** (ricevuto) | Hash finali ricalcolati; binding 69 MATCH; R-final PASS con input invariati; H01–08 exit 0; H12 FAIL deliberato; 12 CLI con gold PROVISIONAL. Il mio R è FAIL al preflight: nessun PASS trasferito. |
+| C08 derivati | **PASS** (ricevuto + campione) | 64 catene e 19 campi ricevuti. Nel campione EPUB-r1 cambiano solo `failures`/`details` e le identità: le ancore passano da 3 a 1 fallimento e due stati di dettaglio da FAIL a PASS. Numeri e `automatic_gates` (FAIL) sono identici e attribuiti all'ID ultimo da AST. `numeric_gate_differences=16` conta dizionari di diagnosi, come già precisato. |
+| C09 documenti | **FAIL** (minore) | Le frasi del PROTOCOL e della reference citate in I001 sono smentite per l'host lista; la grammatica dei token non dichiara `+`/`_`. Gli altri limiti (A8, F36, r010, L01/L02/L04/L05, NONPASS) e la storia 132/133 sono conservati. |
+
+## Esito e limiti
+
+**NO_GO** per CLA-R014-I001. Il percorso del reader è deterministico e citato riga per riga. La
+premessa Pandoc è composta da regole pinned i cui pezzi sono confermati da AST ricevuti. La
+combinazione non è stata eseguita: basta un solo AST di `- item\n# H {k="<img
+src=../x.png>"}\n` per confermarla o smentirla.
+
+Se l'arbitro la smentisse, il mio giudizio sui restanti criteri dipenderebbe da I002/O001/O002,
+tutti decidibili con pochi AST sugli input in `cases.py`. Non dichiaro chiusure universali.
+
+Non eseguiti: suite, build, rescore, CLI, H01–H12, S/B/I, AST e reader propri (R fermato al
+preflight). Pandoc vale solo come oracolo sintattico. L01/L02/L04/L05, F36/A8, Chrome NONPASS e
+gli altri limiti storici restano invariati.
+
+## Costi e passaggio
+
+- **CPU misurata.** Verify d'ingresso 0,96 s; sei letture JSON e il freeze con GNU time,
+  0,98 s; launcher con figli 3,55 s (snapshot 0,13, R 3,25). Totale **5,49 CPU-s** prima del
+  verify finale.
+- **CPU non misurata.** Letture shell (cat/grep/sed/jq/sha256sum) e una decina di piccole
+  letture Python: stima circa 0,7 s, non certificata.
+- **Base.** Ledger supervisore 19648,249184 CPU-s lower, 151,75 allo stop, piano di 10 s per
+  reviewer. I costi dell'altro reviewer r014 non mi sono noti.
+- **Disco e memoria.** Circa 4,3 MB di evidenze (2,3 MB di copie degli input) più uno snapshot tecnico di 97 KB. RSS massimo del
+  launcher 245784 KiB (sampled).
+- **Rete, acquisizioni, invii.** 0; €0.
+- **File fuori da evidence.** `snapshots/review-r014-claude-probe-001.json` (tecnico, non
+  un'approvazione).
+
+Totale, verify finale e budget sono nel checkpoint e in `accounting.json`. Prossimo ruolo:
+supervisore, dopo entrambi i report reali, per l'arbitrato. Nessun Git, cleanup, fase 2,
+motore, ML o nuova V.
+
+## Verify finale
+
+Dopo la scrittura di report, checkpoint ed evidenze, con stesso argv e cwd dell'ingresso:
+**MATCH**, exit 0, 0,95 CPU-s, stderr vuoto (`verify-final.*`). `git diff --check` exit 0,
+indice vuoto, HEAD invariato. Totale proprio misurato **6,44 CPU-s**, circa 0,7 s non misurati,
+visibile lower circa 19654,69 senza i costi concorrenti (`accounting.json`). Queste righe di
+chiusura sono successive al verify e restano nei soli output propri, esclusi dal comune.

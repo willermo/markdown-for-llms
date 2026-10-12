@@ -1,0 +1,78 @@
+# Checkpoint supervisore — a002, GO piano corretto e mandato implementazione
+
+Data: 2026-10-08, Europe/Rome. Codex/OpenAI, GPT-6; identificativo deployment
+esatto/chat non esposti. Ruolo esclusivo supervisione, nessuna delega/review
+simulata o implementazione del prodotto.
+
+## Ricezione, oggetto e decisione
+
+Ricevuti e letti integralmente [addendum E01–E08](../plans/errata-plan-r001-r001.md)
+e [checkpoint autore](planning-errata-r001.md), evidenze proprie r001/r002 FAIL
+conservate e r003 PASS. Verifica del contesto fix MATCH alla ricezione;28 file
+protetti invariati. Letture autorevoli AGENTS/skill/protocollo/brief/architettura
+e contratti del piano pertinenti ai fix, senza nuova campagna a001.
+
+- Piano r001 SHA256 `3ac23bce82817c3a2781a1dded78b8ac6352d78675aea355cd794950dedd4ab8`.
+- Addendum r001 SHA256 `a09cbb8bcedd0fd9c7cca5dc45f45de82d66776539e573ec1c716011aee0dfd9`.
+- Contesto fix storico SHA256 `2278de24a69590da39e9328244cfbdeeedddc9beb9b77256edc8bb88cca0ab2b`.
+- HEAD/dev/merge-base/origin-dev **locale** `80c31da46e5caab990d3596c79c44e524ec1dc95`,
+  feature/run-a002-corpus attiva, indice vuoto, delta documentali ereditati.
+  Nessuna nuova query remota o Git di scrittura.
+
+[Arbitrato r002](../arbitrations/arbitration-plan-r002.md) **GO sul piano r001
++ addendum verificato**, chiusura specifiche E01–E08. Report originali ChatGPT
+GO/Claude NO_GO e arbitrato NO_GO r001 preservati: non sono nuove review
+dell'addendum né GO del codice. Correzioni locali non riaprono piano/doppia
+review generale. M/V, formula parser, writer/reader/harness, test e baseline
+sono prove future dovute, nessun PASS runtime attribuito dalla lettura.
+
+## Risorse, dipendenze e passaggio
+
+[Prompt05 completo](../prompts/05-implementation-r001-corpus-and-measurement.md)
+pronto alla chat implementatrice: risultato intero corpus/gold/runner/negativi/
+baseline reale, stessi criteri A01–A12 con E01–E08 prevalenti, fix ordinari e
+snapshot delle prove autonomi nella stessa chat. Stato IMPLEMENTATION /
+MANDATE_READY, implementazione ancora da avviare.
+
+Quota unica disposta52h wall187200s (27base+22margine+3riserva), CPU21600s,
+crescita disco6GiB, RAMoperativa8GiB/stop sampled6GiB. Stop nuovo workload49h/
+19800CPU-s/5GiB, riserva3h/1800CPU-s/1GiB; acquisizioni/invio documenti0,
+nuovi servizi€0. Ledger dalla prima azione implementativa, include attese e
+registri senza reset fra chat; altri ruoli/costi a001 separati. Somme autonomamente
+ricalcolate: componenti1090/1620/2745min e CPU4800s centrale, conteggi B/F/C/R/N
+e22enabled coerenti; non stime trasformate in dati misurati.
+
+Utente V designato, durata da concordare sul pacchetto pronto:185min gold+
+25min controlli stime, non appuntamento. M/V reali richiesti per VERIFIED/A03,
+assenza risposta lascia provisional e requisito non chiuso. L04 output umano
+non disposto, inventario/pacchetto/stima e stati dovuti. L01PDF/OCR,L02TeX
+compilation,L05hardware/RSS limiti invariati. Suite FAIL legacy eventualmente
+attribuiti sugli input attuali restano FAIL, nuovi test a002 devono passare.
+
+## Evidenze e continuità
+
+- [Ricezione e verifiche autonome](../../../../../temp/run-a002-fase1-corpus/evidence/supervisor-plan-errata-r001/reception.json):
+  argv/cwd/output/exit, input hash,28 protetti, ricalcolo aritmetico/conteggi.
+- Nuovo snapshot tecnico d'ingresso: `snapshots/implementation-context-r001.json`.
+  SHA256 `1e51e06d878f9339bcf5b1da35190ceecdcf3db51d89d7591bf87f264788478f`, worktree `21b5b1fa41534cea1eb287ceeb80b22d149baee42ba1fac357316b3b93e1fed7`,132 file/32 artefatti, verify MATCH.
+  Receipt/digest/delta in `evidence/supervisor-plan-errata-r001/context-transition.json`.
+  Il contesto fix diventa storico dopo aggiornamenti amministrativi dichiarati,
+  non viene rigenerato. Nuovo contesto non è benchmark/preflight/review.
+- Controlli finali in `evidence/supervisor-plan-errata-r001/document-checks.json`:
+  collegamenti locali, hash originali invariati, stati, diff-check e nuovo verify.
+  Checkpoint vivo e receipt finale esclusi dagli input per evitare autoriferimenti.
+  Primo checker del supervisore fallito per richiesta impropria di tutte le
+  etichette E letterali nel prompt: diagnosi conservata in document-checks-r001-failed.json;
+  corretto controllo sui requisiti concreti, finale PASS (15 file/90 link).
+
+Aggiornati STATE, HANDOVER globale/run, solo sezione corrente PROJECT-CONTEXT,
+artefatti/eventi, changelog e indici README/roadmap/next-run. Nessun ADR motore
+o schema applicativo: solo contratti reversibili benchmark. Nessuna suite,
+build/installazione, conversione, R, acquisizione software/pesi o verifica M/V
+eseguita dal supervisore. Nessun processo proprio pendente. Cleanup ricevuta
+non ripetuta, a001 NON PASS storico conservato.
+
+Prossimo ruolo: **implementatore**, prompt05. Alla consegna completa supervisore
+riceve report/evidenze/checkpoint, crea snapshot comune e due prompt review
+implementazione per nuove chat indipendenti ChatGPT e Claude, poi arbitra davvero.
+Nessun commit/merge/push automatico, niente fase2 o fine fase1 anticipata.

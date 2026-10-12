@@ -1,0 +1,640 @@
+{
+  "status": "PASS",
+  "docs": [
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "bytes": 51360,
+      "sha256": "0c1febd1efb39bd208deda92b5c02a083075a61deb69804eb1492956c2149f5d"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "bytes": 33400,
+      "sha256": "a4e0c22f086a562c1716ba948f035b49dd8eeef9c8222d9399b894bcd54130a6"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "bytes": 34710,
+      "sha256": "86a68ffea8971318309b3ad2ac8d09a269444ef9c511bca580cdc5a1d2fbbc8c"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "bytes": 5763,
+      "sha256": "f3891b0d765e90091f6a47fd7523af6e0f17e4b0957a2b726d180520c025406c"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "bytes": 15048,
+      "sha256": "3460780584ee7ff88ab125d2f80346f2fc96f7b6f66023b2573d688501372ddc"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/handovers/implementation-r014.md",
+      "bytes": 3282,
+      "sha256": "16cd2033c06f3f2742759fa63cb3ab64e4233ab9a23c6ffbd8f82e902e14430a"
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/notes/implementation-r014-contracts.md",
+      "bytes": 10206,
+      "sha256": "8da8f853c2c8cf8450ddcc2e6949ed3b27771d4b04b01e8ef31496356a483da7"
+    }
+  ],
+  "links": [
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../docs/reference/benchmark-fedelta.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/development/next-run-a002-corpus.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "#rettifica-r013-fonti-di-guardia-e-contesto-dei-fence",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks/PROTOCOL.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../reference/benchmark-fedelta.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "ambiente-uv.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../reference/benchmark-fedelta.md#reader-r009-contratti-storici-dei-confini",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../reference/benchmark-fedelta.md#reader-r010-confini-htmlmarkdown-inline",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../reference/benchmark-fedelta.md#reader-r011-ownership-delle-foglie-inline",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "#verificare-le-fonti-di-guardia-e-i-fence-con-r013",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../reference/benchmark-fedelta.md#reader-r012-label-e-raw-nei-container",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../reference/benchmark-fedelta.md#reader-r014-accettazione-e-stato",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/how-to/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../how-to/benchmark-fedelta.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md#rettifica-r009-confini-del-reader-e-precedenza-della-guardia",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md#rettifica-r010-domini-html-e-markdown-nelle-foglie-inline",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md#rettifica-r011-ownership-e-metadati-inline",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "#reader-r013-guardie-fence-e-privati",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md#rettifica-r012-decisioni-di-atomo-e-raw-nei-container",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md#rettifica-r013-fonti-di-guardia-e-contesto-dei-fence",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../scripts/benchmarks/PROTOCOL.md#rettifica-r014-accettazione-sintattica-e-rifiuti-uri",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/docs/reference/benchmark-fedelta.md",
+      "target": "../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "target": "../../temp/run-a002-fase1-corpus/prompts/46-implementation-r014-align-block-metadata-and-uri-contracts.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "target": "../../temp/run-a002-fase1-corpus/notes/implementation-r014-contracts.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "target": "../../temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "target": "2026-10-11-a002-r014-contratti-sintassi-data.json",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "target": "2026-10-11-a002-r013-guardia-e-fence.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "target": "../../temp/run-a002-fase1-corpus/evidence/implementation-r014/budget-final.json",
+      "exists": false,
+      "pending_final_ledger": true,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../prompts/46-implementation-r014-align-block-metadata-and-uri-contracts.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../arbitrations/arbitration-implementation-r013.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../notes/recovery-method-r014.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../notes/implementation-r014-contracts.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../evidence/implementation-r014/budget-final.json",
+      "exists": false,
+      "pending_final_ledger": true,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/reports/implementation-r014.md",
+      "target": "../handovers/implementation-r014.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/handovers/implementation-r014.md",
+      "target": "../reports/implementation-r014.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/handovers/implementation-r014.md",
+      "target": "../notes/implementation-r014-contracts.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/handovers/implementation-r014.md",
+      "target": "../../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/handovers/implementation-r014.md",
+      "target": "../evidence/implementation-r014/budget-final.json",
+      "exists": false,
+      "pending_final_ledger": true,
+      "valid": true
+    },
+    {
+      "source": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/notes/implementation-r014-contracts.md",
+      "target": "../reports/implementation-r014.md",
+      "exists": true,
+      "pending_final_ledger": false,
+      "valid": true
+    }
+  ],
+  "invalid_links": [],
+  "entry_records_unchanged": 1042,
+  "authorized_deltas": [
+    {
+      "path": "docs/how-to/benchmark-fedelta.md",
+      "before": "45a531a8e7f178a369dd48b979edf32257669a935b9c77747a385f582255eb2d",
+      "after": "a4e0c22f086a562c1716ba948f035b49dd8eeef9c8222d9399b894bcd54130a6"
+    },
+    {
+      "path": "docs/reference/benchmark-fedelta.md",
+      "before": "3f4096971bf9985b3f1bc3050996a68d1fcedf8614d1cc86d01869e840f36db2",
+      "after": "86a68ffea8971318309b3ad2ac8d09a269444ef9c511bca580cdc5a1d2fbbc8c"
+    },
+    {
+      "path": "scripts/benchmarks/PROTOCOL.md",
+      "before": "c8677c6fcc413426ddb2ba8827d8ef9818cf636a511788c217fd108476208e62",
+      "after": "0c1febd1efb39bd208deda92b5c02a083075a61deb69804eb1492956c2149f5d"
+    },
+    {
+      "path": "scripts/benchmarks/observations.py",
+      "before": "27d1b5809bc2dca51b75e50222aaab1eef86b2c907732c33537fbb5df20c43ad",
+      "after": "613aaa996fcf02200bc6a8ad499ba0ebc044f44ed94deae3f7e638905215cefd"
+    },
+    {
+      "path": "scripts/benchmarks/safety.py",
+      "before": "31aa1d14aeb8bf31894e3ff0b53765dbf1ea1ec52acf57028571f513231332d0",
+      "after": "974656f69e022fcaa810c0828079e8672f59db8e8f8131e0b923f38b4e2e32b2"
+    },
+    {
+      "path": "tests/unit/test_conversion_fix_r011.py",
+      "before": "6c0fe680a0ea4d15ebf6074d293bcc20e4bbae220fb3d29ee038815b37fe229c",
+      "after": "6b5ff7716ca71af5e72a2de10d44c3144d796ba733496df12f6a903ce3a7c68d"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "stdout": "feature/run-a002-corpus\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "dev",
+        "refs/remotes/origin/dev"
+      ],
+      "exit": 0,
+      "stdout": "80c31da46e5caab990d3596c79c44e524ec1dc95\n80c31da46e5caab990d3596c79c44e524ec1dc95\n80c31da46e5caab990d3596c79c44e524ec1dc95\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "remaining_check": "Only final budget link creation; final ledger is written last for accounting."
+}

@@ -1,0 +1,32 @@
+{
+  "role": "reviewer Claude/Anthropic r014",
+  "entry_utc": "2026-10-12T07:43:05.759445648Z",
+  "final_verify_utc": "see verify-final.start/.end",
+  "base_ledger": "temp/run-a002-fase1-corpus/evidence/supervisor-implementation-review-r014/budget-final.json",
+  "base_visible_CPU_lower_seconds": 19648.249184,
+  "base_CPU_remaining_to_stop_seconds": 151.750816,
+  "planned_reviewer_CPU_seconds": 10,
+  "own_measured_CPU_seconds": {
+    "verify_entry_GNU_time": 0.96,
+    "timed_JSON_reads_and_freeze_GNU_time": 0.98,
+    "launch_probe_001_GNU_time_with_children": 3.55,
+    "of_which_snapshot_child": 0.128,
+    "of_which_R_child_failed_at_preflight": 3.251,
+    "verify_final_GNU_time": 0.95
+  },
+  "own_measured_CPU_total_seconds": 6.44,
+  "own_unmeasured_estimate_seconds": 0.7,
+  "own_unmeasured_note": "shell cat/grep/sed/diff/jq/sha256sum and about ten small untimed python3 -I JSON reads; estimate, not a measurement or certified upper",
+  "visible_CPU_lower_after_own_seconds": 19654.689184,
+  "concurrent_reviewer_costs": "unknown to me, not read",
+  "RSS_sampled_max_kib": 245784,
+  "disk_allocated_bytes_own_evidence_apparent": 4323957,
+  "disk_snapshot_bytes": 96939,
+  "network": 0,
+  "acquisitions": 0,
+  "sends": 0,
+  "services_eur": 0,
+  "pending_processes": 0,
+  "deadline": null,
+  "limits": "CPU lower bound; RSS sampled; no upper certified. R probe-001 FAIL at preflight (general S002 STALE, own configuration error), no product import; not repeated because a corrected run plus final verify would predictably exceed the 10 CPU-s plan."
+}

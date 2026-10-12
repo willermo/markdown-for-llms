@@ -1,0 +1,5219 @@
+{
+  "seed": 13013,
+  "limits": {
+    "cases": 400,
+    "bytes_per_case": 2048
+  },
+  "method": "finite enumeration of valid selected contexts; no product imports; semantic expectations manual; syntax predictions subject to AST evidence",
+  "cases": [
+    {
+      "id": "attrs-block-heading-0-before",
+      "raw": "<img src=\"../first.png\" data-r013=\"first\">\n\n# È Heading {onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 71,
+          "byte": 72
+        }
+      ],
+      "family": "attrs",
+      "callsite": "heading"
+    },
+    {
+      "id": "attrs-block-heading-0-after",
+      "raw": "# È Heading {onclick=\"x\"}\n\n<img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 27,
+          "byte": 28
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 71,
+          "byte": 72
+        }
+      ],
+      "family": "attrs",
+      "callsite": "heading"
+    },
+    {
+      "id": "attrs-block-heading-1-before",
+      "raw": "<script data-r013=\"script\">x</script>\n\n# È Heading {onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 66,
+          "byte": 67
+        }
+      ],
+      "family": "attrs",
+      "callsite": "heading"
+    },
+    {
+      "id": "attrs-block-heading-1-after",
+      "raw": "# È Heading {onclick=\"x\"}\n\n<script data-r013=\"script\">x</script>\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 27,
+          "byte": 28
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 66,
+          "byte": 67
+        }
+      ],
+      "family": "attrs",
+      "callsite": "heading"
+    },
+    {
+      "id": "attrs-block-heading-2-before",
+      "raw": "<img src=\"p.png\" data-r013=\"safe\">\n\n# È Heading {onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 63,
+          "byte": 64
+        }
+      ],
+      "family": "attrs",
+      "callsite": "heading"
+    },
+    {
+      "id": "attrs-block-heading-2-after",
+      "raw": "# È Heading {onclick=\"x\"}\n\n<img src=\"p.png\" data-r013=\"safe\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 27,
+          "byte": 28
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 63,
+          "byte": 64
+        }
+      ],
+      "family": "attrs",
+      "callsite": "heading"
+    },
+    {
+      "id": "attrs-block-div-0-before",
+      "raw": "<img src=\"../first.png\" data-r013=\"first\">\n\n::: {onclick=\"x\"}\nBody.\n:::\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 73,
+          "byte": 73
+        }
+      ],
+      "family": "attrs",
+      "callsite": "div"
+    },
+    {
+      "id": "attrs-block-div-0-after",
+      "raw": "::: {onclick=\"x\"}\nBody.\n:::\n\n<img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 29,
+          "byte": 29
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 73,
+          "byte": 73
+        }
+      ],
+      "family": "attrs",
+      "callsite": "div"
+    },
+    {
+      "id": "attrs-block-div-1-before",
+      "raw": "<script data-r013=\"script\">x</script>\n\n::: {onclick=\"x\"}\nBody.\n:::\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 68,
+          "byte": 68
+        }
+      ],
+      "family": "attrs",
+      "callsite": "div"
+    },
+    {
+      "id": "attrs-block-div-1-after",
+      "raw": "::: {onclick=\"x\"}\nBody.\n:::\n\n<script data-r013=\"script\">x</script>\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 29,
+          "byte": 29
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 68,
+          "byte": 68
+        }
+      ],
+      "family": "attrs",
+      "callsite": "div"
+    },
+    {
+      "id": "attrs-block-div-2-before",
+      "raw": "<img src=\"p.png\" data-r013=\"safe\">\n\n::: {onclick=\"x\"}\nBody.\n:::\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 65,
+          "byte": 65
+        }
+      ],
+      "family": "attrs",
+      "callsite": "div"
+    },
+    {
+      "id": "attrs-block-div-2-after",
+      "raw": "::: {onclick=\"x\"}\nBody.\n:::\n\n<img src=\"p.png\" data-r013=\"safe\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 29,
+          "byte": 29
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 65,
+          "byte": 65
+        }
+      ],
+      "family": "attrs",
+      "callsite": "div"
+    },
+    {
+      "id": "attrs-block-fence-0-before",
+      "raw": "<img src=\"../first.png\" data-r013=\"first\">\n\n```{onclick=\"x\"}\n<script>inert</script>\n```\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 89,
+          "byte": 89
+        }
+      ],
+      "family": "attrs",
+      "callsite": "fence"
+    },
+    {
+      "id": "attrs-block-fence-0-after",
+      "raw": "```{onclick=\"x\"}\n<script>inert</script>\n```\n\n<img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 45,
+          "byte": 45
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 89,
+          "byte": 89
+        }
+      ],
+      "family": "attrs",
+      "callsite": "fence"
+    },
+    {
+      "id": "attrs-block-fence-1-before",
+      "raw": "<script data-r013=\"script\">x</script>\n\n```{onclick=\"x\"}\n<script>inert</script>\n```\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 84,
+          "byte": 84
+        }
+      ],
+      "family": "attrs",
+      "callsite": "fence"
+    },
+    {
+      "id": "attrs-block-fence-1-after",
+      "raw": "```{onclick=\"x\"}\n<script>inert</script>\n```\n\n<script data-r013=\"script\">x</script>\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 45,
+          "byte": 45
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 84,
+          "byte": 84
+        }
+      ],
+      "family": "attrs",
+      "callsite": "fence"
+    },
+    {
+      "id": "attrs-block-fence-2-before",
+      "raw": "<img src=\"p.png\" data-r013=\"safe\">\n\n```{onclick=\"x\"}\n<script>inert</script>\n```\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 81,
+          "byte": 81
+        }
+      ],
+      "family": "attrs",
+      "callsite": "fence"
+    },
+    {
+      "id": "attrs-block-fence-2-after",
+      "raw": "```{onclick=\"x\"}\n<script>inert</script>\n```\n\n<img src=\"p.png\" data-r013=\"safe\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 45,
+          "byte": 45
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 81,
+          "byte": 81
+        }
+      ],
+      "family": "attrs",
+      "callsite": "fence"
+    },
+    {
+      "id": "attrs-block-figure-0-before",
+      "raw": "<img src=\"../first.png\" data-r013=\"first\">\n\n![È cap](p.png){onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 74,
+          "byte": 75
+        }
+      ],
+      "family": "attrs",
+      "callsite": "figure"
+    },
+    {
+      "id": "attrs-block-figure-0-after",
+      "raw": "![È cap](p.png){onclick=\"x\"}\n\n<img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 30,
+          "byte": 31
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 74,
+          "byte": 75
+        }
+      ],
+      "family": "attrs",
+      "callsite": "figure"
+    },
+    {
+      "id": "attrs-block-figure-1-before",
+      "raw": "<script data-r013=\"script\">x</script>\n\n![È cap](p.png){onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 69,
+          "byte": 70
+        }
+      ],
+      "family": "attrs",
+      "callsite": "figure"
+    },
+    {
+      "id": "attrs-block-figure-1-after",
+      "raw": "![È cap](p.png){onclick=\"x\"}\n\n<script data-r013=\"script\">x</script>\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 30,
+          "byte": 31
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 69,
+          "byte": 70
+        }
+      ],
+      "family": "attrs",
+      "callsite": "figure"
+    },
+    {
+      "id": "attrs-block-figure-2-before",
+      "raw": "<img src=\"p.png\" data-r013=\"safe\">\n\n![È cap](p.png){onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 66,
+          "byte": 67
+        }
+      ],
+      "family": "attrs",
+      "callsite": "figure"
+    },
+    {
+      "id": "attrs-block-figure-2-after",
+      "raw": "![È cap](p.png){onclick=\"x\"}\n\n<img src=\"p.png\" data-r013=\"safe\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 30,
+          "byte": 31
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 66,
+          "byte": 67
+        }
+      ],
+      "family": "attrs",
+      "callsite": "figure"
+    },
+    {
+      "id": "attrs-inline-root-span-before",
+      "raw": "[È word]{onclick=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 26,
+          "byte": 27
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 70,
+          "byte": 71
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "root"
+    },
+    {
+      "id": "attrs-inline-root-span-after",
+      "raw": "<img src=\"../first.png\" data-r013=\"first\"> and [È word]{onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 70,
+          "byte": 71
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "root"
+    },
+    {
+      "id": "attrs-inline-root-code-before",
+      "raw": "`È word`{style=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 24,
+          "byte": 25
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 68,
+          "byte": 69
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "root"
+    },
+    {
+      "id": "attrs-inline-root-code-after",
+      "raw": "<img src=\"../first.png\" data-r013=\"first\"> and `È word`{style=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 68,
+          "byte": 69
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "root"
+    },
+    {
+      "id": "attrs-inline-root-link-before",
+      "raw": "[È word](https://example.invalid){srcdoc=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 50,
+          "byte": 51
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 94,
+          "byte": 95
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "root"
+    },
+    {
+      "id": "attrs-inline-root-link-after",
+      "raw": "<img src=\"../first.png\" data-r013=\"first\"> and [È word](https://example.invalid){srcdoc=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 0,
+          "byte": 0
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 94,
+          "byte": 95
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "root"
+    },
+    {
+      "id": "attrs-inline-quote-span-before",
+      "raw": "> [È word]{onclick=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 28,
+          "byte": 29
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 72,
+          "byte": 73
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "quote"
+    },
+    {
+      "id": "attrs-inline-quote-span-after",
+      "raw": "> <img src=\"../first.png\" data-r013=\"first\"> and [È word]{onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 2,
+          "byte": 2
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 72,
+          "byte": 73
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "quote"
+    },
+    {
+      "id": "attrs-inline-quote-code-before",
+      "raw": "> `È word`{style=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 26,
+          "byte": 27
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 70,
+          "byte": 71
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "quote"
+    },
+    {
+      "id": "attrs-inline-quote-code-after",
+      "raw": "> <img src=\"../first.png\" data-r013=\"first\"> and `È word`{style=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 2,
+          "byte": 2
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 70,
+          "byte": 71
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "quote"
+    },
+    {
+      "id": "attrs-inline-quote-link-before",
+      "raw": "> [È word](https://example.invalid){srcdoc=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 52,
+          "byte": 53
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 96,
+          "byte": 97
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "quote"
+    },
+    {
+      "id": "attrs-inline-quote-link-after",
+      "raw": "> <img src=\"../first.png\" data-r013=\"first\"> and [È word](https://example.invalid){srcdoc=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 2,
+          "byte": 2
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 96,
+          "byte": 97
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "quote"
+    },
+    {
+      "id": "attrs-inline-list-span-before",
+      "raw": "- [È word]{onclick=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 28,
+          "byte": 29
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 72,
+          "byte": 73
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "list"
+    },
+    {
+      "id": "attrs-inline-list-span-after",
+      "raw": "- <img src=\"../first.png\" data-r013=\"first\"> and [È word]{onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 2,
+          "byte": 2
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 72,
+          "byte": 73
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "list"
+    },
+    {
+      "id": "attrs-inline-list-code-before",
+      "raw": "- `È word`{style=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 26,
+          "byte": 27
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 70,
+          "byte": 71
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "list"
+    },
+    {
+      "id": "attrs-inline-list-code-after",
+      "raw": "- <img src=\"../first.png\" data-r013=\"first\"> and `È word`{style=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 2,
+          "byte": 2
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 70,
+          "byte": 71
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "list"
+    },
+    {
+      "id": "attrs-inline-list-link-before",
+      "raw": "- [È word](https://example.invalid){srcdoc=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 52,
+          "byte": 53
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 96,
+          "byte": 97
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "list"
+    },
+    {
+      "id": "attrs-inline-list-link-after",
+      "raw": "- <img src=\"../first.png\" data-r013=\"first\"> and [È word](https://example.invalid){srcdoc=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 2,
+          "byte": 2
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 96,
+          "byte": 97
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "list"
+    },
+    {
+      "id": "attrs-inline-note-tab-span-before",
+      "raw": "Body[^n].\n\n[^n]: [È word]{onclick=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 43,
+          "byte": 44
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 87,
+          "byte": 88
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "note-tab"
+    },
+    {
+      "id": "attrs-inline-note-tab-span-after",
+      "raw": "Body[^n].\n\n[^n]: <img src=\"../first.png\" data-r013=\"first\"> and [È word]{onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 17,
+          "byte": 17
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 87,
+          "byte": 88
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "note-tab"
+    },
+    {
+      "id": "attrs-inline-note-tab-code-before",
+      "raw": "Body[^n].\n\n[^n]: `È word`{style=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 41,
+          "byte": 42
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 85,
+          "byte": 86
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "note-tab"
+    },
+    {
+      "id": "attrs-inline-note-tab-code-after",
+      "raw": "Body[^n].\n\n[^n]: <img src=\"../first.png\" data-r013=\"first\"> and `È word`{style=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 17,
+          "byte": 17
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 85,
+          "byte": 86
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "note-tab"
+    },
+    {
+      "id": "attrs-inline-note-tab-link-before",
+      "raw": "Body[^n].\n\n[^n]: [È word](https://example.invalid){srcdoc=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 67,
+          "byte": 68
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 111,
+          "byte": 112
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "note-tab"
+    },
+    {
+      "id": "attrs-inline-note-tab-link-after",
+      "raw": "Body[^n].\n\n[^n]: <img src=\"../first.png\" data-r013=\"first\"> and [È word](https://example.invalid){srcdoc=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 17,
+          "byte": 17
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 111,
+          "byte": 112
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "note-tab"
+    },
+    {
+      "id": "attrs-inline-note-spaces-span-before",
+      "raw": "Body[^n].\n\n[^n]: [È word]{onclick=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 43,
+          "byte": 44
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 87,
+          "byte": 88
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "note-spaces"
+    },
+    {
+      "id": "attrs-inline-note-spaces-span-after",
+      "raw": "Body[^n].\n\n[^n]: <img src=\"../first.png\" data-r013=\"first\"> and [È word]{onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 17,
+          "byte": 17
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 87,
+          "byte": 88
+        }
+      ],
+      "family": "attrs",
+      "callsite": "span",
+      "host": "note-spaces"
+    },
+    {
+      "id": "attrs-inline-note-spaces-code-before",
+      "raw": "Body[^n].\n\n[^n]: `È word`{style=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 41,
+          "byte": 42
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 85,
+          "byte": 86
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "note-spaces"
+    },
+    {
+      "id": "attrs-inline-note-spaces-code-after",
+      "raw": "Body[^n].\n\n[^n]: <img src=\"../first.png\" data-r013=\"first\"> and `È word`{style=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 17,
+          "byte": 17
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 85,
+          "byte": 86
+        }
+      ],
+      "family": "attrs",
+      "callsite": "code",
+      "host": "note-spaces"
+    },
+    {
+      "id": "attrs-inline-note-spaces-link-before",
+      "raw": "Body[^n].\n\n[^n]: [È word](https://example.invalid){srcdoc=\"x\"} and <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 67,
+          "byte": 68
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 111,
+          "byte": 112
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "note-spaces"
+    },
+    {
+      "id": "attrs-inline-note-spaces-link-after",
+      "raw": "Body[^n].\n\n[^n]: <img src=\"../first.png\" data-r013=\"first\"> and [È word](https://example.invalid){srcdoc=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 17,
+          "byte": 17
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 111,
+          "byte": 112
+        }
+      ],
+      "family": "attrs",
+      "callsite": "link",
+      "host": "note-spaces"
+    },
+    {
+      "id": "attrs-domain-cell",
+      "raw": "| È [x]{onclick=\"x\"} <img src=\"../first.png\" data-r013=\"first\"> |\n| --- |\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 21,
+          "byte": 22
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 75,
+          "byte": 76
+        }
+      ],
+      "family": "attrs",
+      "callsite": "cell"
+    },
+    {
+      "id": "attrs-domain-caption",
+      "raw": "| h |\n| --- |\n| c |\n\n: È [x]{onclick=\"x\"} <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 42,
+          "byte": 43
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 86,
+          "byte": 87
+        }
+      ],
+      "family": "attrs",
+      "callsite": "caption"
+    },
+    {
+      "id": "attrs-domain-figure-caption",
+      "raw": "![È [x]{onclick=\"x\"} <img src=\"../first.png\" data-r013=\"first\">](p.png)\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 21,
+          "byte": 22
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 73,
+          "byte": 74
+        }
+      ],
+      "family": "attrs",
+      "callsite": "figure-caption"
+    },
+    {
+      "id": "attrs-domain-heading-inline",
+      "raw": "# È [x]{onclick=\"x\"} <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 21,
+          "byte": 22
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 65,
+          "byte": 66
+        }
+      ],
+      "family": "attrs",
+      "callsite": "heading-inline"
+    },
+    {
+      "id": "attrs-tree-error",
+      "raw": "È <span class=\"a\" class=\"b\">safe</span> [x]{onclick=\"x\"} <img src=\"../first.png\" data-r013=\"first\">\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<span class=\"a\" class=\"b\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 57,
+          "byte": 58
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 101,
+          "byte": 102
+        }
+      ],
+      "family": "attrs",
+      "callsite": "tree-error"
+    },
+    {
+      "id": "attrs-heading-order",
+      "raw": "# È <img src=\"../first.png\" data-r013=\"first\"> {onclick=\"x\"}\n\n<img src=\"../last.png\" data-r013=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\" data-r013=\"first\">",
+          "char": 4,
+          "byte": 5
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-r013=\"last\">",
+          "char": 62,
+          "byte": 63
+        }
+      ],
+      "family": "attrs",
+      "callsite": "peel_attrs"
+    },
+    {
+      "id": "attrs-safe",
+      "raw": "# È Heading {#ok}\n\n<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 19,
+          "byte": 20
+        }
+      ],
+      "family": "control",
+      "asset": true
+    },
+    {
+      "id": "attrs-inert",
+      "raw": "È `[x]{onclick=\"x\"} <script>x</script>` and $[x]{style=\"x\"} <script>x</script>$\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "control"
+    },
+    {
+      "id": "fence-root-`-begin-False-False",
+      "raw": "```\n<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 4,
+          "byte": 4
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-begin-False-True",
+      "raw": "```\n<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 4,
+          "byte": 4
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-root-`-begin-True-False",
+      "raw": "```\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-begin-True-True",
+      "raw": "```\n<img src=\"p.png\" data-r013=\"safe\">\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-text-False-False",
+      "raw": "È Intro\n```\n<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 12,
+          "byte": 13
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-text-False-True",
+      "raw": "È Intro\n```\n<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 12,
+          "byte": 13
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-root-`-text-True-False",
+      "raw": "È Intro\n```\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-text-True-True",
+      "raw": "È Intro\n```\n<img src=\"p.png\" data-r013=\"safe\">\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-blank-False-False",
+      "raw": "È Intro\n\n```\n<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 13,
+          "byte": 14
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-blank-False-True",
+      "raw": "È Intro\n\n```\n<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 13,
+          "byte": 14
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-root-`-blank-True-False",
+      "raw": "È Intro\n\n```\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-`-blank-True-True",
+      "raw": "È Intro\n\n```\n<img src=\"p.png\" data-r013=\"safe\">\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-root-`-begin-html",
+      "raw": "```{=html}\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 11,
+          "byte": 11
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-`-text-html",
+      "raw": "È Intro\n```{=html}\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 19,
+          "byte": 20
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-`-blank-html",
+      "raw": "È Intro\n\n```{=html}\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 20,
+          "byte": 21
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-`-begin-latex",
+      "raw": "```{=latex}\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 12,
+          "byte": 12
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-`-text-latex",
+      "raw": "È Intro\n```{=latex}\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 20,
+          "byte": 21
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-`-blank-latex",
+      "raw": "È Intro\n\n```{=latex}\n<script data-r013=\"script\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-root-~-begin-False-False",
+      "raw": "~~~\n<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 4,
+          "byte": 4
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-~-begin-False-True",
+      "raw": "~~~\n<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 4,
+          "byte": 4
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-root-~-begin-True-False",
+      "raw": "~~~\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-~-begin-True-True",
+      "raw": "~~~\n<img src=\"p.png\" data-r013=\"safe\">\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-~-text-False-False",
+      "raw": "È Intro\n~~~\n<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 12,
+          "byte": 13
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-~-text-False-True",
+      "raw": "È Intro\n~~~\n<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 12,
+          "byte": 13
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-root-~-text-True-False",
+      "raw": "È Intro\n~~~\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 12,
+          "byte": 13
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-~-text-True-True",
+      "raw": "È Intro\n~~~\n<img src=\"p.png\" data-r013=\"safe\">\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 12,
+          "byte": 13
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-root-~-blank-False-False",
+      "raw": "È Intro\n\n~~~\n<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 13,
+          "byte": 14
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-~-blank-False-True",
+      "raw": "È Intro\n\n~~~\n<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 13,
+          "byte": 14
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-root-~-blank-True-False",
+      "raw": "È Intro\n\n~~~\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-root-~-blank-True-True",
+      "raw": "È Intro\n\n~~~\n<img src=\"p.png\" data-r013=\"safe\">\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-root-~-begin-html",
+      "raw": "~~~{=html}\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 11,
+          "byte": 11
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-~-text-html",
+      "raw": "È Intro\n~~~{=html}\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 19,
+          "byte": 20
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-root-~-blank-html",
+      "raw": "È Intro\n\n~~~{=html}\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 20,
+          "byte": 21
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-~-begin-latex",
+      "raw": "~~~{=latex}\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 12,
+          "byte": 12
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-root-~-text-latex",
+      "raw": "È Intro\n~~~{=latex}\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 20,
+          "byte": 21
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-root-~-blank-latex",
+      "raw": "È Intro\n\n~~~{=latex}\n<script data-r013=\"script\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "root",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-quote-`-begin-False-False",
+      "raw": "> ```\n> <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 8,
+          "byte": 8
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-begin-False-True",
+      "raw": "> ```\n> <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 8,
+          "byte": 8
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-quote-`-begin-True-False",
+      "raw": "> ```\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-begin-True-True",
+      "raw": "> ```\n> <img src=\"p.png\" data-r013=\"safe\">\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-text-False-False",
+      "raw": "> È Intro\n> ```\n> <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 18,
+          "byte": 19
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-text-False-True",
+      "raw": "> È Intro\n> ```\n> <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 18,
+          "byte": 19
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-quote-`-text-True-False",
+      "raw": "> È Intro\n> ```\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-text-True-True",
+      "raw": "> È Intro\n> ```\n> <img src=\"p.png\" data-r013=\"safe\">\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-blank-False-False",
+      "raw": "> È Intro\n> \n> ```\n> <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-blank-False-True",
+      "raw": "> È Intro\n> \n> ```\n> <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-quote-`-blank-True-False",
+      "raw": "> È Intro\n> \n> ```\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-`-blank-True-True",
+      "raw": "> È Intro\n> \n> ```\n> <img src=\"p.png\" data-r013=\"safe\">\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-quote-`-begin-html",
+      "raw": "> ```{=html}\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 15,
+          "byte": 15
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-`-text-html",
+      "raw": "> È Intro\n> ```{=html}\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 25,
+          "byte": 26
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-`-blank-html",
+      "raw": "> È Intro\n> \n> ```{=html}\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 28,
+          "byte": 29
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-`-begin-latex",
+      "raw": "> ```{=latex}\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-`-text-latex",
+      "raw": "> È Intro\n> ```{=latex}\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-`-blank-latex",
+      "raw": "> È Intro\n> \n> ```{=latex}\n> <script data-r013=\"script\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-quote-~-begin-False-False",
+      "raw": "> ~~~\n> <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 8,
+          "byte": 8
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-~-begin-False-True",
+      "raw": "> ~~~\n> <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 8,
+          "byte": 8
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-quote-~-begin-True-False",
+      "raw": "> ~~~\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-~-begin-True-True",
+      "raw": "> ~~~\n> <img src=\"p.png\" data-r013=\"safe\">\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-~-text-False-False",
+      "raw": "> È Intro\n> ~~~\n> <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 18,
+          "byte": 19
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-~-text-False-True",
+      "raw": "> È Intro\n> ~~~\n> <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 18,
+          "byte": 19
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-quote-~-text-True-False",
+      "raw": "> È Intro\n> ~~~\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 18,
+          "byte": 19
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-~-text-True-True",
+      "raw": "> È Intro\n> ~~~\n> <img src=\"p.png\" data-r013=\"safe\">\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 18,
+          "byte": 19
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-quote-~-blank-False-False",
+      "raw": "> È Intro\n> \n> ~~~\n> <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-~-blank-False-True",
+      "raw": "> È Intro\n> \n> ~~~\n> <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-quote-~-blank-True-False",
+      "raw": "> È Intro\n> \n> ~~~\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-quote-~-blank-True-True",
+      "raw": "> È Intro\n> \n> ~~~\n> <img src=\"p.png\" data-r013=\"safe\">\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-quote-~-begin-html",
+      "raw": "> ~~~{=html}\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 15,
+          "byte": 15
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-~-text-html",
+      "raw": "> È Intro\n> ~~~{=html}\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 25,
+          "byte": 26
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-quote-~-blank-html",
+      "raw": "> È Intro\n> \n> ~~~{=html}\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 28,
+          "byte": 29
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-~-begin-latex",
+      "raw": "> ~~~{=latex}\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-quote-~-text-latex",
+      "raw": "> È Intro\n> ~~~{=latex}\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 26,
+          "byte": 27
+        }
+      ],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-quote-~-blank-latex",
+      "raw": "> È Intro\n> \n> ~~~{=latex}\n> <script data-r013=\"script\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-list-`-begin-False-False",
+      "raw": "- ```\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 10,
+          "byte": 10
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-begin-False-True",
+      "raw": "- ```\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 10,
+          "byte": 10
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-list-`-begin-True-False",
+      "raw": "- ```\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-begin-True-True",
+      "raw": "- ```\n    <img src=\"p.png\" data-r013=\"safe\">\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-text-False-False",
+      "raw": "- È Intro\n    ```\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 22,
+          "byte": 23
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-text-False-True",
+      "raw": "- È Intro\n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 22,
+          "byte": 23
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-list-`-text-True-False",
+      "raw": "- È Intro\n    ```\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-text-True-True",
+      "raw": "- È Intro\n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-blank-False-False",
+      "raw": "- È Intro\n    \n    ```\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 27,
+          "byte": 28
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-blank-False-True",
+      "raw": "- È Intro\n    \n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 27,
+          "byte": 28
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-list-`-blank-True-False",
+      "raw": "- È Intro\n    \n    ```\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-`-blank-True-True",
+      "raw": "- È Intro\n    \n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-list-`-begin-html",
+      "raw": "- ```{=html}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 17,
+          "byte": 17
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-`-text-html",
+      "raw": "- È Intro\n    ```{=html}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 29,
+          "byte": 30
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-`-blank-html",
+      "raw": "- È Intro\n    \n    ```{=html}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 34,
+          "byte": 35
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-`-begin-latex",
+      "raw": "- ```{=latex}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-`-text-latex",
+      "raw": "- È Intro\n    ```{=latex}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-`-blank-latex",
+      "raw": "- È Intro\n    \n    ```{=latex}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-list-~-begin-False-False",
+      "raw": "- ~~~\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 10,
+          "byte": 10
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-~-begin-False-True",
+      "raw": "- ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 10,
+          "byte": 10
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-list-~-begin-True-False",
+      "raw": "- ~~~\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-~-begin-True-True",
+      "raw": "- ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-~-text-False-False",
+      "raw": "- È Intro\n    ~~~\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 22,
+          "byte": 23
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-~-text-False-True",
+      "raw": "- È Intro\n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 22,
+          "byte": 23
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-list-~-text-True-False",
+      "raw": "- È Intro\n    ~~~\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 22,
+          "byte": 23
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-~-text-True-True",
+      "raw": "- È Intro\n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 22,
+          "byte": 23
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-list-~-blank-False-False",
+      "raw": "- È Intro\n    \n    ~~~\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 27,
+          "byte": 28
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-~-blank-False-True",
+      "raw": "- È Intro\n    \n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 27,
+          "byte": 28
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-list-~-blank-True-False",
+      "raw": "- È Intro\n    \n    ~~~\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-list-~-blank-True-True",
+      "raw": "- È Intro\n    \n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-list-~-begin-html",
+      "raw": "- ~~~{=html}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 17,
+          "byte": 17
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-~-text-html",
+      "raw": "- È Intro\n    ~~~{=html}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 29,
+          "byte": 30
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-list-~-blank-html",
+      "raw": "- È Intro\n    \n    ~~~{=html}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 34,
+          "byte": 35
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-~-begin-latex",
+      "raw": "- ~~~{=latex}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-list-~-text-latex",
+      "raw": "- È Intro\n    ~~~{=latex}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 30,
+          "byte": 31
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-list-~-blank-latex",
+      "raw": "- È Intro\n    \n    ~~~{=latex}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-note-tab-`-begin-False-False",
+      "raw": "Body[^n].\n\n[^n]: ```\n\t<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 22,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-begin-False-True",
+      "raw": "Body[^n].\n\n[^n]: ```\n\t<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 22,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-tab-`-begin-True-False",
+      "raw": "Body[^n].\n\n[^n]: ```\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-begin-True-True",
+      "raw": "Body[^n].\n\n[^n]: ```\n\t<img src=\"p.png\" data-r013=\"safe\">\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-text-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t```\n\t<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 31,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-text-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t```\n\t<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 31,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-tab-`-text-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t```\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-text-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t```\n\t<img src=\"p.png\" data-r013=\"safe\">\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-blank-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t```\n\t<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 33,
+          "byte": 34
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-blank-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t```\n\t<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 33,
+          "byte": 34
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-tab-`-blank-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t```\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-`-blank-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t```\n\t<img src=\"p.png\" data-r013=\"safe\">\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-note-tab-`-begin-html",
+      "raw": "Body[^n].\n\n[^n]: ```{=html}\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 29,
+          "byte": 29
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-`-text-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t```{=html}\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 38,
+          "byte": 39
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-`-blank-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t```{=html}\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 40,
+          "byte": 41
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-`-begin-latex",
+      "raw": "Body[^n].\n\n[^n]: ```{=latex}\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-`-text-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t```{=latex}\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-`-blank-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t```{=latex}\n\t<script data-r013=\"script\">x</script>\n\t```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-note-tab-~-begin-False-False",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n\t<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 22,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-~-begin-False-True",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n\t<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 22,
+          "byte": 22
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-tab-~-begin-True-False",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-~-begin-True-True",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n\t<img src=\"p.png\" data-r013=\"safe\">\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-~-text-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t~~~\n\t<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 31,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-~-text-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t~~~\n\t<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 31,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-tab-~-text-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t~~~\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 31,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-~-text-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t~~~\n\t<img src=\"p.png\" data-r013=\"safe\">\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 31,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-tab-~-blank-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t~~~\n\t<script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 33,
+          "byte": 34
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-~-blank-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t~~~\n\t<img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 33,
+          "byte": 34
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-tab-~-blank-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t~~~\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-tab-~-blank-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t~~~\n\t<img src=\"p.png\" data-r013=\"safe\">\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-note-tab-~-begin-html",
+      "raw": "Body[^n].\n\n[^n]: ~~~{=html}\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 29,
+          "byte": 29
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-~-text-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t~~~{=html}\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 38,
+          "byte": 39
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-note-tab-~-blank-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t~~~{=html}\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 40,
+          "byte": 41
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-~-begin-latex",
+      "raw": "Body[^n].\n\n[^n]: ~~~{=latex}\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-tab-~-text-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t~~~{=latex}\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 39,
+          "byte": 40
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-note-tab-~-blank-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n\t\n\t~~~{=latex}\n\t<script data-r013=\"script\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-note-spaces-`-begin-False-False",
+      "raw": "Body[^n].\n\n[^n]: ```\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 25,
+          "byte": 25
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-begin-False-True",
+      "raw": "Body[^n].\n\n[^n]: ```\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 25,
+          "byte": 25
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-spaces-`-begin-True-False",
+      "raw": "Body[^n].\n\n[^n]: ```\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-begin-True-True",
+      "raw": "Body[^n].\n\n[^n]: ```\n    <img src=\"p.png\" data-r013=\"safe\">\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-text-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ```\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 37,
+          "byte": 38
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-text-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 37,
+          "byte": 38
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-spaces-`-text-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ```\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-text-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-blank-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ```\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 42,
+          "byte": 43
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-blank-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 42,
+          "byte": 43
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-spaces-`-blank-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ```\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-`-blank-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ```\n    <img src=\"p.png\" data-r013=\"safe\">\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-note-spaces-`-begin-html",
+      "raw": "Body[^n].\n\n[^n]: ```{=html}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 32,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-`-text-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ```{=html}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 44,
+          "byte": 45
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-`-blank-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ```{=html}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 49,
+          "byte": 50
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-`-begin-latex",
+      "raw": "Body[^n].\n\n[^n]: ```{=latex}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-`-text-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ```{=latex}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-`-blank-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ```{=latex}\n    <script data-r013=\"script\">x</script>\n    ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "```",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "fence-note-spaces-~-begin-False-False",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 25,
+          "byte": 25
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-~-begin-False-True",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 25,
+          "byte": 25
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-spaces-~-begin-True-False",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-~-begin-True-True",
+      "raw": "Body[^n].\n\n[^n]: ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-~-text-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ~~~\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 37,
+          "byte": 38
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-~-text-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 37,
+          "byte": 38
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-spaces-~-text-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ~~~\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 37,
+          "byte": 38
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-~-text-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 37,
+          "byte": 38
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-spaces-~-blank-False-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ~~~\n    <script data-r013=\"script\">x</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 42,
+          "byte": 43
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-~-blank-False-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\" data-r013=\"safe\">",
+          "char": 42,
+          "byte": 43
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": false,
+      "format": null,
+      "code_owned": false,
+      "ast": true,
+      "asset": true
+    },
+    {
+      "id": "fence-note-spaces-~-blank-True-False",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ~~~\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "fence-note-spaces-~-blank-True-True",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ~~~\n    <img src=\"p.png\" data-r013=\"safe\">\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": null,
+      "code_owned": true,
+      "ast": true,
+      "asset": false
+    },
+    {
+      "id": "raw-note-spaces-~-begin-html",
+      "raw": "Body[^n].\n\n[^n]: ~~~{=html}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 32,
+          "byte": 32
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-~-text-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ~~~{=html}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 44,
+          "byte": 45
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-note-spaces-~-blank-html",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ~~~{=html}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 49,
+          "byte": 50
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "html",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-~-begin-latex",
+      "raw": "Body[^n].\n\n[^n]: ~~~{=latex}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "begin",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "raw-note-spaces-~-text-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    ~~~{=latex}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"script\">",
+          "char": 45,
+          "byte": 46
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "text",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": false
+    },
+    {
+      "id": "raw-note-spaces-~-blank-latex",
+      "raw": "Body[^n].\n\n[^n]: È Intro\n    \n    ~~~{=latex}\n    <script data-r013=\"script\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "marker": "~~~",
+      "previous": "blank",
+      "closed": true,
+      "format": "latex",
+      "code_owned": false,
+      "ast": true,
+      "raw_owned": true
+    },
+    {
+      "id": "gpt-metadata-after-first-26",
+      "raw": "È `<script data-review=\"first\">x</script>`{=html}\n\n# Heading {onclick=\"x\"}\n\n<img src=\"../last.png\" data-review=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-review=\"first\">",
+          "char": 3,
+          "byte": 4
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-review=\"last\">",
+          "char": 76,
+          "byte": 77
+        }
+      ],
+      "family": "original"
+    },
+    {
+      "id": "gpt-metadata-after-first-27",
+      "raw": "È `<script data-review=\"first\">x</script>`{=html}\n\n::: {onclick=\"x\"}\n\n<img src=\"../last.png\" data-review=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-review=\"first\">",
+          "char": 3,
+          "byte": 4
+        },
+        {
+          "snippet": "<img src=\"../last.png\" data-review=\"last\">",
+          "char": 70,
+          "byte": 71
+        }
+      ],
+      "family": "original"
+    },
+    {
+      "id": "claude-A1-heading-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n# Heading {onclick=\"x\"}\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\">",
+          "char": 5,
+          "byte": 5
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": false,
+      "code_owned": false
+    },
+    {
+      "id": "claude-A2-div-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n::: {onclick=\"x\"}\nBody.\n:::\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\">",
+          "char": 5,
+          "byte": 5
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": false,
+      "code_owned": false
+    },
+    {
+      "id": "claude-A3-fence-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n```{onclick=\"x\"}\ncode\n```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\">",
+          "char": 5,
+          "byte": 5
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": false,
+      "code_owned": false
+    },
+    {
+      "id": "claude-A4-figure-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n![cap](p.png){onclick=\"x\"}\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\">",
+          "char": 5,
+          "byte": 5
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": false,
+      "code_owned": false
+    },
+    {
+      "id": "claude-A5-control-attr-first",
+      "raw": "# Heading {onclick=\"x\"}\n\nText <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../second.png\">",
+          "char": 30,
+          "byte": 30
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": false,
+      "code_owned": false
+    },
+    {
+      "id": "claude-A6-control-safe-attr",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n# Heading {#ok}\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "../first.png",
+      "visits": [
+        {
+          "snippet": "<img src=\"../first.png\">",
+          "char": 5,
+          "byte": 5
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": false,
+      "code_owned": false
+    },
+    {
+      "id": "claude-A7-inblock-span-attr-first",
+      "raw": "See [a]{onclick=\"x\"} and <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../second.png\">",
+          "char": 25,
+          "byte": 25
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": false,
+      "code_owned": false
+    },
+    {
+      "id": "claude-B1-quote-tilde-after-text",
+      "raw": "> Intro text\n> ~~~\n> <script>alert(1)</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script>",
+          "char": 21,
+          "byte": 21
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": true,
+      "code_owned": false
+    },
+    {
+      "id": "claude-B2-list-tilde-after-text",
+      "raw": "- Intro text\n    ~~~\n    <script>alert(1)</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script>",
+          "char": 25,
+          "byte": 25
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": true,
+      "code_owned": false
+    },
+    {
+      "id": "claude-B3-note-tilde-after-text",
+      "raw": "Body[^n].\n\n[^n]: Intro text\n    ~~~\n    <script>alert(1)</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script>",
+          "char": 40,
+          "byte": 40
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": true,
+      "code_owned": false
+    },
+    {
+      "id": "claude-B4-quote-tilde-safe-img",
+      "raw": "> Intro text\n> ~~~\n> <img src=\"p.png\">\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\">",
+          "char": 21,
+          "byte": 21
+        }
+      ],
+      "family": "original",
+      "asset": true,
+      "ast": true,
+      "code_owned": false
+    },
+    {
+      "id": "claude-B5-control-quote-backtick-after-text",
+      "raw": "> Intro text\n> ```\n> <script>alert(1)</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "original",
+      "asset": false,
+      "ast": true,
+      "code_owned": true
+    },
+    {
+      "id": "claude-B6-control-quote-tilde-first",
+      "raw": "> ~~~\n> <script>alert(1)</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "original",
+      "asset": false,
+      "ast": true,
+      "code_owned": true
+    },
+    {
+      "id": "claude-B7-toplevel-tilde-after-text",
+      "raw": "Intro text\n~~~\n<script>alert(1)</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script>",
+          "char": 15,
+          "byte": 15
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": true,
+      "code_owned": false
+    },
+    {
+      "id": "claude-B8-list-tilde-raw-after-text",
+      "raw": "- Intro text\n    ~~~{=html}\n    <img src=\"p.png\">\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [
+        {
+          "snippet": "<img src=\"p.png\">",
+          "char": 32,
+          "byte": 32
+        }
+      ],
+      "family": "original",
+      "asset": true,
+      "ast": true,
+      "code_owned": false
+    },
+    {
+      "id": "claude-B9-control-quote-unclosed-plain-fence",
+      "raw": "> ```\n> <script>alert(1)</script>\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script>",
+          "char": 8,
+          "byte": 8
+        }
+      ],
+      "family": "original",
+      "asset": false,
+      "ast": true,
+      "code_owned": false
+    },
+    {
+      "id": "validator-0",
+      "raw": "È <blink>\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "blink",
+      "visits": [
+        {
+          "snippet": "<blink>",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 30,
+          "byte": 31
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-1",
+      "raw": "È <img bogus=\"x\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "bogus",
+      "visits": [
+        {
+          "snippet": "<img bogus=\"x\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 38,
+          "byte": 39
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-2",
+      "raw": "È <img src>\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "absent",
+      "visits": [
+        {
+          "snippet": "<img src>",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 32,
+          "byte": 33
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-3",
+      "raw": "È <img src=\"https://example.invalid/a\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "URI vietata",
+      "visits": [
+        {
+          "snippet": "<img src=\"https://example.invalid/a\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 60,
+          "byte": 61
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-4",
+      "raw": "È <img src=\"%2e%2e/out.png\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "encoded",
+      "visits": [
+        {
+          "snippet": "<img src=\"%2e%2e/out.png\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 49,
+          "byte": 50
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-5",
+      "raw": "È <img src=\"C:/out.png\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "URI vietata",
+      "visits": [
+        {
+          "snippet": "<img src=\"C:/out.png\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 45,
+          "byte": 46
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-6",
+      "raw": "È <meta http-equiv=\"refresh\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "http-equiv",
+      "visits": [
+        {
+          "snippet": "<meta http-equiv=\"refresh\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 50,
+          "byte": 51
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-7",
+      "raw": "È <span style=\"x\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "style",
+      "visits": [
+        {
+          "snippet": "<span style=\"x\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 39,
+          "byte": 40
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-8",
+      "raw": "È <span srcdoc=\"x\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "srcdoc",
+      "visits": [
+        {
+          "snippet": "<span srcdoc=\"x\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 40,
+          "byte": 41
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "validator-9",
+      "raw": "È <img src=\"\">\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "detail": "invalido",
+      "visits": [
+        {
+          "snippet": "<img src=\"\">",
+          "char": 2,
+          "byte": 3
+        },
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 35,
+          "byte": 36
+        }
+      ],
+      "family": "validator"
+    },
+    {
+      "id": "metadata-name-onload",
+      "raw": "È [word]{onload=\"x\"} <img src=\"../last.png\">",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "attrs"
+    },
+    {
+      "id": "metadata-name-style",
+      "raw": "È [word]{style=\"x\"} <img src=\"../last.png\">",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 20,
+          "byte": 21
+        }
+      ],
+      "family": "attrs"
+    },
+    {
+      "id": "metadata-name-srcdoc",
+      "raw": "È [word]{srcdoc=\"x\"} <img src=\"../last.png\">",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<img src=\"../last.png\">",
+          "char": 21,
+          "byte": 22
+        }
+      ],
+      "family": "attrs"
+    },
+    {
+      "id": "multiple-attrs",
+      "raw": "È [a]{onclick=\"x\" style=\"y\"} and [b]{srcdoc=\"z\"} <script>x</script>",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<script>",
+          "char": 49,
+          "byte": 50
+        }
+      ],
+      "family": "attrs"
+    },
+    {
+      "id": "div-depth-attr",
+      "raw": "::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {#d}\n::: {onclick=\"x\"}\n<script>x</script>",
+      "detail": "Active markdown attribute",
+      "visits": [
+        {
+          "snippet": "<script>",
+          "char": 162,
+          "byte": 162
+        }
+      ],
+      "family": "attrs"
+    },
+    {
+      "id": "context-root-heading",
+      "raw": "# È heading\n~~~\n<script data-r013=\"literal\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "code_owned": true,
+      "ast": true,
+      "preceding_block": "heading"
+    },
+    {
+      "id": "context-root-code",
+      "raw": "```\nplain\n```\n~~~\n<script data-r013=\"literal\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "root",
+      "code_owned": true,
+      "ast": true,
+      "preceding_block": "code"
+    },
+    {
+      "id": "context-quote-heading",
+      "raw": "> # È heading\n> ~~~\n> <script data-r013=\"literal\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "code_owned": true,
+      "ast": true,
+      "preceding_block": "heading"
+    },
+    {
+      "id": "context-quote-code",
+      "raw": "> ```\n> plain\n> ```\n> ~~~\n> <script data-r013=\"literal\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "quote",
+      "code_owned": true,
+      "ast": true,
+      "preceding_block": "code"
+    },
+    {
+      "id": "context-list-heading",
+      "raw": "- # È heading\n    ~~~\n    <script data-r013=\"literal\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "list",
+      "code_owned": true,
+      "ast": true,
+      "preceding_block": "heading"
+    },
+    {
+      "id": "context-list-code",
+      "raw": "- ```\n    plain\n    ```\n    ~~~\n    <script data-r013=\"literal\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"literal\">",
+          "char": 36,
+          "byte": 36
+        }
+      ],
+      "family": "fence",
+      "host": "list",
+      "code_owned": false,
+      "ast": true,
+      "preceding_block": "code"
+    },
+    {
+      "id": "context-note-tab-heading",
+      "raw": "Body[^n].\n\n[^n]: # È heading\n\t~~~\n\t<script data-r013=\"literal\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"literal\">",
+          "char": 35,
+          "byte": 36
+        }
+      ],
+      "family": "fence",
+      "host": "note-tab",
+      "code_owned": false,
+      "ast": true,
+      "preceding_block": "heading"
+    },
+    {
+      "id": "context-note-tab-code",
+      "raw": "Body[^n].\n\n[^n]: ```\n\tplain\n\t```\n\t~~~\n\t<script data-r013=\"literal\">x</script>\n\t~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-tab",
+      "code_owned": true,
+      "ast": true,
+      "preceding_block": "code"
+    },
+    {
+      "id": "context-note-spaces-heading",
+      "raw": "Body[^n].\n\n[^n]: # È heading\n    ~~~\n    <script data-r013=\"literal\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": "script",
+      "visits": [
+        {
+          "snippet": "<script data-r013=\"literal\">",
+          "char": 41,
+          "byte": 42
+        }
+      ],
+      "family": "fence",
+      "host": "note-spaces",
+      "code_owned": false,
+      "ast": true,
+      "preceding_block": "heading"
+    },
+    {
+      "id": "context-note-spaces-code",
+      "raw": "Body[^n].\n\n[^n]: ```\n    plain\n    ```\n    ~~~\n    <script data-r013=\"literal\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "detail": null,
+      "visits": [],
+      "family": "fence",
+      "host": "note-spaces",
+      "code_owned": true,
+      "ast": true,
+      "preceding_block": "code"
+    }
+  ]
+}

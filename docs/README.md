@@ -12,6 +12,9 @@ La struttura segue [Diátaxis](https://diataxis.fr/):
 | [Reference](reference/README.md) | Consultare dettagli precisi del prodotto | Utenti e sviluppatori |
 | [Spiegazioni](explanation/README.md) | Comprendere concetti e scelte del sistema | Utenti e sviluppatori |
 
+Gli helper di sviluppo a002 hanno una [guida benchmark](how-to/benchmark-fedelta.md)
+e una [reference](reference/benchmark-fedelta.md); non sono servizi applicativi.
+
 Le proposte, le decisioni e la roadmap sono in
 [`documentation/`](../documentation/README.md). Questa separazione evita che una
 proposta venga scambiata per una funzione disponibile.

@@ -1,0 +1,940 @@
+{
+  "git_diff_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "local_links": [
+    {
+      "source": "documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "target": "0001-document-fidelity.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "target": "0007-supervised-development-runs.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "target": "../runs/run-a002-fase1-corpus/manifest.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "target": "../benchmarks/a002-residual-debt.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "target": "../roadmap.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "target": "../development/next-run-a003-engine-comparison.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/benchmarks/a002-residual-debt.md",
+      "target": "../decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/benchmarks/a002-residual-debt.md",
+      "target": "../runs/run-a002-fase1-corpus/manifest.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/development/next-run-a003-engine-comparison.md",
+      "target": "../benchmarks/a002-residual-debt.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/development/next-run-a003-engine-comparison.md",
+      "target": "../runs/run-a002-fase1-corpus/manifest.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/development/next-run-a003-engine-comparison.md",
+      "target": "../runs/run-a002-fase1-corpus/human-evaluation.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/development/next-run-a003-engine-comparison.md",
+      "target": "../decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/development/next-run-a003-engine-comparison.md",
+      "target": "../roadmap.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "closure.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "reports/arbitrations/decision-close-reduced-scope-r001.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "reports/notes/user-accepted-reduced-scope-2026-10-12.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "../../benchmarks/a002-residual-debt.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "../../decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "../../development/next-run-a003-engine-comparison.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "human-evaluation.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "target": "evidence/archive-inventory.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/closure.md",
+      "target": "../../benchmarks/a002-residual-debt.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/closure.md",
+      "target": "../../decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C01-txt-it.txt",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C01-txt-it/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C02-docx-it.docx",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C02-docx-it/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C03-epub-en.epub",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C03-epub-en/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C04-rtf-it.rtf",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C04-rtf-it/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C05-tex-en/main.tex",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C05-tex-en/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C06-pdf-text-it.pdf",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C06-pdf-text-it/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C07-pdf-columns-en.pdf",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C07-pdf-columns-en/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C08-scan-it.pdf",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C08-scan-it/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C09-scan-en.pdf",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C09-scan-en/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/inputs/C10-pdf-mixed-it-en.pdf",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../../tests/fixtures/conversion-corpus/gold/C10-pdf-mixed-it-en/annotations.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r1/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r1/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r2/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r2/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r3/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r3/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r4/raw/document.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r4/metrics.json",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "../../benchmarks/a002-residual-debt.md",
+      "exists": true
+    },
+    {
+      "source": "documentation/runs/run-a002-fase1-corpus/human-evaluation.md",
+      "target": "manifest.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/arbitrations/decision-close-reduced-scope-r001.md",
+      "target": "../notes/user-accepted-reduced-scope-2026-10-12.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/arbitrations/decision-close-reduced-scope-r001.md",
+      "target": "../notes/residual-debt-options-r014.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/arbitrations/decision-close-reduced-scope-r001.md",
+      "target": "../../../documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/arbitrations/decision-close-reduced-scope-r001.md",
+      "target": "../../../documentation/benchmarks/a002-residual-debt.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/arbitrations/decision-close-reduced-scope-r001.md",
+      "target": "../../../documentation/development/next-run-a003-engine-comparison.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/handovers/supervisor-closure-reduced-scope-r001.md",
+      "target": "../arbitrations/decision-close-reduced-scope-r001.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/handovers/supervisor-closure-reduced-scope-r001.md",
+      "target": "../notes/user-accepted-reduced-scope-2026-10-12.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/handovers/supervisor-closure-reduced-scope-r001.md",
+      "target": "../../../documentation/runs/run-a002-fase1-corpus/manifest.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/handovers/supervisor-closure-reduced-scope-r001.md",
+      "target": "../../../documentation/benchmarks/a002-residual-debt.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/handovers/supervisor-closure-reduced-scope-r001.md",
+      "target": "../../../documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md",
+      "exists": true
+    },
+    {
+      "source": "temp/run-a002-fase1-corpus/handovers/supervisor-closure-reduced-scope-r001.md",
+      "target": "../../../documentation/development/next-run-a003-engine-comparison.md",
+      "exists": true
+    }
+  ],
+  "originals_byte_verified": 1443,
+  "bundles": 64,
+  "product_code_unchanged": true,
+  "no_test_runtime": true,
+  "no_Git_mutation": true,
+  "no_cleanup": true
+}

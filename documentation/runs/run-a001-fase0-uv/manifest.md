@@ -5,7 +5,8 @@
   feature/run-a001-uv. Feature commit `8479f975618034abfcfaeb4c9e47ba925d5e356e`;
   squash in dev `b90c6d4c00aed5ceb9122f6f42544736de7ff35a`, genitore uguale alla base.
   Integrazione manuale verificata il 2026-10-07: 405 file MATCH, alberi identici.
-  Working tree e indice puliti alla ricezione, push non verificato.
+  Working tree e indice puliti alla ricezione; successivo commit documentale
+  `80c31da46e5caab990d3596c79c44e524ec1dc95` e push verificati il 2026-10-07.
 - Esito: **GO / INTEGRATED**, arbitrato implementazione r003.
 - Data/responsabile:2026-10-07, supervisore Codex/OpenAI. Nessun deploy/main/cleanup.
 - Oggetto review finale:final-s003 SHA
@@ -50,3 +51,17 @@ git diff --check verificati dal supervisore; ricevuta di chiusura in temp.
 Nessuna nuova esecuzione delle prove, commit/merge/push o pulizia. Tutti i payload
 non selezionati e gli originali rimangono nella run locale. I commit reali sono registrati sopra dopo la verifica
 dell'integrazione; nessun rilascio o collaudo fuori dal perimetro è implicito.
+
+## Integrazioni dopo la chiusura tecnica
+
+- [Verifica del commit dei registri e del push](evidence/integration-push-2026-10-07.json).
+- [Valutazione delle pulizie](notes/cleanup-assessment-2026-10-07.md) e
+  [lista esatta dei payload duplicati](notes/cleanup-duplicate-payloads.json).
+  Nessuna cancellazione eseguita; archivio266record nuovamente MATCH.
+- [Prossimo incremento a002](../../development/next-run-a002-corpus.md), solo PREPARATION.
+- [Pulizia manuale completata e ricevuta](notes/cleanup-completion-2026-10-07.md):
+  193 file rimossi e copie conservate MATCH, tre tag superati assenti/r007 presente.
+  Receipt reali archiviate separatamente; nessuna rimozione del supervisore.
+
+Questi file sono integrazioni amministrative successive, non sostituiscono i
+266 record originali di archive-files.json o gli snapshot di review.

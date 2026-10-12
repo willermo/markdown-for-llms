@@ -9,6 +9,888 @@ La [roadmap](roadmap.md) descrive il percorso previsto, gli
 [archivio delle run](runs/README.md) conserva le evidenze permanenti. Il contesto
 operativo corrente rimane in `temp/`, esclusa da Git.
 
+## 2026-10-12 — A002 chiusa con debito accettato, parser mantenuto deciso
+
+A002 chiusa il2026-10-12 per accettazione esplicita del perimetro ridotto, con debito aperto. Reader r014 sperimentale; ClaudeNO_GO statico e reviewGPTincompleta conservati, nessun GOtecnico retroattivo. Corpus/raw/prove archiviati, parser mantenuto adottato come direzione (ADR0008), implementazione futura obbligatoria. Primo incremento fase1 concluso nel perimetro accettato; confronto/scelta motori e fase1 complessiva ancora aperti. Nessuna integrazione o UI dichiarata.
+
+Disposizione esplicita dell’utente conserva corpus/raw/prove per uso sperimentale,
+rinvia la soluzione con trigger obbligatorio dopo prima app valutabile e prima
+di attestazioni automatiche/rilascio. Archivio selettivo reale e verificato,
+originali/copie di lettura/link/64bundle/indice umano; nessuna pulizia temp.
+Controlli documentali/hash/JSON eGitdiffcheck,nessun test/conversione nuovo.
+Snapshot di chiusura attribuisce byte,nonGO. Costi admin distinti nel ledger,
+nessun reset/deadline/quota nuova. Passo successivo: confronto motori fase1,
+poi fondazioni fase2 eWebUI fase3; parser ancora da implementare. Nessun merge,
+push,deploy o promozione eseguiti.
+
+## 2026-10-12 — A002 r014 ricevuta, due review da svolgere
+
+Consegna completa r014 F58–F62 ricevuta: 157/157 contratti (159 input distinti), suite3156+310subtest, quattro controprove private,12 exit CLI e64 ricalcoli. Chiusure da giudicare, NO_GO r013 conservato; nuovo comune r014 e due NUOVE chat indipendenti ChatGPT/Claude. Zero delta numerici/gate,16 diagnosi EPUB eotto metadata TeX attribuiti. Nessuna deadline; limiti econtatori invariati, review mirate entro residuo corrente. Nessun GO codice o integrazione.
+
+Ricezione supervisore: delivery MATCH,1842 descrittori,1042 record protetti
+immutati/sei delta autorizzati;69 file runtime e132 input/copie corrispondenti,
+dieci hash source/sdist/wheel/install. R finale PASS eH12 FAIL voluti preservati.
+Controlli host stdlib/hash/JSON/archivi;prove prodotto dell’autore ricevute,
+nessuna nuova esecuzione o review simulata. Quattro controprove private e
+157 contratti soddisfatti,overlay HC2/ID rettificati da AST e attesi dettagliati
+materializzati dopo primo after espliciti.19 campi:zero delta numerici/gate,
+16 failures/details EPUB,otto metadata div TeX. Aritmetica autore legata ai
+byte,non ricalcolata dal supervisore. Review mirate con piano10CPU-s propri
+ciascuna entro residuo corrente;nessuna nuova quota o deadline. Git manuale
+dopoGO finale;limiti/storia/FAIL/STALE/NONPASS conservati.
+
+## 2026-10-11 — A002 r014: passaggio a nuova chat implementatrice
+
+Per disposizione dell’utente, mandato46 adeguato al recupero del contesto
+in una nuova chat autrice. F58–F62 e arbitrato r013 NO_GO invariati; stessa
+run, prove e contatori, nessuna nuova pianificazione o quota. Registrati
+checkpoint, transizione e nuovo snapshot tecnico d’ingresso; verifiche
+documentali/hash e manager host, nessun test prodotto o conversione.
+Prossimo passo: implementazione r014, poi due nuove review e arbitrato.
+
+## 2026-10-11 — A002 r013 NO_GO: errori URI eaccettazione di blocchi/metadata
+
+**Fase/run:**1/a002,IMPLEMENTATION/NO_GO_LOCAL_FIX.
+Due review r013 reali NO_GO ricevute e arbitrate. F58:errore parsing URI scavalca prima unsafe e visite;F59:info fence invalida rende inerte HTML reale;F60:contesto esterno/lazy/figura perso tra producer;F61:metadata falsi nascondono HTML reale. Quattro cause media/bloccanti ereditate e riprodotte V13/V12,F54/F55/F56 parziali,F57 chiuso nei domini verificati. F62:contratti di accettazione/stato/errori,prove discriminanti/documenti. Prompt46 completo per r014 nella chat autrice,stessa run/incremento. Nessuna deadline,altri limiti/contatori invariati;nessun GO codice.
+
+Originali attrs/ordine ecoverage corretti;quattro difetti essenziali ereditati
+e riprodottiV13/V12 sottoR/ASTpinned. URIValueError interrompe guarda eperde
+prima causa,altri3falsoCOMPLETE conHTMLnonvalidato/assetperso;nessun fetch
+oesecuzioneHTML dimostrati.643filereviewer identificati/3RfinaliPASS;
+supervisorehash/JSON/tracce,nonruntime. Baseline132/133risolta check004vs005
+suglistessi raw dopoAST:citazioneimprecisa,nessun erroreprodotto.
+Il metodo r013 ha prove vere ma premesse incomplete:info ordinaria semprevuota,
+contesto precedente solo interno,metadataqualsiasigraffe,URIerrornoncoperto.
+Mandato46:rifiuti URIcontrattuali eaccettazione/stato condivisi,ASTpositivo/
+negativo percallsite e quattrocontroproveprivate;non parseruniversale.
+F57chiuso,O003namespaceutente nonbloccante;O001headingfalsopositivo nello
+stessofixcontesto,F36/A8/limiti/errori/FAIL/STALE/NONPASS preservati.
+Base19366,705447CPUlower,costi correnti ledgerfinale e120sprudenziali non
+spacciatipermisura;tempo illimitato,CPU/disco/RAM/rete/R/contatori invariati.
+Ingressofixcompatto legatoalcomuneoriginale,niente pulizia.Gitmanuale
+dopoGO,nessuna integrazione/fase2/ML/motore/nuovaV/ultimo giro promesso.
+
+## 2026-10-11 — A002 r013: consegna per classi ricevuta, review da svolgere
+
+**Fase/run:**1/a002,IMPLEMENTATION_REVIEW/FIX_REVIEW_PROMPTS_READY.
+Consegna completa r013 ricevuta per review: F54–F57 dichiarati realizzati, reader observations-v13-ordered-guards-fences. 301 attesi (285+16 metadata multilinea),2997 test+310 subtest,102 exit CLI e64 ricalcoli con19 campi numerici/gate invariati. Censimento per fonte/callsite,AST Pandoc locale e due controprove su copie private ricevuti. Nuovo comune e prompt44/45 per due NUOVE chat indipendenti ChatGPT/Claude,poi arbitrato reale. Chiusure da giudicare;NO_GO r012 conservato,nessun GO codice. Nessuna deadline;limiti non temporali e contatori invariati.
+
+285+16 casi,AST199+16,tutte fonti/callsite censite e due controprove private
+0/3 ciascuna su byte finali. Ricezione114066hash/109350path,108577storicopreservati,
+129corpus,25Rfinali23PASS+2FAILH12 e binding003PASS;S008/S009/S010 dieci
+origini identiche,37Python esterni nei byte runtime. Nessuna suite propria
+o attribuzione fast a S010. Variazioni degli oracoli esplicite:20EOF r012
+in overlay separato eF29 r006 dopo AST;fixture350originale conservata.
+Discrepanza baseline132 report/133 receipt conservata per review;285/285
+finali coerenti.640campi privati rimossi in56osservazioni;nessun altrodelta
+oltre reader,19campi metriche/gate invariati e4PASS/28FAIL per set32.
+Chiusure/invarianti e regressioni da giudicare,nessun futuro GO assegnato.
+CPU base19044,478813lower,review mirate nei limiti condivisi;nessuna deadline,
+contatori senza reset e limiti non temporali invariati. Nessuna integrazione
+Git/cleanup/fase2/ML/motore/nuovaV;fallimenti e limiti storici preservati.
+
+## 2026-10-11 — A002 r012 NO_GO: guardia degli attributi e ownership dei fence
+
+**Fase/run:**1/a002,IMPLEMENTATION/NO_GO_LOCAL_FIX.
+Due review r012 reali NO_GO ricevute e arbitrate. F54:attributi Markdown attivi bypassano la sessione della prima unsafe e interrompono le guardie successive;F55:ownership errata del fence tilde dopo testo,con COMPLETE senza guardia/asset. Regressioni r012,rami ereditati della stessa classe inclusi senza parser universale. F56:censimento tuttefonti/callsite,AST Pandoc locale e due controprove prima della consegna;F57:documenti/coverage privata,non bloccante. Prompt43 completo nella chat autrice,stessa run/incremento. Nessuna deadline,altri limiti/contatori invariati;nessun GO codice.
+
+Sonde reviewer effettive sotto R;MATCH prima/dopo,byte ricevuti671file.
+GPT e Claude concordano sulla causa attrsraise che bypassa il collector;
+Claude AST Pandoc3.1.3 distingue tilde dopo testo da CodeBlock. F54non
+falsoPASS,F55COMPLETE con script non guardato/asset perso;nessun fetch o
+esecuzione HTML osservati. V11 attribuzione GPT statica/Claude runtime.
+F50 e rawesatto/labeloriginali chiusi nei domini esaminati,global invarianti
+parziali. Il metodo precedente non ha anticipato rami e assunzioni:zero
+attributi attivi/tilde dopo testo nella fixture350. Mandato43 richiede
+censimento fonti/callsite e prove perramo,oracolo AST pinned e due controprove
+private prima della consegna,non solo aumento dei test. Nessun nuovo piano/
+schema/parser universale;F57coverage privata/doc nonbloccante,ordine audit
+path Markdown ereditato resta limite. Supervisore solo stdlib/hash/tracce.
+Nuovo ingresso dopo4registri,comune originale intatto;storia/limiti preservati.
+Base17301,553741CPU-s lower include i due reviewer una volta,altri costi/
+retainedscoped dedup in receipt. Nessuna deadline della run,altri limiti
+invariati. R013nella chat autrice,consegna completa poi due nuove review e
+arbitrato;nessuna promessa ultimo ciclo o GO da modello superiore.
+Nessuna integrazione/Git/cleanup/fase2/ML/motore/nuovaV.
+
+## 2026-10-11 — A002 r012: consegna ricevuta, review da svolgere
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW / FIX_REVIEW_PROMPTS_READY.
+Consegna completa r012 ricevuta per review: F50–F53 dichiarati implementati, reader observations-v12-shared-atoms. 350/350 attesi, regressioni153/303/308,2688 test+310subtest,134exitCLI e64ricalcoli con zero delta su19campi numerici/gate. Nuovo comune e prompt41/42 per due NUOVE chat indipendenti ChatGPT/Claude,poi arbitrato reale. Chiusure da giudicare,NO_GO r011 preservato,nessun GO codice. Nessuna deadline della run; limiti CPU/disco/RAM/rete/R e contatori invariati.
+
+Consolidamento interno atomi/owner/metadata/barriere LF e guardia dei raw
+nei container ricevuto. Otto file autore, nessun nuovo modulo/motore/V.
+Supervisore: controllo dei byte/binding/attesi/catene JSON, nessuna esecuzione
+prodotto.185961hash/111284path,103849storicopreservati,65963protetti/129corpus,
+10origini canoniche/37Python identici S004/S005,20receipt18PASS+2FAILH12.
+S004 runtime e S005 chiusura documentale distinti; vecchio PROTOCOL archiviato
+verificato, errori ordinari dei checker del supervisore conservati/corretti.
+64ricalcoli:19campi numerici/gate0delta,4PASS/28FAIL per set;56osservazioni
+con640campi _guard_coverage aggiunti in celle/didascalie,nessun altro delta
+oltre reader. Da giudicare contratto privato/output, non nuova qualità PASS.
+Review richiedono invarianti oltre payload, attesi indipendenti e ordine/
+identità delle visite, non sola membership del tipo o numero di test.
+Nuovo comune e prompt41/42, due review reali nuove, poi arbitrato.
+Nessuna deadline, altri limiti e contatori invariati, CPUlower/RSSsampled/
+retainedscoped dedup. F36 e limiti/errori/FAIL/STALE/NONPASS preservati.
+Nessuna integrazione/cleanup/fase2/ML/scelta motore; Git manuale dopo GO finale.
+
+## 2026-10-11 — A002: nessuna deadline e recupero del reader r012
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX.
+Disposizione utente: nessuna deadline, durata massima o stop temporale della run. NO_GO r011 tecnico invariato. Prompt40 r012 F50–F53 eseguibile nella chat autrice r009/r010/r011: consolidamento delle decisioni lessicali duplicate, copertura guardia esplicita e generazione finita indipendente prima della consegna. Limiti CPU/disco/RAM/rete/R invariati, contatori e storia senza reset.
+
+L'utente rimuove i limiti temporali, conferma osservata09:43:02Z;52h/24h e
+stop/deadline precedenti restano storia, non gate correnti. Review statiche
+e NO_GO r011 non sanati. Diagnosi: primi cicli anche corpus/metriche/risorse,
+ultimi cicli dominati dalle interpretazioni divergenti degli stessi byte
+fra scanner/producer/guardia/consumer/fallback. Correzioni locali hanno chiuso
+payload ma lasciato classi parziali e introdotto regressioni; il consolidamento
+richiesto da r009 non è stato sufficiente. Metodo r012 rafforzato nella stessa
+chat/incremento, nessun nuovo piano: decisione condivisa del tipo/intervallo
+nel dominio corretto, guardia distinta dalla proiezione, copertura esplicita,
+oracoli indipendenti e ricerca finita di controesempi prima della consegna.
+Microparsing Pandoc locale consentito come oracolo sintattico, non campagna
+conversione/V/motori. Nessun prodotto modificato dal supervisore.
+
+Criteri tecnici e limiti non bloccanti stabili, nessuna severità cambiata per
+GO. Fonte/addendum/nota/mandato/CP in temp; nuovo ingresso dopo soli quattro
+registri generali e prompt40, vecchi comuni preservati. CPUlower e retained
+scoped dedup nella receipt, nessun reset/upper certificato. Alla consegna
+completa nuovo comune/due nuove review indipendenti/arbitrato reale.
+Nessun GO codice/integrazione/cleanup/fase2/ML/motore/nuovaV; Git manuale.
+
+## 2026-10-11 — A002 r011 NO_GO: label ammesse e raw nei container
+
+**Fase/run:**1/a002, IMPLEMENTATION / FIX_MANDATE_READY_RESOURCE_DISPOSITION_REQUIRED.
+Due review r011 reali statiche NO_GO ricevute e arbitrate: F50 bound math delle label accettate con escape+LF (alta,regressione r010 non chiusa),F51 raw fence nella quote esentata dal fallback (media,regressione r011),F52 raw inline nella label saltato e prima diagnosi persa (media,ereditato r010). F53 invarianti/prove/documenti; F46 chiuso nei domini esaminati,F47/F48/F49 parziali,F36 preservato. Prompt40 r012 completo nella chat autrice r009/r010/r011, esecuzione in attesa di disposizione temporale esplicita.
+
+Tre percorsi raggiungibili confermati staticamente, nessuna nuova sonda runtime dopo stop. Prima diagnosi raw inline persa con documento comunque bloccato; nessun fetch/apertura indebita osservata. 232file reviewer identificati/commonMATCHprima dei registri, limiti di lettura Claude r010/guide/SBI dichiarati. O001 complessità non misurata non bloccante, O002list/note ereditato non bloccante incluso nella classe F51. Errori propri ricevitori/checker conservati, dati/prodotto intatti. 153autore/303r010/308r009,2327fast+310subtest/74CLI/64derived ricevuti, non rieseguiti; 4PASS/28FAILper set/56boundesatti/8TRIVIAL_ZERO e limiti storici preservati.
+
+Stop2026-10-11T06:37:31Z passato,deadline09:37:31Z=11:37:31Roma. Quota24h da10ott09:37:31Z ed entry08ott07:06:54.369068Z senza reset; nessuna risposta temporale assunta. CPU21600/stop19800s,disco6/stop5GiB,RAM8/stop sampled6GiB,riserva1800CPU-s/1GiB,R≤900s/stream1MiB/file32MiB,rete/acquisizioni/invii0/€0. Anche amministrazione inclusa e ferma alla deadline reale. CPUlower15459,709673alla ricezione, finali nella receipt, admin parzialmente non misurata/retaineddedup/no upper certificato. Mandato pronto prima della richiesta temporale, nessuna finestra implicita. Nessun GO codice/integrazione/fase2/motore/cleanup/nuovaV; Git manuale dopo GO finale.
+
+## 2026-10-11 — A002 r011 ricevuta: ownership e metadata inline
+
+**Fase/run:**1/a002,IMPLEMENTATION_REVIEW. Consegna r011 completa ricevuta: reader v11/F46–F49 dichiarati verificati,153/153matrice,303/303r010 e308/308r009,2327fast+310subtest,74exitCLI e64misure senza delta numerico/gate. Byte/prove ricevuti; nuovo comune e prompt38/39 per due NUOVE review ChatGPT/Claude,poi arbitrato reale. Chiusure da giudicare,NO_GO r010 preservato,nessun GO codice.
+F46metadata solo blocco,F47lookahead LF delcode label ma non dei token
+opachi,F48ledger subordinato a HTMLowner e quote già proiettate non
+rilette rawHTML. Ricezione185459hash/116599path,109581artefatti storici,
+65963protetti/129corpus,10origini canoniche,21receipt finali19PASS+2FAILH12.
+Nessun runtime prodotto supervisore. Verify autore MATCH,errore checker
+IDv10residuo corretto senza cambiare prove;errori/gold preliminari storici
+e targeted0014FAILF31r007 conservati,nuove prove ripetute dall'autore.
+153raw/gold/oracoli identici,27metv10/37v9/153v11;303r010/308r009preservati.
+64catene/19campi0delta,4PASS/28FAILper set,56bound esatti/8TRIVIAL_ZERO;
+corpus/V13/A03,L04outputUNAVAILABLE distinta eNONPASSstorici preservati.
+
+Stop nuovi workload11ott08:37:31Europe/Rome superato all’ingresso08:55:55; riserva amministrativa fino deadline11:37:31. Review statiche soltanto,nuove sonde R ferme senza disposizione temporale esplicita. Richiesta estensione presentata,nessuna risposta assunta. CPU/disco/RAM/rete0/€0 e contatori senza reset.
+CPUricezione15202,825955s lower,admin non tutta misurata,45sapprox storici
+distinti,retainedfinale dedup nella receipt,non upper certificato/reset.
+Snapshot comune e due prompt indipendenti;nessun GO r011/integrazione/
+fase1 conclusa/fase2/scelta motore/cleanup/nuovaV. Git manuale dopo GO finale.
+
+## 2026-10-10 — A002 r010 NO_GO: ownership e metadata inline
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX. Due review reali
+ChatGPT/Claude NO_GO ricevute e arbitrate sul comune r010 MATCH. Tre cause
+bloccanti: F46 metadata di heading riapplicati inline (media,ereditato v9,
+H2diagnosi regressiva),F47 bound math nella label falsamente unsafe con
+perdita formula/link/blocchi (alta,regressione r010),F48 code della label
+nasconde tag dentro owner HTML e attribuisce unsafe alla seconda violazione
+(media,regressione r010). Nessun fetch/apertura evasiva osservata.
+F43/F44 chiusi sui casi originali ma parziali nelle interazioni;F45 parziale,
+F40/F41 nel perimetro eF36 limite documentato preservati. F49 invarianti finite
+e documenti. Quattro osservazioni non bloccanti conservate: backtick-run,
+raw fuori profilo senza conferma Pandoc,tempo su commenti,IDfallback distinto.
+
+Supervisore stdlib/hash/statico:2352file reviewer,otto receipt finali R PASS
+con binding/inputunchanged/netnone/socketcleaned,nessun runtime prodotto.
+GPT21casi finali5/21v10 contro20/21v9,16discriminanti;Claude35casi v10/v9,
+cinque sondecausa,quattroCLI/ottoexitOS e tempi finiti. CLIunsafe run0/evaluate5
+invece2/2,INDETERMINATE non PASS. Errori checker/gold propri conservati.
+64misure/catene coerenti4PASS/28FAILper set,56bound esatti/8TRIVIAL_ZERO;
+conversion_final originale r001 r010 distinto dal rescore r002 r009.
+Corpus/gold/raw/V13/A03,L04outputUNAVAILABLE distinta,L01/L02/L05 eNONPASS
+storici preservati. Prompt37 completo r011 nella chat autrice r009/r010,
+nessun nuovo piano;nuovo contesto fix-r010 dopo soli quattro registri generali,
+comune originale intatto. Alla consegna completa nuovo comune/due NUOVE review.
+
+CPUvisibile ricezione14354,313656s lower include entrambi i reviewer senza
+R/base duplicate;45sClaude r007approx distinti,admin non tutta misurata,
+retained finale scoped/dedup nella receipt,non upper certificato. Quota24h
+invariata,stop11ott08:37:31Europe/Rome/deadline11:37:31,CPU/disco/RAM/rete0/€0.
+Git manuale dopo GO finale,nessun GO r011/integrazione/fase2/motore/cleanup/nuovaV.
+
+## 2026-10-10 — A002 r010 ricevuta: confini HTML/Markdown inline
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Consegna completa r010 ricevuta,
+[report](benchmarks/2026-10-10-a002-r010-confini-html-markdown.md) e
+[dati](benchmarks/2026-10-10-a002-r010-confini-html-markdown-data.json).
+F43/F44/F45 dichiarati verificati: aperture reali dal lexer prima di fallback,
+HTMLTree/lookahead entro la propria foglia, code esterno letterale preservato.
+A9 usa INCOMPLETE/UNSUPPORTED consentito; F36 B1–B4 limite deliberato dichiarato.
+Delta7,reader v10/scorer invariato. Autore:303/303 contro105/303v9 con oracoli
+identici,308/308regressioni r009,2015mirati/16deselected,2174fast+310subtest,
+41fixture/82exitCLI reali,64misure invarianti19campi/gate. H12FAIL conservati.
+
+Supervisore:168130confronti hash/99451path unici,
+92641artefatti storici immutati,65963protetti/129corpus,53ricevuti fuori
+delta,copie helper prima/dopo,dieci origini source=wheel=installato,
+20receipt finali18PASS+2FAILH12 con binding/reap,inputunchanged. Raw/catene/
+aritmetica verificate; checker distanza letto,non rieseguito e non allineamento
+indipendente completo. Snapshot autore delivery-001 MATCH, nuovo comune r010
+e prompt35/36 per due NUOVE chat ChatGPT/Claude, poi arbitrato. Chiusure ancora
+da giudicare,NO_GO r009 preservato; nessun GO codice/integrazione.
+
+64misure4PASS/28FAIL per set32 osservate,56bound esatti/8TRIVIAL_ZERO;
+corpus/gold/raw/V13/A03 protetti,L04outputUNAVAILABLE distinta,L01/L02/L05 e
+NONPASS storici conservati. CPUvisibile ricezione13916.118050s
+lower,45sapprox storici distinti senza risomma,admin non tutta misurata.
+Quota24h/entry/contatori invariati,stop11ott08:37:31 Europe/Rome/deadline11:37:31,
+CPU/disco/RAM/rete0/€0 invariati. Git manuale dopo GO finale,fase1 non conclusa,
+nessuna nuovaV/fase2/motore scelto/cleanup.
+
+## 2026-10-10 — A002 r009 NO_GO: confini fra HTML e Markdown
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX. Due review reali
+indipendenti ChatGPT/Claude NO_GO ricevute e arbitrate sul comune r009 MATCH.
+F40/F41 chiusi nei domini revisionati; F39/F42 parziali. F43: tag reale
+inglobato in fallback Markdown senza validazione/diagnosi, audit COMPLETE
+pur con score FAIL. F44: HTML letterale nei backtick dopo HTML inline dà
+falso UNSAFE e perde la proiezione del documento. Entrambi ereditati e
+bloccanti nel contratto del giro; nessun fetch/apertura evasiva osservata.
+F45 prove delle interazioni/documenti; CLA-R009-I002 limite F36 non bloccante
+da dichiarare, INCOMPLETE/UNSUPPORTED invariato. Prompt34 completo per r010
+alla chat autrice r009, stesso incremento e quota, senza nuovo piano.
+
+Supervisore:1576file reviewer/69descrittori snapshot e sei receipt finali
+R PASS con binding/input/reap verificati, tracce statiche; nessuna esecuzione
+di prodotto. Snapshot storico di preflight fallito attribuito ai byte
+del launcher conservato, errori propri checker registrati e corretti.
+64misure/19campi invarianti salvo readerID,4PASS/28FAIL per set32,56bound
+esatti/8TRIVIAL_ZERO osservati;corpus/gold/raw/V13/A03 preservati,L04output
+UNAVAILABLE distinta,L01/L02/L05 e NONPASS storici conservati.
+Contesto fix-r009 dopo soli quattro registri generali, comune storico non
+rigenerato; alla consegna completa r010 nuovo comune/due NUOVE review/arbitrato.
+Contabilità ricezione13220,853586CPU-s visibili lower con entrambi i reviewer
+r009;45s storici approssimati distinti,admin non tutta misurata. Risorse finali
+nella receipt corrente, nessun upper certificato/reset. Stop11ott08:37:31
+Europe/Rome/deadline11:37:31,CPU/disco/RAM/rete0/€0 invariati. Nessun GO r010,
+Git/integrazione/fase1 conclusa/fase2/scelta motore/cleanup/nuovaV.
+
+## 2026-10-10 — A002 r009 ricevuta: consolidamento dei confini del reader
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r009
+con [report](benchmarks/2026-10-10-a002-r009-confini-reader.md) e
+[dati](benchmarks/2026-10-10-a002-r009-confini-reader-data.json).
+F39–F42 dichiarati completati: guardia indipendente dalla proiezione,
+decisione lessicale condivisa, dominio/mapping trasportati dal producer e
+matrice finita di interazioni. Delta7, reader v9/scorer v4 invariato.
+Autore:308/308 casi contro178/308 sul v8 con stessi raw/oracoli,1712mirati,
+1869veloci+310subtest,35fixtureCLI/70exit OS attesi,64derivati invarianti
+su19campi/gate. Ogni set32 conserva4PASS/28FAIL osservati,56bound esatti
+e8TRIVIAL_ZERO; zero motori/V nuovi. Fallimenti intermedi e H12 conservati.
+
+Supervisore:152371controlli hash/83283path unici,77011artefatti ricevuti
+immutati,65963descrittori protetti,47input consegna e copie,10origini
+source=wheel=installato,18receipt selezionate16PASS+2FAIL H12,legami/raw/
+aritmetica64 verificati. Snapshot tecnico autore MATCH; nessun prodotto,
+R/suite/build/CLI/motore/M/V rieseguito dal supervisore. Chiusure e
+regressioni F39–F42 da valutare nelle due NUOVE review ChatGPT/Claude sul
+nuovo comune r009, prompt32/33, poi arbitrato. NO_GO r008 preservato;
+nessun GO r009 o integrazione. Wall ricezione56,296h distinta dal ledger
+autore55,969h;CPUaccounting visibile12835,064462s lower+approx,admin non tutta
+misurata. Stop11ott08:37:31 Europe/Rome/deadline11:37:31,quota24h/entry/
+CPU/disco/RAM/rete0/€0 invariati. V13/A03,L04output distintaUNAVAILABLE,
+L01/L02/L05 e NONPASS storici preservati. Git manuale dopo GO finale;
+fase1 non conclusa, nessuna scelta motore/fase2/cleanup.
+
+## 2026-10-10 — A002 r008 NO_GO: consolidamento locale e contesti freschi
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX.
+Due review indipendenti r008 NO_GO ricevute e arbitrate sul comune MATCH.
+F35/F36 chiusi nei domini verificati; F37 parziale e F38 da riallineare.
+F39/F40: guardia HTML interrotta da errori di proiezione e tag incompleto
+inventato da apice in valore unquoted; F41: perdita link/falsoFAIL dopo
+stripping quote/list/note. Tre cause raggiungibili misurate dai reviewer;
+nessuna apertura evasiva/rete osservata, ma classificazione/ref reali persi.
+F42: consolidare decisioni di confine e mapping, prove delle interazioni
+con oracoli indipendenti e documenti. Non nuova architettura/parser universale.
+
+Su richiesta utente nuovo autore e nuova supervisione (prompt30/31), stessa
+run e quota24h cumulativa; mandato completo, nessun nuovo piano o gate
+intermedio. Modelli/effort solo raccomandati, non selezionati automaticamente.
+Compattazione non dimostrata causa, metodo precedente troppo orientato ai
+singoli payload: invarianti comuni rese esplicite nel mandato r009.
+655file reviewer ricevuti/10receiptR e tracce statiche del supervisore;
+nessun prodotto/test/R/motore eseguito dal supervisore. Nuovo contesto dopo
+soli quattro registri, byte ricevuti e storia immutati. 64misure invarianti,
+4PASS/28FAIL per set32,V13/A03 preservati,L04output distintaUNAVAILABLE e
+lacune/fallimenti storici conservati. Stop nuovi workload11ott08:37:31
+Europe/Rome/deadline11:37:31,limitiCPU/disco/RAM/rete/€0benchmark invariati.
+Poi consegna completa r009,nuovo comune/due NUOVE review/arbitrato.
+Nessun GO futuro/Git automatico/integrazione,fase2 o scelta motore.
+
+## 2026-10-10 — A002 r008 ricevuta: progresso scanner e domini inline
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r008 e
+[report permanente](benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md)
+con [dati](benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline-data.json).
+F35–F38 dichiarati completati: progresso raw LaTeX dopo blank, veri token
+inermi dopo delimitatori incompleti nello stesso blocco, code soft-line
+nelle label condiviso fra scanner e consumer, documenti e prove. Delta7,
+reader v8/scorer v4; nuovo uso di PassiveHTML sulle aperture reali da
+revisionare.1373mirati/1530veloci+310subtest dichiarati PASS,261nuovi test;
+25receipt selezionate23PASS+2FAIL H12,10contratti. Tre TIMEOUT prima/tre
+PASS dopo;128casi prima/dopo,Unicode/cursori/fence/edge e57CLI sintetici/
+114exit reali.64misure invarianti su19campi rispetto a r007,4PASS/28FAIL
+per set32, nessun motore o nuova V. Fallimenti intermedi conservati.
+
+Supervisore:67628confronti hash,65763protetti/130copieinput/77copiericevute/
+205runtime S006→S007/10origini/206esterni coincidenti; solo stdlib/hash/Git
+in lettura, nessun test/build/R/CLI/motore/M/V proprio. Nuovo comune r008
+con due NUOVE review mirate prompt28/29,poi arbitrato; nessun GO codice.
+Disposizione24h e entry originale/contatori preservati:wall ricezione53,109h,
+ledger autore51,500h storico. Stop nuovi workload2026-10-11 08:37:31
+Europe/Rome,deadline11:37:31;CPU/disco/RAM/rete/€0 invariati. Corpus/gold/
+raw/V13/A03 chiuso invariati,L04output UNAVAILABLE e lacune storiche
+conservati. Nessun Git automatico/integrazione,fase2 o scelta motore.
+
+## 2026-10-10 — A002 r008: disposizione temporale24h confermata
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX / FIX_MANDATE_READY.
+L'utente conferma estensione e accetta24h se12h rischiano esaurimento;
+il supervisore sceglie24h per fix/prove e attese delle due nuove review.
+Ancoraggio al primo clock dopo ricezione09:37:31UTC (timestamp piattaforma
+non esposto), stop2026-10-11 08:37:31 Europe/Rome, deadline11:37:31,
+riserva3h. Preparazione/attese/registri incluse; entry originale e contatori
+cumulativi preservati, limiti CPU/disco/RAM/R/rete e€0 invariati. Nessuna
+sanatoria dei vecchi stop o esiti. Addendum versionato e prompt27 operativo
+F35–F38 alla stessa chat; nessun nuovo piano o GO prodotto.
+
+Nuovo contesto tecnico dopo soli quattro registri, codice/test/corpus/prove
+ricevute invariati, V13/A03/L04 distinti e64misure preservati. Controlli
+documentali/hash/manager, nessun prodotto/R/test/motore/V eseguito dal
+supervisore. Consegna completa r008, nuovo comune e due NUOVE review
+indipendenti/arbitrato. Nessun Git automatico/integrazione o fase2/ML/cleanup.
+
+## 2026-10-10 — A002 r007 NO_GO: scanner, mandato r008 e tempo pendente
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX /
+AWAITING_WALL_DISPOSITION. Due nuove review indipendenti r007 NO_GO,
+esclusivamente statiche dopo stop workload; comune MATCH prima/dopo e
+alla ricezione. Arbitrato reale di quattro rilievi in tre correzioni:
+F35 ciclo non terminante dedotto nel fence raw LaTeX dopo blank, F36
+commenti/CDATA riattivati dopo delimitatore incompleto nello stesso blocco,
+F37 code su soft-line nelle label scansionato diversamente dal consumer;
+F38 prove/documenti. Le conseguenze sono tracce statiche, non nuove sonde
+runtime.38 file reviewer ricevuti, hash/premesse/stdlb manager verificati;
+nessun reader/audit/scorer/R/test/motore/V eseguito dal supervisore.
+
+F32/F27/F30/F28locale/F26/F16 preservati nei domini verificati; F31/F33
+parziali e F34 da completare.64misure ricevute invarianti,4PASS28FAIL per
+set32, corpus/gold/raw/V13/A03 e L04 distinta UNAVAILABLE conservati;
+limiti/fallimenti storici non sanati. Prompt27 completo alla stessa chat,
+nessun nuovo piano. Quota52h/entry/attese invariati, stop10:06:54 Rome
+trascorso e deadline13:06:54 del10ottobre. Proposta12h dalla conferma
+con stop+9h/riserva3h, senza reset o aumento CPU/disco/RAM, **PENDING**:
+nessuna implementazione r008 autorizzata oltre stop finché non disposta.
+Nuovo contesto tecnico dopo soli quattro registri. Poi consegna completa,
+nuovo comune/due NUOVE review/arbitrato; nessun GO codice/integrazione,
+Git automatico, acquisizioni o fase2.
+
+## 2026-10-10 — A002 r007 ricevuta: contesti Markdown, nuove review
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r007 e
+[report permanente](benchmarks/2026-10-10-a002-r007-contesti-markdown.md)
+con [dati](benchmarks/2026-10-10-a002-r007-contesti-markdown-data.json).
+F31–F34 dichiarati completati: domini finiti scanner/consumer condivisi,
+lookahead delimitato per producer, autolink/metadata/raw TeX, barriere
+label/trasporti e rettifiche. Delta7,scorer/audit invariati;1112 test mirati/
+1269 veloci+310subtest dichiarati PASS,24receipt22PASS+2FAIL H12,10contratti.
+GPT21/14/15 eClaudeY/K15+12domini conformi; E9 atteso errato originale
+preservato, nuovo CLI run0/evaluate5.38CLI stub/76exit reali, nessun motore.
+Rescore64/checker002 senza motori/V,4PASS/28FAIL per set32 e zero differenze
+numeriche/gate da r006. Corpus/gold/raw/V13/A03 eL04 distinta preservati.
+
+Supervisore: solo hash/letture/manager,58941protetti/146input/73copie/
+205runtime S005→S006 equivalenti/10origini/206esterni corrispondenti; nessuna
+suite/build/R/rescore/V propria. Nuovi gate S006,preflight vecchio non
+trasferito,failures intermedi conservati. Nuovo comune r007 e prompt25/26
+a due NUOVE review indipendenti mirate,poi arbitrato; nessun GO codice.
+Quote originali52h/attese/riserva invariati: wall ricezione48,895h rispetto
+al ledger autore storico40,625h. Stop nuovi workload10:06:54 Europe/Rome,
+deadline13:06:54 del10ottobre,nessun reset; review documentali/consegna nella
+riserva dopo lo stop, niente nuove sonde. Limiti storici non sanati, nessun
+Git automatico/integrazione,motore scelto o fase2.
+
+## 2026-10-10 — A002 r006 NO_GO: contesti Markdown, mandato r007
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX. Due nuove review
+indipendenti NO_GO sul comune r006, MATCH prima/dopo e alla ricezione;
+arbitrato reale di quattro rilievi, F31–F33 bloccanti più F34 documenti/prove.
+Confini code/math oltre blocco riattivano prosa/asset commentati; autolink
+e metadata Markdown/raw TeX generano false aperture HTML, occultando blocchi
+validi. INCOMPLETE non rende corretta la misura; COMPLETE può avere perdite
+inventate. Nessun falso qualityPASS/rete/evasione dedotto. F27/F30 chiusi,
+F28 locale chiuso ma garanzia globale parziale, F29 aperto; F16 preservato64,
+domini precedenti conservati. Due checker reviewer confermano numeri/catena,
+4PASS/28FAIL per set32 e zero differenze su19 campi r005→r006.
+
+Ricezione supervisore703 file, sei receipt R PASS: GPT50 casi, Claude15 r006,
+15 confronto r005 e16 chiusure. R PASS distinto dagli assert; E9 Claude
+atteso errato, EPERM, preflight S005 STALE e checker iniziali conservati.
+Solo letture statiche/hash/manager, nessuna suite/build/R/motore/rescore/V
+prodotto supervisore. Corpus/gold/raw/V13/A03 chiuso invariati, L04 distinta
+UNAVAILABLE e limiti storici non sanati. Prompt24 alla stessa chat autrice,
+contratto finito scanner/confini/consumer e prove dipendenti; nuovo contesto
+tecnico dopo soli registri. Quota52h/entry/attese/riserva invariati. Consegna
+completa r007, poi comune e due NUOVE review mirate; nessun nuovo piano,
+GO codice, Git automatico/integrazione o fase2.
+
+## 2026-10-10 — A002 r006: confini lessicali ricevuti, nuove review
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r006 e
+[report permanente](benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md)
+con [dati](benchmarks/2026-10-09-a002-r006-confini-lessicali-html-data.json).
+F27–F30 dichiarati completati: chiusura vuota diagnosticata, commenti/CDATA
+interi e inerti, confini Markdown/trasporti inline condivisi e reason neutra.
+Delta7,scorer/audit invariati;936mirati/1093veloci+310subtest dichiarati PASS,
+21receipt19PASS+2FAILH12,10contratti.36GPT/15Claude e10confini/4foglie note
+dopo conformi, CLI23stub/46exitOS reali: nessun nuovo motore. Rescore00264
+senza motori/V,4PASS28FAIL per set32,zero differenze numeriche/gate da r005.
+
+Supervisore: ricezione statica di hash/delta/receipt,48306protetti/125input/
+72copie/205runtime S004→S005 equivalenti/10origini; nessuna nuova suite/
+build/R/conversione/rescore/V. Binding/receipt/shebang di stage nuovi e gate
+S005 attuali, preflight vecchio non trasferito;122helper/test invariati secondo
+equivalenza autore. Chiusura002 valida prevale sul primo footer FAIL documentale,
+altri fallimenti preservati. Corpus/gold/raw/V13/A03chiuso invariati,L04distinta
+e limiti storici non sanati. Nuovo comune r006 e prompt22/23 a due NUOVE
+review mirate, poi arbitrato reale. Quota52h/entry/attese/riserva invariati;
+nessun GO codice,integrazione/Git automatico o fase2.
+
+## 2026-10-09 — A002 r005 NO_GO: confini lessicali HTML, mandato r006
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX. Due review indipendenti
+r005 NO_GO sullo stesso comune, MATCH prima/dopo; arbitrato reale sui cinque
+rilievi, F27–F30 alla stessa chat implementatrice senza nuovo piano.
+Tre blocchi: `</>` consumato senza diagnosi produce COMPLETE/PASS automatico;
+CDATA troncata e commenti spezzati ai confini Markdown inventano prosa/risorse
+e possono mascherare omissioni, pur con INCOMPLETE. Nessuna rete/evasione o
+lettura riuscita dedotta dal caso absent.png. Reason del nodo diagnostico
+senza foglie è completamento non bloccante. Contratto token→confine/trasporto→
+foglie/consumatori, intero token inerte e intervalli esatti; subset finito.
+F23/F24/F26chiusi, F22originali con residuoF27/F25parziale F28-F29;
+F19/F20/F05/F15 e F16sui64preservati. Dati/catena/numeri invariati da r004,
+due set32×4PASS28FAIL, zero motori/nuovaV; nessun GO codice.
+
+Ricezione supervisore625file/51casi sonde e4CLI stub/8exit, hash/letture
+statiche/verify prima dei quattro registri; nessuna suite/build/R/conversione/
+rescore/V nuova. R PASS dei raccoglitori distinto dai mismatch. FAIL EPERM/
+preflight s005 stale/checker intermedi conservati. Corpus/gold/raw/V13 e
+A03chiuso preservati, L04UNAVAILABLE distinta, limiti storici non sanati.
+Nuovo contesto tecnico fix-r005 dopo sola transizione amministrativa, prompt21
+per consegna r006 e prove dipendenti/rescore o invarianza64senza motori; poi
+nuovo comune, due NUOVE review mirate e arbitrato. Quota52h/entry/attese/
+riserva invariati, costi reviewer da integrare senza doppio conteggio;
+nessun Git automatico/integrazione o fase2.
+
+## 2026-10-09 — A002 r005: diagnosi HTML ricevute, nuove review
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa
+r005 e [report permanente](benchmarks/2026-10-09-a002-r005-diagnosi-html-e-domini.md)
+con [dati](benchmarks/2026-10-09-a002-r005-diagnosi-html-e-domini-data.json).
+F22–F26 dichiarati completati: diagnosi dei wrapper non chiusi indipendenti
+dalla proiezione, heading HTML senza prefisso ATX, host inline heading/code,
+commenti/dichiarazioni/PI conservati fuori profilo. Il bound globale limita
+solo la distanza nel proprio dominio, può superare CER/WER strutturali;
+metrics.py invariato. Delta7,652mirati/809veloci+310subtest dichiarati PASS,
+19receipt17PASS+2FAILH12,10contratti conformi. Sonde16GPT/26Claude (25assert
+eA6diagnostico), nove CLI stub/18exit: nessuna nuova conversione motori.
+Rescore00264senza motori, due set32×4PASS/28FAIL, zero differenze numeriche/
+gate da r004. Ultima correzione intervalli commenti coperta da prove finali.
+
+Supervisore: ricezione statica di hash/delta/receipt,42288protetti invariati,
+168input/copie prima-dopo,108input s004→s005 equivalenti,10origini installate;
+nessuna suite/build/R/conversione/rescore/V nuova. Corpus/raw/gold/V13
+preservati, A03chiuso; L04UNAVAILABLE e limiti storici conservati. Nuovo
+snapshot comune r005 e prompt19/20 per due NUOVE review mirate, poi arbitrato
+reale. Quota52h/entry/attese invariati, nessun GO codice o integrazione.
+
+## 2026-10-09 — A002: doppio NO_GO r004 e fix locale r005
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX. Due nuove review
+indipendenti NO_GO sul medesimo comune r004 MATCH prima/dopo, arbitrate
+realmente: wrapper non chiusi perdono diagnostica e risultano COMPLETE/PASS;
+heading HTML supportati vanno in crash nel mapping dei prefissi Markdown.
+Due blocchi, più host inline heading/code, token comment/declaration e
+chiarimento del dominio del bound come completamenti non bloccanti. F22–F26
+alla stessa chat implementatrice per consegna r005, senza nuovo piano.
+
+F19/F20/F05/F15 chiusi nel dominio dichiarato, F16preservato sulle64misure;
+bound globale corretto, può superare CER/WER strutturale: chiarimento, non
+metrica da cambiare. Corpus/gold/raw/V13protetti, A03chiuso, L04 e limiti
+storici conservati. Test/regressioni/contratti/suite dipendenti e nuove
+misure o invarianza64raw, nessuna V generale o motore per il delta previsto.
+Supervisore: ricezione267file42casi/lettura statica/verify prima registri,
+nessuna suite/build/R/rescore/conversione/V nuova. Storico e FAIL preservati;
+nuovo contesto tecnico dopo sola transizione amministrativa, quota52h/entry/
+attese/riserva invariati. Alla r005 nuovo comune e due NUOVE review mirate,
+poi arbitrato reale. Nessun GO codice/integrazione/Git automatico/fase2.
+
+## 2026-10-09 — A002 r004: copertura HTML e bound ricevuti, nuove review
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa
+r004 e [report permanente](benchmarks/2026-10-09-a002-r004-profili-html-e-bound.md)
+con [dati](benchmarks/2026-10-09-a002-r004-profili-html-e-bound-data.json).
+F17–F21 completati secondo autore, non GO: profili HTML finiti con foglie
+residue conservate/auditate, caption aggiunte, letterale < e conteggi
+strutturali condizionati separati dal bound globale garantito. Zero
+conservativo sul testo non misurabile, senza occultare FAIL strutturali.
+Delta8 file,475 test mirati/632veloci+310subtest dichiarati PASS;
+20receipt18PASS+2FAIL H12 deliberati,10contratti conformi, oracle10casi/
+42completamenti. Rescore64senza motori, due set32×4PASS/28FAIL; RTF19/162
+condizionato vsbound13/162, TeXcompletoNone/condizionato1/152/bound0.
+
+Supervisore: ricezione statica hash/delta/receipt e38018protetti invariati,
+160input prima/dopo,48helper/test s007→s008 equivalenti e10origini installate;
+nessuna suite/build/R/conversione/rescore/V nuova. Corpus/raw/gold/V13
+preservati, A03 chiuso, L04 e limiti storici conservati; tre pyc managed
+preservati con nuovi input/gate, causa storica non attribuita. Nuovo snapshot
+comune e prompt16/17 per due NUOVE review indipendenti mirate, poi arbitrato.
+Quota52h/entryoriginale/attese invariati, nessun GO/integrazione/Git automatico,
+motore scelto o fase2.
+
+## 2026-10-09 — A002: doppio NO_GO r003 e mandato di fix r004
+
+**Fase/run:**1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX. Ricevute due nuove
+review indipendenti NO_GO sullo snapshot r003 verificato MATCH prima/dopo.
+Arbitrato reale sui sette rilievi: quattro famiglie bloccanti (strutture HTML
+inline, residui table/figure, caption aggiunte, bound testuali non garantiti)
+e regressione non bloccante sul letterale <. F17–F21 al medesimo implementatore,
+con contratto di conservazione tra lettura e misura, senza nuovo piano.
+
+F16 chiuso sulle64 misure verificate dai reviewer, due set32 ciascuno4PASS/
+28FAIL, zero nuove conversioni r003. Corpus/raw/gold/V13 protetti, A03 chiuso;
+L04 e lacune storiche preservati. Nuove misure o invarianza64raw e prove
+dipendenti, nessuna riconversione/V generale per il delta previsto.
+Tre pyc managed encodings mutati durante la review richiedono nuovi input
+e gate validi, causa non attribuita; distinti dai Chrome storici. Fallimenti
+conservati, niente ripristino o trasferimento dei PASS a byte nuovi.
+
+Supervisore: lettura statica e ricezione405file/34casi, verify comune MATCH
+prima dei registri; nessuna suite/build/R/conversione/rescore/V nuova.
+Contesto tecnico dopo sola transizione amministrativa, snapshot storico
+immutato. Quota52h/entry originale/attese e riserva invariati. Consegna
+completa r004, nuovo snapshot e due NUOVE review mirate, poi arbitrato.
+Nessun GO codice/integrazione/motore scelto/fase2 o Git automatico.
+
+## 2026-10-09 — A002 r003: fix HTML e metriche ricevuti, review mirate da avviare
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r003,
+[report permanente](benchmarks/2026-10-09-a002-r003-html-e-metriche.md) e
+[dati](benchmarks/2026-10-09-a002-r003-html-e-metriche-data.json): F13–F16
+realizzati secondo autore, non GO. Delta9 file: reader/audit/scorer/protocollo,
+nuovi test e guide/report. Trasporto HTML tipizzato, audit risorse/fallback,
+CER/WER UNAVAILABLE sul testo non misurabile e decomposizione strutturale WER.
+373 test mirati,514 veloci+310 subtest,10 contratti con attesi dichiarati;
+16 R finali14 PASS+2 FAIL H12 deliberati. Rescore64 senza motori, ciascun
+set32 produce4 PASS/28 FAIL; baseline003 conversione r002 con misure r003.
+
+Ricezione statica supervisore:27532 confronti hash,26141 protetti e136 input
+preservati invariati,delta9 confermato,206 input esterni stage010 coincidenti.
+Nessuna build/suite/R/conversione/V nuova del supervisore. Corpus e V13
+invariati, zero nuove conferme umane; L04 e L01/L02/L05/Chrome NONPASS/helper
+storici mancanti non sanati. Nuovo snapshot comune e prompt13/14 per due
+NUOVE review mirate indipendenti, poi arbitrato. Quota52h/entry e attese
+invariati, nessun GO/integrazione/Git automatico/motore scelto o fase2.
+
+## 2026-10-09 — A002: doppio NO_GO r002 e mandato di fix r003
+
+**Fase/run:** 1/a002, IMPLEMENTATION / NO_GO_LOCAL_FIX. Ricevute le due nuove
+review indipendenti dell’implementazione r002, entrambe NO_GO sullo snapshot
+comune verificato MATCH prima/dopo. Arbitrato reale locale: contenuti tipizzati
+persi nel ponte HTML inline, risorse HTML non auditate e CER/WER dichiarati
+completi in presenza di unknown non misurato; completamento della spiegazione
+strutturale del WER nei dati/report. Sei rilievi accolti in F13–F16, senza
+nuova pianificazione. Stessa chat implementatrice, consegna completa r003.
+
+Gli altri fix e la V derivata sono chiusi nel perimetro delle review, con limiti
+espliciti. V reale sui13 riferimenti preservata, nessuna nuova verifica umana.
+Test/contratti/suite dipendenti e rescore o invarianza dei64 raw conservati;
+nessuna nuova conversione motori dovuta al delta reader/audit/scorer previsto.
+Le misure r002 e le perdite Pandoc restano storia, non una nuova certificazione.
+L01/L02/L04/L05, Chrome NONPASS e vecchi helper mancanti non vengono sanati.
+
+Verifica del supervisore: identità Git/base80c31da, indice vuoto, ricezione285
+file dei ruoli e lettura statica dei risultati di18casi, binding R/snapshot
+MATCH. Nessuna suite/build/R/conversione/V nuova del supervisore. Contesto
+tecnico di ingresso aggiornato per sola transizione amministrativa; storico
+preservato. Quota52h dall’ingresso originale e attese incluse, nessun reset.
+Alla consegna r003: nuovo snapshot e due nuove review mirate, poi arbitrato.
+Nessun GO codice, integrazione Git, motore scelto o fase2 anticipati.
+
+## 2026-10-09 — A002 r002: rettifica e baseline ricevute, nuove review mirate
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta la consegna completa
+r002 del [report di rettifica e baseline](benchmarks/2026-10-09-a002-r002-rettifica-e-baseline.md)
+e [dati](benchmarks/2026-10-09-a002-r002-data.json). F01–F12 realizzati secondo
+l’autore, non GO del supervisore. Corpus rev5 aggiorna metadati header e
+11caption in9transcript; sorgenti/render/asset invariati,20PDF ora versionabili.
+Vreale originale conservata in13receipt derivate schema3, nessuna nuova
+conferma umana; M415+93PASS. Nuove osservazioni/score32rawstorici rettificano
+celle/numeri/WER, zero motori; baseline0038×4 correnti distinta,4PASS/28FAIL.
+247testmirati,388test+310subtest suite veloce,20contratti e18guardie dichiarati
+conformi.8Resterne comprendono6FAILattesi e2PASS; statoR/qualità/contratti distinti.
+L04outputUNAVAILABLE e L01/L02/L05 conservati, ChromeNONPASS e altri errori storici
+non sanati. La fase1 non è conclusa e nessun motore è stato scelto.
+
+Controlli supervisore statici:11369confrontihash,9189artefatti storiciimmutati,
+inputworkspace/preservati coerenti, bundle208/230prima/230dopo e PDF nonignorati,
+branch/base80c31da e indice vuoto. TrebinariChrome fuoriworkspace diversi rispetto
+allo stagecapturato,203/206inventorymatch; impatto/freshness per nuove prove da
+valutare nelle review, senza trasferire gate storici a input cambiati.
+Nessuna build/suite/R/conversione o nuovaV eseguiti dal supervisore. Snapshot
+comune implementation-r002 e prompt10/11 per due nuove chat indipendenti
+mirate alle chiusureF01–F12/dipendenze/regressioni, poi arbitrato reale.
+Ledgerfinaleautore15.32hwall/CPUlower6195.769s/retained918503388B+supplemento,
+RSSsampled735604736B/servizi€0; quota52h/entry/limiti invariati. NessunGOcodice,
+commit/merge/push automatici o nuova fase; integrazione resta manuale dopoGO.
+
+## 2026-10-08 — A002: doppio NO_GO implementazione, arbitrato e fix locali
+
+**Fase/run:**1/a002, IMPLEMENTATION/NO_GO_LOCAL_FIX. Ricevute due review reali
+indipendenti ChatGPT/Claude, NO_GO/NO_GO sullo stesso snapshot r001MATCH.
+Supervisore ha letto report/prove e ispezionato il codice, senza nuove esecuzioni
+prodotto. Arbitrato NO_GOlocale:8blocchi su inlinecelle/caption, equivalenzeAST
+nell’allineamento, guardie fino ai figli, risorsepassive, WER inserzioni,
+PDFignorati, header/celle/numeri e missing/unknown. Accolti4completamenti su
+titoli/rawinline, transcriptcaption, PATHE08 e provenienza helperstorici.
+
+Prompt09completo alla stessa chat implementatrice: niente nuovo piano.
+Correggere misure storiche e pubblicare rettifica; nuova baseline32attempt
+motivata dal delta comune validator/adapter/monitor/R, non dal cambiochat.
+V documentale originale13riferimenti conservata, nessuna ripetizione umana
+generalizzata; metadatiheader e receiptderivate richiedono M/delta/invarianza
+dei contenuti visibili, non copie VERIFIED suhashnuovi.20PDFsintetici esclusi
+dalla regola legacy devono diventare versionabili. Prove/report r001 immutati.
+
+Verifiche proprie: snapshotMATCH prima dei registri, hash/report/provider/Git,
+ispezione statica, check-ignore20PDF e copiebytevincolate al nuovo contestofix.
+Nuove prove r002 ancora da eseguire, nessunGOcodice. Quota52h/entryoriginale e
+riserva invariati, ledger da aggiornare incluseattese; costiesterni€0.
+Alla consegna r002 nuovo snapshotcomune e due nuove reviewmirate, poi arbitrato.
+L01/L02/L04/L05,a001/cleanup preservati; Gitmanuale, nessuna fase2/motore scelto.
+
+## 2026-10-08 — A002: consegna completa ricevuta, avvio review implementazione
+
+**Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta la consegna completa del
+corpus rev4, strumenti, negativi e baseline; [report corrente dell’autore](benchmarks/2026-10-08-a002-verified-reference.md).
+Tredici riferimenti VERIFIED nelle receipt: M indipendente e una risposta V
+collettiva reale sul confronto originale/Markdown di riferimento, proiettata
+esplicitamente sui documenti. A03 chiuso nella consegna, durata umana non misurata.
+Fix caption DOCX/RTF/TeX e nuovo confronto leggibile; prove dipendenti ripetute.
+Suite304test+310subtest e163mirati sottoR/stage040 dichiarati PASS.32score sui
+raw validi conservati (12campagna002 e20rerun003):4PASS/28FAIL, batch qualitàFAIL.
+L04formuleoutputUNAVAILABLE, PDF/OCR e compilazioneTeX non misurati; helperdelta
+storici espliciti. Report iniziali e fallimenti R/renderer restano conservati.
+
+Verifiche supervisore: ricezione statica,556hashMATCH/201inputtecnici/10coppie
+moduli installati e33oggetti supervisore invariati prima dei nuovi registri,
+branch/base80c31da e indice vuoto. Snapshot comune implementation-r001 e due
+prompt con criteri identici per nuove chat ChatGPT/Claude. Nessuna prova runtime
+rieseguita dal supervisore, nessun report reviewer o GO codice anticipato.
+Ledger008~11h35wall, CPU nota1465.67s lower-bound e443.63MiB conservati, servizi€0;
+quota52h/entry originale invariati, limiti di misura espliciti. Prossimo passo:
+due review indipendenti reali e arbitrato; Git manuale, fase1 non conclusa.
+
+## 2026-10-08 — A002: correggere il controllo umano V per istruzione utente
+
+**Fase/run:**1/a002, IMPLEMENTATION/V_WORKFLOW_FIX. Report e checkpoint autore
+r001 reali PARZIALI letti: lavoro tecnico/32conversioni/test dichiarati conclusi,
+A03 pendente, nessuna review indipendente o GO implementativo. L’utente ha
+respinto il workflow V a215giudizi/blocchi/TSV come troppo complicato e non
+eseguibile, indicando come modalità possibile il confronto originale/Markdown.
+Il supervisore corregge il proprio requisito umano con addendum esplicito e
+prompt06 alla stessa chat implementatrice, senza nuova pianificazione generale.
+
+Nuova modalità richiesta: originale e Markdown di riferimento completo affiancati,
+una risposta in linguaggio naturale per documento (10corpus+3controlli), nessun
+AST/code point/hash/timestamp/TSV imposto all’utente. Gold indipendente e M
+tecnico restano dovuti; la receipt V è documentale e non inventa215firme atomiche.
+Originali/packet/campagne/report storici preservati, prove dipendenti da ripetere
+solo sugli input modificati.260min erano accordo sul vecchio lavoro, non tempo
+umano già svolto né nuova durata trasferita implicitamente; quota52h e entry
+originale invariati. L’utente ora non deve verificare packet005/006.
+
+Osservazione statica/visiva del supervisore su C02: caption “Celle misurate”
+attesa nel riferimento del packet006 ma assente dal DOCXcanonico e render;
+fix e controllo M discriminante richiesti prima del nuovo confronto. Non è
+un rifiuto umano ricevuto o una review completa. Test/32attempt dichiarati nel
+report dell’autore non sono ricertificati dal supervisore; A03 resta requisito.
+Verifiche proprie documentali/statiche, hash packet/branch e coerenza stati;
+nessuna build/suite/conversione/R o nuova V umana eseguita. Prossimo passo:
+implementatore prepara nuovo confronto C02 utilizzabile e restante packet,
+raccoglie risposta V reale e completa fix/report prima delle due review codice.
+
+## 2026-10-08 — A002: errata verificate, GO piano corretto e mandato completo
+
+**Fase/run:** 1/a002, arbitrato piano r002 **GO sul piano r001 + addendum errata
+r001**. Verificate le correzioni E01–E08: struttura matematica limitata e raw,
+M/V indipendenti con pacchetto leggibile, harness expected0 sotto R che conserva
+errori/FAIL motore, ristima dal basso, profilo Markdown, input/output unsafe,
+baseline Pandoc con figura e identità/scratch/cattura legacy. Piano originale,
+review ChatGPT GO/Claude NO_GO e NO_GO locale r001 restano immutati: il GO è
+la decisione reale del supervisore dopo fix locali, non nuova review simulata
+né PASS del futuro runtime. Nessun nuovo piano o doppia review integrale.
+
+Mandato prompt05 completo nel contesto della run, stato IMPLEMENTATION /
+MANDATE_READY. Quota unica disposta52h wall (27base+22margine+3riserva), CPU
+aggregata21600s, crescita6GiB, RAM operativa8GiB/stop sampled6GiB; riserva3h/
+1800CPU-s/1GiB. Acquisizioni/invio documenti0 e nuovi servizi€0. Ledger dalla
+prima azione implementativa, comprende preparazione/attese/M-V/test/workload/
+fix/consegna; tempi degli altri ruoli separati e quote a001 non sanate/reset.
+Utente V già designato, durata concordata sul pacchetto pronto (stime gold185min
++controlli25min), nessun giudizio già raccolto. Output umano non disposto/L04;
+M/V gold resta requisito di consegna, corpus provvisorio non equivale a completo.
+
+Verifiche solo documentali/statiche: snapshot fix MATCH alla ricezione,28protetti
+invariati, somme17componenti e conteggi ricalcolati, matrice rilievi→errata e
+criteri A01–A12/L01–L05, link/stati/whitespace e git diff --check. Errori autore
+r001/r002 conservati, r003 PASS. Nuovo contesto tecnico d'ingresso identifica
+il delta amministrativo successivo, senza riscrivere snapshot precedenti.
+Implementazione/corpus/test/conversioni/benchmark reali a002 ancora da svolgere;
+nessuna nuova acquisizione, operazione Git, M/V o prova R del supervisore.
+Prossimo passo: implementatore completa risultato e fix nello stesso mandato;
+poi snapshot comune e due nuove review indipendenti del codice e arbitrato reale.
+PDF/OCR/compilazione TeX, hardware non collaudati e fase1 successiva restano tali.
+
+## 2026-10-08 — A002: review piano ricevute, arbitrato NO_GO locale
+
+**Fase/run:** 1/a002, arbitrato piano r001 **NO_GO locale / errata richieste**.
+Ricevuti report reali ChatGPT/Codex OpenAI GO e Claude/Anthropic NO_GO sullo
+stesso piano/snapshot; indipendenza dichiarata, hash e verify MATCH confermati
+alla ricezione. Il supervisore non decide a maggioranza: accoglie difetti del
+confronto strutturale delle formule, verifica Unicode non visiva e ambito M/V,
+contratto degli exit del benchmark sotto R. Accolta ristima dal basso come
+prerequisito della quota; le somme sono corrette e le stime del reviewer non
+sono limiti inferiori misurati. Accolti anche chiarimenti su profilo Markdown,
+output unsafe, criterio nativo con asset e identità/PATH del legacy; campagna
+aggiuntiva del default rinviata fuori dall'incremento corrente.
+
+Arbitrato e prompt04 completi scritti nel contesto della run: addendum locale
+E01–E08, piano r001 immutato, nessun nuovo piano o review integrale automatica.
+Esito NO_GO finché le errata non sono completate e verificate; nessuna quota
+definitiva, implementazione o GO condizionale. Prossimo passo: stessa chat
+autrice completa errata e ristima, poi verifica/arbitrato del supervisore e
+mandato completo solo dopo GO. Il nuovo snapshot tecnico del contesto di fix
+conserva le identità originarie e registra le sole transizioni documentali;
+snapshot delle review non riscritto né sanato dopo gli aggiornamenti dei registri.
+
+L'utente ha risposto: svolgerà il controllo visivo e la durata sarà concordata
+sul pacchetto pronto. È designazione reale, non verifica gold già effettuata.
+M meccanico indipendente resta distinto da V umano; materiale leggibile e
+stima per ambito sono parte dei fix. Il requisito umano introdotto dal mandato
+è attribuito anche alla supervisione. Nessuna firma agente sostituisce l'utente.
+
+Verifiche: ricezione/hash, codice statico R/legacy, help locale dei reviewer,
+fonti primarie Pandoc/texmath per delimitare i contratti (nessun risultato
+runtime dedotto), link/stati e git diff --check. Nessuna suite/build/conversione,
+prova R, installazione o modello; acquisizioni/ML/remoto/fase2 non avviati.
+Base/feature80c31da e indice vuoto confermati, Git di scrittura manuale utente.
+A001 e quote NON PASS storiche conservate. [Stato dell'incremento](development/next-run-a002-corpus.md).
+
+## 2026-10-07 — A002: piano r001 ricevuto, passaggio alle review indipendenti
+
+**Fase/run:** primo incremento 1/a002, **PLAN_REVIEW**. Ricevuti il piano r001
+e il checkpoint del pianificatore; verificati hash dei due documenti e dei
+23 file ereditati/condivisi prima degli aggiornamenti di supervisione. Il FAIL
+aritmetico del controllo documentale r001 è conservato; r002 corregge la
+somma a 600 min e risulta PASS, riconfermata l'aritmetica della quota proposta.
+Branch `feature/run-a002-corpus` ora osservato attivo, HEAD/dev e merge-base
+alla base `80c31da`, indice vuoto e delta soltanto documentali. Registrata la
+differenza dalla rilevazione precedente; nessun Git di scrittura del supervisore.
+
+Piano: 10 documenti, 9 pagine PDF, 12 pagine fisse di controllo e 32 tentativi
+nativi (cinque percorsi diretti e tre legacy distinti). Corpus/gold/runner/
+negativi/baseline ancora da implementare; conversioni PDF/OCR NOT_MEASURED,
+compilazione TeX esclusa dalla misura. Verifica umana dei gold proposta come
+dipendenza reale, non assegnata né completata. Risorse proposte: 15 h wall,
+7200 CPU-s, 4 GiB nuovi, 8 GiB RAM operativa, rete di acquisizione 0/costo nuovi
+servizi €0; quote da valutare e disporre nell'arbitrato/mandato, non autorizzate
+dalla ricezione del piano. A001 e limiti NON PASS restano invariati.
+
+Preparati gli input comuni dello snapshot plan-r001 e due prompt di review
+con criteri identici e destinazioni distinte per nuove chat ChatGPT e Claude.
+Freeze e verifica registrati nel contesto locale della run. Nessun report di
+review, arbitrato o GO anticipato, nessuna delega implicita dei reviewer.
+Prossimo passo: ricevere le due review reali sullo stesso oggetto e arbitrare
+i rilievi. [Stato permanente dell'incremento](development/next-run-a002-corpus.md).
+
+Verifiche limitate a ricezione documentale, identità degli input, aritmetica,
+link/stati/ruoli e `git diff --check`; nessuna suite/build/conversione/prova R,
+inferenza, verifica umana dei gold o nuova query Git remota eseguita.
+
+## 2026-10-07 — A002: prompt pianificazione pronto e pulizia manuale ricevuta
+
+**Fase/run:** primo incremento 1/a002, **PREPARATION / PLANNING_PROMPT_READY**.
+La nuova supervisione ha letto gli ingressi autorevoli, skill/protocollo,
+ADR/roadmap e archivio mirato a001. Branch attivo dev, HEAD/base `80c31da`,
+indice vuoto e delta documentali di preparazione identificati; feature a002
+ancora assente. Nessuna nuova query remota: push ereditato dalla receipt reale.
+Pianificazione consentita su dev per disposizione utente, feature necessaria
+prima dell'implementazione e Git di scrittura sempre manuale.
+
+Scritto il prompt completo r001 per la chat pianificatrice: corpus minimo con
+gold verificabili indipendentemente, protocollo/runner, metriche per fenomeno,
+positivi/negativi e primo esperimento nativo reale; stima numerica per l'intero
+obiettivo con riserva. Stato, eventi, indici e checkpoint aggiornati. Nessun piano,
+review, arbitrato, quota definitiva o benchmark a002 prodotto. Prossimo passo:
+consegna del piano, snapshot comune e due prompt per review ChatGPT/Claude
+indipendenti, poi arbitrato reale. Fase2 e confronto ML non avviati.
+
+Ricevute le [receipt reali della pulizia manuale](runs/run-a001-fase0-uv/notes/cleanup-completion-2026-10-07.md):
+193 file rimossi (~319,40 MiB logici), tre tag Docker superati rimossi. Ricontrollati
+193 path assenti, 91 keeper unici MATCH e soli tag attesi (r007 presente).
+Prima query Docker negata dal processo; escalation read-only approvata e riuscita.
+Copie delle receipt archiviate byte-identiche, separate dai 266 record storici.
+Nessuna rimozione del supervisore; spazio fisico recuperato non misurato.
+
+Verifiche documentali: link locali, stati/ruoli/output attesi, hash delle copie
+e `git diff --check`. Nessuna suite/build/conversione/inferenza; GO a001 e
+quote temporali NON PASS conservati. [Obiettivo e stato permanente](development/next-run-a002-corpus.md).
+
+## 2026-10-07 — Push a001 verificato, pulizia valutata e preparazione a002
+
+**Fase/run:** chiusura 0.1/a001 e preparazione del primo incremento 1/a002.
+Verificato il commit documentale `80c31da46e5caab990d3596c79c44e524ec1dc95`,
+con genitore squash `b90c6d4`, soli sette registri attesi e whitespace PASS;
+`git ls-remote origin refs/heads/dev` conferma lo stesso SHA. Worktree pulito
+prima di questa preparazione; nessun Git di scrittura del supervisore.
+GO implementativo e quote temporali NON PASS restano invariati.
+
+Verificati i266record dell'archivio, inventariati residui/dipendenze: circa1.43GiB
+allocati nella run locale. Identificate193wheel storiche duplicate (~319MiB)
+con hash/copie conservate e tre immagini Docker superate senza container associati.
+[Valutazione selettiva e limiti](runs/run-a001-fase0-uv/notes/cleanup-assessment-2026-10-07.md):
+nessuna cancellazione, r007/input finali/env/cache utili/prove uniche conservati;
+cache Docker condivisa non attribuita. Lo spazio basta, pulizia non è un gate.
+
+Su richiesta esplicita dell'utente definita [a002](development/next-run-a002-corpus.md):
+corpus di riferimento, protocollo/runner di misura della fedeltà, negativi e
+baseline reale leggera. Contesto inizializzato con run_context.py e handover alla
+nuova supervisione pronti; **PREPARATION**, branch feature da creare manualmente,
+nessun piano/review/benchmark già prodotto. Prossimo passo: prompt completo per
+la chat pianificatrice, poi ciclo supervisionato ordinario; modelli pesanti,
+remoto a pagamento, scelta dei motori e fase2 non avviati implicitamente.
+
+Verifiche di questa consegna: remoto Git in sola lettura, hash archivio/copied
+payload, symlink, processi accessibili, inventario Docker senza modifiche,
+coerenza dei registri, link locali e diff. Nessuna suite/build/inferenza.
+Questi nuovi documenti di preparazione possono accompagnare la feature a002,
+senza un ulteriore commit obbligatorio di chiusura a001.
+
 ## 2026-10-07 — Run a001: integrazione manuale verificata in dev
 
 **Fase/run:** 0.1, `run-a001-fase0-uv`. **Stato:** INTEGRATED.

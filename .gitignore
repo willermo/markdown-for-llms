@@ -60,6 +60,7 @@ pipeline_logs/
 
 # Generated/processed files - exclude all PDFs 
 *.pdf
+!tests/fixtures/conversion-corpus/**/*.pdf
 # Exclude pipeline config but keep template
 pipeline_config.json
 !pipeline_config.json.example

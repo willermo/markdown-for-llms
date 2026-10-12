@@ -1,0 +1,65 @@
+[b01; pagina=N/A; tipo=heading]
+A source based experiment
+
+[b02; pagina=N/A; tipo=paragraph]
+The imaginary laboratory records three samples without using personal records. Each sample has a readable description and a value in its original written form. The identifier 0012 names a series, while −7 records a signed change. The decimal point in 123.45 remains part of the observation. A revision can correct a transcription only while retaining the original document and a reason for the change.
+
+[b03; pagina=N/A; tipo=formula]
+
+
+E=mc^{2}
+
+[b04; pagina=N/A; tipo=heading]
+Included observations
+
+[b05; pagina=N/A; tipo=paragraph]
+The second observation separates content from its position on the page. A sentence can occupy two lines without changing its words, but a missing line changes the result. Empty cells are present in the table and do not ask the reader to invent a measurement. The figure contains colored regions, axes and a legend. A matching filename cannot establish that those elements survived conversion.
+
+[b06; pagina=N/A; tipo=formula]
+
+
+\frac{x_i+1}{2}
+
+[b07; pagina=N/A; tipo=formula]
+
+
+\sum_{i=1}^{n}x_i
+
+[b08; pagina=N/A; tipo=table]
+
+
+Code | Value | Note
+
+0012 | 0 | 
+
+B | −7 | 123.45
+
+Measured cells
+
+[b09; pagina=N/A; tipo=heading]
+Structured results
+
+[b10; pagina=N/A; tipo=formula]
+
+
+\begin{aligned}a&=1\\b&=-2\end{aligned}
+
+[b11; pagina=N/A; tipo=formula]
+
+
+\begin{bmatrix}0&-1\\2&3\end{bmatrix}
+
+[b12; pagina=N/A; tipo=figure]
+Figure 1 — Three regions and laboratory axes.
+
+[b13; pagina=N/A; tipo=paragraph]
+See the figure and the source while keeping references explicit.
+
+ref: figure → fig1
+
+link: source → https://example.invalid/study?series=0012&mode=a_b#note
+
+citation: reference → bib1
+
+[b14; pagina=N/A; tipo=bibliography]
+Synthetic Researcher. Source notebook, 2026.

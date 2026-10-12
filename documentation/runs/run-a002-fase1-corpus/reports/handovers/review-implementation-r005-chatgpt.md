@@ -1,0 +1,36 @@
+# Checkpoint — reviewer ChatGPT implementazione r005
+
+Review indipendente completata: **NO_GO**. Codex/OpenAI, famiglia GPT-6; deployment/chat ID non esposti, nessuna sostituzione/delega. Chat nuova, letti i due report/checkpoint r004 ammessi; non letti report/evidenze/checkpoint concorrenti r005 o arbitrato r005.
+
+## Input e identità
+
+- [Prompt19](../prompts/19-review-implementation-r005-chatgpt.md), SHA256 `7d5bce9660b54bbf58ab17e81c123202d47214b283b75cfc4e269d015543f368`; arbitrato r004/prompt18/F22–F26, piano/errata/GO e mandati nei requisiti pertinenti, consegna finale autore r005.
+- Comune implementation-r005 SHA256 `b4fe0240533ad92e0acb65c355c01991c6d15f83abab2f4781e7d28f9653433e`, impronta `0a99ca81113185b6ed48263b798e72bc2bf542c0a92d64d2bd2fb72033ccdd34`,316file/47654artefatti. Verify prima/dopo **MATCH/exit0**; nessuna rigenerazione.
+- Feature/run-a002-corpus; HEAD/dev/origin-dev/merge-base80c31da46e5caab990d3596c79c44e524ec1dc95; indice vuoto. Delta7autore+4documenti supervisore; metrics.py invariato.
+- Skill manage-implementation-run e verify-conversion-fidelity applicate.
+
+## Output ed esito
+
+- [Report](../reviews/review-implementation-r005-chatgpt.md).
+- [Evidenze proprie](../../../../../temp/run-a002-fase1-corpus/evidence/review-implementation-r005-chatgpt): verify/git/delta, startup e nuovi S/B/I/origin/preflight, FAIL s005 stale diagnosticato, helper/manifest/target propri, R-probes001/002,36sonde/raw/gold/observations/audit/metrics, quattro CLI stub/8exit reali, checker statico47511PASS, supplemental4432input invariati/64final e raw trees, costi.
+- Tre snapshot tecnici propri `review-r005-chatgpt-inputs-001`, `-workload-001`, `-cli-001` sotto snapshots/, nessuno ricevuto modificato.
+
+**GPT-R005-I001**, media/bloccante: il tokenizer locale ignora `</>` senza callback e il produttore non conserva quella diagnosi. Paragrafo/cella/fence danno COMPLETE/PASSautomatico/unknown0; CLI reale stub run0/evaluate5 anziché2/2. Ereditato, residuo F22/F25/F13/F14/F09, non perdita di prosa o bypass URI.
+
+**GPT-R005-I002**, media/bloccante per regressione del contenuto inline: unknown_decl consuma CDATA sino a `]]>` ma token() tronca al primo`>`. Nel blocco/cella raw localizzato incompleto; inline riinterpreta la coda come prosa e una finta img come reference, con tentativo audit.regular('absent.png'). Rimane INCOMPLETE/nonPASS; nessun fetch/evasione/lettura riuscita inventati. Nuovo r005, F25/C04/C06. Correzione minima: conservare l'intero token unsupported/inerte con intervallo esatto.
+
+F22casi originali/F23/F24chiusi nel dominio controllato; F25parziale per rilievi, F26chiuso. F05/F15/F19/F20preservati, F16su64: due set32×4PASS28FAIL, zero differenze numeriche/gate da r004, zero motori/V. TXT0/89,DOCX11/182,EPUB8/186,RTFcondizionato19/162vsglobale13/162,TeXcompletoNone/condizionato1/152/global0. V13/A03preservati,L04distinta. C08/C09soddisfatti nei limiti; nessuna sanatoria ChromeNONPASS/helper12gap/L01/L02/L04/L05.
+
+## Prove, costi e processi
+
+R001 IMPEDITA/EPERM sul socket prima workload, preservata. Escalazione tool approvata mantenendo R; R002 PASS/36casi diagnostici, **28contratti rispettati/8unmet**, non36testPASS. R-cli001 PASS/4casi8exit, mismatch empty-close conservato. Gate attuali, managed3.12.13/stesso interprete figli, Firejail rete isolata, timeout120s/expected0, binding prima/dopo/reap/socket. Gold sintetici PROVISIONAL; gatePASS distinto da qualitàINDETERMINATE.
+
+Autore652mirati/809veloci+310subtest e19receipt17PASS2FAILH12 controllati, non rieseguiti. A6Claude solo diagnostico,25assert sui26casi; nessun assertPASS inventato. Copie168delivery non attribuite prima di ogni workload,108equivalenze effettive e budget host separato. Tre pyc managed invariati, causa non attribuita.
+
+Costi in costs.json: clock ingresso20:47:46UTC; alla misura20:57:25UTC wall run136231,342393s, CPU propria registrata78,032289s **lower/subset**, evidenze circa3,31MBlogici/4,44MBallocati prima dei documenti finali, RSSworkloadmaxcampionato142434304B. Non sommare receipt R ai wrapper; costi amministrativi e scrittura finale parzialmente non misurati. Quota52h/entryoriginale/attese/stop/deadline e riserva invariati; ledger autore closing storico, nessun saldo upper inventato.
+
+Nessuna suite/build/install/conversione motori/render/browser/M/V/API/Docker/ML propria. Zero rete/acquisizioni/invio/nuovi servizi esterni. **Nessun processo proprio persistente pendente**: sonde/CLI conclusi, figli R raccolti, socket puliti; verifica /proc limitata ai prefissi propri senza segnali. Scritti soltanto output propri autorizzati, nessun fix prodotto/test/corpus/gold/registro comune o Git di scrittura.
+
+## Prossimo ruolo
+
+**Supervisore per ricezione dei due report r005 e arbitrato reale** sul comune identificato. Nessun GO/arbitrato/fix o passaggio di stato anticipato dal reviewer.

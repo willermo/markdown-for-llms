@@ -1,0 +1,141 @@
+{
+  "reason": "F55 / AST pinned: ordinary EOF has no code ownership; real HTML guarded, safe img preserved (tilde text) or explicit residual (unclosed backtick). Historical r012 raw/gold untouched.",
+  "cases": {
+    "block-quote-False-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-quote-False-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-quote-True-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-quote-True-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-quote-True-False-True-False-False": {
+      "reason": null,
+      "visits": [
+        "img"
+      ]
+    },
+    "block-list-False-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-list-False-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-list-True-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-list-True-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-list-True-False-True-False-False": {
+      "reason": null,
+      "visits": [
+        "img"
+      ]
+    },
+    "block-note-tab-False-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-note-tab-False-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-note-tab-True-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-note-tab-True-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-note-tab-True-False-True-False-False": {
+      "reason": null,
+      "visits": [
+        "img"
+      ]
+    },
+    "block-note-spaces-False-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-note-spaces-False-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-note-spaces-True-False-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "../outside.png",
+      "visits": [
+        "img"
+      ]
+    },
+    "block-note-spaces-True-True-False-False-False": {
+      "reason": "UNSAFE_REFERENCE",
+      "detail": "script",
+      "visits": [
+        "script"
+      ]
+    },
+    "block-note-spaces-True-False-True-False-False": {
+      "reason": null,
+      "visits": [
+        "img"
+      ]
+    }
+  }
+}

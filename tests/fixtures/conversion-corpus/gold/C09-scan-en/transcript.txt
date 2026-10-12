@@ -1,0 +1,37 @@
+[b01; pagina=1; tipo=heading]
+Image only measurements
+
+[b02; pagina=1; tipo=paragraph]
+Visible English values 0012, 123.45 and 0.0007. Distinguish O/0 and l/1 while reading this synthetic scan. The source has no hidden text layer. Every visible word must be checked on the rendered page, and Unicode transcription is a declared convention rather than recovered encoding.
+
+[b03; pagina=1; tipo=formula]
+
+
+\begin{bmatrix}0&-1\\2&3\end{bmatrix}
+
+[b04; pagina=1; tipo=formula]
+
+
+E=mc^{2}
+
+[b05; pagina=1; tipo=table]
+
+
+Code | Value | Note
+
+0012 | 0 | 
+
+Measured cells
+
+[b06; pagina=1; tipo=figure]
+Figure 1 — Three regions and laboratory axes.
+
+[b07; pagina=1; tipo=paragraph]
+Visible source
+
+link: source → https://example.invalid/study?series=0012&mode=a_b#note
+
+note_call: note → n1
+
+[b08; pagina=1; tipo=note]
+Scan note: temperature −4.

@@ -1,0 +1,121 @@
+# Checkpoint implementatore r006 — lavoro in corso
+
+Prosegue il [checkpoint r005](implementation-r005.md), storico arbitrato NO_GO.
+Mandato prompt21/arbitrato r005, ruolo solo implementatore. Nessun registro
+comune, review, arbitrato o Git di scrittura modificato. Ingresso fix-context-r005
+MATCH, feature/base80c31da/indice vuoto; 48306 artefatti protetti e byte ricevuti.
+
+[Ingresso e ledger](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006): package3813 invariato,
+startup/input/origine managed3.12.13 verificati prima del primo managed;
+nuove catene S/B/I/canonical wheel/diecihash e R Firejail senza rete.
+Originali reviewer preservati, copie proprie prima: GPT36 con8unmet e Claude15
+con8unmet; CLI prima12casi/24exit, tre chiusure vuote run0/evaluate5.
+
+F27 token empty-close; F28 CDATA sino a ]]> o EOF; F29 unità Markdown che
+preservano il token attraverso blank e marcatori, ogni produttore; F30 riepilogo
+neutro. Enfasi/label/trim/metadata conservano token interi. Codice literal inerte.
+Primo test817PASS3FAIL per due nomi errati nelle mie assert, corretto; test002
+919PASS16deselected. GPT36/Claude15 e10trasporti aggiuntivi conformi in s003.
+Ultima verifica del trasporto ha richiesto anche skip delle foglie finite math,
+link/ref/rawunknown nei delimitatori di enfasi: nuovo reader v6, stage-s004/gate
+PASS; prove correnti in after-plan-003.json, in corso. Scorer v4 invariato.
+
+CLI002:46exit corretti ma15assert errate score5; il bundle incompleto produce
+FAIL3 nello scorer invariato. FAIL e manifest conservati, diagnosi propria.
+CLI00323casi/46exit reali PASS sul reader s003; gold PROVISIONAL, writer stub
+esplicito, nessun motore baseline/V. H01–H08PASS e H12±RFAIL deliberati/expected0.
+Rescore00164nuoviID r006a, checker indipendente PASS/0differenze numeriche/gate,
+due set32 ciascuno4PASS28FAIL reali. Queste prove s003 vanno ripetute o motivate
+per l'ultimo delta del reader: completare prove s004 e nuova misura002.
+
+Non consegna finale. Restano rerun dipendenti H/CLI/64, guide/PROTOCOL e nuovo
+report/dati permanenti r006, catena finale e suite veloce, controlli protetti/
+byte/legami/delta/documenti/processi, costi e report autore. Quota originale52h
+entry2026-10-08T07:06:54.369068Z, review/attese incluse, nessun reset; budget e
+riserva invariati. CPU lower/RSSsampled/disco conservativo, rete/costi nuovi0.
+Prossimo ruolo solo dopo consegna completa: supervisore per nuovo comune e
+2NUOVE review indipendenti mirate, arbitrato reale. Nessun GO autore.
+
+## Consegna completa r006 — 2026-10-09 UTC
+
+Questa sezione finale sostituisce soltanto le indicazioni operative in corso
+precedenti; cronologia r005/r006 e fallimenti rimangono conservati.
+[Report completo](../reports/implementation-r006.md) e
+[report/dati permanenti](../../../../benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md).
+F27–F30 chiusi nel profilo finito implementato, senza GO autore.
+
+- Reader `observations-v6-html-lexical-boundaries`: token `</>` diagnosticato;
+  CDATA/commenti interi e inerti sino alla chiusura effettiva/EOF; trasporti
+  Markdown/inline, EOF, enfasi/label/celle/caption rispettano le foglie;
+  riepilogo F30 neutro, occorrenze specifiche conservate.
+- Stage finali S004 funzionale e S005 attuale, nuovi S/B/I e wheel canonica
+  reinstallata offline, dieci moduli/origini e managed3.12.13 verificati.
+  R e figli nello stesso interprete, Firejail senza rete. Equivalenza byte
+  semantici provata, nessun PASS preflight vecchio trasferito ai nuovi documenti.
+- 936 test mirati PASS/16 deselected; tutte36GPT e15Claude dopo rispettano gli
+  attesi; 10 varianti di confine e4foglie note prima unmet, ora rispettate.
+  Suite veloce1093PASS/310subtest, API/packaging/Docker e smoke radice esclusi;
+  collaudo parziale, nessuna acquisizione per collection.
+- CLI23casi/46exitOS reali corretti con writer sintetico dichiarato, gold
+  PROVISIONAL: positivi run0/evaluate5, negativi INCOMPLETE/run2/evaluate2/score3.
+  H01–H08PASS; H12±RFAIL deliberati, expected0/harness1/wrapper2 preservati.
+- Rescore64 nuovo r006b, motori0/Vnuova0; checker aritmetico indipendente,
+  intero albero raw e19campi confrontati: zero differenze rispetto a r005,
+  ogni set4PASS/28FAIL reali. Nuovi derivati/final legati alle identità di
+  conversione storiche, senza reinterpretare le prove r005 o riscriverle.
+- 48.306 artefatti ricevuti immutati, sette file esatti di delta autorizzato,
+  125 copie byte correnti e21receipt finali controllate (19PASS+2H12FAIL).
+  Nessun processo proprio pendente, indice vuoto, branch/HEAD invariati.
+
+[Evidenze](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006/final-checks-001.json),
+[equivalenza](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006/semantic-equivalence-002.json),
+[ledger](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006/ledger.jsonl).
+Quota originale52h/21600CPU-s/6GiB, attese/review incluse, senza reset/incremento;
+costi finali e limiti nel footer. Nessun nuovo servizio/rete/invio, costo€0.
+CPU nota lower-bound, RSS campionato, disco conservativo/cacheOS non misurata.
+
+Proteggere input/V13/gold/canonici/render/asset/raw, snapshot comuni ricevuti,
+originali reviewer, fallimenti/sonde/stage, helper byte e report/dati storici.
+F23/F24/F26 invariati; F25 rettificato nelle guide; F19/F20/F05/F15/F16 preservati.
+L04 formule output UNAVAILABLE distinta da V13/A03; L01/L02 NOT_MEASURED,
+L05/ChromeNONPASS/gap12helper storici non sanati. Nessuna nuova V generale.
+
+Prossimo ruolo: supervisore per nuovo snapshot comune e due nuove review
+indipendenti mirate, poi arbitrato reale. Riceve aggiornamenti necessari agli
+indici/stato/changelog comuni, non modificati dall'autore. Nessun nuovo piano,
+fase2, motore, render/browser, ML/API/Docker o Git di scrittura anticipato.
+
+
+## Chiusura amministrativa finale
+
+[Controllo documentale/processi](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006/document-check-001.json)
+e [ledger finale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006/delivery-budget-closing-001.json):
+wall140510.875582s (~39.031h),
+CPU nota9277.600452s lower-bound,
+retained conservativo1861217332B,
+RSS massimo noto campionato740855808B.
+Quota originale/riserva invariata, attese incluse, nessun reset o nuovo workload.
+own_pending0; consegna completa al supervisore per nuovo snapshot e due nuove
+review indipendenti mirate, poi arbitrato reale. Nessun GO autore.
+
+
+### Rettifica del controllo amministrativo 001
+
+Il tentativo di chiusura001 ha registrato budget/footer, poi è fallito sulla
+verifica di due link relativi nei soli registri autore r006. Il suo controllo
+documentale è FAIL, conservato; dati economici001 rimangono storici, non una
+nuova approvazione. I link sono corretti; la chiusura valida è002 nel nuovo
+footer, senza cambi agli input/prove prodotto o reset del ledger.
+
+
+## Chiusura amministrativa finale 002
+
+[Controllo documentale/processi](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006/document-check-002.json)
+e [ledger finale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r006/delivery-budget-closing-002.json):
+wall140540.315652s (~39.039h),
+CPU nota9277.600452s lower-bound,
+retained conservativo1861397431B,
+RSS massimo noto campionato740855808B.
+Quota originale/riserva invariata, attese incluse, nessun reset o nuovo workload.
+own_pending0; consegna completa al supervisore per nuovo snapshot e due nuove
+review indipendenti mirate, poi arbitrato reale. Nessun GO autore.

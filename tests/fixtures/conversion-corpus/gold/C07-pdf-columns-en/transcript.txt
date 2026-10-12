@@ -1,0 +1,69 @@
+[b01; pagina=1; tipo=heading]
+Column experiment
+
+[b02; pagina=1; tipo=paragraph]
+The imaginary laboratory records three samples without using personal records. Each sample has a readable description and a value in its original written form. The identifier 0012 names a series, while −7 records a signed change. The decimal point in 123.45 remains part of the observation. A revision can correct a transcription only while retaining the original document and a reason for the change.
+
+[b03; pagina=1; tipo=formula]
+
+
+E=mc^{2}
+
+[b04; pagina=1; tipo=formula]
+
+
+\frac{x_i+1}{2}
+
+[b05; pagina=1; tipo=table]
+
+
+Code | Value | Note
+
+0012 | 0 | 
+
+B | −7 | 123.45
+
+Measured cells
+
+[b06; pagina=1; tipo=figure]
+Figure 1 — Three regions and laboratory axes.
+
+[b07; pagina=1; tipo=paragraph]
+Distinct first page value 51.08.
+
+[b08; pagina=1; tipo=note]
+Note: the signed temperature is −3.
+
+[b09; pagina=2; tipo=heading]
+Final observations
+
+[b10; pagina=2; tipo=paragraph]
+The second observation separates content from its position on the page. A sentence can occupy two lines without changing its words, but a missing line changes the result. Empty cells are present in the table and do not ask the reader to invent a measurement. The figure contains colored regions, axes and a legend. A matching filename cannot establish that those elements survived conversion.
+
+[b11; pagina=2; tipo=formula]
+
+
+\sum_{i=1}^{n}x_i
+
+[b12; pagina=2; tipo=formula]
+
+
+\begin{aligned}a&=1\\b&=-2\end{aligned}
+
+[b13; pagina=2; tipo=formula]
+
+
+\begin{bmatrix}0&-1\\2&3\end{bmatrix}
+
+[b14; pagina=2; tipo=paragraph]
+Distinct final value 92.06; no page may be omitted.
+
+[b15; pagina=2; tipo=paragraph]
+Source target
+
+link: source → https://example.invalid/study?series=0012&mode=a_b#note
+
+note_call: note → n1
+
+[b16; pagina=2; tipo=bibliography]
+Synthetic Author. Column notebook, 2026.

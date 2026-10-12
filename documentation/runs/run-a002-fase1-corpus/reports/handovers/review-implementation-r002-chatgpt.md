@@ -1,0 +1,31 @@
+# Checkpoint reviewer ChatGPT — implementazione r002
+
+Data: 2026-10-09. Ruolo esclusivo reviewer indipendente ChatGPT/Codex, provider OpenAI, famiglia GPT-6 dichiarata in sessione; deployment preciso e chat ID non esposti. Nessun agente delegato, nessuna sostituzione di provider. Prompt origine: `prompts/10-review-implementation-r002-chatgpt.md`.
+
+## Input e identità
+
+Run `run-a002-fase1-corpus`, consegna completa r002. Snapshot `snapshots/implementation-r002.json`, SHA256 `da3ecd3c352afe15bc07a0dba3ed27e52831e779fa1ab19981ad7fe92621291a`; worktree `9dae2da3d81663f51189fab604effc659ca02fc85bc38bfb2c899e72e52418ca`, 307 file e 25706 artefatti. Branch `feature/run-a002-corpus`; HEAD/dev/origin/dev locale/merge-base `80c31da46e5caab990d3596c79c44e524ec1dc95`. Indice vuoto.
+
+Letture secondo mandato, incluse le skill manage-implementation-run e verify-conversion-fidelity, due review r001 e arbitrato r001 ammessi, report/checkpoint finale autore, delta003, prove finali, codice e dipendenze colpite. Non letta review concorrente Claude r002 né arbitrato r002. Le prove proprie non mutano gli input comuni.
+
+Controllo stdlib del contesto prima/dopo: **MATCH**, exit0; dettagli `evidence/review-implementation-r002-chatgpt/reception-commands.json` e `final-commands.json`. `git diff --check` exit0. Nessuno snapshot comune rigenerato; nessun Git di scrittura.
+
+## Output ed esito
+
+- [Report](../reviews/review-implementation-r002-chatgpt.md): **NO_GO** valido per l'oggetto r002 identificato.
+- [Evidenze proprie](../../../../../temp/run-a002-fase1-corpus/evidence/review-implementation-r002-chatgpt): input/argv/cwd/stdout/stderr/receipt, S/B/I e target/inventario/preflight propri, sonde con dati completi, audit indipendente degli artefatti.
+- GPT-R002-I001, alta/bloccante: `observations.py:205–206` perde formule/unknown nel ponte HTML inline; aggiunta MathML passiva in span dentro cella pipe vuota diventa gate automatico PASS. Non dichiarato overall quality PASS: gold/L04 restano indisponibili nella sonda.
+- GPT-R002-I002, media/bloccante: `metrics.py:275–278,295–297` non invalida WER/CER complete per unknown testuale estraneo non allineato; dichiara AVAILABLE0 pur mantenendo correttamente il gate INDETERMINATE.
+- F01/F05 aperti. F02/F03/F04/F06/F07/F08/F09/F10/F11/F12 chiusi entro prove/ispezione e limiti esplicitati nel report. V derivata qualificata per contenuti reference invariati, zero nuove conferme umane; L04 output non risolta.
+
+Audit stdlib finale: 2592 controlli, zero fallimenti, 1639 file unici attribuiti; 208 e230 input preservati/correnti,606 storici invariati, corpus129/20PDF/101immuti, 9transcript/11caption,13gold/V/viste, M415+93, baseline32 e qualità4PASS28FAIL corroborati. Non rieseguite conversioni, render o suite dell'autore. Chrome cambiato non consumato dalle sonde.
+
+R proprie: R001 IMPEDITA/exit2 per EPERM socket prima del workload, conservata; escalation tool approvata per l'azione autorizzata mantenendo R/isolamento/rete0. R002 PASS sul primo diagnostico, che aveva un FAIL figura estraneo; R003 PASS con qualificazione indipendente dei byte dell'asset nei soli input propri e sette sonde finali. Script e risultati intermedi conservati. Tre revisioni intermedie del mio audit artefatti contenevano errori diagnostici, conservati e corretti senza mutare il prodotto; esito finale `artifact-audit.json`/`artifact-audit-004.stdout`.
+
+## Processi e limiti
+
+Nessun processo proprio pendente rilevato: [own-processes-final.json](../../../../../temp/run-a002-fase1-corpus/evidence/review-implementation-r002-chatgpt/own-processes-final.json), oltre a custodia/reap completati nelle receipt R002/R003. Nessuna build, reinstallazione, download, campagna, nuova conversione/render, servizio/modello/acquisizione remota o operazione Git di scrittura. Nessuna modifica a sorgenti, corpus/gold/packet/receipt/report altrui, STATE/HANDOVER condivisi, arbitrati, indici o changelog. L01/L02/L04/L05 restano come nel report; limiti delle suite storiche e della lacuna helper dei12 raw campaign002 conservati.
+
+## Prossimo ruolo
+
+**Supervisore per ricezione di entrambi i report r002 e arbitrato reale.** Ricevere questo NO_GO sull'oggetto comune; valutare i due rilievi riprodotti con la review concorrente effettiva e, se confermati, preparare il mandato mirato di fix e le prove di chiusura. Questo reviewer non avvia fix, nuova pianificazione o operazioni Git.

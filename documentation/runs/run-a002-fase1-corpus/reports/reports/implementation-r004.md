@@ -1,0 +1,199 @@
+# Consegna implementatore a002 r004
+
+Mandato prompt15 e arbitrato reale r003 NO_GO: fix locali F17–F21 nella stessa
+chat autrice, con regressioni e prove dipendenti. Ruolo esclusivo implementatore;
+nessuna review/arbitrato/GO autore o scrittura di registri comuni. Feature
+`feature/run-a002-corpus`, HEAD/base/dev/origin-dev/merge-base
+`80c31da46e5caab990d3596c79c44e524ec1dc95`, indice vuoto, Git manuale dell'utente.
+
+## Ingresso, scelte e delta
+
+[Verify ingresso](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/entry-verify.json) registra
+argv/cwd/output/exit0/MATCH del contesto implementation-fix-context-r003 prima
+dei cambiamenti. [Identità Git](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/entry-git.json)
+comprende delta locale completo e file non tracciati, non il solo diff fra commit.
+Entrambe le review r003, arbitrato integrale/checkpoint supervisore e mandato
+sono input reali letti; r003 storico e fix-context non sono rigenerati.
+
+[Byte ricevuti](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/received-bytes.json), snapshot
+managed-entry001 e [audit statico managed](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/managed-static-input-audit.json)
+precedono il primo avvio managed. I tre pyc encodings attuali coincidono con la
+ricezione del supervisore, campi eseguibili/nomi/costanti con sorgenti controllati;
+line-table differente in __init__ rispetto al compiler host. Causa/autore non
+attribuiti. Conservati byte pyc e sorgenti, nessun ripristino. Guardia startup
+host, [manifest attuale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/entry-package-inputs.json)
+e snapshot proprio vincolano i byte reali; nuovi gate, nessun PASS trasferito.
+Tre differenze package effettive, distinte dai Chrome storici non consumati.
+
+Delta comune esatto8 file nei [controlli finali](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/final-checks-001.json):
+observations/metrics/PROTOCOL, test r004, due guide, nuovo report/dati permanenti.
+Audit, safety/validator, adapter, R/resources, writer/config/registry/PATH,
+wheel legacy, lock/pin e sorgenti corpus invariati. Il fix nel produttore porta
+le risorse ai consumatori audit già esistenti. Nessun nuovo motore/architettura.
+
+## F17–F21 e prove prima/dopo
+
+| Fix | Scelta e contratto | Prove effettive |
+| --- | --- | --- |
+| F17 | html-inline-v1 ammette tag inline finiti e MathML supportato; block inline diventa unsupported localizzato ma conserva tutto il sottoalbero, testo noto, formule/ref/unknown/raw/coordinate. Non trasporta la proiezione vuota di table o la sola caption di figure | I1 prima PASS ora FAIL3; I2 prima PASS/WER0 ora INDETERMINATE/completi None. Table/figure in cella/caption/paragrafo e wrapper annidati, formule/unknown/asset; positivi span/a/enfasi/MathML e code invariati |
+| F18 | html-table-v1: caption unica, tr dirette o thead/tbody, td/th dirette, whitespace. Ogni ramo residuo consumato interamente una volta, caption duplicate non selezionano ultima. html-figure-v1: img primaria+figcaption, residui espliciti. Risorse/formule/unknown mantengono localizzazione e raggiungono i consumatori | H1/table-child-missing e duplicate-caption-missing prima COMPLETE/PASS ora INCOMPLETE/run2/evaluate2; H2/F1 e aggiunte note FAIL3, formule supportate residue FAIL3, unknown nonPASS. Positivi H0/F0 e table-positive PASS automatico, presente asset auditCOMPLETE; URI ../outside.png già respinta prima, spy conferma nessuna apertura |
+| F19 | caption assente/vuota equivalente solo come testo (absent-empty-text-equivalent-v1); confrontare aggiunta nota non vuota e componenti tipizzate, senza contaminare CER/WER prosa | extra-caption-text prima PASS ora FAIL3. Atteso None/vuoto/testo contro assente/vuoto/equivalente/differente/math/unknown; omissione/differenza FAIL, unknown maiPASS, ref/math locali conservati |
+| F20 | structural-text-counts-v1/WER_decomposition v2 condizionati al matching, NON bound. global-text-completion-bound-v1 separato: distanza globale minima su testo misurabile; zero garantito su completamenti arbitrari del testo non misurabile. Alignment/F08/gold non modificati | GPT Known words unknown intercalato prima4/2 e24/12 impropriamente detti bound, ora conteggi condizionati e bound0; L1 condizionato20/30 ma bound0 ≤ completamento1/30. Liste/HTML/posizioni/multiblocchi; oracle indipendente10 casi42 completamenti char+token. C0 positivo0, aggiunta interamente nota3/2; C1 condizionato3/30 e FAIL rimane, bound0 quando incerto. Missing/page loss restaFAIL3 separato |
+| F21 | `<` seguito da spazio/cifra è testo fedele; veri inizi tag/commenti/dichiarazioni/malformed mantengono confini risorsa. Tail scartato da HTMLParser rilevato con copertura del raw | LT prima INCOMPLETE/2 ora COMPLETE/PASS automatico; a < b, p < 0.05 e code letterale positivi. <img incompleto/duplicati src/fallback malformed INCOMPLETE; nessun fetch/comando dai dati |
+
+Prove proprie [prima GPT](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/before-gpt/probe-summary-v2.json),
+[prima Claude](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/before-claude-summary.json),
+[dopo GPT](../../../../../temp/run-a002-fase1-corpus/work/implementation-r004/after-gpt/probe-summary-v2.json),
+[dopo Claude](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/after-claude-summary.json).
+Le copie GPT prima nelle evidenze sono byte-identiche ai risultati effettivi
+in work; receipt R registra il percorso realmente eseguito. Originali reviewer
+preservati. GPT rimane gold sintetico PROVISIONAL; Claude usa K01/gold/receipt V
+derivata reale, LT gold sintetico. R PASS attesta esecuzione, non qualità payload.
+Gli exit run/evaluate delle sonde sono derivati da audit/score secondo contratto;
+non sono nuove conversioni motore. H01–H08 conservano gli exit operativi reali.
+
+La copertura non dipende da stringhe delle sonde: il walk classifica ogni figlio
+come ramo strutturale ammesso, foglia della cella/caption o intero residuo. Un
+ramo non ammesso non viene visitato selettivamente per cercare solo td/caption.
+Le foglie dei residui entrano nelle liste flat una sola volta; lo scorer consuma
+residual_contents e unknown, l'audit tutte le referenze. Duplicati di caption
+conservano ordine/raw e foglie di entrambe. Non è richiesto HTML universale:
+spanning/malformed/block inline rimangono unsupported espliciti.
+
+## Garanzia e distinzione delle misure
+
+CER/WER completi sono misure sotto il matching strutturale dichiarato, None
+quando il testo non è misurabile. Totals e alias known_word_edits sono conteggi
+condizionati al matching/attribuzione; decomp v2 dichiara guaranteed_bound=false
+anche per categorie KNOWN. Omissione/inserzione possono rappresentare lo stesso
+contenuto visibile: non sono edit certi né un limite inferiore globale.
+
+Il bound globale esclude table/figure/formula/anchor, include code letterale,
+omette proiezioni testuali vuote; char stream con LF fra blocchi, token stream
+concatenato. Denominatori pieni del dominio originale, LF separatori non aggiunti
+al denominatore. Corrispondenze di edit libere, indipendenti dal matching.
+Ogni completamento unknown ammette qualsiasi stringa, anche zero, e cambi dei
+confini dei token: la distanza nonnegativa garantisce bound0 per **ogni**
+completamento. Su flusso misurabile Levenshtein calcola il minimo globale; sul
+limite di calcolo globale si pubblica zero, non un risultato inventato.
+La garanzia deriva da questa politica, non dal superamento di due esempi.
+Precisione conservativa deliberata: con unknown il bound può essere zero anche
+se un FAIL strutturale è certo. Non usa unknown come wildcard dell'alignment.
+
+[Completamenti indipendenti](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/completion-check-001.json)
+confrontano char e token con matrice di edit autonoma: zero/parole, prima/dopo/
+intercalato, due unknown, più blocchi e pagina mancante. I test L1/L1c calcolano
+anche distanza autonoma del testo b02; missing rimane distinto. Numeri/celle/
+asset/ordine e denominatori non sono allentati. Unknown solo non diventa completo0. Il positivo0 è text-positive; C0 delle
+sonde Claude precedenti è l’aggiunta nota3/30 e conserva quel risultato, senza
+rinominare il payload storico.
+
+## Catena e verifiche correnti
+
+Stage finale [s008](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/stage-s008/preparation.json):
+S/B/I nuovi, build offline sdist+wheel, canonical reinstall ultima, dieci hash,
+origine managed3.12.13/startup/Pandoc/cache tokenizer/inventario/preflight e
+[R gate](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/R-stage-s008-gate-001/receipt.json) PASS
+prima degli import/--no-sync. Helper fuori wheel, config/test/probe/manifest/target
+con byte fisici [prima](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/input-bytes-delivery-before.json)
+e [dopo](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/input-bytes-delivery-after.json).
+
+475 test mirati PASS in16.98s sul codice s007, 16 F04 unitari deselected;
+[receipt](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/R-r004-tests-005/receipt.json). Test
+r004118 nuovi, r001/r002/r003 pertinenti357. Nessun nuovo apparato applicativo.
+I [48 helper/test consumati s007→s008](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/s007-s008-consumed-equivalence.json)
+sono byte-identici; s008 cambia solo due nuovi report/dati permanenti. S/B/I e
+gate finali sono nuovi, i vecchi stage rimangono storici. Suite veloce prescritta
+nel R finale dedicato: risultato riportato nella sezione finale di questo report.
+
+[10 contratti](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/contracts-001/summary.json):
+H01–H08 R PASS/harness0, H12-negative e positive R FAIL/harness1/wrapper2,
+R expected0 congelato prima, no riclassificazione verde. Binding prima/dopo,
+preflight e reap/socket verificati. F03/H15/F04 standalone/API/Docker/ML e
+campagne a001 non rieseguiti; la suite veloce prescritta comprende regressioni
+unitarie preesistenti, non nuove campagne dedicate. Nessun motore rieseguito
+per i64 raw; integrazione writer selezionata usa soltanto i controlli esistenti.
+
+## 64 score e rettifica permanente
+
+[Manifest prima workload](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/rescore-manifest-001.json)
+congela64 input, output esclusivi, gold/V/original run/vecchie osservazioni e
+metriche. [Rescore001](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/rescore-001/summary.json):
+nuove osservazioni/audit/score r004a su due set32, engine_runs0, raw byte-identici,
+source/gold/V e identità conversione r001/baseline003 r002 conservati. Tutti i64
+risultati sono effettivi:4PASS/28FAIL per set, non vincolati al vecchio conteggio.
+[Checker indipendente](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/derived-check-001.json)
+PASS64, somme/denominatori/role evidence/legami e global char/token verificati
+senza import reader/scorer/generator; zero differenze nei campi storici numerici
+/gate comparati. Nuova disponibilità/metadati/decomposizione/bound dichiarati.
+
+TXT completo0/89; DOCX11/182 di caption unmatched (2+9), EPUB8/186 omissioni;
+RTF19/162 =11aligned+3omissione titolo+5inserzioni (titolo3/caption2). Questi
+conteggi restano condizionati: bound globale RTF13/162, DOCX11/182, EPUB8/186,
+TXT0/89; TeX completoNone, condizionato1/152 e bound0/152. Celle corpo DOCX9/9,
+RTF6/6, EPUB9/9 e TeX9/9; altre perdite per fenomeno nei dati permanenti.
+F16 rimane verificabile, nuova decompv2 qualifica la semantica dei numeratori.
+Nessuna caption è dichiarata materialmente persa solo perché diventata prosa.
+Non sommare gate diversi come perdite indipendenti.
+
+[Report permanente r004](../../../../benchmarks/2026-10-09-a002-r004-profili-html-e-bound.md)
+e dati nuovi rettificano la garanzia r003/claim precedenti, senza sovrascriverli.
+Guide/PROTOCOL coerenti. F01/F05/F09 HTML e F13/F14/F15 chiusi nel profilo finito
+con prove di aggiunta/perdita/unknown/risorse/denominatori; F16 preservato sui64.
+F02/F03/F04/F06/F07/F08/F10/F11/F12/V derivata non riaperti senza dipendenza.
+Sorgenti/gold rev5/packet/asset/render e V13 invariati, nessuna nuova V/M/render.
+L04 formule output UNAVAILABLE distinta da Vgold; L01 PDF/OCR, L02 compileTeX,
+L05 altro hardware non misurati. Gap12 helper raw storici e ChromeNONPASS restano
+limiti storici, non sanati da questo rescore.
+
+## Fallimenti conservati, quota e consegna
+
+Prepare s001 relativo fallisce primaS, riprovato s002 assoluto. Test001 collection
+SyntaxError, corretto; test002446PASS29FAIL per root sintetico trattato inline;
+test003/004474PASS1FAIL per <img scartato dal tokenizer. Diagnosi R propria,
+correzioni e stage nuovi, test005475PASS. Nessun fallimento cancellato o trasferito
+su byte nuovi, nessun install/download per riparare collection, nessun rifiuto
+auto-review. Escalazioni tool delle stesse azioni autorizzate mantengono R.
+
+Quota52h originale dall'entry2026-10-08T07:06:54.369068Z, attese incluse e ledger
+append-only, no reset. CPU nota lower-bound (non upper-bound), RSS campionato,
+retained/cache OS con limiti; quote21600CPU-s/6GiB/RAMoperativa8GiB/sample stop6GiB,
+stop nuovi49h/19800CPU-s/5GiB e riserva3h/1800CPU-s/1GiB invariati. Stop nuovi
+2026-10-10T08:06:54.369068Z, deadline11:06:54.369068Z. Dati finali nella sezione
+successiva; rete/acquisizioni/document-send/servizi nuovi0. Nessun privilegio
+persistente, dato privato, altro hardware o nuovo servizio.
+
+Supervisore: ricezione completa, aggiornamenti permanenti necessari (changelog,
+indici/stato/roadmap nel proprio ruolo), nuovo snapshot comune e **due NUOVE
+review indipendenti mirate**, poi arbitrato reale. Nessun GO futuro attribuito.
+Archiviare dati/prove/byte prima della futura pulizia temp. Nessun Git automatico,
+cleanup o fase2. [Checkpoint](../handovers/implementation-r004.md), storia r003
+conservata nel precedente. Completamento tecnico non è approvazione indipendente.
+
+
+## Consegna completa finale — 2026-10-09 Europe/Rome
+
+Suite veloce finale **632 PASS +310 subtest PASS**, in27.76s, sotto
+[R corrente s008](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/R-r004-tests-fast-001/receipt.json).
+Comando esatto prescribed tests/ con ignore API/packaging/Docker; due smoke radice
+esclusi per selezione tests/. Nessuna acquisizione per collection. Collaudo parziale.
+
+[Final-checks001](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/final-checks-001.json) PASS:
+38018 input protetti invariati,160 input con byte fisici prima/dopo,20 receipt
+correnti (18PASS +2FAIL H12 deliberati), binding prima/dopo/reap/socket clean,
+delta comune8 file, HEAD/feature/indice vuoto/diff-check e own_pending0 nella
+scansione host /proc read-only. Tutti i workload richiesti terminati; nessun
+motore o giudizio umano aggiuntivo. Registri comuni e prove storiche immutati.
+
+[Ledger](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/ledger.jsonl) append-only e
+[budget finale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/delivery-budget-final-001.json):
+wall120696.041367s (~33.527h) dalla entry originale,
+CPU nota7524.451826s lower-bound, retained con supplementi
+1479711980B, RSS massimo noto campionato735604736B.
+Supplementi includono intero scratch ereditato e file repo/ruolo correnti in
+modo conservativo; non sono hard cap universali. Nessun reset, riserva preservata,
+network/document-send/acquisizioni/servizi nuovi0. R ≤900s/stream1MiB/file32MiB,
+same interpreter/isolamento invariati. Prossimo ruolo: supervisore per nuovo
+snapshot comune, due nuove review mirate indipendenti e arbitrato reale.
+
+Chiusura amministrativa successiva nel [ledger finale](../../../../../temp/run-a002-fase1-corpus/evidence/implementation-r004/delivery-budget-closing-001.json): append-only, costi precedenti conservati, nessun reset.

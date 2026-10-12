@@ -1,0 +1,2384 @@
+{
+  "cases": [
+    {
+      "id": "GPT-ordered-heading",
+      "raw": "È `<script>first</script>`{=html}\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "ordered-heading",
+        "raw": "È `<script>first</script>`{=html}\n\n# H {onclick=\"x\"}\n\n<img src=\"../last.png\">\n",
+        "sha256": "f183910ae82a9e99b94e3935be30614a04a7e786be371e184306385675852b72",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 3,
+            "byte": 4
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 54,
+            "byte": 55
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "f183910ae82a9e99b94e3935be30614a04a7e786be371e184306385675852b72"
+    },
+    {
+      "id": "GPT-ordered-div",
+      "raw": "È `<script>first</script>`{=html}\n\n::: {onclick=\"x\"}\nText\n:::\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "ordered-div",
+        "raw": "È `<script>first</script>`{=html}\n\n::: {onclick=\"x\"}\nText\n:::\n\n<img src=\"../last.png\">\n",
+        "sha256": "80bdf852d5f52e941a19a0a9c5aa702d95864ddd21dd622383604512711ef528",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 3,
+            "byte": 4
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 63,
+            "byte": 64
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "80bdf852d5f52e941a19a0a9c5aa702d95864ddd21dd622383604512711ef528"
+    },
+    {
+      "id": "GPT-ordered-fence",
+      "raw": "È `<script>first</script>`{=html}\n\n```{onclick=\"x\"}\n<img src=\"../inert\">\n```\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "ordered-fence",
+        "raw": "È `<script>first</script>`{=html}\n\n```{onclick=\"x\"}\n<img src=\"../inert\">\n```\n\n<img src=\"../last.png\">\n",
+        "sha256": "488e2eb49f676584b09b873488d1273a47053b06d16cac5902795b4884ab74be",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 3,
+            "byte": 4
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 78,
+            "byte": 79
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "488e2eb49f676584b09b873488d1273a47053b06d16cac5902795b4884ab74be"
+    },
+    {
+      "id": "GPT-ordered-figure",
+      "raw": "È `<script>first</script>`{=html}\n\n![cap](p.png){onclick=\"x\"}\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "ordered-figure",
+        "raw": "È `<script>first</script>`{=html}\n\n![cap](p.png){onclick=\"x\"}\n\n<img src=\"../last.png\">\n",
+        "sha256": "a15441ef7fb9225448c741221d2b0f423a416b9b0d2f8b87568f7ca48af5a0d5",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 3,
+            "byte": 4
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 63,
+            "byte": 64
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "a15441ef7fb9225448c741221d2b0f423a416b9b0d2f8b87568f7ca48af5a0d5"
+    },
+    {
+      "id": "GPT-metadata-first",
+      "raw": "È [a]{onclick=\"x\"} <img src=\"../later.png\">\n",
+      "received": {
+        "id": "metadata-first",
+        "raw": "È [a]{onclick=\"x\"} <img src=\"../later.png\">\n",
+        "sha256": "90046949b2819b79fee5ac3ddb784ee215eff99f16e8216fc3573cff5091cf56",
+        "detail": "Active markdown attribute",
+        "visits": [
+          {
+            "snippet": "<img src=\"../later.png\">",
+            "char": 19,
+            "byte": 20
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "90046949b2819b79fee5ac3ddb784ee215eff99f16e8216fc3573cff5091cf56"
+    },
+    {
+      "id": "GPT-repeated-identical",
+      "raw": "È [a]{onclick=\"x\"} <img src=\"p.png\"> <img src=\"p.png\">\n",
+      "received": {
+        "id": "repeated-identical",
+        "raw": "È [a]{onclick=\"x\"} <img src=\"p.png\"> <img src=\"p.png\">\n",
+        "sha256": "92beed13449c632d653e18f4988576d23ebb0c0de5f9baf36555cf2def7b23e1",
+        "detail": "Active markdown attribute",
+        "visits": [
+          {
+            "snippet": "<img src=\"p.png\">",
+            "char": 19,
+            "byte": 20
+          },
+          {
+            "snippet": "<img src=\"p.png\">",
+            "char": 37,
+            "byte": 38
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "92beed13449c632d653e18f4988576d23ebb0c0de5f9baf36555cf2def7b23e1"
+    },
+    {
+      "id": "GPT-tree-depth",
+      "raw": "<div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><script>x</script></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "tree-depth",
+        "raw": "<div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><div><script>x</script></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>\n\n<img src=\"../last.png\">\n",
+        "sha256": "5d613cfef807e86f8b9a088fa764643b4264638dcad9514c764b7f745b678d64",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<div>",
+            "char": 0,
+            "byte": 0
+          },
+          {
+            "snippet": "<div>",
+            "char": 5,
+            "byte": 5
+          },
+          {
+            "snippet": "<div>",
+            "char": 10,
+            "byte": 10
+          },
+          {
+            "snippet": "<div>",
+            "char": 15,
+            "byte": 15
+          },
+          {
+            "snippet": "<div>",
+            "char": 20,
+            "byte": 20
+          },
+          {
+            "snippet": "<div>",
+            "char": 25,
+            "byte": 25
+          },
+          {
+            "snippet": "<div>",
+            "char": 30,
+            "byte": 30
+          },
+          {
+            "snippet": "<div>",
+            "char": 35,
+            "byte": 35
+          },
+          {
+            "snippet": "<div>",
+            "char": 40,
+            "byte": 40
+          },
+          {
+            "snippet": "<div>",
+            "char": 45,
+            "byte": 45
+          },
+          {
+            "snippet": "<div>",
+            "char": 50,
+            "byte": 50
+          },
+          {
+            "snippet": "<div>",
+            "char": 55,
+            "byte": 55
+          },
+          {
+            "snippet": "<div>",
+            "char": 60,
+            "byte": 60
+          },
+          {
+            "snippet": "<div>",
+            "char": 65,
+            "byte": 65
+          },
+          {
+            "snippet": "<div>",
+            "char": 70,
+            "byte": 70
+          },
+          {
+            "snippet": "<div>",
+            "char": 75,
+            "byte": 75
+          },
+          {
+            "snippet": "<div>",
+            "char": 80,
+            "byte": 80
+          },
+          {
+            "snippet": "<div>",
+            "char": 85,
+            "byte": 85
+          },
+          {
+            "snippet": "<script>",
+            "char": 90,
+            "byte": 90
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 218,
+            "byte": 218
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "5d613cfef807e86f8b9a088fa764643b4264638dcad9514c764b7f745b678d64"
+    },
+    {
+      "id": "GPT-tree-duplicate",
+      "raw": "È <span class=\"a\" class=\"b\">text</span> [a]{onclick=\"x\"}\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "tree-duplicate",
+        "raw": "È <span class=\"a\" class=\"b\">text</span> [a]{onclick=\"x\"}\n\n<img src=\"../last.png\">\n",
+        "sha256": "388571609f9bc0c034a2942a7e2b7ecca1ce0204cdba433f19756d6d6a13a1f1",
+        "detail": "Active markdown attribute",
+        "visits": [
+          {
+            "snippet": "<span class=\"a\" class=\"b\">",
+            "char": 2,
+            "byte": 3
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 58,
+            "byte": 59
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "388571609f9bc0c034a2942a7e2b7ecca1ce0204cdba433f19756d6d6a13a1f1"
+    },
+    {
+      "id": "GPT-declaration-error",
+      "raw": "<p>text</p><![foo]>\n\n<script>x</script>\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "declaration-error",
+        "raw": "<p>text</p><![foo]>\n\n<script>x</script>\n\n<img src=\"../last.png\">\n",
+        "sha256": "bed643bbe335f845df0df4eec13c79775808a136bd7f88c274b6da56f356ec67",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<p>",
+            "char": 0,
+            "byte": 0
+          },
+          {
+            "snippet": "<script>",
+            "char": 21,
+            "byte": 21
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 41,
+            "byte": 41
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": "inert unsupported declaration must not truncate guards"
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "bed643bbe335f845df0df4eec13c79775808a136bd7f88c274b6da56f356ec67"
+    },
+    {
+      "id": "GPT-uri-validator-error",
+      "raw": "È <img src=\"http://[\"> then <script>x</script>\n\n<img src=\"../last.png\">\n",
+      "received": {
+        "id": "uri-validator-error",
+        "raw": "È <img src=\"http://[\"> then <script>x</script>\n\n<img src=\"../last.png\">\n",
+        "sha256": "58ace1f2088f99f16f819c923aa2c53c0153f8c484872356154492320a4e18ea",
+        "detail": "URI",
+        "visits": [
+          {
+            "snippet": "<img src=\"http://[\">",
+            "char": 2,
+            "byte": 3
+          },
+          {
+            "snippet": "<script>",
+            "char": 28,
+            "byte": 29
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 48,
+            "byte": 49
+          }
+        ],
+        "ast": false,
+        "owner": null,
+        "property": "invalid resource remains rejected while following openings are visited"
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "58ace1f2088f99f16f819c923aa2c53c0153f8c484872356154492320a4e18ea"
+    },
+    {
+      "id": "GPT-opener-backtick-info",
+      "raw": "```foo`bar\n<script>x</script>\n```\n\n# End\n",
+      "received": {
+        "id": "opener-backtick-info",
+        "raw": "```foo`bar\n<script>x</script>\n```\n\n# End\n",
+        "sha256": "5f6efe849a6d6cf1d53269556f31f590000ffa68354c312f9eb14026eff35c1a",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 11,
+            "byte": 11
+          }
+        ],
+        "ast": true,
+        "owner": false,
+        "property": "ordinary invalid opener must not lend literal ownership"
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "5f6efe849a6d6cf1d53269556f31f590000ffa68354c312f9eb14026eff35c1a"
+    },
+    {
+      "id": "GPT-opener-space-info",
+      "raw": "```foo bar\n<script>x</script>\n```\n\n# End\n",
+      "received": {
+        "id": "opener-space-info",
+        "raw": "```foo bar\n<script>x</script>\n```\n\n# End\n",
+        "sha256": "456e2dc7526f89dddce374d002a84811e65ea8e1e7734e287530db6db712d046",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 11,
+            "byte": 11
+          }
+        ],
+        "ast": true,
+        "owner": false,
+        "property": "ordinary invalid opener must not lend literal ownership"
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "456e2dc7526f89dddce374d002a84811e65ea8e1e7734e287530db6db712d046"
+    },
+    {
+      "id": "GPT-opener-attrs-tail",
+      "raw": "```{#id} tail\n<script>x</script>\n```\n\n# End\n",
+      "received": {
+        "id": "opener-attrs-tail",
+        "raw": "```{#id} tail\n<script>x</script>\n```\n\n# End\n",
+        "sha256": "52094267a8bd5a672afe4b50ac61efd825dbe9ca4c50a1733a05b00c2a06a6cf",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 14,
+            "byte": 14
+          }
+        ],
+        "ast": true,
+        "owner": false,
+        "property": "ordinary invalid opener must not lend literal ownership"
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "52094267a8bd5a672afe4b50ac61efd825dbe9ca4c50a1733a05b00c2a06a6cf"
+    },
+    {
+      "id": "GPT-quote-prefix",
+      "raw": "> > ~~~\n> > <script>x</script>\n>> ~~~\n\n# End\n",
+      "received": {
+        "id": "quote-prefix",
+        "raw": "> > ~~~\n> > <script>x</script>\n>> ~~~\n\n# End\n",
+        "sha256": "481dec94d300c975c8c781329bfc328dd24c24e2b445af2cedf05e94ce934280",
+        "detail": null,
+        "visits": [],
+        "ast": true,
+        "owner": true,
+        "property": "equivalent nested quote prefix must retain literal owner"
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "481dec94d300c975c8c781329bfc328dd24c24e2b445af2cedf05e94ce934280"
+    },
+    {
+      "id": "GPT-tilde-text",
+      "raw": "> È intro\n> ~~~\n> <script>x</script>\n> ~~~\n\n# End\n",
+      "received": {
+        "id": "tilde-text",
+        "raw": "> È intro\n> ~~~\n> <script>x</script>\n> ~~~\n\n# End\n",
+        "sha256": "58e88527cbbdad4f3e05108308c4e78a5c78d2588f071912d33e76bc06ae0342",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 18,
+            "byte": 19
+          }
+        ],
+        "ast": true,
+        "owner": false,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "58e88527cbbdad4f3e05108308c4e78a5c78d2588f071912d33e76bc06ae0342"
+    },
+    {
+      "id": "GPT-tilde-start",
+      "raw": "> ~~~\n> <script>x</script>\n> ~~~\n\n# End\n",
+      "received": {
+        "id": "tilde-start",
+        "raw": "> ~~~\n> <script>x</script>\n> ~~~\n\n# End\n",
+        "sha256": "d8166307c2458bf62445b4f70b6235f234755d9cedec13749f8b96853eda7174",
+        "detail": null,
+        "visits": [],
+        "ast": true,
+        "owner": true,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "d8166307c2458bf62445b4f70b6235f234755d9cedec13749f8b96853eda7174"
+    },
+    {
+      "id": "GPT-ordinary-eof",
+      "raw": "> ```\n> <script>x</script>\n\n# End\n",
+      "received": {
+        "id": "ordinary-eof",
+        "raw": "> ```\n> <script>x</script>\n\n# End\n",
+        "sha256": "fbda61c753cbe6a23269262e986b165afa0b0ad5a78d6e674ac6c39f73e2ea52",
+        "detail": "script",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 8,
+            "byte": 8
+          }
+        ],
+        "ast": true,
+        "owner": false,
+        "property": null
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "fbda61c753cbe6a23269262e986b165afa0b0ad5a78d6e674ac6c39f73e2ea52"
+    },
+    {
+      "id": "GPT-safe-coverage",
+      "raw": "| h |\n| --- |\n| [c](https://example.invalid) |\n\n: caption $x_1$\n\n# End\n",
+      "received": {
+        "id": "safe-coverage",
+        "raw": "| h |\n| --- |\n| [c](https://example.invalid) |\n\n: caption $x_1$\n\n# End\n",
+        "sha256": "8a191e1d21ce0ffa5dfaec133887eda86c0d01dc8674e94f8b69d78407e7458a",
+        "detail": null,
+        "visits": [],
+        "ast": false,
+        "owner": null,
+        "property": "nested coverage removed; formula,reference,cell and heading retained"
+      },
+      "source": "cases-001.json",
+      "raw_sha256": "8a191e1d21ce0ffa5dfaec133887eda86c0d01dc8674e94f8b69d78407e7458a"
+    },
+    {
+      "id": "GPT-tilde-info-root",
+      "raw": "~~~foo bar\n<script>x</script>\n~~~\n\n# End\n",
+      "received": {
+        "id": "tilde-info-root",
+        "raw": "~~~foo bar\n<script>x</script>\n~~~\n\n# End\n",
+        "raw_sha256": "33722f6d69da2c211ecec19600664fb860c92874754477d7db6390067472e5af",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 11,
+            "byte": 11
+          }
+        ],
+        "detail": "script",
+        "owner": false,
+        "ast": true,
+        "asset": false
+      },
+      "source": "cases-002.json",
+      "raw_sha256": "33722f6d69da2c211ecec19600664fb860c92874754477d7db6390067472e5af"
+    },
+    {
+      "id": "GPT-tilde-info-quote",
+      "raw": "> ~~~foo bar\n> <script>x</script>\n> ~~~\n\n# End\n",
+      "received": {
+        "id": "tilde-info-quote",
+        "raw": "> ~~~foo bar\n> <script>x</script>\n> ~~~\n\n# End\n",
+        "raw_sha256": "d114ec33affd2af8e53c4a32d1045dcfb5edea177def1120948f3c27a443a6f9",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 15,
+            "byte": 15
+          }
+        ],
+        "detail": "script",
+        "owner": false,
+        "ast": true,
+        "asset": false
+      },
+      "source": "cases-002.json",
+      "raw_sha256": "d114ec33affd2af8e53c4a32d1045dcfb5edea177def1120948f3c27a443a6f9"
+    },
+    {
+      "id": "GPT-tilde-info-asset",
+      "raw": "~~~foo bar\n<img src=\"p.png\">\n~~~\n\n# End\n",
+      "received": {
+        "id": "tilde-info-asset",
+        "raw": "~~~foo bar\n<img src=\"p.png\">\n~~~\n\n# End\n",
+        "raw_sha256": "e45e3b8341ac703e403ab705f8b352ebcc199f161960bb2ee8a07dff03889bb1",
+        "visits": [
+          {
+            "snippet": "<img src=\"p.png\">",
+            "char": 11,
+            "byte": 11
+          }
+        ],
+        "detail": null,
+        "owner": false,
+        "ast": true,
+        "asset": true
+      },
+      "source": "cases-002.json",
+      "raw_sha256": "e45e3b8341ac703e403ab705f8b352ebcc199f161960bb2ee8a07dff03889bb1"
+    },
+    {
+      "id": "GPT-first-unsafe-invalid-uri",
+      "raw": "È <script>x</script> <img src=\"http://[\"> <img src=\"../last.png\">\n",
+      "received": {
+        "id": "first-unsafe-invalid-uri",
+        "raw": "È <script>x</script> <img src=\"http://[\"> <img src=\"../last.png\">\n",
+        "raw_sha256": "42fb7f6853a4e3d4acf4b40d70b92631ef6f854e0ffdb708f28b41c46a1f196b",
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 2,
+            "byte": 3
+          },
+          {
+            "snippet": "<img src=\"http://[\">",
+            "char": 21,
+            "byte": 22
+          },
+          {
+            "snippet": "<img src=\"../last.png\">",
+            "char": 42,
+            "byte": 43
+          }
+        ],
+        "detail": "script",
+        "owner": false,
+        "ast": false,
+        "asset": false
+      },
+      "source": "cases-002.json",
+      "raw_sha256": "42fb7f6853a4e3d4acf4b40d70b92631ef6f854e0ffdb708f28b41c46a1f196b"
+    },
+    {
+      "id": "GPT-tilde-language-control",
+      "raw": "~~~python\n<script>x</script>\n~~~\n\n# End\n",
+      "received": {
+        "id": "tilde-language-control",
+        "raw": "~~~python\n<script>x</script>\n~~~\n\n# End\n",
+        "raw_sha256": "dfe926f1aa79eb48ece55bc7801eba58d525961f408b6fb584e464473c142e35",
+        "visits": [],
+        "detail": null,
+        "owner": true,
+        "ast": true,
+        "asset": false
+      },
+      "source": "cases-002.json",
+      "raw_sha256": "dfe926f1aa79eb48ece55bc7801eba58d525961f408b6fb584e464473c142e35"
+    },
+    {
+      "id": "GPT-tilde-attrs-control",
+      "raw": "~~~{.python}\n<script>x</script>\n~~~\n\n# End\n",
+      "received": {
+        "id": "tilde-attrs-control",
+        "raw": "~~~{.python}\n<script>x</script>\n~~~\n\n# End\n",
+        "raw_sha256": "cb247fc88f198c137c6b8dbbe84eb817a164ec498dae92f312a41b56d2aaf1af",
+        "visits": [],
+        "detail": null,
+        "owner": true,
+        "ast": true,
+        "asset": false
+      },
+      "source": "cases-002.json",
+      "raw_sha256": "cb247fc88f198c137c6b8dbbe84eb817a164ec498dae92f312a41b56d2aaf1af"
+    },
+    {
+      "id": "CLA-K1a-quote-after-para-tilde-script",
+      "raw": "Intro text\n> ~~~\n> <script data-c13=\"k1a\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K1a-quote-after-para-tilde-script",
+        "group": "K",
+        "raw": "Intro text\n> ~~~\n> <script data-c13=\"k1a\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k1a",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "PARAGRAPH_BOUNDARY ends the paragraph at >; container fence at start owns body",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "6f29901b91d6b6d24baae3768c7caa524f9145b5b88d8f36d7192f8a421b6ffa"
+    },
+    {
+      "id": "CLA-K1b-quote-after-para-tilde-img",
+      "raw": "Intro text\n> ~~~\n> <img src=\"p.png\" data-c13=\"k1b\">\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K1b-quote-after-para-tilde-img",
+        "group": "K",
+        "raw": "Intro text\n> ~~~\n> <img src=\"p.png\" data-c13=\"k1b\">\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE",
+          "assets": []
+        },
+        "v12": {
+          "status": "COMPLETE",
+          "assets": []
+        },
+        "ast": "ACTIVE",
+        "key": "k1b",
+        "if_active": {
+          "status": "ASSET_OR_NOT_COMPLETE"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "7b36598d01b62f930753f089a66aa18e19d269877ea0e97c7651b8eca34ddeb3"
+    },
+    {
+      "id": "CLA-K1c-list-after-para-tilde-script",
+      "raw": "Intro text\n- ~~~\n    <script data-c13=\"k1c\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K1c-list-after-para-tilde-script",
+        "group": "K",
+        "raw": "Intro text\n- ~~~\n    <script data-c13=\"k1c\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k1c",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "bda4b602749d5dfce017f2beebca084b7d1aab02d93c98c791f04dc0d4d0ecf9"
+    },
+    {
+      "id": "CLA-K1d-note-after-para-tilde-script",
+      "raw": "Body[^n].\nIntro text\n[^n]: ~~~\n    <script data-c13=\"k1d\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K1d-note-after-para-tilde-script",
+        "group": "K",
+        "raw": "Body[^n].\nIntro text\n[^n]: ~~~\n    <script data-c13=\"k1d\">x</script>\n    ~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k1d",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "AST prediction low confidence",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "63d9cecf4b4508daf47d39ad2b55b72822e205ae868382223c6e913fe5b10f85"
+    },
+    {
+      "id": "CLA-K1e-control-quote-after-para-backtick",
+      "raw": "Intro text\n> ```\n> <script data-c13=\"k1e\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K1e-control-quote-after-para-backtick",
+        "group": "K",
+        "raw": "Intro text\n> ```\n> <script data-c13=\"k1e\">x</script>\n> ```\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "INERT",
+        "key": "k1e",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "expected agreement by inline code spanning the three lines",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "94f6c06ca589ff95df81266ddcb49dacaa0b632eddd61fa2fb81620d14ff0d35"
+    },
+    {
+      "id": "CLA-K1f-control-quote-after-para-raw-html",
+      "raw": "Intro text\n> ~~~{=html}\n> <script data-c13=\"k1f\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K1f-control-quote-after-para-raw-html",
+        "group": "K",
+        "raw": "Intro text\n> ~~~{=html}\n> <script data-c13=\"k1f\">x</script>\n> ~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "ast": "ACTIVE",
+        "key": "k1f",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "6b50d8fd40093b8f9e74da1d72a964ef919b8245f58bfa4b65bd9f94a0b42716"
+    },
+    {
+      "id": "CLA-K1h-heading-after-para-attr",
+      "raw": "Intro text\n# Heading {onclick=\"x\" data-c13=\"k1h\"}\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K1h-heading-after-para-attr",
+        "group": "K",
+        "raw": "Intro text\n# Heading {onclick=\"x\" data-c13=\"k1h\"}\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": "TEXT",
+        "key": "k1h",
+        "if_active": null,
+        "if_inert": null,
+        "visits": null,
+        "note": "observation only (+blank_before_header): reader over-reports, not a safety gap",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "efa304dd59a2bdb3be24cd2292b2a532b059956a44b5602c803e5b3bd4740812"
+    },
+    {
+      "id": "CLA-K2a-lazy-quote-tilde-script",
+      "raw": "> Intro text\n~~~\n<script data-c13=\"k2a\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K2a-lazy-quote-tilde-script",
+        "group": "K",
+        "raw": "> Intro text\n~~~\n<script data-c13=\"k2a\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k2a",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "root fence_decision called with paragraph_open=False after quote; root lexer keeps paragraph_open=True",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "c253f21768e535a0bcd4669e8014da2f011032d0d51eb8f83461b46c3d6522d3"
+    },
+    {
+      "id": "CLA-K2b-lazy-quote-tilde-img",
+      "raw": "> Intro text\n~~~\n<img src=\"p.png\" data-c13=\"k2b\">\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K2b-lazy-quote-tilde-img",
+        "group": "K",
+        "raw": "> Intro text\n~~~\n<img src=\"p.png\" data-c13=\"k2b\">\n~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE",
+          "assets": []
+        },
+        "v12": {
+          "status": "COMPLETE",
+          "assets": []
+        },
+        "ast": "ACTIVE",
+        "key": "k2b",
+        "if_active": {
+          "status": "ASSET_OR_NOT_COMPLETE"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "f9a5b95cdc282905b3fa10093f3f600d32865ece519061e76a0817a6223d09e5"
+    },
+    {
+      "id": "CLA-K2c-lazy-list-tilde-script",
+      "raw": "- Intro text\n~~~\n<script data-c13=\"k2c\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K2c-lazy-list-tilde-script",
+        "group": "K",
+        "raw": "- Intro text\n~~~\n<script data-c13=\"k2c\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k2c",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "a2fc39724af279dd85df1d416c532ade928f4de04e8adeb58c63b35b6aa049ec"
+    },
+    {
+      "id": "CLA-K2d-lazy-note-tilde-script",
+      "raw": "Body[^n].\n\n[^n]: Intro text\n~~~\n<script data-c13=\"k2d\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K2d-lazy-note-tilde-script",
+        "group": "K",
+        "raw": "Body[^n].\n\n[^n]: Intro text\n~~~\n<script data-c13=\"k2d\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k2d",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "AST prediction low confidence",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "3f20b10e7af97d74b952cbec5f09a02d34f7e839011f9687c0d25340f0ec5d5c"
+    },
+    {
+      "id": "CLA-K2e-figure-line-then-tilde-script",
+      "raw": "![a](p.png)\n~~~\n<script data-c13=\"k2e\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K2e-figure-line-then-tilde-script",
+        "group": "K",
+        "raw": "![a](p.png)\n~~~\n<script data-c13=\"k2e\">x</script>\n~~~\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "v12": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "ast": "ACTIVE",
+        "key": "k2e",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "2cefe9fdf2d3c9036e10f155411114caecdbe79e66b625dae96444d60c84a81a"
+    },
+    {
+      "id": "CLA-K2f-control-lazy-quote-backtick",
+      "raw": "> Intro text\n```\n<script data-c13=\"k2f\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K2f-control-lazy-quote-backtick",
+        "group": "K",
+        "raw": "> Intro text\n```\n<script data-c13=\"k2f\">x</script>\n```\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "INERT",
+        "key": "k2f",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "7e8b88e682be4c2656d5536fc2486701e670f9a2a9235d78c2fc5bd3a06535b9"
+    },
+    {
+      "id": "CLA-K3a-div-tail-img-evasive",
+      "raw": "::: <img src=\"../x.png\" data-c13=\"k3a\">\nBody.\n:::\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K3a-div-tail-img-evasive",
+        "group": "K",
+        "raw": "::: <img src=\"../x.png\" data-c13=\"k3a\">\nBody.\n:::\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k3a",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "../x.png"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "2e82f10931a97d454554c313815d477d9941a6736e02f2f485cacf01f47dd096"
+    },
+    {
+      "id": "CLA-K3d-div-tail-script",
+      "raw": "::: <script data-c13=\"k3d\">x</script>\nBody.\n:::\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K3d-div-tail-script",
+        "group": "K",
+        "raw": "::: <script data-c13=\"k3d\">x</script>\nBody.\n:::\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k3d",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "4a2be9419e20dac42059c364aaee20a299b98ef8f1489b193894f4b9b603730e"
+    },
+    {
+      "id": "CLA-K4a-span-braces-img-evasive",
+      "raw": "See [a]{<img src=\"../x.png\" data-c13=\"k4a\">} end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K4a-span-braces-img-evasive",
+        "group": "K",
+        "raw": "See [a]{<img src=\"../x.png\" data-c13=\"k4a\">} end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k4a",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "../x.png"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "497dd458976018b50411a80e11730cf95e59e242fb8bb06e840424a9fd5ea5ff"
+    },
+    {
+      "id": "CLA-K4b-heading-braces-script",
+      "raw": "# Title {<script data-c13=\"k4b\">x</script>}\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K4b-heading-braces-script",
+        "group": "K",
+        "raw": "# Title {<script data-c13=\"k4b\">x</script>}\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k4b",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "d4b8a0ed3414b3477c76678cdee9b26f75d554f5899fab6e5ffb6c6f7b800a64"
+    },
+    {
+      "id": "CLA-K4c-link-braces-script",
+      "raw": "See [a](https://example.invalid){<script data-c13=\"k4c\">x</script>} end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K4c-link-braces-script",
+        "group": "K",
+        "raw": "See [a](https://example.invalid){<script data-c13=\"k4c\">x</script>} end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k4c",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "9d56f15d6f6a9adc00bbb273ee916682047fc8316eda00f9f49d17c708280dd6"
+    },
+    {
+      "id": "CLA-K4d-code-braces-img-evasive",
+      "raw": "See `x`{<img src=\"../x.png\" data-c13=\"k4d\">} end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K4d-code-braces-img-evasive",
+        "group": "K",
+        "raw": "See `x`{<img src=\"../x.png\" data-c13=\"k4d\">} end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ACTIVE",
+        "key": "k4d",
+        "if_active": {
+          "status": "UNSAFE",
+          "detail": "../x.png"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "a111cc61a41ce76feddd7afeb2370305745079b236127159b4d422943b1c8e46"
+    },
+    {
+      "id": "CLA-K4e-span-braces-img-safe",
+      "raw": "See [a]{<img src=\"p.png\" data-c13=\"k4e\">} end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K4e-span-braces-img-safe",
+        "group": "K",
+        "raw": "See [a]{<img src=\"p.png\" data-c13=\"k4e\">} end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": null,
+        "v13": {
+          "status": "COMPLETE",
+          "assets": []
+        },
+        "v12": {
+          "status": "COMPLETE",
+          "assets": []
+        },
+        "ast": "ACTIVE",
+        "key": "k4e",
+        "if_active": {
+          "status": "ASSET_OR_NOT_COMPLETE"
+        },
+        "if_inert": {
+          "status": "NOT_UNSAFE"
+        },
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "c6415298703ecba7d78237d3559768e2e5c9a1fb4d7ad4ee0d692b2e341bdcd1"
+    },
+    {
+      "id": "CLA-K4f-control-span-valid-attrs",
+      "raw": "See [a]{.cls data-c13=\"k4f\"} end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "K4f-control-span-valid-attrs",
+        "group": "K",
+        "raw": "See [a]{.cls data-c13=\"k4f\"} end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "COMPLETE"
+        },
+        "v13": {
+          "status": "COMPLETE"
+        },
+        "v12": {
+          "status": "COMPLETE"
+        },
+        "ast": "ATTR",
+        "key": "k4f",
+        "if_active": null,
+        "if_inert": null,
+        "visits": null,
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "128103d04afba6433cc3ece771c86ebb3431e41feae99b2869e893813c7763eb"
+    },
+    {
+      "id": "CLA-A1-heading-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n# Heading {onclick=\"x\"}\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A1-heading-attr-after",
+        "group": "A",
+        "raw": "Text <img src=\"../first.png\"> end.\n\n# Heading {onclick=\"x\"}\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<img src=\"../first.png\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../tail.png\">",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "60f3770eb3cc512cdf40f1453d61f30709b58aea925399158827f00d7cc819a4"
+    },
+    {
+      "id": "CLA-A2-div-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n::: {onclick=\"x\"}\nBody.\n:::\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A2-div-attr-after",
+        "group": "A",
+        "raw": "Text <img src=\"../first.png\"> end.\n\n::: {onclick=\"x\"}\nBody.\n:::\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<img src=\"../first.png\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../tail.png\">",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "fbeada1938d399475c18cdee5c9031dd90298becba93bcc9e92c5bf5e82c91af"
+    },
+    {
+      "id": "CLA-A3-fence-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n```{onclick=\"x\"}\ncode <img src=\"../in-code.png\">\n```\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A3-fence-attr-after",
+        "group": "A",
+        "raw": "Text <img src=\"../first.png\"> end.\n\n```{onclick=\"x\"}\ncode <img src=\"../in-code.png\">\n```\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<img src=\"../first.png\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../tail.png\">",
+            0
+          ]
+        ],
+        "note": "code body inert: no visit for ../in-code.png",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "bb59217b6f0f37350a6774cd5e660628d33cf826d68b2ab8315b2274ed7e0052"
+    },
+    {
+      "id": "CLA-A4-figure-attr-after",
+      "raw": "Text <img src=\"../first.png\"> end.\n\n![cap](p.png){onclick=\"x\"}\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A4-figure-attr-after",
+        "group": "A",
+        "raw": "Text <img src=\"../first.png\"> end.\n\n![cap](p.png){onclick=\"x\"}\n\n<img src=\"../tail.png\">\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "../first.png"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<img src=\"../first.png\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../tail.png\">",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "401e82f694398445d784e8d8091ca2ad6da94c35d906d37dd1da69bfa6e6060c"
+    },
+    {
+      "id": "CLA-A5-control-attr-first",
+      "raw": "# Heading {onclick=\"x\"}\n\nText <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A5-control-attr-first",
+        "group": "A",
+        "raw": "# Heading {onclick=\"x\"}\n\nText <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../second.png\">",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "619149593b38b7ad2b5bc55d84e256279ca46a7b96012a7e0b4c889c8bb26646"
+    },
+    {
+      "id": "CLA-A7-inblock-span-attr-first",
+      "raw": "See [a]{onclick=\"x\"} and <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A7-inblock-span-attr-first",
+        "group": "A",
+        "raw": "See [a]{onclick=\"x\"} and <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "../second.png"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../second.png\">",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "b26bb08351e78b8b97ebe5600c090115cb8f4c5e55186ee7418eb05ea0f1484f"
+    },
+    {
+      "id": "CLA-A8-limit-markdown-image-first",
+      "raw": "![a](../first.png)\n\nText <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A8-limit-markdown-image-first",
+        "group": "A",
+        "raw": "![a](../first.png)\n\nText <img src=\"../second.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "../second.png"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "../second.png"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "../second.png"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<img src=\"../second.png\">",
+            0
+          ]
+        ],
+        "note": "documented limit: Markdown path checked by audit after observe",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "4474f8a147d22f3305da7a9b8b0947603e6223938c7161e9370a5315bfd89095"
+    },
+    {
+      "id": "CLA-A9-gpt26-raw-first-heading-attr",
+      "raw": "È `<script data-review=\"first\">x</script>`{=html}\n\n# Heading {onclick=\"x\"}\n\n<img src=\"../last.png\" data-review=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A9-gpt26-raw-first-heading-attr",
+        "group": "A",
+        "raw": "È `<script data-review=\"first\">x</script>`{=html}\n\n# Heading {onclick=\"x\"}\n\n<img src=\"../last.png\" data-review=\"last\">\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "script"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<script data-review=\"first\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../last.png\" data-review=\"last\">",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "14ea6e563477368ab3bde76fbed88c12d2dd522b890f9cffea8e9380be4b02b3"
+    },
+    {
+      "id": "CLA-A10-utf8-crlf-many-causes",
+      "raw": "È ü [a]{onclick=\"x\"} <img src=\"../b.png\">\r\n\r\n| A | B |\r\n|---|---|\r\n| <img src=\"../c.png\"> | [d]{onmouseover=\"y\"} |\r\n\r\n![€ <img src=\"../e.png\">](p.png){style=\"z\"}\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A10-utf8-crlf-many-causes",
+        "group": "A",
+        "raw": "È ü [a]{onclick=\"x\"} <img src=\"../b.png\">\r\n\r\n| A | B |\r\n|---|---|\r\n| <img src=\"../c.png\"> | [d]{onmouseover=\"y\"} |\r\n\r\n![€ <img src=\"../e.png\">](p.png){style=\"z\"}\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "Active markdown attribute"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../b.png\">",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../c.png\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "onmouseover=\"y\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../e.png\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "style=\"z\"",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "f92ce9c2bb03f89a6dfe8d30eb4275114938554fff55174b2d15a152d1056e10"
+    },
+    {
+      "id": "CLA-A11-tree-error-then-attr-then-html",
+      "raw": "È <span class=\"a\" class=\"b\">safe</span> <img src=\"../t.png\"> [x]{onclick=\"x\"}\n\n<img src=\"../u.png\">\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A11-tree-error-then-attr-then-html",
+        "group": "A",
+        "raw": "È <span class=\"a\" class=\"b\">safe</span> <img src=\"../t.png\"> [x]{onclick=\"x\"}\n\n<img src=\"../u.png\">\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "UNSAFE",
+          "detail": "../t.png"
+        },
+        "v13": {
+          "status": "UNSAFE",
+          "detail": "../t.png"
+        },
+        "v12": {
+          "status": "UNSAFE",
+          "detail": "../t.png"
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<span class=\"a\" class=\"b\">",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../t.png\">",
+            0
+          ],
+          [
+            "markdown-attribute",
+            "onclick=\"x\"",
+            0
+          ],
+          [
+            "html",
+            "<img src=\"../u.png\">",
+            0
+          ]
+        ],
+        "note": "",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "f8241db18f9826db2204fa7abe513eed74085c5279018c932d486925118720f8"
+    },
+    {
+      "id": "CLA-A12-reset-safe-after-unsafe",
+      "raw": "Plain words <img src=\"p.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "A12-reset-safe-after-unsafe",
+        "group": "A",
+        "raw": "Plain words <img src=\"p.png\"> end.\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "v13": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "v12": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": [
+          [
+            "html",
+            "<img src=\"p.png\">",
+            0
+          ]
+        ],
+        "note": "runs right after A11 in the same process",
+        "private": false
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "151ad62b885dde6b605751593805c7f9a5b7dc1e4a104f027d8becc7189ddef7"
+    },
+    {
+      "id": "CLA-P1-private-keys-nested",
+      "raw": "| A | B |\n|---|---|\n| x [l](https://example.invalid) | $y$ |\n\nTable: cap *z*\n\n![fig *c*](p.png)\n\n<table><caption>c</caption><tr><td>q</td></tr></table>\n\n# Visible heading\n\nAfter words.\n",
+      "received": {
+        "id": "P1-private-keys-nested",
+        "group": "P",
+        "raw": "| A | B |\n|---|---|\n| x [l](https://example.invalid) | $y$ |\n\nTable: cap *z*\n\n![fig *c*](p.png)\n\n<table><caption>c</caption><tr><td>q</td></tr></table>\n\n# Visible heading\n\nAfter words.\n",
+        "expect": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "v13": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "v12": {
+          "status": "COMPLETE",
+          "assets": [
+            "p.png"
+          ]
+        },
+        "ast": null,
+        "key": null,
+        "if_active": null,
+        "if_inert": null,
+        "visits": null,
+        "note": "V13: no _guard_coverage/_source_map key at any depth; V12 expected to leak _guard_coverage in nested leaves",
+        "private": true
+      },
+      "source": "claude/cases.py",
+      "raw_sha256": "bd97d547334b36db6887792afa1fca452f2f60c12bad65a9a77fe928fe17ab06"
+    },
+    {
+      "id": "info-57",
+      "raw": "~~~\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "c26706684482cb250ee3dd35f577c53afe271806609def90ab57539b81fb44ad"
+    },
+    {
+      "id": "info-58",
+      "raw": "~~~python\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "5d5a1357b491a87961ba9dcbc5e908c3ed41bf330e59c3179db4dafdf6f1f0ad"
+    },
+    {
+      "id": "info-59",
+      "raw": "~~~foo bar\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "3c62c169dbc1a705fb0a4db399ad58a99a51f8f1ba710e8de5974d640c3bbd42"
+    },
+    {
+      "id": "info-60",
+      "raw": "~~~{.python}\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "d7b7b8b267ec2383ac48dcd8d14e2cd23e85fbcf0bade58b5d04b634b89171dc"
+    },
+    {
+      "id": "info-61",
+      "raw": "~~~{.python} tail\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "c1678efdde84c34b4256082f4234abb9d44b844fc3d1aeb9eb04a235587f1181"
+    },
+    {
+      "id": "info-62",
+      "raw": "~~~{title=\"<script>x</script>\"}\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "77b2b8d339c47c99f56bda4fe535082ddf5bc16bbb8220d0e50209e5dbf0b033"
+    },
+    {
+      "id": "info-63",
+      "raw": "~~~{<img src=\"../m.png\">}\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "d2239b3b9fb5582b81019c69c2603339b408324df49b889cddacd32b5d337435"
+    },
+    {
+      "id": "info-64",
+      "raw": "~~~{=html}\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "555b11ba445043320b1a7f08efae4a87c41885a14c1e6ec780e2b8d4763adbf0"
+    },
+    {
+      "id": "info-65",
+      "raw": "~~~{=latex}\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "9d437d67aa691f94a59a22d1fb6ab3beedf83839dfb834aee7c908c17acf8100"
+    },
+    {
+      "id": "info-66",
+      "raw": "~~~ python\t\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "84edf496b88734cbe86d9aecc407e96f6d843a6a8394119d5bd46ec53008b097"
+    },
+    {
+      "id": "info-67",
+      "raw": "~~~{#i .c key=\"a b\"}\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "20ef9675eb636ce2d6faa0aa2f6063560361e5a51a3002b1e21645e884408947"
+    },
+    {
+      "id": "info-68",
+      "raw": "~~~{}\n<script data-r14=\"body\">x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "b1898bf8fde3e8e0f21b4c0053a16c65530eaff579907d7ebb7ddd211d831861"
+    },
+    {
+      "id": "info-69",
+      "raw": "```\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "f79f6d7e01bd54552e4453888c22b0db0ac9775618351e9a49e2e3babb1a9ee7"
+    },
+    {
+      "id": "info-70",
+      "raw": "```python\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "6a3e5d56f54552b714a7674f0f21e4147919a695bc5bb6b85f08991f2336d440"
+    },
+    {
+      "id": "info-71",
+      "raw": "```foo bar\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "ca083a4ab19e0a0f441baa9df36ba401ff1bb7ae9392b0410ea8654077abfb4b"
+    },
+    {
+      "id": "info-72",
+      "raw": "```{.python}\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "dd2eb78782cc1da2fe9a912061a51daa6fcd78eb32e93bcfe7acad1d321ff4d9"
+    },
+    {
+      "id": "info-73",
+      "raw": "```{.python} tail\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "7e90353ae60195cda47c1b5f0bc022604b0aa1bd6b5758a416132481ac227d80"
+    },
+    {
+      "id": "info-74",
+      "raw": "```{title=\"<script>x</script>\"}\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "2c19e91393fb9f185a971bf26f9f1e0056d92ef1187eb69531f626b50ccddd77"
+    },
+    {
+      "id": "info-75",
+      "raw": "```{<img src=\"../m.png\">}\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "c428d8ab24d5eff54564cdca3a5f6b7e541526fb349b32eff0419c2fe1220915"
+    },
+    {
+      "id": "info-76",
+      "raw": "```{=html}\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "ebccb1c2d50433ce743f7695a1e5350ef2996da45da09d22281d9b14ba5cfc5a"
+    },
+    {
+      "id": "info-77",
+      "raw": "```{=latex}\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "f38d26e229954751c7187c0a1d220edf65ed9e294a3c540ba58ce28420eada2e"
+    },
+    {
+      "id": "info-78",
+      "raw": "``` python\t\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "7c2fe0fdbec4a4f6e0d44afa432786a694e17e5f9c860ae6a839cef458fce1f3"
+    },
+    {
+      "id": "info-79",
+      "raw": "```{#i .c key=\"a b\"}\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "5d63d380f357d5d577a43a352bf62f327e923e6bb89f74a0cbb0650dc97ab942"
+    },
+    {
+      "id": "info-80",
+      "raw": "```{}\n<script data-r14=\"body\">x</script>\n```\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "a65fac750cc9be41f8dd02107d73e4a1a8859593d0e5028e93df20979f458ffc"
+    },
+    {
+      "id": "metadata-81",
+      "raw": "[a]{<img src=\"../x.png\">}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "b31e661e98cb02a4822d1ba951ddc92a2dad06591b54be6d244e72ec5bf425a4"
+    },
+    {
+      "id": "metadata-82",
+      "raw": "[a]{title=\"<img src=bad>\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "6a26f20ec5a4d5e54d42b2a2e095a51c70ef34ac811467de1f0e419558410655"
+    },
+    {
+      "id": "metadata-83",
+      "raw": "[a]{.c #i key=\"v\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "8b2743f1310f5f7d4da6489aacd3d714a77a24e4b8e9edde8e27a8fadb32a410"
+    },
+    {
+      "id": "metadata-84",
+      "raw": "[a]{onclick=\"x\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "4bdd5fedd22eba2d4a3d72f8e7726937bfd636b67ebd6cf9cc25fa8bcf70100f"
+    },
+    {
+      "id": "metadata-85",
+      "raw": "[a](https://example.invalid){<img src=\"../x.png\">}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "78fd8cf1610399cf89dcd1cbc86179173e13ec1f176b75ccf02772c0f17b0730"
+    },
+    {
+      "id": "metadata-86",
+      "raw": "[a](https://example.invalid){title=\"<img src=bad>\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "f203dc8284d211c57f1b3214ecc036e27cf626d0bfaf98f21a5f56b81556eba1"
+    },
+    {
+      "id": "metadata-87",
+      "raw": "[a](https://example.invalid){.c #i key=\"v\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "50090e8765ddb50eff4702e795ecfb18ceb3d98dfb51fb24684343ee47bdb5ee"
+    },
+    {
+      "id": "metadata-88",
+      "raw": "[a](https://example.invalid){onclick=\"x\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "559313aec8eaf7dda1affbd47f914c23758a7205efccee38dbff29f5e064925c"
+    },
+    {
+      "id": "metadata-89",
+      "raw": "`a`{<img src=\"../x.png\">}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "d742221a427764f8f3af22dfa47eb2b3d13ba755b274ec080f350c7aa62b9168"
+    },
+    {
+      "id": "metadata-90",
+      "raw": "`a`{title=\"<img src=bad>\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "10c70f3676fbec8d07efdacfcd9ad9783358a604a4e77618612d6c7c686ad5ba"
+    },
+    {
+      "id": "metadata-91",
+      "raw": "`a`{.c #i key=\"v\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "7b38363d2da7cd14a90eaf90b82bd37fec6e235552d095f37a4dc9cd662ee43d"
+    },
+    {
+      "id": "metadata-92",
+      "raw": "`a`{onclick=\"x\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "fe066c3762990728525c488ada2db51ed115b3a3cbeb3753995f9cd7b2562b7e"
+    },
+    {
+      "id": "metadata-93",
+      "raw": "# Title {<img src=\"../x.png\">}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "cb508ae8d10965a59bfe50698244031923e320836ed91f620a86cd94f22b3d02"
+    },
+    {
+      "id": "metadata-94",
+      "raw": "# Title {title=\"<img src=bad>\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "c2c7bfe909f7f6a64192aa66a14bfab5220fc8841629474ab847d183c98196e5"
+    },
+    {
+      "id": "metadata-95",
+      "raw": "# Title {.c #i key=\"v\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "c5abe8956e64c18d9cefce186bfc024eaca2daf1bd512cd9600f62119d9f91e0"
+    },
+    {
+      "id": "metadata-96",
+      "raw": "# Title {onclick=\"x\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "6f3f026f83145e65357f1ee6ce7e767aa955daba968ba1e4ea4b35457ec09e07"
+    },
+    {
+      "id": "metadata-97",
+      "raw": "![a](p.png){<img src=\"../x.png\">}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "5a72fa5583aeae6f6b622814a34aa3f3a1d35c96c67d1b18b7e7b25d2e58b15c"
+    },
+    {
+      "id": "metadata-98",
+      "raw": "![a](p.png){title=\"<img src=bad>\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "72a79fe6b8fd91ff12e9b1ee5384e7dc22714a78eca5f438bd8e717091a5513c"
+    },
+    {
+      "id": "metadata-99",
+      "raw": "![a](p.png){.c #i key=\"v\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "eafa39c97b19a98ddb1e11af0ecae8a3424c7eef49bd97082eb62d444f120a07"
+    },
+    {
+      "id": "metadata-100",
+      "raw": "![a](p.png){onclick=\"x\"}\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "b827aa22298fb3a005464fc3c938ce6d198f05d3cc2df4484a2fbc3de07036cd"
+    },
+    {
+      "id": "metadata-101",
+      "raw": "::: {<img src=\"../x.png\">}\nBody\n:::\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "4e9b6b87c9fe50e4cc561cb0b05c09f7f5f2100104ead79119dd506fb9f70ef1"
+    },
+    {
+      "id": "metadata-102",
+      "raw": "::: {title=\"<img src=bad>\"}\nBody\n:::\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "a91993efb6ecfe2203dbfc7286647fdd484ccd0c2d42b1c59ad6305d002a462d"
+    },
+    {
+      "id": "metadata-103",
+      "raw": "::: {.c #i key=\"v\"}\nBody\n:::\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "b964f5ac73e470eb8024e329354443143627b4904324df4dbfe84fe7b16c8512"
+    },
+    {
+      "id": "metadata-104",
+      "raw": "::: {onclick=\"x\"}\nBody\n:::\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "c38d4d7c6117aa351b465912350e2a6c4f5eb5aec30c5a0a61f4f96b33fe2324"
+    },
+    {
+      "id": "boundary-105",
+      "raw": "Intro\n> ~~~\n> <script>x</script>\n> ~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "674294e8f426af5bd0d71a338ec383130854b7e6c2ec55ec369016af3666a46a"
+    },
+    {
+      "id": "boundary-106",
+      "raw": "Intro\n\n> ~~~\n> <script>x</script>\n> ~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "40d9dedb99caaa643041637369ee89657b1544193d67ebcaec34167ebbcc3935"
+    },
+    {
+      "id": "boundary-107",
+      "raw": "Intro\n- ~~~\n    <script>x</script>\n    ~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "1b570fd45eeb5b38472f2a69947df27952b74c662007bb83535eefe19bfa4ae2"
+    },
+    {
+      "id": "boundary-108",
+      "raw": "Intro\n\n- ~~~\n    <script>x</script>\n    ~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "1cb176621a857e9412b893951ab6da36527a79e352ae421e92b118f47f425186"
+    },
+    {
+      "id": "boundary-109",
+      "raw": "Intro\n[^n]: ~~~\n    <script>x</script>\n    ~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "d0b63fb7bfe23e6fe944b1e820c63f7072d02270aa3025c8f9d3992e72941ec3"
+    },
+    {
+      "id": "boundary-110",
+      "raw": "Intro\n\n[^n]: ~~~\n    <script>x</script>\n    ~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "f05dddf0699b00dc5e56dfcadd538a329e2655ded8a9542492cec68f700b552a"
+    },
+    {
+      "id": "boundary-111",
+      "raw": "Intro\n![a](p.png)\n~~~\n<script>x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "c07baa5f61f7296f31505969b721f2480ce3942ef98b484a80fe3a570cad8819"
+    },
+    {
+      "id": "boundary-112",
+      "raw": "Intro\n\n![a](p.png)\n~~~\n<script>x</script>\n~~~\n\nEnd.",
+      "owner": "AST-body",
+      "detail": null,
+      "text": null,
+      "raw_sha256": "0fc7e0290f70381d725d62e5e4a7edf1f18026b15411184ba03f384406a470e6"
+    },
+    {
+      "id": "uri-113",
+      "raw": "È <script>x</script> <img src=\"http://[\"> <img src=\"p.png\"> <a href=\"http://[\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "script",
+      "text": null,
+      "raw_sha256": "b94b02581a4ccbe4545f2119b174909924068385b32afab35ffc801b621f0976"
+    },
+    {
+      "id": "uri-114",
+      "raw": "È <img src=\"http://[\"> <script>x</script> <img src=\"p.png\"> <a href=\"http://[\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "URI",
+      "text": null,
+      "raw_sha256": "812927ff28c9e614612a24f2a2fdbe08bec8ef558e2ebf3b353f56bcc62a1dc3"
+    },
+    {
+      "id": "uri-115",
+      "raw": "È <script>x</script> <img src=\"http://[not-ip]/\"> <img src=\"p.png\"> <a href=\"http://[not-ip]/\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "script",
+      "text": null,
+      "raw_sha256": "f5c041ac1fd8162e36eaeed6f7ad5b01a99da0d80caa8771b388ce467cb25fe9"
+    },
+    {
+      "id": "uri-116",
+      "raw": "È <img src=\"http://[not-ip]/\"> <script>x</script> <img src=\"p.png\"> <a href=\"http://[not-ip]/\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "URI",
+      "text": null,
+      "raw_sha256": "2658ab477a145aa69948382d83203bed0242fb9507f454683c8fb9dacf93ed94"
+    },
+    {
+      "id": "uri-117",
+      "raw": "È <script>x</script> <img src=\"http://[127.0.0.1]/\"> <img src=\"p.png\"> <a href=\"http://[127.0.0.1]/\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "script",
+      "text": null,
+      "raw_sha256": "aef4565187a3d2917ff60356ee5fc5d03746a1d5a8fa0ef3d882409cf952a659"
+    },
+    {
+      "id": "uri-118",
+      "raw": "È <img src=\"http://[127.0.0.1]/\"> <script>x</script> <img src=\"p.png\"> <a href=\"http://[127.0.0.1]/\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "URI",
+      "text": null,
+      "raw_sha256": "e49a67faac83f30a2feff0f7755ec8c1119987b67510904434a21646ebce7d1b"
+    },
+    {
+      "id": "uri-119",
+      "raw": "È <script>x</script> <img src=\"http://exa／mple/\"> <img src=\"p.png\"> <a href=\"http://exa／mple/\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "script",
+      "text": null,
+      "raw_sha256": "fa6b103c88c5be4331f6fbcaada10729f86e69bbb8040aa583a0e335ed819d3d"
+    },
+    {
+      "id": "uri-120",
+      "raw": "È <img src=\"http://exa／mple/\"> <script>x</script> <img src=\"p.png\"> <a href=\"http://exa／mple/\">a</a> <img src=\"../last.png\">",
+      "owner": null,
+      "detail": "URI",
+      "text": null,
+      "raw_sha256": "1d2c99cad0cf53ae1183cc3deb6f800560f4fa71229b77dfbdc3fd4403809c8a"
+    },
+    {
+      "id": "heading-attached",
+      "raw": "Intro\n# Heading {onclick=\"x\"}\n\nEnd.",
+      "owner": null,
+      "detail": null,
+      "text": "onclick=\"x\"",
+      "raw_sha256": "347f9b217ca11a447fc41f41e48bc1681bf8250983276bb82e69165b737a0094"
+    },
+    {
+      "id": "heading-separated",
+      "raw": "Intro\n\n# Heading {onclick=\"x\"}\n\nEnd.",
+      "owner": null,
+      "detail": "Active markdown attribute",
+      "text": null,
+      "raw_sha256": "10a7e05e5ff47308049ca9d9d3729a210c03d430acbe8f4e01891dda42c6337e"
+    },
+    {
+      "id": "metadata-crlf",
+      "raw": "È [a]{.c\r\nonclick=\"x\"}\r\n\r\n<img src=\"../last.png\">",
+      "owner": null,
+      "detail": "Active markdown attribute",
+      "text": null,
+      "raw_sha256": "5e6b728d644fd52a2459211edeb2663072c93179ab2dcf1e6cd588aef0fd5c1e"
+    },
+    {
+      "id": "metadata-lf",
+      "raw": "È [a]{.c\nonclick=\"x\"}\n\n<img src=\"../last.png\">",
+      "owner": null,
+      "detail": "Active markdown attribute",
+      "text": null,
+      "raw_sha256": "53a9ed2b09fe058734adce00c3e20b16fd59586c7b8a122aaaa7cada7b3eb2f0"
+    },
+    {
+      "id": "user-private-name",
+      "raw": "[a]{_guard_coverage=x}",
+      "owner": null,
+      "detail": null,
+      "text": "a",
+      "raw_sha256": "44b2a796e227335c8f69d303070de055a1828424f7dae06bcca9e8445a1c1bf0"
+    }
+  ],
+  "policy": "Received originals and corrected controls; new syntax expectations conditional on AST of marked body, manual unsafe/assets/text contracts; no product output is gold.",
+  "seed": null
+}

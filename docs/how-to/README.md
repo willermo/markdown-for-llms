@@ -1,6 +1,7 @@
 # Guide pratiche
 
 - [Preparare e aggiornare ambiente uv legacy](ambiente-uv.md).
+- [Eseguire il benchmark locale di conversione](benchmark-fedelta.md).
 - [Preparare e verificare Marker in Docker](marker-legacy-docker.md).
 - [Scegliere backend e scenari della pipeline](pipeline-backends.md).
 

@@ -1,0 +1,1597 @@
+{
+  "cleanup_executed": false,
+  "kind": "only byte-identical public inputs; keep receipts/context/env/raw evidence",
+  "candidates": [
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/cloudpickle-3.1.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cloudpickle-3.1.2-py3-none-any.whl",
+      "sha256": "9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+      "bytes": 22228,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "3d31298449090ab8d47b7b1b2a555ff73cac7ed438a08b7ac160980c7ebed649",
+      "bytes": 257601,
+      "allocated_bytes": 258048,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/filetype-1.2.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filetype-1.2.0-py2.py3-none-any.whl",
+      "sha256": "7ce71b6880181241cf7ac8697a2f1eb6a8bd9b429f7ad6d27b8db9ba5f1c2d25",
+      "bytes": 19970,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/et_xmlfile-2.0.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/et_xmlfile-2.0.0-py3-none-any.whl",
+      "sha256": "7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa",
+      "bytes": 18059,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/einops-0.8.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/einops-0.8.2-py3-none-any.whl",
+      "sha256": "54058201ac7087911181bfec4af6091bb59380360f069276601256a76af08193",
+      "bytes": 65638,
+      "allocated_bytes": 69632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/cryptography-50.0.2-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cryptography-50.0.2-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "630ebfea3bf689d075f82316324ff7433dc447fe6bc1bfc76524b74b4a9567d2",
+      "bytes": 4719841,
+      "allocated_bytes": 4722688,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/EbookLib-0.18.tar.gz",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/EbookLib-0.18.tar.gz",
+      "sha256": "38562643a7bc94d9bf56e9930b4927e4e93b5d1d0917f697a6454db5a1c1a533",
+      "bytes": 115484,
+      "allocated_bytes": 118784,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "072e7624b1fc4d601036ab3f4f27942ef772887e876beff0301d261210bca97f",
+      "bytes": 1419762,
+      "allocated_bytes": 1421312,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/click-8.5.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/click-8.5.0-py3-none-any.whl",
+      "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360",
+      "bytes": 125251,
+      "allocated_bytes": 126976,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/beautifulsoup4-4.15.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/beautifulsoup4-4.15.0-py3-none-any.whl",
+      "sha256": "d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9",
+      "bytes": 109924,
+      "allocated_bytes": 110592,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/anthropic-0.46.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anthropic-0.46.0-py3-none-any.whl",
+      "sha256": "1445ec9be78d2de7ea51b4d5acd3574e414aea97ef903d0ecbb57bec806aaa49",
+      "bytes": 223228,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/cobble-0.1.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cobble-0.1.4-py3-none-any.whl",
+      "sha256": "36c91b1655e599fd428e2b95fdd5f0da1ca2e9f1abb0bc871dec21a0e78a2b44",
+      "bytes": 3984,
+      "allocated_bytes": 4096,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/fastapi-0.142.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fastapi-0.142.2-py3-none-any.whl",
+      "sha256": "bd5f4d81f1e93a88bcd77caf4dfe3c2dbffc3805407a0007e9a114c18b3a670b",
+      "bytes": 144409,
+      "allocated_bytes": 147456,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/distro-1.9.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distro-1.9.0-py3-none-any.whl",
+      "sha256": "7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2",
+      "bytes": 20277,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/distlib-0.4.3-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distlib-0.4.3-py2.py3-none-any.whl",
+      "sha256": "4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b",
+      "bytes": 470628,
+      "allocated_bytes": 471040,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/certifi-2026.7.22-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/certifi-2026.7.22-py3-none-any.whl",
+      "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775",
+      "bytes": 136983,
+      "allocated_bytes": 139264,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/cfgv-3.5.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cfgv-3.5.0-py2.py3-none-any.whl",
+      "sha256": "a8dc6b26ad22ff227d2634a65cb388215ce6cc96bbcc5cfde7641ae87e8dacc0",
+      "bytes": 7445,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "c1453022f490d2459a11819d83ad1d586e9ff65a12ac3e705ffebd46d3685dcf",
+      "bytes": 221822,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/annotated_doc-0.0.5-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_doc-0.0.5-py3-none-any.whl",
+      "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+      "bytes": 5302,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/anyio-4.15.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anyio-4.15.1-py3-none-any.whl",
+      "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101",
+      "bytes": 132079,
+      "allocated_bytes": 135168,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/annotated_types-0.8.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_types-0.8.0-py3-none-any.whl",
+      "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+      "bytes": 13427,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/filelock-4.0.12-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filelock-4.0.12-py3-none-any.whl",
+      "sha256": "5f17ee83ecee8a6f3e389c75822fb70a1c2f0506b99438a6dffa1d56793588c8",
+      "bytes": 111732,
+      "allocated_bytes": 114688,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r001/wheels/cssselect2-0.10.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cssselect2-0.10.1-py3-none-any.whl",
+      "sha256": "25cc4494d55985d6a6da359be48da6ce98c28dcbafa2314c383ace3fc32ec868",
+      "bytes": 15489,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/cloudpickle-3.1.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cloudpickle-3.1.2-py3-none-any.whl",
+      "sha256": "9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+      "bytes": 22228,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/requests-2.34.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/requests-2.34.2-py3-none-any.whl",
+      "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+      "bytes": 73075,
+      "allocated_bytes": 73728,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/marker_pdf-1.10.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/marker_pdf-1.10.2-py3-none-any.whl",
+      "sha256": "f631737dd46d3927142b4b14c7b488962c5af278dc2c3ae7dc5b03a47f5909fb",
+      "bytes": 195706,
+      "allocated_bytes": 196608,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "3d31298449090ab8d47b7b1b2a555ff73cac7ed438a08b7ac160980c7ebed649",
+      "bytes": 257601,
+      "allocated_bytes": 258048,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/idna-3.20-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/idna-3.20-py3-none-any.whl",
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "bytes": 69583,
+      "allocated_bytes": 69632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b",
+      "bytes": 49969856,
+      "allocated_bytes": 49975296,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/filetype-1.2.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filetype-1.2.0-py2.py3-none-any.whl",
+      "sha256": "7ce71b6880181241cf7ac8697a2f1eb6a8bd9b429f7ad6d27b8db9ba5f1c2d25",
+      "bytes": 19970,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "b7e18c623bb5c95acb3b3328861272816ba199fb531921c5d6d0b675f1fde9e3",
+      "bytes": 16717410,
+      "allocated_bytes": 16719872,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/et_xmlfile-2.0.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/et_xmlfile-2.0.0-py3-none-any.whl",
+      "sha256": "7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa",
+      "bytes": 18059,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/einops-0.8.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/einops-0.8.2-py3-none-any.whl",
+      "sha256": "54058201ac7087911181bfec4af6091bb59380360f069276601256a76af08193",
+      "bytes": 65638,
+      "allocated_bytes": 69632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/jiter-0.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/jiter-0.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "8c21265b251d99bbb40080d178a8953e35601d3a1564e05c4de4c0d2ca616797",
+      "bytes": 345025,
+      "allocated_bytes": 348160,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pre_commit-4.6.2-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pre_commit-4.6.2-py2.py3-none-any.whl",
+      "sha256": "e2dde9a75d3bce11bd3831c26d134df00a2803c1d818be6a0383c3dcda25dc4e",
+      "bytes": 226202,
+      "allocated_bytes": 229376,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pycparser-3.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pycparser-3.0-py3-none-any.whl",
+      "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+      "bytes": 48172,
+      "allocated_bytes": 49152,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/cryptography-50.0.2-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cryptography-50.0.2-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "630ebfea3bf689d075f82316324ff7433dc447fe6bc1bfc76524b74b4a9567d2",
+      "bytes": 4719841,
+      "allocated_bytes": 4722688,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/google_genai-1.75.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/google_genai-1.75.0-py3-none-any.whl",
+      "sha256": "8dc4c096e7d6288c3087f6893f582fe52468932464781edb8193bd92b9fefb2c",
+      "bytes": 793726,
+      "allocated_bytes": 794624,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/huggingface_hub-0.36.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/huggingface_hub-0.36.2-py3-none-any.whl",
+      "sha256": "48f0c8eac16145dfce371e9d2d7772854a4f591bcb56c9cf548accf531d54270",
+      "bytes": 566395,
+      "allocated_bytes": 569344,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/EbookLib-0.18.tar.gz",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/EbookLib-0.18.tar.gz",
+      "sha256": "38562643a7bc94d9bf56e9930b4927e4e93b5d1d0917f697a6454db5a1c1a533",
+      "bytes": 115484,
+      "allocated_bytes": 118784,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "fd6f3f93c9a0a7cc2788ee63fb763353d4bd2e89b0751bc78fcf7dda00bea774",
+      "bytes": 516040,
+      "allocated_bytes": 516096,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pydyf-0.12.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydyf-0.12.1-py3-none-any.whl",
+      "sha256": "ea25b4e1fe7911195cb57067560daaa266639184e8335365cc3ee5214e7eaadc",
+      "bytes": 8028,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/httpx-0.28.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/httpx-0.28.1-py3-none-any.whl",
+      "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad",
+      "bytes": 73517,
+      "allocated_bytes": 73728,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "072e7624b1fc4d601036ab3f4f27942ef772887e876beff0301d261210bca97f",
+      "bytes": 1419762,
+      "allocated_bytes": 1421312,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/fonttools-4.66.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fonttools-4.66.1-py3-none-any.whl",
+      "sha256": "7234ae9e28db64273fbbfa72caebd0a97e3bdba6b05064114741b9539ef339d0",
+      "bytes": 1202222,
+      "allocated_bytes": 1204224,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "f55fa87b6c612ecd6b058f167c53231b1d14e412efe361d3d6e38b3631c73218",
+      "bytes": 35344199,
+      "allocated_bytes": 35348480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/setuptools-84.0.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/setuptools-84.0.0-py3-none-any.whl",
+      "sha256": "51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670",
+      "bytes": 818216,
+      "allocated_bytes": 819200,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/rapidfuzz-3.14.6-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/rapidfuzz-3.14.6-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "0debb5f43662ea84d2f0228a0c7407ff647f9c3d13f3b692efff0cde46eebce0",
+      "bytes": 3168023,
+      "allocated_bytes": 3170304,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/h11-0.16.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/h11-0.16.0-py3-none-any.whl",
+      "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86",
+      "bytes": 37515,
+      "allocated_bytes": 40960,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/opentelemetry_api-1.45.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/opentelemetry_api-1.45.0-py3-none-any.whl",
+      "sha256": "80e068aba7cd56c8b58512d6a36f8d25cb1dfaa0c0a4cc1c938ccf9f362d9cb3",
+      "bytes": 60020,
+      "allocated_bytes": 61440,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/fsspec-2026.9.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fsspec-2026.9.0-py3-none-any.whl",
+      "sha256": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+      "bytes": 221738,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/click-8.5.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/click-8.5.0-py3-none-any.whl",
+      "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360",
+      "bytes": 125251,
+      "allocated_bytes": 126976,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/python_discovery-1.6.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_discovery-1.6.1-py3-none-any.whl",
+      "sha256": "d43fcdef879fe795352bd13ccf8d185ba5a9f86f36cfcd00529f596e737442b3",
+      "bytes": 38664,
+      "allocated_bytes": 40960,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/markdownify-1.2.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markdownify-1.2.3-py3-none-any.whl",
+      "sha256": "a189a0bedfd14009030fde5f85bb6f77c56897cb839b5c25315dd7d4e3e290ba",
+      "bytes": 15732,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/openpyxl-3.1.5-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/openpyxl-3.1.5-py2.py3-none-any.whl",
+      "sha256": "5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2",
+      "bytes": 250910,
+      "allocated_bytes": 253952,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/beautifulsoup4-4.15.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/beautifulsoup4-4.15.0-py3-none-any.whl",
+      "sha256": "d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9",
+      "bytes": 109924,
+      "allocated_bytes": 110592,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/platformdirs-4.12.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/platformdirs-4.12.3-py3-none-any.whl",
+      "sha256": "080f3b39423b5abfca9a23d84c4e9795f54d395cd8459867a8ded44084fcd5f8",
+      "bytes": 32493,
+      "allocated_bytes": 32768,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/python_pptx-1.0.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_pptx-1.0.2-py3-none-any.whl",
+      "sha256": "160838e0b8565a8b1f67947675886e9fea18aa5e795db7ae531606d68e785cba",
+      "bytes": 472788,
+      "allocated_bytes": 475136,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/anthropic-0.46.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anthropic-0.46.0-py3-none-any.whl",
+      "sha256": "1445ec9be78d2de7ea51b4d5acd3574e414aea97ef903d0ecbb57bec806aaa49",
+      "bytes": 223228,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/cobble-0.1.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cobble-0.1.4-py3-none-any.whl",
+      "sha256": "36c91b1655e599fd428e2b95fdd5f0da1ca2e9f1abb0bc871dec21a0e78a2b44",
+      "bytes": 3984,
+      "allocated_bytes": 4096,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/httpcore-1.0.9-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/httpcore-1.0.9-py3-none-any.whl",
+      "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55",
+      "bytes": 78784,
+      "allocated_bytes": 81920,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pyphen-0.18.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyphen-0.18.1-py3-none-any.whl",
+      "sha256": "0aa9051e15928cecadd4c632cea0258ba57215b2a197a39baa46abcdb0f47e84",
+      "bytes": 2116143,
+      "allocated_bytes": 2117632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/jinja2-3.1.6-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/jinja2-3.1.6-py3-none-any.whl",
+      "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+      "bytes": 134899,
+      "allocated_bytes": 135168,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "d62671bb130879cef0ee4c9ebe47a14af6c66ec53e6d84dc15936e5ffdfac82f",
+      "bytes": 4464663,
+      "allocated_bytes": 4468736,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/fastapi-0.142.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fastapi-0.142.2-py3-none-any.whl",
+      "sha256": "bd5f4d81f1e93a88bcd77caf4dfe3c2dbffc3805407a0007e9a114c18b3a670b",
+      "bytes": 144409,
+      "allocated_bytes": 147456,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/openai-1.109.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/openai-1.109.1-py3-none-any.whl",
+      "sha256": "6bcaf57086cf59159b8e27447e4e7dd019db5d29a438072fbd49c290c7e65315",
+      "bytes": 948627,
+      "allocated_bytes": 950272,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/narwhals-2.26.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/narwhals-2.26.0-py3-none-any.whl",
+      "sha256": "29326d74f107c347fd1009bd58e38d9f7c7c5b51e6de97bc93dbc325d9038b54",
+      "bytes": 474034,
+      "allocated_bytes": 475136,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pydantic_settings-2.15.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic_settings-2.15.0-py3-none-any.whl",
+      "sha256": "0ba092c291c94baceb5eff768aa0d56400a457585bc0175925a5a5510303da42",
+      "bytes": 69413,
+      "allocated_bytes": 69632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pyasn1-0.6.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyasn1-0.6.4-py3-none-any.whl",
+      "sha256": "deda9277cfd454080ec40b207fb6df82206a3a2688735233cdcd8d3d565f088b",
+      "bytes": 84410,
+      "allocated_bytes": 86016,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "8e124f974786f831d6043728e38296969d3579db8896fe004682f5758e613581",
+      "bytes": 22985,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/google_auth-2.60.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/google_auth-2.60.0-py3-none-any.whl",
+      "sha256": "e78414cd2e22cc02884768707def024ca32da17695f2c0e6194cdbe1316c4cd4",
+      "bytes": 264569,
+      "allocated_bytes": 266240,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pydantic-2.13.5-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic-2.13.5-py3-none-any.whl",
+      "sha256": "346a034f080da3755d8e9cb5e00e8b07de1d39e4f6e2c87d8ab7cafa0b269a73",
+      "bytes": 472589,
+      "allocated_bytes": 475136,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/python_multipart-0.0.32-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_multipart-0.0.32-py3-none-any.whl",
+      "sha256": "ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23",
+      "bytes": 30042,
+      "allocated_bytes": 32768,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/distro-1.9.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distro-1.9.0-py3-none-any.whl",
+      "sha256": "7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2",
+      "bytes": 20277,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/distlib-0.4.3-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distlib-0.4.3-py2.py3-none-any.whl",
+      "sha256": "4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b",
+      "bytes": 470628,
+      "allocated_bytes": 471040,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/certifi-2026.7.22-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/certifi-2026.7.22-py3-none-any.whl",
+      "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775",
+      "bytes": 136983,
+      "allocated_bytes": 139264,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/mpmath-1.3.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/mpmath-1.3.0-py3-none-any.whl",
+      "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+      "bytes": 536198,
+      "allocated_bytes": 536576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/ftfy-6.3.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/ftfy-6.3.1-py3-none-any.whl",
+      "sha256": "7c70eb532015cd2f9adb53f101fb6c7945988d023a085d127d1573dc49dd0083",
+      "bytes": 44821,
+      "allocated_bytes": 45056,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/cfgv-3.5.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cfgv-3.5.0-py2.py3-none-any.whl",
+      "sha256": "a8dc6b26ad22ff227d2634a65cb388215ce6cc96bbcc5cfde7641ae87e8dacc0",
+      "bytes": 7445,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pillow-10.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pillow-10.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "bf2342ac639c4cf38799a44950bbc2dfcb685f052b9e262f446482afaf4bffca",
+      "bytes": 4459973,
+      "allocated_bytes": 4460544,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/python_dotenv-1.2.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_dotenv-1.2.4-py3-none-any.whl",
+      "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc",
+      "bytes": 23266,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc",
+      "bytes": 807870,
+      "allocated_bytes": 811008,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/packaging-26.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/packaging-26.3-py3-none-any.whl",
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "bytes": 129956,
+      "allocated_bytes": 131072,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/networkx-3.7-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/networkx-3.7-py3-none-any.whl",
+      "sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+      "bytes": 2142205,
+      "allocated_bytes": 2142208,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "c1453022f490d2459a11819d83ad1d586e9ff65a12ac3e705ffebd46d3685dcf",
+      "bytes": 221822,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pdftext-0.6.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pdftext-0.6.3-py3-none-any.whl",
+      "sha256": "528431ed8bdce39d74372cd3d27e8544af812f1f1adc81db229cf9fb48dacacb",
+      "bytes": 23693,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/annotated_doc-0.0.5-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_doc-0.0.5-py3-none-any.whl",
+      "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+      "bytes": 5302,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/markdown2-2.5.5-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markdown2-2.5.5-py3-none-any.whl",
+      "sha256": "be798587e09d1f52d2e4d96a649c4b82a778c75f9929aad52a2c95747fa26941",
+      "bytes": 56250,
+      "allocated_bytes": 57344,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/anyio-4.15.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anyio-4.15.1-py3-none-any.whl",
+      "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101",
+      "bytes": 132079,
+      "allocated_bytes": 135168,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "0fc5be0abd4a407e200d844b404e33639a554e7bd0d448e7b9ae181be4789ac2",
+      "bytes": 2066284,
+      "allocated_bytes": 2068480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/nodeenv-1.11.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/nodeenv-1.11.0-py2.py3-none-any.whl",
+      "sha256": "edaa16e6c14d7cf395d75d4bbd5a26390f4dc06501a33b4e76282b02cc688a25",
+      "bytes": 34277,
+      "allocated_bytes": 36864,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/regex-2024.11.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/regex-2024.11.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "70b7fa6606c2881c1db9479b0eaa11ed5dfa11c8d60a474ff0e095099f39d98e",
+      "bytes": 796896,
+      "allocated_bytes": 798720,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/annotated_types-0.8.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_types-0.8.0-py3-none-any.whl",
+      "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+      "bytes": 13427,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/lxml-6.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/lxml-6.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "379f8a75cf6eb7eef0af074b55f49ab73b868388a98de14646abcdfa4564bb11",
+      "bytes": 5105247,
+      "allocated_bytes": 5107712,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/filelock-4.0.12-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filelock-4.0.12-py3-none-any.whl",
+      "sha256": "5f17ee83ecee8a6f3e389c75822fb70a1c2f0506b99438a6dffa1d56793588c8",
+      "bytes": 111732,
+      "allocated_bytes": 114688,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/joblib-1.6.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/joblib-1.6.0-py3-none-any.whl",
+      "sha256": "3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba",
+      "bytes": 306115,
+      "allocated_bytes": 307200,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/scikit_learn-1.9.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/scikit_learn-1.9.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "e5d7b18a5b9dca241a74695f3275fa4c895a9dadc72b3d8df5fa9d1083c9b83e",
+      "bytes": 9166043,
+      "allocated_bytes": 9170944,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/identify-2.6.20-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/identify-2.6.20-py2.py3-none-any.whl",
+      "sha256": "6a16b69b93187244e0548cbfd25b3e4a6f9a7a2ad784625c3bec2b8d27b81aaa",
+      "bytes": 99506,
+      "allocated_bytes": 102400,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pyasn1_modules-0.4.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyasn1_modules-0.4.2-py3-none-any.whl",
+      "sha256": "29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a",
+      "bytes": 181259,
+      "allocated_bytes": 184320,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/mammoth-1.13.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/mammoth-1.13.0-py2.py3-none-any.whl",
+      "sha256": "dd7629fa9d0a5e82207b3f481a9dcb8308fb43f6206258e062f11121efba9991",
+      "bytes": 55228,
+      "allocated_bytes": 57344,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/cssselect2-0.10.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cssselect2-0.10.1-py3-none-any.whl",
+      "sha256": "25cc4494d55985d6a6da359be48da6ce98c28dcbafa2314c383ace3fc32ec868",
+      "bytes": 15489,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r002/wheels/pypdfium2-4.30.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pypdfium2-4.30.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "f1f78d2189e0ddf9ac2b7a9b9bd4f0c66f54d1389ff6c17e9fd9dc034d06eb3f",
+      "bytes": 2812008,
+      "allocated_bytes": 2813952,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/cloudpickle-3.1.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cloudpickle-3.1.2-py3-none-any.whl",
+      "sha256": "9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+      "bytes": 22228,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/requests-2.34.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/requests-2.34.2-py3-none-any.whl",
+      "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+      "bytes": 73075,
+      "allocated_bytes": 73728,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/marker_pdf-1.10.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/marker_pdf-1.10.2-py3-none-any.whl",
+      "sha256": "f631737dd46d3927142b4b14c7b488962c5af278dc2c3ae7dc5b03a47f5909fb",
+      "bytes": 195706,
+      "allocated_bytes": 196608,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "3d31298449090ab8d47b7b1b2a555ff73cac7ed438a08b7ac160980c7ebed649",
+      "bytes": 257601,
+      "allocated_bytes": 258048,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/idna-3.20-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/idna-3.20-py3-none-any.whl",
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "bytes": 69583,
+      "allocated_bytes": 69632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b",
+      "bytes": 49969856,
+      "allocated_bytes": 49975296,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/filetype-1.2.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filetype-1.2.0-py2.py3-none-any.whl",
+      "sha256": "7ce71b6880181241cf7ac8697a2f1eb6a8bd9b429f7ad6d27b8db9ba5f1c2d25",
+      "bytes": 19970,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "b7e18c623bb5c95acb3b3328861272816ba199fb531921c5d6d0b675f1fde9e3",
+      "bytes": 16717410,
+      "allocated_bytes": 16723968,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/sympy-1.14.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/sympy-1.14.0-py3-none-any.whl",
+      "sha256": "e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+      "bytes": 6299353,
+      "allocated_bytes": 6299648,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/et_xmlfile-2.0.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/et_xmlfile-2.0.0-py3-none-any.whl",
+      "sha256": "7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa",
+      "bytes": 18059,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/einops-0.8.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/einops-0.8.2-py3-none-any.whl",
+      "sha256": "54058201ac7087911181bfec4af6091bb59380360f069276601256a76af08193",
+      "bytes": 65638,
+      "allocated_bytes": 69632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/jiter-0.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/jiter-0.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "8c21265b251d99bbb40080d178a8953e35601d3a1564e05c4de4c0d2ca616797",
+      "bytes": 345025,
+      "allocated_bytes": 348160,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pre_commit-4.6.2-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pre_commit-4.6.2-py2.py3-none-any.whl",
+      "sha256": "e2dde9a75d3bce11bd3831c26d134df00a2803c1d818be6a0383c3dcda25dc4e",
+      "bytes": 226202,
+      "allocated_bytes": 229376,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pycparser-3.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pycparser-3.0-py3-none-any.whl",
+      "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+      "bytes": 48172,
+      "allocated_bytes": 49152,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/cryptography-50.0.2-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cryptography-50.0.2-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "630ebfea3bf689d075f82316324ff7433dc447fe6bc1bfc76524b74b4a9567d2",
+      "bytes": 4719841,
+      "allocated_bytes": 4722688,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/google_genai-1.75.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/google_genai-1.75.0-py3-none-any.whl",
+      "sha256": "8dc4c096e7d6288c3087f6893f582fe52468932464781edb8193bd92b9fefb2c",
+      "bytes": 793726,
+      "allocated_bytes": 794624,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/huggingface_hub-0.36.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/huggingface_hub-0.36.2-py3-none-any.whl",
+      "sha256": "48f0c8eac16145dfce371e9d2d7772854a4f591bcb56c9cf548accf531d54270",
+      "bytes": 566395,
+      "allocated_bytes": 569344,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/EbookLib-0.18.tar.gz",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/EbookLib-0.18.tar.gz",
+      "sha256": "38562643a7bc94d9bf56e9930b4927e4e93b5d1d0917f697a6454db5a1c1a533",
+      "bytes": 115484,
+      "allocated_bytes": 118784,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/tenacity-9.1.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tenacity-9.1.4-py3-none-any.whl",
+      "sha256": "6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55",
+      "bytes": 28926,
+      "allocated_bytes": 32768,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "fd6f3f93c9a0a7cc2788ee63fb763353d4bd2e89b0751bc78fcf7dda00bea774",
+      "bytes": 516040,
+      "allocated_bytes": 516096,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pydyf-0.12.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydyf-0.12.1-py3-none-any.whl",
+      "sha256": "ea25b4e1fe7911195cb57067560daaa266639184e8335365cc3ee5214e7eaadc",
+      "bytes": 8028,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/httpx-0.28.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/httpx-0.28.1-py3-none-any.whl",
+      "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad",
+      "bytes": 73517,
+      "allocated_bytes": 73728,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "072e7624b1fc4d601036ab3f4f27942ef772887e876beff0301d261210bca97f",
+      "bytes": 1419762,
+      "allocated_bytes": 1421312,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/fonttools-4.66.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fonttools-4.66.1-py3-none-any.whl",
+      "sha256": "7234ae9e28db64273fbbfa72caebd0a97e3bdba6b05064114741b9539ef339d0",
+      "bytes": 1202222,
+      "allocated_bytes": 1204224,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "f55fa87b6c612ecd6b058f167c53231b1d14e412efe361d3d6e38b3631c73218",
+      "bytes": 35344199,
+      "allocated_bytes": 35348480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/setuptools-84.0.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/setuptools-84.0.0-py3-none-any.whl",
+      "sha256": "51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670",
+      "bytes": 818216,
+      "allocated_bytes": 819200,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/rapidfuzz-3.14.6-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/rapidfuzz-3.14.6-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "0debb5f43662ea84d2f0228a0c7407ff647f9c3d13f3b692efff0cde46eebce0",
+      "bytes": 3168023,
+      "allocated_bytes": 3170304,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/h11-0.16.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/h11-0.16.0-py3-none-any.whl",
+      "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86",
+      "bytes": 37515,
+      "allocated_bytes": 40960,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/opentelemetry_api-1.45.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/opentelemetry_api-1.45.0-py3-none-any.whl",
+      "sha256": "80e068aba7cd56c8b58512d6a36f8d25cb1dfaa0c0a4cc1c938ccf9f362d9cb3",
+      "bytes": 60020,
+      "allocated_bytes": 61440,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/fsspec-2026.9.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fsspec-2026.9.0-py3-none-any.whl",
+      "sha256": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+      "bytes": 221738,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/click-8.5.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/click-8.5.0-py3-none-any.whl",
+      "sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360",
+      "bytes": 125251,
+      "allocated_bytes": 126976,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/python_discovery-1.6.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_discovery-1.6.1-py3-none-any.whl",
+      "sha256": "d43fcdef879fe795352bd13ccf8d185ba5a9f86f36cfcd00529f596e737442b3",
+      "bytes": 38664,
+      "allocated_bytes": 40960,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/markdownify-1.2.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markdownify-1.2.3-py3-none-any.whl",
+      "sha256": "a189a0bedfd14009030fde5f85bb6f77c56897cb839b5c25315dd7d4e3e290ba",
+      "bytes": 15732,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/openpyxl-3.1.5-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/openpyxl-3.1.5-py2.py3-none-any.whl",
+      "sha256": "5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2",
+      "bytes": 250910,
+      "allocated_bytes": 253952,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/beautifulsoup4-4.15.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/beautifulsoup4-4.15.0-py3-none-any.whl",
+      "sha256": "d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9",
+      "bytes": 109924,
+      "allocated_bytes": 110592,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/starlette-1.7.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/starlette-1.7.0-py3-none-any.whl",
+      "sha256": "67f8e99895493dd2911a03f11314af6ceebeae4e704bb9f43dfc6a9db151c93e",
+      "bytes": 78980,
+      "allocated_bytes": 81920,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/platformdirs-4.12.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/platformdirs-4.12.3-py3-none-any.whl",
+      "sha256": "080f3b39423b5abfca9a23d84c4e9795f54d395cd8459867a8ded44084fcd5f8",
+      "bytes": 32493,
+      "allocated_bytes": 32768,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/python_pptx-1.0.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_pptx-1.0.2-py3-none-any.whl",
+      "sha256": "160838e0b8565a8b1f67947675886e9fea18aa5e795db7ae531606d68e785cba",
+      "bytes": 472788,
+      "allocated_bytes": 475136,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/anthropic-0.46.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anthropic-0.46.0-py3-none-any.whl",
+      "sha256": "1445ec9be78d2de7ea51b4d5acd3574e414aea97ef903d0ecbb57bec806aaa49",
+      "bytes": 223228,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/cobble-0.1.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cobble-0.1.4-py3-none-any.whl",
+      "sha256": "36c91b1655e599fd428e2b95fdd5f0da1ca2e9f1abb0bc871dec21a0e78a2b44",
+      "bytes": 3984,
+      "allocated_bytes": 4096,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/httpcore-1.0.9-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/httpcore-1.0.9-py3-none-any.whl",
+      "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55",
+      "bytes": 78784,
+      "allocated_bytes": 81920,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pyphen-0.18.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyphen-0.18.1-py3-none-any.whl",
+      "sha256": "0aa9051e15928cecadd4c632cea0258ba57215b2a197a39baa46abcdb0f47e84",
+      "bytes": 2116143,
+      "allocated_bytes": 2117632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "369cc9fc8cc10cb24143873a0d95438bb8ee257bb80c71989e3ee290e8d72c67",
+      "bytes": 3274982,
+      "allocated_bytes": 3276800,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/jinja2-3.1.6-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/jinja2-3.1.6-py3-none-any.whl",
+      "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+      "bytes": 134899,
+      "allocated_bytes": 135168,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "d62671bb130879cef0ee4c9ebe47a14af6c66ec53e6d84dc15936e5ffdfac82f",
+      "bytes": 4464663,
+      "allocated_bytes": 4468736,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/fastapi-0.142.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/fastapi-0.142.2-py3-none-any.whl",
+      "sha256": "bd5f4d81f1e93a88bcd77caf4dfe3c2dbffc3805407a0007e9a114c18b3a670b",
+      "bytes": 144409,
+      "allocated_bytes": 147456,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/openai-1.109.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/openai-1.109.1-py3-none-any.whl",
+      "sha256": "6bcaf57086cf59159b8e27447e4e7dd019db5d29a438072fbd49c290c7e65315",
+      "bytes": 948627,
+      "allocated_bytes": 950272,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/narwhals-2.26.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/narwhals-2.26.0-py3-none-any.whl",
+      "sha256": "29326d74f107c347fd1009bd58e38d9f7c7c5b51e6de97bc93dbc325d9038b54",
+      "bytes": 474034,
+      "allocated_bytes": 475136,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pydantic_settings-2.15.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic_settings-2.15.0-py3-none-any.whl",
+      "sha256": "0ba092c291c94baceb5eff768aa0d56400a457585bc0175925a5a5510303da42",
+      "bytes": 69413,
+      "allocated_bytes": 69632,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pyasn1-0.6.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyasn1-0.6.4-py3-none-any.whl",
+      "sha256": "deda9277cfd454080ec40b207fb6df82206a3a2688735233cdcd8d3d565f088b",
+      "bytes": 84410,
+      "allocated_bytes": 86016,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/surya_ocr-0.17.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/surya_ocr-0.17.1-py3-none-any.whl",
+      "sha256": "74c331ccb9be2d0c6a774122e572b85abdddf2982ecf6d11c1d83b3a0c9ae19d",
+      "bytes": 189881,
+      "allocated_bytes": 192512,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "8e124f974786f831d6043728e38296969d3579db8896fe004682f5758e613581",
+      "bytes": 22985,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/google_auth-2.60.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/google_auth-2.60.0-py3-none-any.whl",
+      "sha256": "e78414cd2e22cc02884768707def024ca32da17695f2c0e6194cdbe1316c4cd4",
+      "bytes": 264569,
+      "allocated_bytes": 266240,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pydantic-2.13.5-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic-2.13.5-py3-none-any.whl",
+      "sha256": "346a034f080da3755d8e9cb5e00e8b07de1d39e4f6e2c87d8ab7cafa0b269a73",
+      "bytes": 472589,
+      "allocated_bytes": 475136,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/python_multipart-0.0.32-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_multipart-0.0.32-py3-none-any.whl",
+      "sha256": "ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23",
+      "bytes": 30042,
+      "allocated_bytes": 32768,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/distro-1.9.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distro-1.9.0-py3-none-any.whl",
+      "sha256": "7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2",
+      "bytes": 20277,
+      "allocated_bytes": 20480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/distlib-0.4.3-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/distlib-0.4.3-py2.py3-none-any.whl",
+      "sha256": "4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b",
+      "bytes": 470628,
+      "allocated_bytes": 471040,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/certifi-2026.7.22-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/certifi-2026.7.22-py3-none-any.whl",
+      "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775",
+      "bytes": 136983,
+      "allocated_bytes": 139264,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/mpmath-1.3.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/mpmath-1.3.0-py3-none-any.whl",
+      "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+      "bytes": 536198,
+      "allocated_bytes": 536576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/sniffio-1.3.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/sniffio-1.3.1-py3-none-any.whl",
+      "sha256": "2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2",
+      "bytes": 10235,
+      "allocated_bytes": 12288,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/ftfy-6.3.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/ftfy-6.3.1-py3-none-any.whl",
+      "sha256": "7c70eb532015cd2f9adb53f101fb6c7945988d023a085d127d1573dc49dd0083",
+      "bytes": 44821,
+      "allocated_bytes": 45056,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/tinyhtml5-2.1.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tinyhtml5-2.1.0-py3-none-any.whl",
+      "sha256": "6e11cfff38515834268daf89d5f85bbde0b6dd02e8d9e212d1385c2289b89f0a",
+      "bytes": 39686,
+      "allocated_bytes": 40960,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/cfgv-3.5.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cfgv-3.5.0-py2.py3-none-any.whl",
+      "sha256": "a8dc6b26ad22ff227d2634a65cb388215ce6cc96bbcc5cfde7641ae87e8dacc0",
+      "bytes": 7445,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pillow-10.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pillow-10.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "bf2342ac639c4cf38799a44950bbc2dfcb685f052b9e262f446482afaf4bffca",
+      "bytes": 4459973,
+      "allocated_bytes": 4460544,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/python_dotenv-1.2.4-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/python_dotenv-1.2.4-py3-none-any.whl",
+      "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc",
+      "bytes": 23266,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/tinycss2-1.5.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tinycss2-1.5.1-py3-none-any.whl",
+      "sha256": "3415ba0f5839c062696996998176c4a3751d18b7edaaeeb658c9ce21ec150661",
+      "bytes": 28404,
+      "allocated_bytes": 28672,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc",
+      "bytes": 807870,
+      "allocated_bytes": 811008,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/packaging-26.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/packaging-26.3-py3-none-any.whl",
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "bytes": 129956,
+      "allocated_bytes": 131072,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/networkx-3.7-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/networkx-3.7-py3-none-any.whl",
+      "sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+      "bytes": 2142205,
+      "allocated_bytes": 2142208,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "c1453022f490d2459a11819d83ad1d586e9ff65a12ac3e705ffebd46d3685dcf",
+      "bytes": 221822,
+      "allocated_bytes": 225280,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pdftext-0.6.3-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pdftext-0.6.3-py3-none-any.whl",
+      "sha256": "528431ed8bdce39d74372cd3d27e8544af812f1f1adc81db229cf9fb48dacacb",
+      "bytes": 23693,
+      "allocated_bytes": 24576,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/annotated_doc-0.0.5-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_doc-0.0.5-py3-none-any.whl",
+      "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+      "bytes": 5302,
+      "allocated_bytes": 8192,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/tiktoken-0.14.0-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/tiktoken-0.14.0-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "sha256": "7896eea257fe497a2b7134474d909156c6744ce8da35bce88011a960e008aa0d",
+      "bytes": 1204197,
+      "allocated_bytes": 1204224,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/markdown2-2.5.5-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/markdown2-2.5.5-py3-none-any.whl",
+      "sha256": "be798587e09d1f52d2e4d96a649c4b82a778c75f9929aad52a2c95747fa26941",
+      "bytes": 56250,
+      "allocated_bytes": 57344,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/anyio-4.15.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/anyio-4.15.1-py3-none-any.whl",
+      "sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101",
+      "bytes": 132079,
+      "allocated_bytes": 135168,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "0fc5be0abd4a407e200d844b404e33639a554e7bd0d448e7b9ae181be4789ac2",
+      "bytes": 2066284,
+      "allocated_bytes": 2068480,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/nodeenv-1.11.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/nodeenv-1.11.0-py2.py3-none-any.whl",
+      "sha256": "edaa16e6c14d7cf395d75d4bbd5a26390f4dc06501a33b4e76282b02cc688a25",
+      "bytes": 34277,
+      "allocated_bytes": 36864,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/regex-2024.11.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/regex-2024.11.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "70b7fa6606c2881c1db9479b0eaa11ed5dfa11c8d60a474ff0e095099f39d98e",
+      "bytes": 796896,
+      "allocated_bytes": 798720,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/annotated_types-0.8.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/annotated_types-0.8.0-py3-none-any.whl",
+      "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+      "bytes": 13427,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/lxml-6.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/lxml-6.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "379f8a75cf6eb7eef0af074b55f49ab73b868388a98de14646abcdfa4564bb11",
+      "bytes": 5105247,
+      "allocated_bytes": 5107712,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/filelock-4.0.12-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/filelock-4.0.12-py3-none-any.whl",
+      "sha256": "5f17ee83ecee8a6f3e389c75822fb70a1c2f0506b99438a6dffa1d56793588c8",
+      "bytes": 111732,
+      "allocated_bytes": 114688,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/six-1.17.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/six-1.17.0-py2.py3-none-any.whl",
+      "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+      "bytes": 11050,
+      "allocated_bytes": 12288,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/soupsieve-2.10-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/soupsieve-2.10-py3-none-any.whl",
+      "sha256": "8596eb8967d744174820280fa62b4542a2e955bfaccca73ed8a13c6eb8e9b502",
+      "bytes": 38019,
+      "allocated_bytes": 40960,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/joblib-1.6.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/joblib-1.6.0-py3-none-any.whl",
+      "sha256": "3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba",
+      "bytes": 306115,
+      "allocated_bytes": 307200,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/scikit_learn-1.9.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/scikit_learn-1.9.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "e5d7b18a5b9dca241a74695f3275fa4c895a9dadc72b3d8df5fa9d1083c9b83e",
+      "bytes": 9166043,
+      "allocated_bytes": 9166848,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/identify-2.6.20-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/identify-2.6.20-py2.py3-none-any.whl",
+      "sha256": "6a16b69b93187244e0548cbfd25b3e4a6f9a7a2ad784625c3bec2b8d27b81aaa",
+      "bytes": 99506,
+      "allocated_bytes": 102400,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pyasn1_modules-0.4.2-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pyasn1_modules-0.4.2-py3-none-any.whl",
+      "sha256": "29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a",
+      "bytes": 181259,
+      "allocated_bytes": 184320,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/mammoth-1.13.0-py2.py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/mammoth-1.13.0-py2.py3-none-any.whl",
+      "sha256": "dd7629fa9d0a5e82207b3f481a9dcb8308fb43f6206258e062f11121efba9991",
+      "bytes": 55228,
+      "allocated_bytes": 57344,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/cssselect2-0.10.1-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/cssselect2-0.10.1-py3-none-any.whl",
+      "sha256": "25cc4494d55985d6a6da359be48da6ce98c28dcbafa2314c383ace3fc32ec868",
+      "bytes": 15489,
+      "allocated_bytes": 16384,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/threadpoolctl-3.7.0-py3-none-any.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/threadpoolctl-3.7.0-py3-none-any.whl",
+      "sha256": "cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be",
+      "bytes": 26362,
+      "allocated_bytes": 28672,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r003/wheels/pypdfium2-4.30.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/pypdfium2-4.30.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "f1f78d2189e0ddf9ac2b7a9b9bd4f0c66f54d1389ff6c17e9fd9dc034d06eb3f",
+      "bytes": 2812008,
+      "allocated_bytes": 2813952,
+      "hardlink_to_retained": false
+    }
+  ],
+  "not_duplicated_keep": [
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/snapshot.txt",
+      "sha256": "2936be7c99e1051c8171f491da2b20d707d423fc8305a922f57869db2e50fbdc",
+      "bytes": 16
+    }
+  ],
+  "logical_candidate_bytes": 334918780,
+  "allocated_candidate_bytes_upper": 335282176,
+  "exact_reclaim_not_guaranteed": true,
+  "retained_latest_supply_duplicates": [
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian-security/dists/bookworm-security/InRelease",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian-security/dists/bookworm-security/InRelease",
+      "sha256": "9e410c84fe36cff1047b97277bf37bfa3f8fff578eba22acda1f307cded000eb",
+      "bytes": 34770,
+      "allocated_bytes": 36864,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian-security/dists/bookworm-security/main/binary-amd64/Packages.xz",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian-security/dists/bookworm-security/main/binary-amd64/Packages.xz",
+      "sha256": "0f93fdcaaa31d94a709590f802edaa6b2101db69427c0e39282e71bde3f79fc6",
+      "bytes": 345800,
+      "allocated_bytes": 348160,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian/dists/bookworm/InRelease",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/dists/bookworm/InRelease",
+      "sha256": "77737fa4b34f2693e982cc9ee35736816c35a7778fc2d326cc1bbf5b301fe1aa",
+      "bytes": 151075,
+      "allocated_bytes": 151552,
+      "hardlink_to_retained": false
+    },
+    {
+      "path": "temp/run-a001-fase0-uv/work/docker-cpu-r001/fix-supply-r004/apt-repository/debian/dists/bookworm/main/binary-amd64/Packages.xz",
+      "retained_copy": "temp/run-a001-fase0-uv/work/docker-cpu-r001/apt-repository/debian/dists/bookworm/main/binary-amd64/Packages.xz",
+      "sha256": "9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5",
+      "bytes": 8790396,
+      "allocated_bytes": 8794112,
+      "hardlink_to_retained": false
+    }
+  ],
+  "selection_reason": "Only historical supply r001-r003 duplicate public wheel files; current r004 input paths retained.",
+  "assessed_at": "2026-10-07",
+  "active_scope": "run a001 historical public inputs; r004 latest supply and all raw evidence retained"
+}

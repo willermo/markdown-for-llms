@@ -1,0 +1,92 @@
+# Checkpoint supervisore — ricezione completa e review implementazione r006
+
+2026-10-10 Europe/Rome. Ruolo esclusivo supervisore Codex/OpenAI; deployment
+e ID chat precisi non esposti. Skill manage-implementation-run e verify-
+conversion-fidelity già applicate; nessuna delega o review simulata.
+
+## Ricezione e identità
+
+Feature feature/run-a002-corpus; HEAD/dev/origin-dev locale/merge-base
+`80c31da46e5caab990d3596c79c44e524ec1dc95`,indicevuoto. Report/CP r006 letti,
+sezioni Consegna completa e Chiusura amministrativa finale002 autorevoli.
+Arbitrato r005 e prompt21 mandatano F27–F30,dichiarati completati dall'autore;
+nessun GO supervisore e nessuna review/arbitrato r006 preesistente.
+
+[Ricezione statica](../../../../../temp/run-a002-fase1-corpus/evidence/supervisor-implementation-review-r006/reception.json):
+50027confronti hash,48306protetti invariati,125input/copie consegna prima-dopo,
+72copie ricevute,205runtime S004→S005 equivalenti e10origini installate.
+206input esterni S005,zero differenze. Delta7 autore observations/PROTOCOL,
+test r006,due guide e due report/dati permanenti. metrics.py/audit/safety/
+adapter/R/resources/PATH/config/registry/writer/corpus invariati. Quattro
+registri generali supervisore distinti dal delta autore.
+
+122helper/test invariati secondo semantic-equivalence002,3813package/startup,
+ambiente chiuso e dieci installati controllati dall'autore;125copie correnti
+controllate qui. PROTOCOL solo delta benchmark fra S004/S005. Receipt/prefix/
+shebang e binding S/I di stage hanno identità nuove, non byte-identità.
+S005/preflight/gate nuovi prima della suite finale; equivalenza semantica
+degli input consumati attribuisce prove S004,non trasferisce preflight generale.
+I quattro nuovi registri supervisore rendono storico S005 integrale:
+eventuali sonde hanno gate/manifest/input e snapshot tecnici propri autorizzati,
+nessun freeze intermedio. Tre pyc managed ricevuti preservati,causa non attribuita.
+
+## Consegna e oggetto delle review
+
+Reader observations-v6-html-lexical-boundaries,scorer v4 invariato. F27errore
+lessicale `</>`,F28CDATA intera,F29commenti/confiniMarkdown,F30riepilogo neutro.
+Intero delta e nuove dipendenze: html_lexeme/markdown_lexemes/markdown_units,
+inline_delimiter/enfasi/link/math/LaTeX/celle/caption/figure/EOF,coordinate e
+contesti letterali. Contratto corpo inerte/token intero,proiezione/consumatori
+e positivi/regressioni finiti; nessun HTML/algebra universale richiesto.
+
+936mirati (284nuovi+652precedenti)/16F04deselected,1093veloci+310subtest
+dichiarati PASS;21receipt finali19PASS+2FAILH12 deliberati,10contratti conformi,
+binding prima-dopo/reap/socket.36GPT/15Claude finali e10varianti confine/
+4foglie note tutti con attesi rispettati;23CLI stub/46exitOS reali conformi.
+Gold sintetici PROVISIONAL nelle copie,originali reviewer immutati; positivi
+gatePASS/qualitàINDETERMINATE/evaluate5,negativi run2/evaluate2/score3bundle.
+Non sono nuove conversioni native o verifiche umane. Nessuna riesecuzione
+supervisore di suite/build/R/CLI/conversione/rescore/V.
+
+Rescore00264nuoviIDr006b,raw/source/gold/V13 e identità conversione r001/r002
+preservati,zero motori/nuovaV;set32 ciascuno4PASS28FAIL reali. Checker autore
+indipendente19campi/somme/denominatori/edit globali-condizionati/catena/rawtree:
+zero differenze da r005. final derivato attuale distinto da conversion_final/
+run e old_*storici; F16preservato. F26dominio globale non limita CER/WER
+strutturali,TRIVIAL_ZERO non completo0. Test001/CLI002/eq001/documentcheck001
+e fallimenti storici conservati; chiusura002 valida prevale sul primo footer.
+
+V13/A03chiuso preservati,L04formuleoutputUNAVAILABLE distinta,L01/L02/L05/
+ChromeNONPASS/helper12gap non sanati. F23/F24/F26 e fix anteriori da preservare
+nei domini; F27–F30 chiusure da valutare. Nessun nuovo piano/fase2/motore scelto.
+
+## Output e prossimo passaggio
+
+Stato condiviso,checkpoint/eventi/artefatti e quattro registri generali
+aggiornati: IMPLEMENTATION_REVIEW / FIX_REVIEW_PROMPTS_READY.
+
+- [Prompt22 ChatGPT](../prompts/22-review-implementation-r006-chatgpt.md)
+  e [prompt23 Claude](../prompts/23-review-implementation-r006-claude.md):
+  due **NUOVE chat indipendenti**,stessi criteri,output/ID/label distinti.
+- [Snapshot comune r006](../../../../../temp/run-a002-fase1-corpus/snapshots/implementation-r006.json),non GO.
+- Evidenze evidence/supervisor-implementation-review-r006/:ricezione/copie/
+  inventario/snapshot-command/receipt/transition/prompt-identity/verify/
+  document-checks. Nessuna review/arbitrato r006 creata.
+
+SHA256 snapshot `633503036862eab4cd21443311aa25cfa5b1e5d73fc970840a2c56bfeed8398d`,impronta `8eefc61f4380b11ac1f77fd8764c7658778cb40085e83533ac94e81684375158`;
+319file/58212artefatti espliciti,20PDF nella fingerprint generale.
+Transizione fix-context-r005:7autore+4registri supervisore,nessun altro delta
+prodotto o input precedente mutato. Vecchi snapshot immutati,registri vivi/
+prompt22-23/output nuovi reviewer/questo CP esclusi dal comune. Verify prima/
+dopo e16documenti/link/stati/criteri/diffcheck registrati nella evidence.
+
+Quota52h/entry2026-10-08T07:06:54.369068Z/attese/riserva invariati. Ledger
+**closing002 autore storico**:140540,315652s (~39,039h),CPU9277,600452s lower,
+1861397431Bretained/RSSsampled740855808B. Ricezione wall~39.128h,
+non upper/certificazione CPU/hardware/disco. Limiti21600CPU-s/6GiB/RAM8GiB/
+stop sampled6GiB;stop49h/19800CPU-s/5GiB,riserva3h/1800CPU-s/1GiB.
+Stopnuovi2026-10-10T08:06:54.369068Z,deadline11:06:54.369068Z,noreset.
+Nuove prove registrano costi propri; niente acquisizioni/invio/rete/costi esterni
+impliciti. Processi propri pendenti alla consegna0,Git manuale dopo GO finale.
+Prossimo ruolo: reviewer in NUOVE chat22/23,poi supervisore per ricezione di
+entrambi i report e arbitrato reale. Nessun Git di scrittura/cleanup/fase2.

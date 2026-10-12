@@ -1,0 +1,217 @@
+{
+  "at": "2026-10-12T07:21:47.751610+00:00",
+  "entry_clock": "2026-10-12T07:17:48Z",
+  "role": "supervisor/OpenAI Codex",
+  "product_runtime_own": false,
+  "author_delivery_snapshot": {
+    "path": "temp/run-a002-fase1-corpus/snapshots/implementation-r014-delivery-r001.json",
+    "sha256": "98bdcf1303f5d85a87657eabc5f5e072dd47dff6b06f36e6e10cb69bf8fc1ce8",
+    "worktree_sha256": "b6ff2d34a36b3576cd15bb2fb869341c1582782f64f8a52c22970051e8f004aa",
+    "files": 349,
+    "artifacts": 69,
+    "verify": "MATCH"
+  },
+  "received_entry_unchanged_records": 1042,
+  "authorized_existing_delta": [
+    {
+      "path": "docs/how-to/benchmark-fedelta.md",
+      "before": "45a531a8e7f178a369dd48b979edf32257669a935b9c77747a385f582255eb2d",
+      "after": "a4e0c22f086a562c1716ba948f035b49dd8eeef9c8222d9399b894bcd54130a6"
+    },
+    {
+      "path": "docs/reference/benchmark-fedelta.md",
+      "before": "3f4096971bf9985b3f1bc3050996a68d1fcedf8614d1cc86d01869e840f36db2",
+      "after": "86a68ffea8971318309b3ad2ac8d09a269444ef9c511bca580cdc5a1d2fbbc8c"
+    },
+    {
+      "path": "scripts/benchmarks/PROTOCOL.md",
+      "before": "c8677c6fcc413426ddb2ba8827d8ef9818cf636a511788c217fd108476208e62",
+      "after": "0c1febd1efb39bd208deda92b5c02a083075a61deb69804eb1492956c2149f5d"
+    },
+    {
+      "path": "scripts/benchmarks/observations.py",
+      "before": "27d1b5809bc2dca51b75e50222aaab1eef86b2c907732c33537fbb5df20c43ad",
+      "after": "613aaa996fcf02200bc6a8ad499ba0ebc044f44ed94deae3f7e638905215cefd"
+    },
+    {
+      "path": "scripts/benchmarks/safety.py",
+      "before": "31aa1d14aeb8bf31894e3ff0b53765dbf1ea1ec52acf57028571f513231332d0",
+      "after": "974656f69e022fcaa810c0828079e8672f59db8e8f8131e0b923f38b4e2e32b2"
+    },
+    {
+      "path": "tests/unit/test_conversion_fix_r011.py",
+      "before": "6c0fe680a0ea4d15ebf6074d293bcc20e4bbae220fb3d29ee038815b37fe229c",
+      "after": "6b5ff7716ca71af5e72a2de10d44c3144d796ba733496df12f6a903ce3a7c68d"
+    }
+  ],
+  "runtime_files_MATCH": 69,
+  "final_inputs_and_copies_MATCH": 132,
+  "canonical_modules_source_archive_install_MATCH": 10,
+  "receipts": [
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-final-001/receipt.json",
+      "status": "PASS",
+      "command_exit": 0,
+      "children_reaped": true,
+      "binding_before_after_MATCH": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-positive-001/receipt.json",
+      "status": "FAIL",
+      "command_exit": 1,
+      "children_reaped": true,
+      "binding_before_after_MATCH": true
+    },
+    {
+      "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-negative-001/receipt.json",
+      "status": "FAIL",
+      "command_exit": 1,
+      "children_reaped": true,
+      "binding_before_after_MATCH": true
+    }
+  ],
+  "fast_received": "3156 PASS + 310 subtest PASS; selected suite, not rerun",
+  "matrix_received": "157/157; HC2+ID additional =159 distinct inputs",
+  "mutations_received": "4 copies / 7 discriminants rejected",
+  "CLI_received": "12 real exits compliant; synthetic writer PROVISIONAL",
+  "rescore_received": {
+    "attempts": 64,
+    "numeric_gate_deltas": 0,
+    "fields": 19,
+    "diagnostic_deltas": [
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r1",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r2",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r3",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r4",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r1",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r2",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r3",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r4",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      },
+      {
+        "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4",
+        "fields": [
+          "failures",
+          "details"
+        ]
+      }
+    ],
+    "bounds": {
+      "EXACT_GLOBAL_DISTANCE": 56,
+      "TRIVIAL_ZERO": 8
+    },
+    "quality": {
+      "PASS": 8,
+      "FAIL": 56
+    },
+    "tex_observation_only_changes": 8,
+    "arithmetic": "Author independent full-distance checker inspected and its descriptors verified; not recomputed here"
+  },
+  "checker_field_caveat": "derived-check.numeric_gate_differences=16 counts all changed field dictionaries; includes only failures/details, not 16 numeric/gate changes. Preserved as received, final attribution and own JSON comparison distinguish these.",
+  "history": "Old entry snapshot bytes preserved and protected records compared. Full original history is linked by original snapshots, not all rehashed again.",
+  "scope": "Hash/JSON/archive member comparison/received stdout; not reviewer proof or GO",
+  "reports_present": true,
+  "review_reports_absent": true,
+  "reads": [
+    "author report/CP integral",
+    "contracts note/permanent integral",
+    "mandate46/arbitration r013 recovered unchanged",
+    "author checker/gate/R/CLI/delta/fast evidence targeted"
+  ]
+}

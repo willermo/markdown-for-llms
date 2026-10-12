@@ -1,0 +1,57 @@
+[b01; pagina=N/A; tipo=heading]
+A portable laboratory
+
+[b02; pagina=N/A; tipo=paragraph]
+The imaginary laboratory records three samples without using personal records. Each sample has a readable description and a value in its original written form. The identifier 0012 names a series, while −7 records a signed change. The decimal point in 123.45 remains part of the observation. A revision can correct a transcription only while retaining the original document and a reason for the change.
+
+[b03; pagina=N/A; tipo=formula]
+
+
+E=mc^{2}
+
+[b04; pagina=N/A; tipo=table]
+
+
+Code | Value | Note
+
+0012 | 0 | 
+
+B | −7 | 123.45
+
+Measured cells
+
+[b05; pagina=N/A; tipo=figure]
+Figure 1 — Three regions and laboratory axes.
+
+[b06; pagina=N/A; tipo=paragraph]
+The observation carries a note and a route to the next chapter.
+
+note_call: note → chapter2.xhtml#n1
+
+link: next chapter → chapter2.xhtml#results
+
+[b07; pagina=N/A; tipo=heading]
+Results across chapters
+
+[b08; pagina=N/A; tipo=paragraph]
+The second observation separates content from its position on the page. A sentence can occupy two lines without changing its words, but a missing line changes the result. Empty cells are present in the table and do not ask the reader to invent a measurement. The figure contains colored regions, axes and a legend. A matching filename cannot establish that those elements survived conversion. The value exclusive to the second chapter is 84.20.
+
+[b09; pagina=N/A; tipo=formula]
+
+
+\frac{x_i+1}{2}
+
+[b10; pagina=N/A; tipo=paragraph]
+Return to the opening chapter and preserve the source query.
+
+link: opening → chapter1.xhtml#start
+
+link: source → https://example.invalid/study?series=0012&mode=a_b#note
+
+[b11; pagina=N/A; tipo=note]
+Laboratory note: temperature −3 and series 0012.
+
+backlink: back → chapter1.xhtml#call-n1
+
+[b12; pagina=N/A; tipo=bibliography]
+Synthetic Researcher. Measurement notebook, edition 2026, page 12.

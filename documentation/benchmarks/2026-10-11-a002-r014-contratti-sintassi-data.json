@@ -1,0 +1,3238 @@
+{
+  "at": "2026-10-11T21:18:47.242235+00:00",
+  "role": "implementation only; no GO/review",
+  "run": "run-a002-fase1-corpus",
+  "branch": "feature/run-a002-corpus",
+  "head": "80c31da46e5caab990d3596c79c44e524ec1dc95",
+  "version": "observations-v14-syntax-contracts",
+  "source": [
+    {
+      "path": "scripts/benchmarks/observations.py",
+      "bytes": 83734,
+      "sha256": "613aaa996fcf02200bc6a8ad499ba0ebc044f44ed94deae3f7e638905215cefd"
+    },
+    {
+      "path": "scripts/benchmarks/safety.py",
+      "bytes": 13442,
+      "sha256": "974656f69e022fcaa810c0828079e8672f59db8e8f8131e0b923f38b4e2e32b2"
+    },
+    {
+      "path": "tests/unit/test_conversion_fix_r011.py",
+      "bytes": 45558,
+      "sha256": "6b5ff7716ca71af5e72a2de10d44c3144d796ba733496df12f6a903ce3a7c68d"
+    },
+    {
+      "path": "tests/unit/test_conversion_fix_r014.py",
+      "bytes": 4321,
+      "sha256": "d3b1915fe959b3de86a0308a5ebdf8537581a786699c0c59cfb4616e20a0784c"
+    },
+    {
+      "path": "tests/fixtures/conversion-reader-r014.json",
+      "bytes": 91306,
+      "sha256": "06a367f9f5ba117b2bd2050762688774acb99d2d06baa4986fc7abe171dd94e6"
+    },
+    {
+      "path": "tests/fixtures/conversion-reader-r014-legacy-expectations.json",
+      "bytes": 1309,
+      "sha256": "e1043278ef90e8f28c66db85fa5844a6b2feec9e5449df777d4fc7ef70cb2a69"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/verify-entry.json",
+      "bytes": 496,
+      "sha256": "e5cef2acd69a45af0836f8daa87b2a853b7684c899028ca09adf784f6b35ceae"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/received-bytes/manifest.json",
+      "bytes": 293,
+      "sha256": "7657463f7b48c370bacd4bcf813acc3532f95da882c936bcfbaf830d8a61f654"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/freeze-001.json",
+      "bytes": 184,
+      "sha256": "9ae732b1dd9cad6048446e103f73506c9e2f889877785ec9821ac90055717dca"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/freeze-002.json",
+      "bytes": 312,
+      "sha256": "18b4174310efce7e4df2ce3ffab5597926bf6196c7f5f3e508f2e577e9afb2d8"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/cases-001.json",
+      "bytes": 76280,
+      "sha256": "5bde65371ece5acf09a0a9557e4df9e08b262a573826958414666085f5d36d73"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/cases-002.json",
+      "bytes": 6782,
+      "sha256": "10f6655786669be29a2751cfa7fc5399db37486aed7dcd4b627c6f07c635b3a9"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/cases-003.json",
+      "bytes": 620,
+      "sha256": "7d8f45ec5cacff04dac947ad0cbd7572a1263a8bdcf8279657dc8b32a534365b"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/expectations-001.json",
+      "bytes": 77985,
+      "sha256": "7b3e997bd105f51de2ac0ec2ebe68e87cb333ef3042a5761d93b05f1b46477e6"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/baseline-001.json",
+      "bytes": 865960,
+      "sha256": "b2506f5f273151c7e63e6d146ff16756fae2dda7cdf2acbcf27331cfbe9f0d1e"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/grammar-001.json",
+      "bytes": 143597,
+      "sha256": "af10c2e81f681be5504546548aef7d97f558c05188c5a78a2ca4851c206477aa"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/after-final.json",
+      "bytes": 881526,
+      "sha256": "030b896cdb6830cbc6627c019897bc4facb17ff7884dc2eedb8d1c3d1311262b"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/check-baseline-001.json",
+      "bytes": 13366,
+      "sha256": "826dd3ebde0694dbcb9c2e2deccbc319aa74470706bd60342bfc167fdac45c97"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/check-grammar-001.json",
+      "bytes": 2010,
+      "sha256": "d8c6c76a51d5fa2f22434541c372a2d53aaabb677f358d5d182cffc6f31d2084"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/check-after-final.json",
+      "bytes": 10345,
+      "sha256": "b8b384cc035b4a034ebad11c29a906c5f98b44d68e4268e3c3e2d29e0915b3bf"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/metadata-preservation.json",
+      "bytes": 5977,
+      "sha256": "965f1e301e9c40b93749791d11f9a0de91f82c654af0d9249cbb2bda4ea6c7ae"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/mutations-inputs.json",
+      "bytes": 4782,
+      "sha256": "859dbce307c04a83366abc8727afe876bf389ab6d33f75aff9b8ce587f5a6553"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/mutations-results.json",
+      "bytes": 2821,
+      "sha256": "b4348a8a7bc7c77d4ece452e49d2c500c873d99d47ba3f80835e02a16a388700"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/hc2-ast.json",
+      "bytes": 895,
+      "sha256": "3357fead10e07000b6e503d22dffc4cb922b638a66bca734d79a00117025b308"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/compound-id-before.json",
+      "bytes": 17846,
+      "sha256": "782e0e8aa97e9f38c8795b95ea9120e342d173796fafc0a3d0ea69f64fc4cfd2"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/compound-id-after.json",
+      "bytes": 9528,
+      "sha256": "da2ecf99ea2acd856dca0c221e4052932206ebe4300d51bc1b1baf5b3c4e2bd9"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/summary.json",
+      "bytes": 7591,
+      "sha256": "9f4c5a191f407ed3efaf3e9b5d6ae1e47f96268c7c1cd349e5038c0dbecdd33e"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/H12-summary.json",
+      "bytes": 976,
+      "sha256": "b17dbcffcac004a498ff1234fbfb8307a9e139ca3774954e3ab279bd85269961"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/summary.json",
+      "bytes": 859644,
+      "sha256": "c4f6be58afc55d2f18e1f8f4581a160c9d29066ea9b3ad108ec99e56ae9a0318"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/derived-check-001.json",
+      "bytes": 909907,
+      "sha256": "b69a143ef00ad360ecae4f7a0e62976e75b2c5292a61996f28296e2b7f19e208"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/epub-delta-attribution.json",
+      "bytes": 37708,
+      "sha256": "7b92aaef3ff2aac2e2fb31f578ed37378cc3f8e3e60d73f12a619ccf1ee05f59"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/runtime-byte-binding.json",
+      "bytes": 14682,
+      "sha256": "2c7ef44930131a42d7dfb0c5b5616c14dfadf4c35057fb0d3b9356d4c9250827"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/final-workload/summary.json",
+      "bytes": 16177,
+      "sha256": "3036bdbe51ed3030c84e90699dd968642a6ada4bbf4efaef703573978234475a"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/final-001-inputs.json",
+      "bytes": 53228,
+      "sha256": "0d18833c6d0b8109cd938326356ceb033f6b3d20ba5055f24cd4bd58ec4585a8"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/final-001-inputs-after.json",
+      "bytes": 53228,
+      "sha256": "0d18833c6d0b8109cd938326356ceb033f6b3d20ba5055f24cd4bd58ec4585a8"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/stage-s002/S.json",
+      "bytes": 27680,
+      "sha256": "cae6f5c7fbf785617e2a8af6e70e0ba17c4862bfe247d3168a4406f0f4707855"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/stage-s002/B.json",
+      "bytes": 5334,
+      "sha256": "209d583226c1d4735e6223ba2b73bef041b8a2c81519631154e72396693f994c"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/stage-s002/I.json",
+      "bytes": 18827,
+      "sha256": "b7edae3c9f69f7b559bfe76b97dc631953ce09da77df086c55b65f6f9dc3b68a"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/stage-s002/preparation.json",
+      "bytes": 157356,
+      "sha256": "ee3495489bedc2512daba7b5b5ada2d7fab2b787592156afa4c90ca3a66552a4"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/R-final-001/receipt.json",
+      "bytes": 9032,
+      "sha256": "9e1e58d9e2cf2507354342ee735b7023157accd600fe2985f454a8f53da359a5"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/R-final-001/inside.json",
+      "bytes": 130537,
+      "sha256": "55b92a3033d0df8ff9197108a3b9c122d46559a776dabdedfac5c280499d3f60"
+    },
+    {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/R-final-001/command-resources.json",
+      "bytes": 1015992,
+      "sha256": "b7b9f3712e02e7a3d8ed22727114687ba84dd7e8a41f1089a49cf034aa94d1f6"
+    }
+  ],
+  "baseline": {
+    "reader_sha256": "27d1b5809bc2dca51b75e50222aaab1eef86b2c907732c33537fbb5df20c43ad",
+    "adapter_sha256": "31aa1d14aeb8bf31894e3ff0b53765dbf1ea1ec52acf57028571f513231332d0",
+    "cases": 157,
+    "met": 112,
+    "violations": 45
+  },
+  "final": {
+    "cases": 157,
+    "passed": 157,
+    "rows": [
+      {
+        "id": "GPT-ordered-heading",
+        "failures": []
+      },
+      {
+        "id": "GPT-ordered-div",
+        "failures": []
+      },
+      {
+        "id": "GPT-ordered-fence",
+        "failures": []
+      },
+      {
+        "id": "GPT-ordered-figure",
+        "failures": []
+      },
+      {
+        "id": "GPT-metadata-first",
+        "failures": []
+      },
+      {
+        "id": "GPT-repeated-identical",
+        "failures": []
+      },
+      {
+        "id": "GPT-tree-depth",
+        "failures": []
+      },
+      {
+        "id": "GPT-tree-duplicate",
+        "failures": []
+      },
+      {
+        "id": "GPT-declaration-error",
+        "failures": []
+      },
+      {
+        "id": "GPT-uri-validator-error",
+        "failures": []
+      },
+      {
+        "id": "GPT-opener-backtick-info",
+        "failures": []
+      },
+      {
+        "id": "GPT-opener-space-info",
+        "failures": []
+      },
+      {
+        "id": "GPT-opener-attrs-tail",
+        "failures": []
+      },
+      {
+        "id": "GPT-quote-prefix",
+        "failures": []
+      },
+      {
+        "id": "GPT-tilde-text",
+        "failures": []
+      },
+      {
+        "id": "GPT-tilde-start",
+        "failures": []
+      },
+      {
+        "id": "GPT-ordinary-eof",
+        "failures": []
+      },
+      {
+        "id": "GPT-safe-coverage",
+        "failures": []
+      },
+      {
+        "id": "GPT-tilde-info-root",
+        "failures": []
+      },
+      {
+        "id": "GPT-tilde-info-quote",
+        "failures": []
+      },
+      {
+        "id": "GPT-tilde-info-asset",
+        "failures": []
+      },
+      {
+        "id": "GPT-first-unsafe-invalid-uri",
+        "failures": []
+      },
+      {
+        "id": "GPT-tilde-language-control",
+        "failures": []
+      },
+      {
+        "id": "GPT-tilde-attrs-control",
+        "failures": []
+      },
+      {
+        "id": "CLA-K1a-quote-after-para-tilde-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K1b-quote-after-para-tilde-img",
+        "failures": []
+      },
+      {
+        "id": "CLA-K1c-list-after-para-tilde-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K1d-note-after-para-tilde-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K1e-control-quote-after-para-backtick",
+        "failures": []
+      },
+      {
+        "id": "CLA-K1f-control-quote-after-para-raw-html",
+        "failures": []
+      },
+      {
+        "id": "CLA-K1h-heading-after-para-attr",
+        "failures": []
+      },
+      {
+        "id": "CLA-K2a-lazy-quote-tilde-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K2b-lazy-quote-tilde-img",
+        "failures": []
+      },
+      {
+        "id": "CLA-K2c-lazy-list-tilde-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K2d-lazy-note-tilde-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K2e-figure-line-then-tilde-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K2f-control-lazy-quote-backtick",
+        "failures": []
+      },
+      {
+        "id": "CLA-K3a-div-tail-img-evasive",
+        "failures": []
+      },
+      {
+        "id": "CLA-K3d-div-tail-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K4a-span-braces-img-evasive",
+        "failures": []
+      },
+      {
+        "id": "CLA-K4b-heading-braces-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K4c-link-braces-script",
+        "failures": []
+      },
+      {
+        "id": "CLA-K4d-code-braces-img-evasive",
+        "failures": []
+      },
+      {
+        "id": "CLA-K4e-span-braces-img-safe",
+        "failures": []
+      },
+      {
+        "id": "CLA-K4f-control-span-valid-attrs",
+        "failures": []
+      },
+      {
+        "id": "CLA-A1-heading-attr-after",
+        "failures": []
+      },
+      {
+        "id": "CLA-A2-div-attr-after",
+        "failures": []
+      },
+      {
+        "id": "CLA-A3-fence-attr-after",
+        "failures": []
+      },
+      {
+        "id": "CLA-A4-figure-attr-after",
+        "failures": []
+      },
+      {
+        "id": "CLA-A5-control-attr-first",
+        "failures": []
+      },
+      {
+        "id": "CLA-A7-inblock-span-attr-first",
+        "failures": []
+      },
+      {
+        "id": "CLA-A8-limit-markdown-image-first",
+        "failures": []
+      },
+      {
+        "id": "CLA-A9-gpt26-raw-first-heading-attr",
+        "failures": []
+      },
+      {
+        "id": "CLA-A10-utf8-crlf-many-causes",
+        "failures": []
+      },
+      {
+        "id": "CLA-A11-tree-error-then-attr-then-html",
+        "failures": []
+      },
+      {
+        "id": "CLA-A12-reset-safe-after-unsafe",
+        "failures": []
+      },
+      {
+        "id": "CLA-P1-private-keys-nested",
+        "failures": []
+      },
+      {
+        "id": "info-57",
+        "failures": []
+      },
+      {
+        "id": "info-58",
+        "failures": []
+      },
+      {
+        "id": "info-59",
+        "failures": []
+      },
+      {
+        "id": "info-60",
+        "failures": []
+      },
+      {
+        "id": "info-61",
+        "failures": []
+      },
+      {
+        "id": "info-62",
+        "failures": []
+      },
+      {
+        "id": "info-63",
+        "failures": []
+      },
+      {
+        "id": "info-64",
+        "failures": []
+      },
+      {
+        "id": "info-65",
+        "failures": []
+      },
+      {
+        "id": "info-66",
+        "failures": []
+      },
+      {
+        "id": "info-67",
+        "failures": []
+      },
+      {
+        "id": "info-68",
+        "failures": []
+      },
+      {
+        "id": "info-69",
+        "failures": []
+      },
+      {
+        "id": "info-70",
+        "failures": []
+      },
+      {
+        "id": "info-71",
+        "failures": []
+      },
+      {
+        "id": "info-72",
+        "failures": []
+      },
+      {
+        "id": "info-73",
+        "failures": []
+      },
+      {
+        "id": "info-74",
+        "failures": []
+      },
+      {
+        "id": "info-75",
+        "failures": []
+      },
+      {
+        "id": "info-76",
+        "failures": []
+      },
+      {
+        "id": "info-77",
+        "failures": []
+      },
+      {
+        "id": "info-78",
+        "failures": []
+      },
+      {
+        "id": "info-79",
+        "failures": []
+      },
+      {
+        "id": "info-80",
+        "failures": []
+      },
+      {
+        "id": "metadata-81",
+        "failures": []
+      },
+      {
+        "id": "metadata-82",
+        "failures": []
+      },
+      {
+        "id": "metadata-83",
+        "failures": []
+      },
+      {
+        "id": "metadata-84",
+        "failures": []
+      },
+      {
+        "id": "metadata-85",
+        "failures": []
+      },
+      {
+        "id": "metadata-86",
+        "failures": []
+      },
+      {
+        "id": "metadata-87",
+        "failures": []
+      },
+      {
+        "id": "metadata-88",
+        "failures": []
+      },
+      {
+        "id": "metadata-89",
+        "failures": []
+      },
+      {
+        "id": "metadata-90",
+        "failures": []
+      },
+      {
+        "id": "metadata-91",
+        "failures": []
+      },
+      {
+        "id": "metadata-92",
+        "failures": []
+      },
+      {
+        "id": "metadata-93",
+        "failures": []
+      },
+      {
+        "id": "metadata-94",
+        "failures": []
+      },
+      {
+        "id": "metadata-95",
+        "failures": []
+      },
+      {
+        "id": "metadata-96",
+        "failures": []
+      },
+      {
+        "id": "metadata-97",
+        "failures": []
+      },
+      {
+        "id": "metadata-98",
+        "failures": []
+      },
+      {
+        "id": "metadata-99",
+        "failures": []
+      },
+      {
+        "id": "metadata-100",
+        "failures": []
+      },
+      {
+        "id": "metadata-101",
+        "failures": []
+      },
+      {
+        "id": "metadata-102",
+        "failures": []
+      },
+      {
+        "id": "metadata-103",
+        "failures": []
+      },
+      {
+        "id": "metadata-104",
+        "failures": []
+      },
+      {
+        "id": "boundary-105",
+        "failures": []
+      },
+      {
+        "id": "boundary-106",
+        "failures": []
+      },
+      {
+        "id": "boundary-107",
+        "failures": []
+      },
+      {
+        "id": "boundary-108",
+        "failures": []
+      },
+      {
+        "id": "boundary-109",
+        "failures": []
+      },
+      {
+        "id": "boundary-110",
+        "failures": []
+      },
+      {
+        "id": "boundary-111",
+        "failures": []
+      },
+      {
+        "id": "boundary-112",
+        "failures": []
+      },
+      {
+        "id": "uri-113",
+        "failures": []
+      },
+      {
+        "id": "uri-114",
+        "failures": []
+      },
+      {
+        "id": "uri-115",
+        "failures": []
+      },
+      {
+        "id": "uri-116",
+        "failures": []
+      },
+      {
+        "id": "uri-117",
+        "failures": []
+      },
+      {
+        "id": "uri-118",
+        "failures": []
+      },
+      {
+        "id": "uri-119",
+        "failures": []
+      },
+      {
+        "id": "uri-120",
+        "failures": []
+      },
+      {
+        "id": "heading-attached",
+        "failures": []
+      },
+      {
+        "id": "heading-separated",
+        "failures": []
+      },
+      {
+        "id": "metadata-crlf",
+        "failures": []
+      },
+      {
+        "id": "metadata-lf",
+        "failures": []
+      },
+      {
+        "id": "user-private-name",
+        "failures": []
+      },
+      {
+        "id": "grammar-0",
+        "failures": []
+      },
+      {
+        "id": "grammar-1",
+        "failures": []
+      },
+      {
+        "id": "grammar-2",
+        "failures": []
+      },
+      {
+        "id": "grammar-3",
+        "failures": []
+      },
+      {
+        "id": "grammar-4",
+        "failures": []
+      },
+      {
+        "id": "grammar-5",
+        "failures": []
+      },
+      {
+        "id": "grammar-6",
+        "failures": []
+      },
+      {
+        "id": "grammar-7",
+        "failures": []
+      },
+      {
+        "id": "grammar-8",
+        "failures": []
+      },
+      {
+        "id": "grammar-9",
+        "failures": []
+      },
+      {
+        "id": "grammar-10",
+        "failures": []
+      },
+      {
+        "id": "grammar-11",
+        "failures": []
+      },
+      {
+        "id": "grammar-12",
+        "failures": []
+      },
+      {
+        "id": "grammar-13",
+        "failures": []
+      },
+      {
+        "id": "grammar-14",
+        "failures": []
+      },
+      {
+        "id": "grammar-15",
+        "failures": []
+      },
+      {
+        "id": "grammar-16",
+        "failures": []
+      },
+      {
+        "id": "grammar-17",
+        "failures": []
+      },
+      {
+        "id": "grammar-18",
+        "failures": []
+      },
+      {
+        "id": "grammar-19",
+        "failures": []
+      },
+      {
+        "id": "grammar-20",
+        "failures": []
+      },
+      {
+        "id": "grammar-21",
+        "failures": []
+      },
+      {
+        "id": "grammar-22",
+        "failures": []
+      },
+      {
+        "id": "grammar-23",
+        "failures": []
+      },
+      {
+        "id": "grammar-24",
+        "failures": []
+      },
+      {
+        "id": "grammar-25",
+        "failures": []
+      },
+      {
+        "id": "grammar-26",
+        "failures": []
+      },
+      {
+        "id": "grammar-27",
+        "failures": []
+      },
+      {
+        "id": "grammar-28",
+        "failures": []
+      },
+      {
+        "id": "grammar-29",
+        "failures": []
+      },
+      {
+        "id": "grammar-30",
+        "failures": []
+      }
+    ]
+  },
+  "fast": {
+    "passed": 3156,
+    "subtests": 310,
+    "argv": [
+      "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/stage-s002/dev/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "tests/",
+      "--ignore=tests/api",
+      "--ignore=tests/packaging",
+      "--ignore=tests/docker",
+      "-q"
+    ],
+    "receipt": {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/final-workload/fast.json",
+      "bytes": 526,
+      "sha256": "aec2856516a97b3bd0e0b9404c1b30959e0dd8470594dca343471fa110d5f918"
+    }
+  },
+  "regressions": {
+    "r013": 301,
+    "r012": 350,
+    "r011": 153,
+    "r010": 303,
+    "r009": 308,
+    "r011_overlay": "HC2 pinned AST; original raw/gold/expected retained"
+  },
+  "mutations": {
+    "rows": [
+      {
+        "mutation": "uri",
+        "case": "GPT-first-unsafe-invalid-uri",
+        "checks": {
+          "no_internal_exception": false,
+          "detail": false,
+          "visits": false,
+          "asset": true,
+          "reset": true
+        },
+        "detail": null,
+        "error": {
+          "type": "ValueError",
+          "detail": "Invalid IPv6 URL"
+        },
+        "visits": [
+          {
+            "snippet": "<script>",
+            "char": 2,
+            "byte": 3
+          },
+          {
+            "snippet": "<img src=\"http://[\">",
+            "char": 21,
+            "byte": 22
+          }
+        ],
+        "assets": [],
+        "rejected": true
+      },
+      {
+        "mutation": "info",
+        "case": "GPT-tilde-info-root",
+        "checks": {
+          "no_internal_exception": true,
+          "detail": false,
+          "visits": false,
+          "asset": true,
+          "reset": true
+        },
+        "detail": null,
+        "error": null,
+        "visits": [],
+        "assets": [],
+        "rejected": true
+      },
+      {
+        "mutation": "info",
+        "case": "GPT-tilde-info-asset",
+        "checks": {
+          "no_internal_exception": true,
+          "detail": true,
+          "visits": false,
+          "asset": false,
+          "reset": true
+        },
+        "detail": null,
+        "error": null,
+        "visits": [],
+        "assets": [],
+        "rejected": true
+      },
+      {
+        "mutation": "caller",
+        "case": "CLA-K2e-figure-line-then-tilde-script",
+        "checks": {
+          "no_internal_exception": true,
+          "detail": false,
+          "visits": false,
+          "asset": true,
+          "reset": true
+        },
+        "detail": null,
+        "error": null,
+        "visits": [],
+        "assets": [
+          "p.png"
+        ],
+        "rejected": true
+      },
+      {
+        "mutation": "caller",
+        "case": "CLA-K2b-lazy-quote-tilde-img",
+        "checks": {
+          "no_internal_exception": true,
+          "detail": true,
+          "visits": false,
+          "asset": false,
+          "reset": true
+        },
+        "detail": null,
+        "error": null,
+        "visits": [],
+        "assets": [],
+        "rejected": true
+      },
+      {
+        "mutation": "metadata",
+        "case": "CLA-K4e-span-braces-img-safe",
+        "checks": {
+          "no_internal_exception": true,
+          "detail": true,
+          "visits": false,
+          "asset": false,
+          "reset": true
+        },
+        "detail": null,
+        "error": null,
+        "visits": [],
+        "assets": [],
+        "rejected": true
+      },
+      {
+        "mutation": "metadata",
+        "case": "CLA-K4a-span-braces-img-evasive",
+        "checks": {
+          "no_internal_exception": true,
+          "detail": false,
+          "visits": false,
+          "asset": true,
+          "reset": true
+        },
+        "detail": null,
+        "error": null,
+        "visits": [],
+        "assets": [],
+        "rejected": true
+      }
+    ],
+    "all_rejected": true
+  },
+  "metadata": {
+    "status": "PASS",
+    "cases": 22,
+    "checks": [
+      {
+        "id": "metadata-82",
+        "raw_sha256": "6a26f20ec5a4d5e54d42b2a2e095a51c70ef34ac811467de1f0e419558410655",
+        "manual_value": {
+          "title": "<img src=bad>"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "metadata-86",
+        "raw_sha256": "f203dc8284d211c57f1b3214ecc036e27cf626d0bfaf98f21a5f56b81556eba1",
+        "manual_value": {
+          "title": "<img src=bad>"
+        },
+        "actual_paths": [
+          "/nodes/0/references/0/attrs",
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "metadata-90",
+        "raw_sha256": "10c70f3676fbec8d07efdacfcd9ad9783358a604a4e77618612d6c7c686ad5ba",
+        "manual_value": {
+          "title": "<img src=bad>"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "metadata-94",
+        "raw_sha256": "c2c7bfe909f7f6a64192aa66a14bfab5220fc8841629474ab847d183c98196e5",
+        "manual_value": {
+          "title": "<img src=bad>"
+        },
+        "actual_paths": [
+          "/nodes/0/attrs"
+        ]
+      },
+      {
+        "id": "metadata-98",
+        "raw_sha256": "72a79fe6b8fd91ff12e9b1ee5384e7dc22714a78eca5f438bd8e717091a5513c",
+        "manual_value": {
+          "title": "<img src=bad>"
+        },
+        "actual_paths": [
+          "/nodes/0/attrs"
+        ]
+      },
+      {
+        "id": "metadata-102",
+        "raw_sha256": "a91993efb6ecfe2203dbfc7286647fdd484ccd0c2d42b1c59ad6305d002a462d",
+        "manual_value": {
+          "title": "<img src=bad>"
+        },
+        "actual_paths": [
+          "/nodes/0/containers/0"
+        ]
+      },
+      {
+        "id": "grammar-1",
+        "raw_sha256": "74f49488a1be32edb53d936cd80935a22f31c153c74290e6e906cc1253ce7432",
+        "manual_value": {
+          "id": "1"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-3",
+        "raw_sha256": "01ad4882ae34ea2b15e79be2e2d3d8fb9c883c65148faac6faccb1926bccc106",
+        "manual_value": {
+          "key": "x"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-4",
+        "raw_sha256": "e024a244fa2b4eb7ef39b1624b6a09c897ce91808cf1a549ecc76c2a8ae2adf6",
+        "manual_value": {
+          "a": "b"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-5",
+        "raw_sha256": "746a5fae568fcb6d2282e024df5752f6781232f82b2d752eb68db6774f1b036a",
+        "manual_value": {
+          "a": ""
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-7",
+        "raw_sha256": "0f58651d1914099e6e2e90a3dac100d59b5620a812bc4949b4cdb82c0bd811f8",
+        "manual_value": {
+          "key": "a<b>"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-8",
+        "raw_sha256": "7956fa6e3d6fa6f9fe97cc6237a574da45b475609b00ba49fd2025d2e5df5fff",
+        "manual_value": {
+          "key": "a{b}"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-9",
+        "raw_sha256": "2bb3a39916fe9547623e718604cbe949cab6d744b9db61325667925bf51600f3",
+        "manual_value": {
+          "key": "a\"b"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-10",
+        "raw_sha256": "0210fbb26a36e3ceeb611cf5fd34fa53c64db5b3ce7dc115a26c41e6dc54e435",
+        "manual_value": {
+          "classes": [
+            "unnumbered"
+          ]
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-13",
+        "raw_sha256": "85cc528813c2700bc956e28ba1df5fe1810ba609cd80a3307b9e799ee202b9f8",
+        "manual_value": {
+          "data-x": "x"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-14",
+        "raw_sha256": "0e1183ac4cb6429f19dd3dd9043ba1867233dfdda0b16a2e9b43b1ab974832b8",
+        "manual_value": {
+          "xml:lang": "it"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-15",
+        "raw_sha256": "87e1aaeb7a1114e49131650deb6168f8ac92da1f6ac63faba905eab7d3f6adfe",
+        "manual_value": {
+          "id": "a.b"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-16",
+        "raw_sha256": "376d784c245fa9007bbfc1282e1d426ad2cde9c4c759f6420b2bbd43029ad28c",
+        "manual_value": {
+          "classes": [
+            "a.b"
+          ]
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-17",
+        "raw_sha256": "9bfc3112e547aade2bef4d1c1ead08d80ed4d3f08e160d9b6485b3a323dbc106",
+        "manual_value": {
+          "a": "x",
+          "b": "y"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-18",
+        "raw_sha256": "1ae66fdac3c54f40a216edb142ab8acbababeafe59c95278975ae59168365586",
+        "manual_value": {
+          "id": "x",
+          "classes": [
+            "c"
+          ]
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-19",
+        "raw_sha256": "5956a73981cc9b57c898a23a0ae01bc6b1bf1b9b98992ae09fa59af5459da33b",
+        "manual_value": {
+          "title": "a b"
+        },
+        "actual_paths": [
+          "/nodes/0/segments/0/attrs"
+        ]
+      },
+      {
+        "id": "grammar-21",
+        "raw_sha256": "09d7a6c2fc0af3efb2dae59990114fd3df9da6e4e7a80482ada85e4ed2d70085",
+        "manual_value": {
+          "classes": [
+            "class"
+          ]
+        },
+        "actual_paths": [
+          "/nodes/0/containers/0"
+        ]
+      }
+    ],
+    "namespace": {
+      "raw": "[a]{_guard_coverage=x}",
+      "value_preserved": true,
+      "limitation": "Invalid Pandoc attribute; underscores follow existing inline formatting, no promise of literal namespace spelling."
+    }
+  },
+  "CLI": {
+    "actual_OS_CLI_exits": true,
+    "all_expected": true,
+    "cases": 6,
+    "commands": 12,
+    "engine_runs": 0,
+    "fixture": "declared synthetic writer; not native conversion",
+    "gold": "PROVISIONAL; no V",
+    "new_human_judgments": 0,
+    "records": [
+      {
+        "id": "GPT-first-unsafe-invalid-uri",
+        "results": [
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true
+            },
+            "command": "run",
+            "expected_exit": 2,
+            "final": null,
+            "match": true,
+            "run": {
+              "bytes": 7860,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/GPT-first-unsafe-invalid-uri/run/run.json",
+              "sha256": "9611b4b1442b116d9fb8c6eef169cdc8de300623648175cf1a001c3568f773db"
+            },
+            "score_exit": null
+          },
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "first_detail": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true,
+              "score_exit": true
+            },
+            "command": "evaluate",
+            "expected_exit": 2,
+            "final": {
+              "bytes": 2393,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/GPT-first-unsafe-invalid-uri/evaluate/final.json",
+              "sha256": "728ac700f3afe835c62676bbf4d547196732e458231ef64dc342d824314a731e"
+            },
+            "match": true,
+            "run": {
+              "bytes": 7866,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/GPT-first-unsafe-invalid-uri/evaluate/run.json",
+              "sha256": "fcb6d871c9434ea11180e704cffa0e459b455f3731b386667442fcbcc26c97a9"
+            },
+            "score_exit": 3
+          }
+        ]
+      },
+      {
+        "id": "GPT-tilde-info-root",
+        "results": [
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true
+            },
+            "command": "run",
+            "expected_exit": 2,
+            "final": null,
+            "match": true,
+            "run": {
+              "bytes": 7597,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/GPT-tilde-info-root/run/run.json",
+              "sha256": "c4e28c02e9c4e5cf40912a92ccf8ed8cf21a19100a73609e4e0a7679e4082b99"
+            },
+            "score_exit": null
+          },
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "first_detail": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true,
+              "score_exit": true
+            },
+            "command": "evaluate",
+            "expected_exit": 2,
+            "final": {
+              "bytes": 2339,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/GPT-tilde-info-root/evaluate/final.json",
+              "sha256": "017866d5dcb41375f7639a68d47db8446b71bdafe566d002366bdc683d543b96"
+            },
+            "match": true,
+            "run": {
+              "bytes": 7724,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/GPT-tilde-info-root/evaluate/run.json",
+              "sha256": "41df0b52c9e85c4beaea264e302f97af520abeff25e96ce266acee892bc3b54c"
+            },
+            "score_exit": 3
+          }
+        ]
+      },
+      {
+        "id": "CLA-K1a-quote-after-para-tilde-script",
+        "results": [
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true
+            },
+            "command": "run",
+            "expected_exit": 2,
+            "final": null,
+            "match": true,
+            "run": {
+              "bytes": 7824,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-K1a-quote-after-para-tilde-script/run/run.json",
+              "sha256": "2353e46998e8ec2d2e2ae61d4e1789e7e13eb69f6f14bf11c726c1ca486c712e"
+            },
+            "score_exit": null
+          },
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "first_detail": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true,
+              "score_exit": true
+            },
+            "command": "evaluate",
+            "expected_exit": 2,
+            "final": {
+              "bytes": 2447,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-K1a-quote-after-para-tilde-script/evaluate/final.json",
+              "sha256": "0fd028cbf3c64f11904f4e61137481d1089a03142ae89a324b1bcaa76394cb53"
+            },
+            "match": true,
+            "run": {
+              "bytes": 8007,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-K1a-quote-after-para-tilde-script/evaluate/run.json",
+              "sha256": "c42d7cc0dad38b8ea80c7ea864545b15163d3571fc9c08674911af6e1c100bfa"
+            },
+            "score_exit": 3
+          }
+        ]
+      },
+      {
+        "id": "CLA-K4a-span-braces-img-evasive",
+        "results": [
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true
+            },
+            "command": "run",
+            "expected_exit": 2,
+            "final": null,
+            "match": true,
+            "run": {
+              "bytes": 7745,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-K4a-span-braces-img-evasive/run/run.json",
+              "sha256": "e4505e92d13a8bf39090cc3797d4e905ef4b62280ca13c4d1a24d9c97de07319"
+            },
+            "score_exit": null
+          },
+          {
+            "actual_exit": 2,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "first_detail": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true,
+              "score_exit": true
+            },
+            "command": "evaluate",
+            "expected_exit": 2,
+            "final": {
+              "bytes": 2411,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-K4a-span-braces-img-evasive/evaluate/final.json",
+              "sha256": "85b90b139bf39b161717164e143d743ffdce7deaeb870f5562553937e9e033db"
+            },
+            "match": true,
+            "run": {
+              "bytes": 7786,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-K4a-span-braces-img-evasive/evaluate/run.json",
+              "sha256": "86ead76c40d40ed418e2df0cd4c239fbd91e002e9b5bfb6f23ccb05f5f915c21"
+            },
+            "score_exit": 3
+          }
+        ]
+      },
+      {
+        "id": "metadata-82",
+        "results": [
+          {
+            "actual_exit": 0,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true
+            },
+            "command": "run",
+            "expected_exit": 0,
+            "final": null,
+            "match": true,
+            "run": {
+              "bytes": 7540,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/metadata-82/run/run.json",
+              "sha256": "48bebf2a81439ccb674ddb0aa5bda5fc682f858530ef1c367aa32071630f87c9"
+            },
+            "score_exit": null
+          },
+          {
+            "actual_exit": 3,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "first_detail": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true,
+              "score_exit": true
+            },
+            "command": "evaluate",
+            "expected_exit": 3,
+            "final": {
+              "bytes": 2290,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/metadata-82/evaluate/final.json",
+              "sha256": "53d57face60c82affe8bb17bc17d20ebc95b616e194b0d5a3ac08752faad102d"
+            },
+            "match": true,
+            "run": {
+              "bytes": 7579,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/metadata-82/evaluate/run.json",
+              "sha256": "f3c2eef16ea66bc29a40566c22005bef4352e26caa5b5b6fd8915ab176c60558"
+            },
+            "score_exit": 3
+          }
+        ]
+      },
+      {
+        "id": "CLA-A12-reset-safe-after-unsafe",
+        "results": [
+          {
+            "actual_exit": 0,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true
+            },
+            "command": "run",
+            "expected_exit": 0,
+            "final": null,
+            "match": true,
+            "run": {
+              "bytes": 7950,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-A12-reset-safe-after-unsafe/run/run.json",
+              "sha256": "c580ae3616da37b8456226ffe00c90a9f3e4bd3f7ceaf46abf480dd7e35b25e1"
+            },
+            "score_exit": null
+          },
+          {
+            "actual_exit": 3,
+            "checks": {
+              "actual_exit": true,
+              "audit_reason": true,
+              "first_detail": true,
+              "no_stderr": true,
+              "raw": true,
+              "run_bundle": true,
+              "score_exit": true
+            },
+            "command": "evaluate",
+            "expected_exit": 3,
+            "final": {
+              "bytes": 2410,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-A12-reset-safe-after-unsafe/evaluate/final.json",
+              "sha256": "7b1516ec6719face335b7990cd7ed8775c9f105a16ad4c1034722afea248b115"
+            },
+            "match": true,
+            "run": {
+              "bytes": 8111,
+              "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cli-final/CLA-A12-reset-safe-after-unsafe/evaluate/run.json",
+              "sha256": "98300e0b82aac12862c187b41c96afbea1a6e16f7dfa10451d2c18b3424b78b9"
+            },
+            "score_exit": 3
+          }
+        ]
+      }
+    ]
+  },
+  "contracts": {
+    "status": "EXPECTED_DELIBERATE_FAILURES",
+    "records": [
+      {
+        "case": "H12-positive",
+        "harness_exit": 1,
+        "R_expected_exit": 0,
+        "wrapper_exit": 2,
+        "R_status": "FAIL",
+        "deliberate": true,
+        "receipt": {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-positive-001/receipt.json",
+          "bytes": 9655,
+          "sha256": "920e8e4e9291a5c7f0495ac50420d5e444076e46e43c85cd39fa6fe95bf0b288"
+        }
+      },
+      {
+        "case": "H12-negative",
+        "harness_exit": 1,
+        "R_expected_exit": 0,
+        "wrapper_exit": 2,
+        "R_status": "FAIL",
+        "deliberate": true,
+        "receipt": {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-negative-001/receipt.json",
+          "bytes": 9655,
+          "sha256": "b9578aaf5e3d374b18d8335a17975432525491b8437b7f5b00edae846a1713e6"
+        }
+      }
+    ]
+  },
+  "rescore": {
+    "attempts": 64,
+    "sets": {
+      "baseline-r002": {
+        "attempts": 32,
+        "quality_counts": {
+          "FAIL": 28,
+          "INDETERMINATE": 0,
+          "PASS": 4
+        }
+      },
+      "historical-r001": {
+        "attempts": 32,
+        "quality_counts": {
+          "FAIL": 28,
+          "INDETERMINATE": 0,
+          "PASS": 4
+        }
+      }
+    },
+    "protected_files_unchanged": 925,
+    "engine_runs": 0,
+    "new_human_judgments": 0,
+    "independent_check": {
+      "path": "temp/run-a002-fase1-corpus/evidence/implementation-r014/derived-check-001.json",
+      "bytes": 909907,
+      "sha256": "b69a143ef00ad360ecae4f7a0e62976e75b2c5292a61996f28296e2b7f19e208"
+    },
+    "attribution": {
+      "status": "ATTRIBUTED",
+      "attempts": 64,
+      "metrics_fields_compared": 19,
+      "changed_attempts": 16,
+      "changed_fields": [
+        "failures",
+        "details"
+      ],
+      "numeric_and_gate_deltas": 0,
+      "explanation": "Pandoc 3.1.3 parses adjacent # identifiers as successive declarations; last id wins. V13 consumed the compound as one identifier. Current values match pinned AST, without changing reference targets, raw, assets or metric formulas.",
+      "initial_premise": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/cases-003.json",
+        "bytes": 620,
+        "sha256": "7d8f45ec5cacff04dac947ad0cbd7572a1263a8bdcf8279657dc8b32a534365b"
+      },
+      "refutation": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/compound-id-before.json",
+        "bytes": 17846,
+        "sha256": "782e0e8aa97e9f38c8795b95ea9120e342d173796fafc0a3d0ea69f64fc4cfd2"
+      },
+      "confirmation": {
+        "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/compound-id-after.json",
+        "bytes": 9528,
+        "sha256": "da2ecf99ea2acd856dca0c221e4052932206ebe4300d51bc1b1baf5b3c4e2bd9"
+      },
+      "records": [
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r1",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-direct-epub-r1/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r1/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r2",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-direct-epub-r2/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r2/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r3",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-direct-epub-r3/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r3/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r4",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-direct-epub-r4/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r4/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r1",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-legacy-epub-r1/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r1/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r2",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-legacy-epub-r2/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r2/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r3",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-legacy-epub-r3/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r3/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r4",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-historical-historical-r002b-legacy-epub-r4/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r4/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        },
+        {
+          "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4",
+          "format": "epub",
+          "changed_fields": [
+            "failures",
+            "details"
+          ],
+          "observation_changes": [
+            [
+              "/nodes/1/anchors/1",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/1/attrs/id",
+              "chapter1.xhtml#start",
+              "start"
+            ],
+            [
+              "/nodes/6/anchors/0",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/references/0/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/64/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/65/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/66/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/6/segments/67/attrs/id",
+              "chapter1.xhtml#call-n1",
+              "call-n1"
+            ],
+            [
+              "/nodes/8/anchors/1",
+              "chapter2.xhtml#results",
+              "results"
+            ],
+            [
+              "/nodes/8/attrs/id",
+              "chapter2.xhtml#results",
+              "results"
+            ]
+          ],
+          "old": {
+            "bytes": 167602,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r013/rescore-002/r013ba-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4/observations.json",
+            "sha256": "8b911c7f68314656e236db20be70ff266a2547e1a2a7d86d3e946ca76aac3cbb"
+          },
+          "new": {
+            "bytes": 167447,
+            "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/rescore-001/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4/observations.json",
+            "sha256": "ccc4d5f3e067553bc0da0b003c97b8dad0354dcaac0327e640ccde1d1db4a314"
+          }
+        }
+      ],
+      "additional_observation_only_changes": {
+        "records": [
+          {
+            "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r1",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          },
+          {
+            "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r2",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          },
+          {
+            "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r3",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          },
+          {
+            "id": "r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r4",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          },
+          {
+            "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r1",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          },
+          {
+            "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r2",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          },
+          {
+            "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r3",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          },
+          {
+            "id": "r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r4",
+            "changes": [
+              [
+                "/nodes/13/containers/0/classes",
+                null,
+                [
+                  "thebibliography"
+                ]
+              ],
+              [
+                "/nodes/13/containers/0/unknown",
+                [
+                  "thebibliography"
+                ],
+                null
+              ]
+            ]
+          }
+        ],
+        "reason": "Bare class after ::: is an accepted Div class, corroborated by the frozen grammar-21 AST; thebibliography is no longer transported as an unknown attribute token. No text, asset, metric or gate change."
+      }
+    }
+  },
+  "resources": {
+    "final_ledger": "temp/run-a002-fase1-corpus/evidence/implementation-r014/budget-final.json",
+    "progress": {
+      "at": "2026-10-11T21:13:46.517367+00:00",
+      "entry": "2026-10-08T07:06:54.369068+00:00",
+      "wall_cumulative_seconds": 310012.148299,
+      "base_ledger": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/supervisor-author-transition-r014-r001/budget-final.json",
+      "received_visible_CPU_lower_seconds": 19411.022312999998,
+      "own_measured_CPU_lower_seconds": 223.086005,
+      "visible_CPU_lower_seconds": 19634.108318,
+      "CPU_stop_seconds": 19800,
+      "CPU_remaining_to_stop_seconds": 165.8916820000013,
+      "prudential_unmeasured_reservation_seconds": 120,
+      "planning_residual_after_reservation_seconds": 45.89168200000131,
+      "receipts": [
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-after-001-snapshot.json",
+          "cpu_s": 0.14656199999999997,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-after-001.json",
+          "cpu_s": 4.4033929999999994,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-before-001-snapshot.json",
+          "cpu_s": 0.14578799999999997,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/compound-before-001.json",
+          "cpu_s": 4.600021,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/final-001-snapshot.json",
+          "cpu_s": 0.13918899999999995,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/final-001.json",
+          "cpu_s": 129.531915,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/finish-checks-001.json",
+          "cpu_s": 0.4201339999999999,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/finish-checks-002.json",
+          "cpu_s": 0.6354460000000001,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-negative-001-snapshot.json",
+          "cpu_s": 0.14722,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-negative-001.json",
+          "cpu_s": 4.6552679999999995,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-positive-001-snapshot.json",
+          "cpu_s": 0.14168299999999998,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/h12-positive-001.json",
+          "cpu_s": 4.624053,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/hc2-001-snapshot.json",
+          "cpu_s": 0.123506,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/hc2-001.json",
+          "cpu_s": 4.4855599999999995,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/prepare-002.json",
+          "cpu_s": 16.724708000000003,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/regressions-001-snapshot.json",
+          "cpu_s": 0.11970199999999996,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/admin/regressions-001.json",
+          "cpu_s": 22.44141,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/after-001-snapshot.json",
+          "cpu_s": 0.12770700000000001,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/after-R-001-snapshot.json",
+          "cpu_s": 0.03519000000000001,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/baseline-R-001.json",
+          "cpu_s": 0.6185149999999999,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/baseline-R-002.json",
+          "cpu_s": 5.98982,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-archives.json",
+          "cpu_s": 1.348131,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-installed.json",
+          "cpu_s": 1.4061759999999994,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-origin-002.json",
+          "cpu_s": 0.17511300000000005,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/current-source-002.json",
+          "cpu_s": 1.521198,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/grammar-R-001.json",
+          "cpu_s": 4.895262,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/grammar-snapshot.json",
+          "cpu_s": 0.2006229999999999,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/input-snapshot.json",
+          "cpu_s": 0.10847799999999994,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/prepare-001.json",
+          "cpu_s": 11.940459,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/technical-snapshot.json",
+          "cpu_s": 0.12283900000000036,
+          "scope": "whole direct command including children once"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/verify-entry.json",
+          "cpu_s": 0.39077100000000003,
+          "scope": "entry verify"
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-after-001/command-resources.json",
+          "cpu_s": 0.7201649999999999,
+          "scope": "contained workload only; wrapper receipt lost to filename collision, unmeasured wrapper excluded"
+        }
+      ],
+      "allocated_scoped_bytes": 4666826752,
+      "logical_scoped_bytes": 4015425726,
+      "disk_stop_bytes": 5368709120,
+      "scopes": [
+        {
+          "scope": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus",
+          "unique_files": 237810,
+          "logical_bytes": 3898952265,
+          "allocated_bytes": 4482134016
+        },
+        {
+          "scope": "/home/davide/workarea/markdown-for-llms/scripts/benchmarks",
+          "unique_files": 35,
+          "logical_bytes": 464676,
+          "allocated_bytes": 544768
+        },
+        {
+          "scope": "/home/davide/workarea/markdown-for-llms/tests/fixtures/conversion-corpus",
+          "unique_files": 129,
+          "logical_bytes": 3586210,
+          "allocated_bytes": 3928064
+        },
+        {
+          "scope": "/home/davide/workarea/markdown-for-llms/documentation/benchmarks",
+          "unique_files": 28,
+          "logical_bytes": 34434877,
+          "allocated_bytes": 34504704
+        },
+        {
+          "scope": "/tmp/a002-r003/work",
+          "unique_files": 21131,
+          "logical_bytes": 77987698,
+          "allocated_bytes": 145715200
+        }
+      ],
+      "own_sampled_RSS_bytes": 691843072,
+      "received_historical_sampled_RSS_bytes": 749760512,
+      "RSS_stop_bytes": 6442450944,
+      "R_receipts": [
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-compound-before-001/command-resources.json",
+          "sampled_bytes": 65798144,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-positive-001/command-resources.json",
+          "sampled_bytes": 73547776,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-grammar-R-001/command-resources.json",
+          "sampled_bytes": 228306944,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-regressions-001/command-resources.json",
+          "sampled_bytes": 439029760,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-h12-negative-001/command-resources.json",
+          "sampled_bytes": 74039296,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-compound-after-001/command-resources.json",
+          "sampled_bytes": 40665088,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-hc2-001/command-resources.json",
+          "sampled_bytes": 57671680,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-baseline-R-002/command-resources.json",
+          "sampled_bytes": 229236736,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-final-001/command-resources.json",
+          "sampled_bytes": 691843072,
+          "children_reaped": true
+        },
+        {
+          "path": "/home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/evidence/implementation-r014/R-after-001/command-resources.json",
+          "sampled_bytes": 229199872,
+          "children_reaped": true
+        }
+      ],
+      "own_pending": 0,
+      "network": 0,
+      "acquisitions": 0,
+      "sends": 0,
+      "benchmark_services_eur": 0,
+      "engine_conversions": 0,
+      "new_human_V": 0,
+      "deadline": null,
+      "reset": false,
+      "limitations": "CPU lower, no upper certified; host startup/reads/edits and this write partly unmeasured. Parent command receipts contain descendants once; nested R/CLI/resources are not added again. 120 is a prudential reservation, not certified spend. Historical Claude r007 45s approximate remains separate. Disk is current scope5 deduplicated, never added to its historical measurement. RSS sampled can miss short peaks."
+    },
+    "note": "Progress measurement precedes final administrative receipts. Final ledger is authoritative lower bound, not a certified upper; no new quota."
+  },
+  "limits": [
+    "finite profile, not universal nested parser",
+    "F36B1-B4/A8 and four r010 observations retained",
+    "L04 output UNAVAILABLE distinct from V13/A03 closed",
+    "L01/L02/L05 Chrome NONPASS helper12gap H15/E9 historical failures retained",
+    "historical r013 permanent unchanged: baseline132/check005/cases005/outputbaseline004; 133/check004/freeze005 retained",
+    "new independent reviews and supervisor arbitration pending"
+  ]
+}

@@ -1,0 +1,899 @@
+# Piano — run-a002-fase1-corpus — r001
+
+- Data: 2026-10-07, contesto Europe/Rome.
+- Autore: Codex, provider OpenAI, famiglia GPT-6 dichiarata dalle istruzioni
+  della sessione; identificativo esatto del modello/deployment non esposto. Ruolo esclusivo:
+  pianificatore; identificativo della chat non disponibile.
+- Prompt di origine: [01-planning-r001-corpus-and-measurement.md](../prompts/01-planning-r001-corpus-and-measurement.md).
+- Giro: iniziale; nessun arbitrato o approvazione a002 ricevuti.
+- Branch osservato: `feature/run-a002-corpus`; HEAD, `dev`, `origin/dev` **locale**
+  e merge-base HEAD/dev: `80c31da46e5caab990d3596c79c44e524ec1dc95`.
+  Indice vuoto. Nessuna query remota nuova o operazione Git di scrittura.
+- Delta rispetto all'ingresso del prompt: la feature esiste già ed è attiva.
+  I registri condivisi riportano ancora feature assente/PREPARATION; la loro
+  riconciliazione spetta al supervisore, senza riscrivere la rilevazione precedente.
+- Delta locale ereditato: sette modificati (`documentation/CHANGELOG.md`,
+  `documentation/README.md`, `documentation/decisions/0006-python-toolchain-uv.md`,
+  `documentation/decisions/README.md`, `documentation/roadmap.md`,
+  `documentation/runs/README.md`, manifest a001) e otto nuovi non ignorati:
+  `documentation/development/next-run-a002-corpus.md`, quattro receipt
+  `cleanup-{docker,files}-receipt`, `cleanup-reception`, `integration-push`,
+  due note `cleanup-assessment`, `cleanup-completion` e
+  `notes/cleanup-duplicate-payloads.json`, tutti datati 2026-10-07 sotto a001.
+  Nessun delta di codice prodotto. La lista esatta è nella sonda d'ingresso.
+- Brief e fonti: [brief](../context/brief.md), [prossima run](../../../../development/next-run-a002-corpus.md),
+  [roadmap fase 1](../../../../roadmap.md#fase-1--corpus-e-scelta-dei-motori),
+  [ADR 0001](../../../../decisions/0001-document-fidelity.md),
+  [ADR 0004](../../../../decisions/0004-execution-and-configuration.md),
+  [protocollo](../../../../development/run-lifecycle.md),
+  [guida uv](../../../../../docs/how-to/ambiente-uv.md),
+  [reference legacy](../../../../../docs/reference/toolchain-legacy.md).
+- Evidenze di sola pianificazione: [inspection.json](../../../../../temp/run-a002-fase1-corpus/evidence/planning-r001/inspection.json)
+  e [tool-help.json](../../../../../temp/run-a002-fase1-corpus/evidence/planning-r001/tool-help.json): argv, cwd, output,
+  exit, errori e limiti. Disponibilità/versione non significa conversione riuscita,
+  isolamento R verificato o origine del managed attestata in questa chat.
+
+## Obiettivo e perimetro
+
+Consegnare dieci documenti sintetici redistribuibili, gold controllabili sul
+documento effettivo, inventario offline, protocollo e runner riutilizzabili,
+positivi e negativi del misuratore, un esperimento reale ripetuto sui percorsi
+nativi leggeri e un report che conservi anche le perdite dei motori.
+Il documento Markdown completo con asset è l'output valutato. Il contratto è
+del benchmark: non determina schema interno, API, worker, DB o frontend futuri.
+
+La costruzione del corpus copre anche PDF/OCR. L'esperimento di conversione
+copre TXT, DOCX, EPUB, RTF e progetto LaTeX; PDF testuale, OCR IT/EN e misto
+rimangono **NOT_MEASURED** in questa run. PDF e scansioni avranno comunque
+sorgenti, asset, annotazioni e controllo visivo. Nessun mock attesta OCR,
+Docling o Marker. Nessun vincitore o uscita completa della fase 1.
+
+Esclusi: dati privati, rete di acquisizione, invio di documenti, inferenza ML,
+provider pagati, nuove macchine, download di pesi/font, TeX pesante,
+aggiornamenti pin/lock e correzioni generali del prodotto legacy.
+Un FAIL di fedeltà del motore è un risultato valido, se il runner lo rileva e
+lo attribuisce. Una prova essenziale del runner mancante impedisce la consegna
+convalidata. Chunking, cleaning e revisione AI non entrano nel workload.
+
+### Dipendenze osservate e decisioni proposte
+
+Ispezione statica di `pyproject.toml`, `MANIFEST.in`, `unified_converter.py`,
+`tests/conftest.py` e diagnostici pertinenti:
+
+| Componente | Evidenza locale | Uso proposto e limite |
+| --- | --- | --- |
+| Pandoc host | `/usr/bin/pandoc`, 3.1.3; discovery elenca docx/epub/rtf/latex, non plain/TXT | Motore nativo diretto; non importare ML. Registrare binario/hash, data-dir confinata e argv |
+| Legacy | `PandocConverter.convert`, righe 57–149 circa; input `.temp.md`, output stringa, immagini non restituite | Misurare separatamente il comportamento installato, su copie; non ricostruire gli asset mancanti dal gold |
+| Routing legacy | TXT/TeX assenti dai default; PDF verso Marker; fallback Marker→Pandoc per estensioni configurate | Non usare discovery del converter unificato né orchestratore per questa baseline |
+| Ambiente base | `.venv/pyvenv.cfg`: managed locale 3.12.13; metadata letti senza import | Riutilizzo candidato, soggetto a nuovo audit/installazione/preflight; nessun PASS corrente |
+| Ambiente dev | `temp/run-a001-fase0-uv/work/core-profiles-r001/dev`; pytest 9.1.1 nei metadata; cfg con home alias 3.12 | Verificare risoluzione reale contro managed 3.12.13; non assumere l'alias corretto né correggere target storici |
+| Poppler | pdfinfo/pdftoppm/pdftotext 24.02.0 | Conteggio pagine e rendering del documento reale; estrazione testo soltanto ausilio al controllo |
+| Inkscape | 1.4.4, export PDF/PNG e testo vettoriale disponibili nell'help | SVG leggibili→PDF text e immagini, senza `--export-text-to-path` né export LaTeX |
+| MuPDF | mutool 1.23.10; help di create espone font/image/MediaBox | Unire pagine e creare PDF image-only da raster; help `create -h` exit1 conservato, non workload fallito |
+| LibreOffice | 24.2.7.2, version exit0 con warning dconf read-only | Rendering indipendente DOCX/RTF con profilo scratch e HOME/XDG ricevuti da R; warning conservato, uso non ancora provato |
+| Font locali | DejaVu e altri presenti; copyright DejaVu letto | Selezionare soltanto DejaVu con hash e notice Bitstream Vera/DejaVu; nessun font scaricato |
+| R e toolchain | run_offline/check_runner/run_tests, Firejail 0.9.72, unshare 2.39.3, uv 0.10.10 | Riutilizzare protocolli standard; R nuova obbligatoria, non ereditarne la receipt |
+| Python PDF/immagini | reportlab/Pillow/PyMuPDF non nei metadata base/dev ispezionati | Non aggiungerli per default; stdlib per ZIP/XML/PNG e tool host per rendering |
+
+Ghostscript 10.02.1 è disponibile come alternativa locale di rendering, non
+necessario al percorso primario. La sonda non ha eseguito import applicativi,
+conversioni, build, installazioni, workload R o chiamate di acquisizione.
+Le versioni sono quelle installate, non una valutazione di versioni candidate
+aggiornate. Non serve un sondaggio Docling/Marker per chiudere questo piano.
+
+## Implementazione proposta
+
+### 1. Preparazione e contratti prima delle prove
+
+Verificare feature/base/delta reali e arbitrato del piano. Identificare gli input
+protetti, scegliere directory nuove sotto la run per work/evidence, misurare
+spazio iniziale e avviare un ledger cumulativo dell'intero mandato. Non chiedere
+un nuovo commit a001. Non modificare receipt o keeper storici.
+
+Scrivere contratti JSON schema-versioned del solo benchmark e CLI con modalità
+esplicite `inventory`, `run`, `observe`, `score`, `summarize`, senza import del
+prodotto durante discovery. Sono interfacce proposte, da documentare sugli help
+effettivi dopo implementazione. Tutti gli input della prova sono path/hash
+espliciti; nessun comando viene dal documento o dal manifest non fidato.
+
+### 2. Corpus minimo proposto
+
+Dieci documenti: cinque formati nativi distinti e cinque classi PDF distinte.
+Ridurre ulteriormente significherebbe confondere i due OCR linguistici oppure
+una classe PDF con una variante non identificata. Riutilizzare due nuclei
+leggibili, `base-it` e `science-en`, ma conservare gold **per documento effettivo**,
+perché note, pagination e rappresentazione delle formule cambiano tra formati.
+Varianti di formato non sono prove indipendenti di generalizzazione.
+
+Totale: **9 pagine PDF** (2+2+1+1+3), DOCX 2 pagine e RTF 1 pagina nei render
+di controllo proposti, più 3 sezioni TXT, 2 capitoli EPUB e 3 unità LaTeX.
+12 pagine di controllo fisse includendo DOCX/RTF e 9 PDF; EPUB è reflowable,
+non attribuirgli pagine fittizie. Circa 2.000–3.500 parole complessive nelle
+sorgenti, blocchi brevi, massima leggibilità a 100–200%.
+
+I path nella tabella sono **proposti** sotto
+`tests/fixtures/conversion-corpus/`; non esistono ancora. `G/<ID>` abbrevia
+`gold/<ID>/transcript.txt`, `annotations.json` e `verification.json`.
+Ogni asset ha inventario autonomo. T=testo/Unicode, N=numeri/segni, O=ordine,
+F=formule/simboli, C=celle, A=figura/didascalia, R=note/bibliografia/link.
+
+| ID stabile | Formato / lingua / pagine o sezioni | Fenomeni e discriminanti | Sorgente/generatore proposti | Gold e asset | Percorso conversione / prova |
+| --- | --- | --- | --- | --- | --- |
+| C01-txt-it | TXT UTF-8, IT, 3 sezioni | T/N/O: NFC e NFD intenzionali, `−7` e `-7`, `0012`, `123,45`, `0.0007`, `1e-3`; breve codice e URL letterale | `sources/C01/source.txt`, stdlib, contenuto letterale | G/C01; nessun asset, F/C/A non applicabili | `utf8-literal-v1`: copia il testo in fence Markdown sicura, confronto del contenuto decodificato; reale prevista, adapter benchmark proprio, nessuna pretesa di supporto TXT legacy |
+| C02-docx-it | DOCX, IT, 2 pagine con page break esplicito | T/N/O/F/C/A/R: formula inline, tabella 3×3, cella vuota significativa, nota, bibliografia, bookmark/link; termini distinti sulla seconda pagina | `sources/C02/` OOXML minimo via zipfile/XML: document, relationships, footnotes, OMML e media; non creato dal converter | G/C02; `figure-it.png`, fonte disegno originale; render LO delle due pagine | Pandoc diretto con media; confronto legacy `PandocConverter` separato; reale prevista |
+| C03-epub-en | EPUB3, EN, 2 capitoli/spine | T/N/O/F/C/A/R: apici, Unicode, formula MathML semplice, link tra capitoli, nota con backlink, tabella, figura | ZIP stdlib, mimetype stored/primo, OPF/nav/XHTML/MathML/CSS leggibili; nessun DRM | G/C03; `figure-en.png`; controllo XHTML effettivo estratto più spine | Pandoc diretto e legacy separato; reale prevista; eventuali perdite MathML/anchor sono risultati |
+| C04-rtf-it | RTF, IT, 1 pagina render proposta | T/N/O/C/R: escape Unicode, due righe di tabella, segno e zero, nota e link esterno; nessuna immagine intenzionale | `sources/C04/source.rtf`, writer stdlib limitato a costrutti dichiarati; testo sorgente leggibile a fianco | G/C04; asset N/A; render LO, celle/nota visibili | Pandoc diretto e legacy separato; reale prevista |
+| C05-tex-en | Progetto LaTeX, EN, main + 2 include | T/N/O/F/C/A/R: inline, aligned, matrice 2×2, frazione/sommatoria, tabular, includegraphics, label/ref, bibitem e URL | `sources/C05/main.tex`, `sections/*.tex`, `assets/figure-en.png`; scrittura stdlib, pacchetti dichiarativi allowlisted | G/C05 sul progetto leggibile; tavola SVG esplicativa della matematica; immagine locale | Expander confinato proprio→Pandoc `--from=latex`; reale prevista; compilazione TeX e identità tipografica del progetto non misurate |
+| C06-pdf-text-it | PDF testuale, IT, 2 pagine a una colonna | T/N/O/F/C/A/R: tutti i tipi F, tabella con zero/negativo/cella vuota, nota, bib; blocchi esclusivi pagina 2 | `sources/C06/page-*.svg`, layout esplicito da base-it→Inkscape→mutool merge | G/C06 con pagina/bbox/ordine; `figure-it.png`, raster di controllo di entrambe le pagine | Corpus reale da costruire e verificare; conversione PDF NOT_MEASURED, futura run motori |
+| C07-pdf-columns-en | PDF testuale, EN, 2 pagine a due colonne | T/N/O/F/C/A/R: header a tutta larghezza, colonna sinistra→destra, formula e nota, caption sotto figura; ultimo blocco pagina2 | `sources/C07/page-*.svg`, layout science-en esplicito→Inkscape→merge | G/C07 con pagina/colonna/bbox; `figure-en.png` | Corpus previsto; conversione NOT_MEASURED; futuro confronto ordine Docling/Marker |
+| C08-scan-it | PDF image-only, IT, 1 pagina | T/N/O/F/C/A/R: diacritici, `0/O`, `1/l`, segni, frazione leggibile, figura e nota | Derivato da pagina IT identificata: pdftoppm RGB a 180 dpi→mutool create con sola immagine full-page; nessun OCR layer | G/C08 trascritto dal raster effettivo, relazione al progenitore; raster/asset | Corpus previsto; OCR NOT_MEASURED; futura prova IT esplicita |
+| C09-scan-en | PDF image-only, EN, 1 pagina | T/N/O/F/C/A/R: decimale EN, pedici, matrice, link scritto, caption; testo distinto da IT | Raster pagina EN a 180 dpi, image-only come C08 | G/C09 dal raster effettivo, figura e sorgente | Corpus previsto; OCR NOT_MEASURED; futura prova EN esplicita |
+| C10-pdf-mixed-it-en | PDF misto, IT/EN, 3 pagine | T/N/O/F/C/A/R: p1 testuale IT, p2 raster EN, p3 **stessa pagina con metà testo nativo e metà immagine IT**; dati unici su ogni pagina; perdita p2 distinta da blocco | SVG per p1/p3, p2 raster; composizione locale Inkscape/mutool; nessun testo nascosto sotto raster | G/C10 con appartenenza pagina/regione; due figure, raster p2/p3 | Corpus previsto; conversione NOT_MEASURED; negativo pagina su output controllato con gli stessi contenuti |
+
+Le formule devono includere almeno `E=mc^{2}`, una frazione con pedice,
+`\sum_{i=1}^{n}x_i`, un sistema aligned di due righe e una matrice 2×2
+con zero e `-1`. La tabella deve distinguere header, stringa `0012`, numero
+`0`, numero `−7` e cella presente ma vuota. Codice con `{}`, `<`, URL con query
+e underscore deve esercitare la protezione dalle normalizzazioni.
+Almeno due blocchi con testo ripetuto ma posizione diversa esercitano duplicati
+e allineamento ambiguo; non disseminare ID artificiali per rendere tutto triviale.
+
+#### Generazione, riproducibilità e provenienza
+
+`sources/` contiene specifiche leggibili, XML/XHTML/SVG/TeX e testi prima degli
+archivi. Generatori stdlib fuori dalla wheel; fissare ordine membri ZIP,
+timestamp 1980-01-01, permessi, newline UTF-8, seed esplicito e dati metadata
+costanti. PNG originale generato con struct/zlib, dimensioni e pixel noti;
+figura piccola con assi, legenda e regioni differenti, non un pixel indistinto.
+Le fixture a001 restano protette e non vengono promosse a gold scientifici.
+
+Manifest `schema_version`, `corpus_id`, `corpus_revision`, `documents[]` con:
+ID, formato/MIME/classe, lingua per documento/blocco, path/byte/SHA256 di ogni
+sorgente e input effettivo, pagine o sezioni/spine, generatori/hash/versioni,
+parametri/seed, derivazioni da parent ID/hash, origin/author/license,
+tool/font/version/hash e notice, asset attesi con ruolo/hash/dimensioni,
+path/hash dei gold e status della loro verifica. Ordine canonico per calcolare
+`corpus_digest`; il manifest non include circolarmente il proprio digest.
+Annotazioni contengono denominatori effettivi, ricavati dalla sorgente
+controllata, non i numeri stimati nel piano.
+
+Origine dei testi/disegni: originali sintetici della run, licenza MIT esplicita
+con notice, senza titoli/autori reali o terzi. Per font embedded e derivati
+aggiungere notice DejaVu/Bitstream Vera separata, con copia della licenza
+locale identificata e origine; non etichettare MIT il font. Niente font TTF
+vendored se non necessario. Controllare che il renderer non usi fallback
+di font diverso per un glifo; se lo usa, identificarlo/licenziarlo o scegliere
+un glifo disponibile conservando la specifica richiesta. Non omettere il segno
+meno matematico per evitare il controllo.
+
+Verificare due generazioni in directory distinte: per TXT/XML/ZIP/PNG byte
+identici; per PDF/LO possono variare ID/timestamp/font subset. Conservare
+hash **di entrambe** e manifest per ciascuna generazione; distinguere
+BYTE_IDENTICAL da CONTENT_REPRODUCIBLE. Quest'ultimo richiede stesso conteggio
+pagine, testo/celle/assets e controllo render con font/tool bloccati, non una
+regex che cancella metadata. Se serve confronto raster, fissare renderer/DPI
+e riportare differenze; non farne prova automatica di equivalenza semantica.
+Le fixture canoniche consegnate hanno sempre identità byte precisa.
+
+PDF senza TeX: SVG con text/tspan, coordinate esplicite e font DejaVu fissato;
+frazioni, indici e matrici composte con elementi dichiarativi. Export PDF con
+testo nativo, merge locale. Poppler conta/rasterizza **il PDF risultante**;
+pdftotext può diagnosticare un PDF diventato tutto immagine, ma non scrive
+gold. C08/C09 sono costruiti da raster e ricontrollati per assenza di testo
+estraibile/OCR layer. In C10 verificare raster e testo nella stessa pagina,
+non soltanto pagine di tipi diversi. La ricostruzione con MuPDF non esegue
+comandi del documento: generatori propri producono solo text/image/layout.
+
+Alternative entro perimetro: mutool create con font locale se SVG export
+rompe il testo; LO per il render DOCX/RTF, Ghostscript come secondo renderer
+PDF se utile alla diagnosi. Nessuna installazione nuova o nuova distribuzione
+TeX per recuperare. Una capacità disponibile ma non ancora provata richiede
+un tentativo identificato dopo il mandato, non una garanzia inventata.
+
+### 3. Riferimenti indipendenti e verifica del documento renderizzato
+
+Il gold è separato da output motori e reader di osservazione. Una specifica
+condivisa leggibile è ammessa per authoring, ma non basta a convalidare il
+render. `transcript.txt` contiene il testo completo in ordine logico;
+`annotations.json` contiene blocchi tipizzati con ID stabili, testo/verbatim,
+ordine/gerarchia, pagina/bbox ove applicabile, segmenti Unicode sensibili,
+numeri con segno/lessico/occorrenza, formule con LaTeX dichiarato e simboli,
+tabelle/celle `(table_id,row,col)` incluse vuote, asset/didascalie, note,
+bibliografia, link con target e anchor del documento. I blocchi TXT non hanno
+pagina. Non importare uno schema Docling o il futuro dominio applicativo.
+
+Percorso di verifica distinto da converter/comparatore:
+
+1. Authoring: l'implementatore redige specifica e annotazioni, convalidazione
+   strutturale/inventario e controlli manuali propri. Questi restano verifiche
+   dell'autore; se effettuati dall'agente sono `agent_visual`, mai `human`.
+2. Render del file canonico: Poppler a 150–200 dpi per **tutte** le pagine PDF,
+   LO per DOCX/RTF su file effettivo con profilo nuovo; per EPUB, estrazione
+   sicura dello ZIP, spine e XHTML/CSS actual in browser offline con schermate
+   per ogni capitolo, link/nota verificati. Non usare Pandoc per questo controllo.
+   TXT letto direttamente; TeX letto main/include/assets, con tavola SVG
+   dichiarata illustrativa: non attesta compilazione del progetto LaTeX.
+3. Un verificatore umano designato dal supervisore (utente o persona nominata,
+   senza impersonarla) controlla sorgente canonica/render contro gold su tutto
+   il corpus piccolo. Può controllare in una sola sessione mentre prosegue
+   il lavoro indipendente del runner. Le review ChatGPT/Claude sono aggiuntive,
+   indipendenti; non costituiscono firma umana.
+4. Checklist per documento: prima/ultima parola di ogni blocco e pagina;
+   nessun overflow, clipping o glifo mancante; conteggio e confini di colonne,
+   note e caption; **tutti** i numeri/segni, simboli/indici/righe/matrici,
+   celle incluse vuote; figure/legenda; target di note/link/bib; presenza
+   della pagina centrale C10 e contenuto misto p3. Annotare localizzazioni,
+   divergenze e correzioni. Per EPUB controllare anche ordine spine e backlink.
+5. Receipt `verification.json`: ID/verificatore/ruolo/tipo verifica/data,
+   SHA sorgente/gold/render, argv/versione del renderer, checklist con esito
+   per pagina/blocco, screenshot/ritagli hashati per elementi critici e problemi.
+   `VERIFIED` solo dopo controllo umano reale; `PENDING_HUMAN`/`REJECTED` altrimenti.
+   Correzioni al corpus prima della canonizzazione danno nuova revisione/hash,
+   nuova verifica delle parti dipendenti. Output del motore mai copiato nel gold.
+
+Dipendenza da disporre all'arbitrato del piano: disponibilità di circa 60–90
+minuti di controllo umano e browser offline per EPUB. Nessuna verifica umana
+è avvenuta. Se il verificatore non è disponibile, corpus/runner e osservazioni
+si possono produrre, ma gold e punteggi restano **PROVISIONAL**, e il criterio
+di corpus convalidato non è soddisfatto. Non ridurre silenziosamente il gate.
+La compilazione TeX è una lacuna proposta accettabile: gold TeX controllato
+sul sorgente; fedeltà tipografica compilata `NOT_MEASURED`, futura prova TeX
+isolata esplicita. Il controllo del PDF corpus resta obbligatorio e completo.
+
+### 4. Osservazioni dall'output e allineamento
+
+Separare conversione, osservazione e scoring in processi/funzioni che possono
+essere eseguiti indipendentemente. `observe` riceve soltanto Markdown grezzo,
+asset prodotti e profilo reader, **nessun gold**. Prova del confine: lo stesso
+bundle con gold diversi produce lo stesso digest observations. Ogni osservazione
+ha tipo, testo/sintassi effettivi, offset byte/riga nel grezzo, ordine, contenitore,
+link/target, formule, celle e asset realmente trovati. Non aggiungere blocchi,
+pagine, numeri, nomi asset, dimensioni tabella o target attesi durante estrazione.
+
+Reader stdlib limitato al profilo benchmark esplicito: heading/paragraph/list,
+fenced code, pipe table, math inline/display, note/link/image, anchor espliciti
+e HTML passivo riconoscibile via HTMLParser. Produrre testo con entità/escape
+Markdown decodificati solo nei nodi pertinenti e offset originali conservati.
+Codice resta codice, matematica resta LaTeX, URL resta stringa target. Non usare
+Pandoc come reader del misuratore se Pandoc è il converter valutato. Per estensioni
+non gestite conservare nodo `unknown` con raw e metriche `UNAVAILABLE`, non ignorare
+HTML, note o matematica. Non promettere un parser Markdown universale.
+
+`score` usa gold solo per confronto/allineamento. Unicità di titoli/landmark
+visibili nel contenuto permette candidati; poi allineamento monotono uno-a-uno
+di tipo e similarità testuale, con score/margine/versione configurati. Valori
+proposti: similarity normalizzata ≥0,75 e margine ≥0,15; sono **euristiche di
+allineamento**, non soglie di fedeltà. Nessuna correzione di testo derivata.
+Un numero alterato resta osservato, anche se partecipa al costo di allineamento.
+Blocco interamente rimosso resta unmatched gold; duplicato/unexpected resta
+unmatched observed. Se titoli mancano o due candidati sono equivalenti, stato
+`AMBIGUOUS`, alternative e offset esposti, nessun tie-break che dichiara PASS.
+Un secondo confronto senza vincolo monotono identifica inversioni per landmark
+univoci: il primo non deve trasformare ogni inversione in sola omissione.
+
+Conservare matched/unmatched/ambiguous e costo di allineamento, con risoluzioni
+manuali versionate separate. Annotazioni di risoluzione non riscrivono il raw.
+Negativi su blocchi ripetuti verificano che il runner non riusi un'osservazione
+per soddisfare due blocchi. Ogni blocco mancante porta tutti i suoi fenomeni
+attesi nel denominatore con copertura zero; un allineamento irrisolto non li
+trasforma in N/A. Riportare anche contenuto inatteso/duplicato: il recall da
+solo non basta a rilevare le aggiunte.
+
+#### Metriche e soglie del corpus sintetico
+
+Ogni record metrica riporta stato, numerator/denominator quando disponibili,
+errori/localizzazione, regole/versione e hash observations/gold. Stati:
+`PASS`, `FAIL`, `AMBIGUOUS`, `UNAVAILABLE`, `NOT_MEASURED`, `NOT_APPLICABLE`.
+N/A richiede ragione attestata dal manifest, denominatore null, mai zero
+usato come punteggio. NOT_MEASURED conserva denominatore atteso se noto;
+UNAVAILABLE indica una misura applicabile che il reader/metodo non sa ottenere.
+Numeratore zero è riservato a una misura effettuata con nessun elemento corretto.
+
+| Fenomeno | Unità/denominatore e allineamento | Metrica e normalizzazione ammessa | Attesa/soglia proposta e ambiguità |
+| --- | --- | --- | --- |
+| Testo/Unicode | Code point del testo gold per blocco tipizzato e documento; token parole ausiliari; blocchi mancanti inclusi | Levenshtein CER = edit/ref; WER diagnostico; contare insert/delete/substitute e testo unexpected. LF/CRLF e soft-wrap→spazio solo in prosa; NFC solo vista secondaria dichiarata. Raw code point per segmenti sensibili, mai NFKC/casefold | CER=0 sulla vista prosa conservativa e 100% segmenti sensibili raw; riportare CER raw separato. NFD/NFC ordinario può avere differenza raw lecita, `−`/`-` mai equivalente. Corpus piccolo esatto giustifica zero perdita |
+| Blocchi/omissioni/pagine | Tutti i blocchi gold, rispettive unità di contenuto; pagine PDF con insieme di blocchi attesi | Recall blocchi, precision observed, missing/duplicate/unexpected; pagina completa solo se tutti i suoi blocchi sono presenti e fedeli, page-missing se nessun contenuto distintivo trovato. Non serve page marker nel MD per attribuire copertura attraverso gold | 100% blocchi, 0 extra/dup, 100% pagine per casi paginati. Una pagina priva di dati distintivi sarebbe AMBIGUOUS: C10 li contiene su ciascuna. Output senza provenance pagina non misura layout conservato, ma misura contenuti di pagina |
+| Numeri e segni | Ogni occorrenza annotata in prosa/cella/formula/codice, legata a blocco/offset; includere zeri e leading zeros | Exact-match lessicale per occorrenza e counts unexpected; nessuna conversione float, separatore locale, meno Unicode, esponente o zero iniziale normalizzati | 100%, 0 alterazioni/omissioni/aggiunte. Un match del valore numerico in altro blocco non soddisfa l'occorrenza; segmenti non tokenizzabili UNAVAILABLE, non passano |
+| Ordine | Tutti i blocchi gold e coppie ordinate (n(n−1)/2) per documento, ordine specifico di note dichiarato | Copertura distinta + numero coppie concordi/discordi/unrisolte; Kendall su coppie risolte solo ausilio, con denominatore completo esposto; numerazione indice autonoma del reader | 100% copertura, 0 inversioni e 0 coppie irrisolte per PASS. n<2 N/A motivato. Posizionare note secondo relazione definita nel gold, non penalizzare lecitamente una raccolta finale se profilo la consente |
+| Formule sintattiche | Ogni formula, righe aligned, coordinate matrice e token significativi dichiarati; formule mancanti incluse | Tokenizer LaTeX conservativo: delimitatori esterni distinti dalla formula, spazio TeX ignorabile solo fuori `text`/verbatim; preservare graffe, operatori, indici, segni, ordine, ampersand/newline aligned. Niente riordino algebrico o alias non dichiarati | 100% formule/token/righe/celle e 0 extra. Token/string match dimostra preservazione sintattica nel profilo, non equivalenza semantica; macro non riconosciuta UNAVAILABLE |
+| Formule tipografiche | Ogni formula renderizzata nel gold e nel risultato, quando vi è renderer disponibile | Checklist di glifi, indici, frazione, allineamento, forma matrice; confronto visivo con ritagli identificati, non pixel globali. Renderizzabilità indicatore distinto | 100% elementi checklist per PASS umano; renderer formula output non disponibile→UNAVAILABLE, non dedurre PASS da sintassi. Render TeX sorgente non compilato NOT_MEASURED |
+| Formule semantiche | Ogni formula con espressione e contesto gold; operatori/variabili/domìni/righe/coordinate | Verifica esplicita umana della coppia sorgente/output, checklist e motivazione, eventualmente singoli controesempi; nessun CAS aggiunto. Stato indipendente da render e token equality | 100% giudizi equivalenti nel corpus per PASS; assenza verifica UNAVAILABLE/PENDING nel dettaglio. Cambiare `+` in `−` o `x_i` in `x_j` deve dare FAIL sintattico anche prima del giudizio. Non generalizzare equivalenza fuori campione |
+| Tabelle/celle | Celle gold incluse vuote, header, table_id/row/col; rows/cols gold separati dalle dimensioni osservate | Exact text/Unicode/numero al coordinato; recall/precision celle, righe e colonne; cella assente distinta da presente vuota. Prosa conservativa solo nelle celle di prosa | 100% celle e dimensioni, 0 aggiunte. Senza ricostruzione affidabile dei confini UNAVAILABLE o AMBIGUOUS. Tabella testuale senza coordinate non passa come tabella fedele |
+| Asset e caption | Figure gold, file effettivamente referenziati, associazioni figura-caption e didascalie complete | Existence/hash/dimensioni, path resolution sicura e occurrence associata; match SHA per PNG senza trasformazioni; se re-encoding, pixel RGBA tramite decoder disponibile separato e/o verifica visiva, mai solo filename/alt-text | 100% figure e caption collegate, nessun riferimento mancante. Trasformazione senza verifica contenuto UNAVAILABLE; raster formula non sostituisce formula sintattica. Missing file causa anche bundle INCOMPLETE |
+| Note/bibliografia/link | Ogni chiamata/definizione/target gold, anchor locale ed esterno, testo bib completo | Copertura exact target e relazione, conteggio unresolved/unexpected; decodifica escape serializzazione, nessuna rimozione query/frammenti o visita URL. Note possono rinumerarsi solo tramite bijezione call↔definition con contenuto/ordine verificati | 100%, 0 broken link/orphan/dup; esterni verificati come stringhe, disponibilità rete N/A. Numeri delle note non vanno normalizzati come numeri di contenuto; un riferimento formula/tabella segue target reale |
+
+Queste soglie sono **proposte per il corpus sintetico controllato**, non standard
+universali per OCR reale. Un futuro corpus rumoroso richiede calibrazione e
+campioni nuovi, non abbassamento retroattivo. Nessuna media composita autorizza
+perdita di pagine, numeri, formule, celle o asset. `quality=PASS` richiede tutti
+i gate applicabili PASS, zero ambiguità e gold verificato; se metriche obbligatorie
+sono unavailable, `quality=INDETERMINATE`. Un FAIL critico ha precedenza sul
+non misurato, con entrambi esposti. Riportare sempre quante metriche/pagine
+non sono state misurate. I dettagli tipografici/semantici non esaminati non
+impediscono di pubblicare una misura sintattica corretta, ma impediscono di
+presentarla come prova complessiva della matematica.
+
+Normalizzazioni eseguite solo su viste derivate tipizzate, mai sul file grezzo.
+LF di prosa e NFC diagnostico sono regole per metrica; spazi in codice/LaTeX
+text/URL/numeri sono protetti. Ogni trasformazione annota input e output/offset
+e regola. Non impiegare cleaning legacy né regex globali per far passare il
+confronto. Il reader richiede test di escape, dollari letterali e delimiter
+in fence; niente interpretazione dei frammenti codice come formula o link.
+
+### 5. Runner, identità e stati
+
+Schema minimo, confinato al benchmark:
+
+- `experiment_id` nuovo ed esclusivo; `run_id` a002 e versione protocollo;
+  `document_id` stabile del corpus e `source_digest` del bundle; `attempt_id`
+  distinto a ogni esecuzione, anche fallita, e numero ripetizione/cache label.
+- `engine_id` distingue `txt-literal-v1`, `pandoc-direct-3.1.3` e
+  `legacy-pandoc-installed`; versione/hash binario/codice/wheel, reader/writer,
+  configurazione effettiva canonicalizzata con hash; modello/pesi `not_used`.
+  Una versione Pandoc uguale senza stesso binario/config non è identità sufficiente.
+- Input: corpus revision/digest, file input/assets/include hashati, gold/versione
+  verifica, codice runner/reader/comparatore/hash, S/B/I/snapshot/R pertinenti;
+  hardware/OS/kernel/arch/CPU/logical CPU/RAM, env pubblica chiusa.
+- Tentativo: argv **effettivo** come array, cwd, start/end UTC e monotonic seconds,
+  exit/signal/timeout, stdout/stderr binari e hash; raw Markdown/file media di
+  qualsiasi tentativo conservati, inclusi parziali; inventario file/output digest.
+- Separati `observations.json`, `alignment.json`, `metrics.json`, receipt operativa,
+  risorse con metodo/limiti, errori stage-specific. Final record pubblicato
+  atomicamente solo dopo audit, ma i parziali restano disponibili su crash.
+
+Directory `work/<experiment_id>/<document_id>/<attempt_id>/` con source-copy,
+raw, observations, metrics e registri. Riserva esclusiva `mkdir(exist_ok=False)`;
+vietato riuso/sovrascrittura. Omonimia: due document_id/hash diversi con
+`source.docx` in source-copy differenti; rerun: nuovo attempt sotto stesso ID.
+Non inferire document_id dal basename e non usare solo filename per skip/cache.
+Riuso esplicito futuro necessita corrispondenza di tutti gli input; questa
+prima run esegue tentativi nuovi e non introduce cache dei risultati.
+
+Audit output: UTF-8 decodificabile, Markdown non vuoto (whitespace-only è EMPTY),
+tutti i link locali/asset richiesti dal **raw** esistenti e confinati;
+inventario separato degli asset attesi dal gold per misurare figure perse anche
+quando il link è scomparso. Distinguere file prodotto non referenziato, file
+referenziato mancante e figura gold non prodotta. Symlink vietati, file regolari.
+Nessun riempimento da source/gold per sanare immagini perse dal converter.
+
+Confinamento proporzionato: root di ogni bundle e output dedicata, path component
+validati prima della risoluzione, no `..`, assoluti, symlink/hardlink evasivi,
+URL come sorgenti o file URI. Link esterni sono confrontati come dati, mai
+scaricati; link locali/fragment sono risolti nella root dichiarata, senza
+decodifiche ripetute che creino traversal. ZIP DOCX/EPUB: no duplicati canonici,
+nomi assoluti/drive/backslash evasivi, symlink o membri criptati; massimo256
+membri, 16MiB input nativo e 64MiB espansi per archivio, ratio≤100 e lettura
+stream con contatore anche se metadata mentono. PDF/asset raster: 32MiB per
+file e limite pixel12M; massimo64file/8MiB/4livelli per bundle TeX, include
+allowlisted e senza cicli. Questi sono limiti sintetici proposti, non limiti
+upload prodotto; modificarli entro quota motivando il requisito invariato.
+XML senza DTD/ENTITY/external entities, relazioni OOXML esterne solo hyperlink
+inerte dichiarato; SVG solo text/path/shape/image locale verificata, no script,
+foreignObject o URL CSS. HTML passivo mai eseguito dal runner; per il controllo
+umano offline soltanto XHTML/CSS sintetici validati. Nessun filtro Pandoc/Lua,
+template o comando da manifest/documento; registry adapter/tool esplicito nel
+codice, shell=False e nessuna acquisizione di risorse remote implicita.
+
+| Livello | Stati e significato |
+| --- | --- |
+| Conversione operativa | SUCCESS, ERROR, TIMEOUT, EMPTY, INTERRUPTED; SUCCESS richiede processo exit0 e raw non vuoto leggibile, non implica fedeltà |
+| Bundle | COMPLETE, INCOMPLETE, UNAVAILABLE; COMPLETE richiede raw e file referenziati realmente presenti; asset gold omesso causa FAIL qualità, asset raw mancante anche INCOMPLETE |
+| Qualità | PASS, FAIL, INDETERMINATE, NOT_MEASURED; gold non verificato aggiunge `provisional=true` e impedisce PASS definitivo |
+| Supporto/coverage | MEASURED, NOT_MEASURED, UNSUPPORTED_OBSERVED; quest'ultimo solo dopo tentativo reale che rifiuta il formato, non dedotto da mock |
+| Batch | COMPLETE, PARTIAL, FAILED, INTERRUPTED; COMPLETE solo se tutti i tentativi pianificati eseguiti, conversione SUCCESS e bundle COMPLETE; qualità indipendente |
+
+Il batch native schedula cinque percorsi diretti e tre legacy separati; la matrice
+corpus riporta altri cinque documenti NOT_MEASURED. Chiamare COMPLETE il batch
+di questi otto percorsi non significa copertura completa del corpus né qualità
+PASS. Un errore di motore rende il batch PARTIAL/FAILED: il report può essere
+completo **come rendicontazione** con tutti gli errori, ma non un batch riuscito.
+Tentativi di errore attesi nei test hanno una expectation separata; non
+riscrivere il loro stato operativo in SUCCESS.
+
+Exit proposti:
+
+- `run`: 0 se batch operativo COMPLETE; 2 se PARTIAL/FAILED, output vuoto o
+  bundle incompleto; 4 per input/contratto/preflight/runner invalido; 130 su
+  interruzione. Un processo terminato da segnale conserva anche il segnale.
+- `score`/`evaluate`: 0 solo gate qualità PASS; 3 per qualità FAIL; 5 per
+  INDETERMINATE/NOT_MEASURED/metriche obbligatorie unavailable; 4 per errore
+  del contratto. Se più esiti, 4 poi 2 per incomplete operativo, poi 3, poi 5.
+- `summarize`: 0 significa report letto e generato senza errore, **non** qualità
+  o batch PASS; JSON/HTML/Markdown di riepilogo mostrano gli stati reali.
+  L'harness dei negativi attende l'exit nonzero specifico e verifica i dettagli.
+
+Aggregati: tabella document_id/engine_id/tentativo e matrice per fenomeno/classe;
+totali numerator/denominator solo tra metriche omogenee misurate, con contatori
+separati e denominatori attesi per unavailable/non misurato/ambiguo. Minimo e
+worst-case oltre ai totali. Errori visibili in prima tabella, elenco missing/dup,
+non solo percentuali. Nessun voto complessivo del motore o media eliminando FAIL.
+
+### 6. Positivi e prove negative del misuratore/runner
+
+Creare `controls/` del misuratore distinto dal corpus di conversione: Markdown
+e PNG scritti a mano da specifica leggibile, **non** output atteso ricopiato da
+un motore. Un controllo positivo piccolo copre tutti i fenomeni, uno a tre
+sezioni replica i contenuti paginati distintivi C10, uno ha due blocchi ripetuti.
+Trascrizioni/annotazioni controllate separatamente come per il gold. Le dimensioni
+dei controlli non aumentano il numero di documenti corpus.
+
+Positivi obbligatori: bundle fedele→recall/precision 1, CER0, exact numeri/celle/
+formule/link/asset 1, nessun missing/dup; prosa con soft-wrap diverso→PASS della
+vista consentita, raw differente visibile; rinumerazione note coerente→PASS della
+relazione e conteggio; stessi filename ma ID distinti→due risultati separati;
+rerun→output identico di contenuto con nuovo attempt, nessuna sovrascrittura.
+Giudizio tipografico/semantico automatico rimane unavailable se manca verifica
+umana, per cui il positivo **automatico** richiede PASS di tutti i gate automatici
+e corretti stati dei gate manuali, non inventa un quality PASS complessivo.
+Positivo end-to-end con receipt umane reali può attestare anche quality PASS.
+
+Ogni mutazione ha ID/versione, baseline hash, argv o descrizione deterministica,
+file copiati/modificati e hash before/after. Scrivere solo copie in directory
+nuove della run; gold e baseline protetti prima/dopo con hash. Non eseguire
+mutazioni direttamente sulle fixture canoniche. Non chiamare test del motore
+un test sintetico del misuratore.
+
+| Mutazione su copia dedicata | Rilevatore / prova sostanziale | Esito atteso |
+| --- | --- | --- |
+| Rimuovere tutti i blocchi della pagina 2 del controllo C10 | Coverage per pagina e missing blocks; numeri/formule/celle della pagina restano nel denominatore | score exit3; missing_page p2, copertura p2=0, FAIL critico, nessun miglioramento artificiale degli altri denominatori |
+| Rimuovere un paragrafo intermedio | Allineamento one-to-one e CER/recall | exit3; ID/blocco missing, testo atteso cancellato nel conteggio; pagina partial, distinta da pagina intera persa |
+| Duplicare blocco o aggiungere frase inattesa | Unmatched observed, precision/insertions | exit3; duplicate/unexpected localizzato; recall1 da solo non dà PASS |
+| `123,45`→`123,46`, `−7`→`7` e `0012`→`12` in tre copie | Match numeri/segni in posizione e CER | exit3 per ciascuna, diff lessicale preciso; nessuna conversione float/strip segno |
+| `+`→`−`, pedice i→j, togliere una riga aligned o cella matrice | Token/simboli/struttura formula | exit3 sintattico, formula/riga/coordinata identificata; renderizzabilità non sana FAIL; semantica separata |
+| Scambiare due blocchi o le due colonne | Secondo allineamento libero + coppie ordine | exit3, ≥1 inversione; blocchi tutti presenti e testo invariato, test non ridotto a missing |
+| Eliminare una cella, separatamente svuotare una cella piena | Dimensioni osservate e coordinate/cell values | exit3; cella assente distinta da vuota, denom gold identico; celle successive non riallineate per farle passare |
+| Rimuovere PNG ma mantenere link; poi togliere link/caption lasciando file | Audit raw asset + metrica figura/associazione | prima run exit2 INCOMPLETE; score FAIL; seconda bundle può essere COMPLETE ma exit3 qualità con missing figure/caption |
+| Cambiare target anchor/URL query; togliere definizione nota | Target/definizioni osservati, relazione gold | exit3, broken/internal or mismatched external string, nota orphan; zero visite di rete |
+| Raw vuoto o soli spazi con processo exit0 | Audit operativo prima dello score | run exit2 EMPTY, batch PARTIAL/FAILED, metriche non misurate con denominatori attesi; mai CER0/PASS |
+| Un successo e un processo con exit nonzero nello stesso batch | Receipt per tentativo, aggregato e exit batch | exit2, entrambi record presenti, errore visibile, PARTIAL; nessun conteggio di successo completo |
+| Crash/timeout dopo raw parziale o prima final receipt | Stato tentativo aperto riconciliato e processo proprio raccolto | INTERRUPTED/TIMEOUT, parziali preservati, nessun final SUCCESS; nuova esecuzione su attempt nuovo |
+| Due output omonimi/rerun | Identità/riserva directory, hash contenuto diverso | nessuna collisione; tentativo di sovrascrittura exit4; positivi distinti rimangono leggibili |
+| Blocchi ripetuti senza landmark discriminante | Allineamento e margine | AMBIGUOUS/exit5 se irrisolto, mai doppio match; copia con posizione/landmark chiaro risolvibile |
+| Gold diverso senza modificare output | Digest osservazioni senza accesso gold | observations byte/digest invariati; metrics cambiano coerentemente; impedire valori iniettati |
+| Tabella/HTML/formula fuori reader dichiarato | Nodo unknown e applicabilità | UNAVAILABLE/exit5, raw preservato e coverage unresolved, mai silenzioso N/A |
+| Asset `../`, path assoluto, symlink, membro ZIP duplicato/evasivo, include fuori root, HTML script o fetch | Validatore dati/path; rete sotto R e assenza comandi derivati | exit4 prima di conversione/esecuzione, nessuna scrittura/fetch; per HTML non supportato osservazione unknown senza esecuzione |
+
+Gli assert verificano contenuto degli errori, denominatori, count/offset,
+stati per documento e batch ed exit. Il controllo positivo deve fallire se
+il comparatore viene sostituito da un rifiuto universale. I test con subprocess
+stub misurano il contratto di errore, non dichiarano conversione reale.
+Una prova d'isolamento con processo figlio e socket sintetico verifica il
+confine; niente HTTP esterno o socket operativi per provocare errori.
+
+### 7. Primo esperimento nativo reale
+
+Percorso primario: cinque adapters espliciti, TXT letterale e Pandoc diretto
+per DOCX/EPUB/RTF/TeX. Un subprocess per documento, `shell=False`, binary Pandoc
+assoluto identificato. Proposta di argv, da verificare sugli input effettivi:
+
+```text
+/usr/bin/pandoc <source-copy> --from=<docx|epub|rtf|latex>
+  --to=markdown+pipe_tables-simple_tables-grid_tables
+  --wrap=none --markdown-headings=atx
+  --data-dir=<empty-confined-data-dir>
+  --resource-path=<source-copy-root>
+  --extract-media=media -o document.md
+```
+
+Il cwd effettivo è `<attempt>/raw/`, source-copy/resource/data-dir sono path
+assoluti confinati; così link `media/...` risolvono rispetto a document.md.
+Il percorso media relativo è configurazione del converter, non riscrittura
+dell'output: nessun postprocess per riparare link assoluti o copiare asset gold.
+
+Il profilo mantiene math TeX, notes/link/anchor e raw riconoscibili; le estensioni
+writer effettive devono essere registrate e testate, non solo presunte. Non
+impiegare `--strip-comments` per conservare commenti significativi se presenti;
+nei documenti sintetici i commenti sono dichiarati metadata non contenuto.
+Usare `--sandbox` se compatibile con input/resource extraction in 3.1.3; verificarlo
+su copie. Non considerarlo sostituto di R o del confinamento filesystem. Se
+incompatibile, R senza rete + bundle validato/confined resta percorso primario,
+con motivo e prove nella decisione tecnica dell'implementatore.
+
+TXT: leggere UTF-8 rigorosamente, scrivere fence più lunga di ogni run backtick
+del testo, LF di serializzazione documentati; payload interno preservato, nessuna
+interpretazione di URL/formule. È un reader nativo benchmark minimale, non un
+converter prodotto già disponibile; positive fidelity sul contenuto letterale.
+Il gold TXT dichiara un blocco `literal_text` con tre sezioni interne: il profilo
+TXT associa il payload della fence a quel tipo, senza cambiarne valori. La
+segmentazione interna usa le righe/separatori effettivi, prima di vedere gold;
+non pretendere heading Markdown prodotti da un sorgente testo letterale.
+
+LaTeX: expander strettamente limitato a `input`/`include` letterali dei due file
+autorizzati, confini root, no cicli, profondità/file/byte finiti, provenance per
+range sorgente. Output expanded separato hashato. Non eseguire TeX, shell escape,
+write18, input pipe, macro dinamiche o include remoto; macro non supportata
+produce errore visibile. Non inferire formule corrette dal gold né generare
+immagini formula al posto dell'input. `includegraphics` solo asset inventariati.
+Se Pandoc non produce media per TeX, rilevare perdita; nessuna copia asset a
+posteriori per renderlo verde. Tale FAIL non invalida il runner.
+
+Secondo percorso, confrontabile ma distinto: istanziare **solo**
+`PandocConverter(config_dict)` dal package installato in un figlio `-I -B`
+con cwd workspace nuovo. Niente `UnifiedDocumentConverter`, sessioni Marker,
+`is_available` su server, API, modello o discovery globale. Escludere variabili
+Marker/cloud e `.env` reali; adapter/config di benchmark espliciti.
+Tre casi DOCX/EPUB/RTF: configurare writer e asset path per tentativo usando
+opzioni legacy, path scratch senza spazi per il suo `.split()`; registrare
+`ConversionResult`, markdown ritornato e file creati **realmente**. Non affermare
+che il legacy conserva stdout/stderr Pandoc completi: non li espone dopo successo.
+Receipt segnala questo limite; percorso diretto conserva entrambi integralmente.
+Default legacy privo di extract-media non è questa configurazione: citare
+esattamente configurazione misurata e limite default, senza attribuzione indebita.
+
+Il confronto installato è una caratterizzazione del prodotto pertinente; nessuna
+patch indiscriminata al legacy. Se helper proprio deve essere corretto, ripetere
+prove invalidate; se motore perde formula/nota/cella, conservare FAIL e report.
+Almeno uno dei percorsi reali nativi deve completare la conversione con Markdown
+non vuoto e tutti i media referenziati esistenti; C02/C03 diretti sono i target
+con asset. Se nessuno ci riesce, il requisito di baseline completa resta aperto,
+senza simulare un successo; proseguire le diagnosi ordinarie entro mandato.
+Il controllo di fedeltà su quel percorso deve essere effettivo anche se FAIL.
+
+#### Ripetizioni e risorse misurate
+
+Per ciascuno degli otto percorsi: **1 primo avvio + 3 ripetizioni** sequenziali,
+32 tentativi totali. Le tre ripetizioni calde permettono mediana/range e
+rilevazione grossolana di variabilità senza inferenza statistica forte.
+Nessun warmup nascosto: primo avvio è registrato. Fixture identiche/hash;
+tentativi con FAILURE restano nel report. Ripetere tre volte anche il FAIL
+riproducibile se non viola budget, per distinguerlo da fallimento intermittente.
+
+`fresh_process_fresh_workspace` significa cache applicativa/directory nuova,
+non page cache OS fredda. Cache OS non svuotata, niente drop_caches/root;
+`os_cache=uncontrolled`, primo avvio non chiamato cold OS. Le ripetizioni usano
+stesso binario/preparazione, workspace esclusivo, cache tool dichiarata.
+Tempo preparazione (generazione/render/build/install/R/test) distinto da
+workload (conversione più solo audit media richiesto) e scoring (fuori tempo
+converter). Misurare anche end-to-end del tentativo, etichette distinte.
+
+Metodo stdlib Linux: monotonic_ns prima Popen e dopo wait per elapsed seconds;
+CPU user/system dal wait4 del processo dedicato/reaped subtree, con assunzioni
+su figli che vengono raccolti. `ru_maxrss` Linux in KiB→bytes: massimo del
+processo/reaped subtree, **non somma del picco dei processi contemporanei**.
+Campionare a 10 ms `/proc` di processo e discendenti propri, identità PID/start
+per evitare reuse; somma RSS simultanea→`sampled_tree_peak_rss_bytes` e curva,
+max processi, intervallo/missing PID. È stima inferiore del picco vero, shared
+pages possono essere contate più volte; non un certificato RAM esatta.
+Nessun psutil necessario. Child di misura nuovo per tentativo evita contaminazione
+di RUSAGE_CHILDREN da prove precedenti; vietato usare una differenza di maxrss
+cumulativi. Processi brevi persi riportati, non stimati come zero.
+Le misure wrapper R e tempo di conversione non sono intercambiabili.
+
+Registrare hardware osservato di nuovo dopo mandato: CPU modello/logical count,
+memoria totale/disponibile, uname/kernel, arch, container/cgroup limiti leggibili,
+tool/lib/font versioni. All'ingresso precedente i7-1165G7, 8 CPU logiche,
+~62,5 GiB RAM; assenza device NVIDIA non è certificazione assenza GPU.
+Non trasferire performance a GPU/Windows/WSL/macOS. Contabilizzare disco input,
+raw, registri e parziali; nessuna rete/costo provider nel workload.
+
+### 8. Ambiente, wheel canonica e isolamento ufficiale
+
+Seguire la guida uv con gli strumenti esistenti, senza nuovo installer/resolver.
+Preparazione distinta dal workload, offline dalle cache/payload pubblici
+conservati: uv 0.10.10, managed locale 3.12.13, backend Setuptools 84.0.0,
+base/dev locked; niente extra marker/ML o lock aggiornato. I path dei keeper
+si ricavano dalle note/mappa a001 e si verificano prima del riuso, non da vecchie
+receipt con file rimossi. Non riconvalidare a001: verificare risorse che **a002
+consuma effettivamente**, con input e receipt nuovi.
+
+1. Audit statico prefix/startup/pyvenv e reale managed, poi check_python_origin
+   nello stesso interprete `-I -B`. Venv dev storica soltanto candidato: preferire
+   venv a002 nuova locked offline o riuso verificato senza mutare target protetti.
+   Il managed/binario va identificato; il solo numero Python non basta.
+2. Identificare backend wheel84 hash-pinned, uv/binario, tokenizer cache già
+   pronta e Pandoc. make_input_inventory corrente per package-inputs effettivi.
+   Inventario **aggiuntivo benchmark** per tool host/font, scripts/benchmarks,
+   fixture/gold e test, fuori dal perimetro fisso della wheel.
+3. Dopo il codice finale o ogni modifica che invalida prove, creare autonomamente
+   snapshot tecnico di esecuzione con label nuova, inclusi manifest reali,
+   helper/input effettivi e configurazione R. Escludere output futuri e checkpoint
+   vivi dagli input. Snapshot comune delle review resta al supervisore.
+4. Nuovo S con make_source_manifest `--snapshot` a002 e input-inventory,
+   niente standalone come prova ufficiale. Build offline sdist e wheel dalla
+   sdist con vincoli84; audit B archives-only; sync locked base/dev offline
+   non editable/reinstall-package; reinstallare **per ultima** la wheel canonica
+   individuata, `uv pip install --no-deps --no-build ... <wheel>`.
+5. Nuova I via verify_distribution per ogni venv usata; preflight confronta
+   dieci hash, build-inputs, S/B/I/RECORD e snapshot, prima degli import prodotto
+   e prima di qualsiasi `uv run --no-sync`. Il solo sync è insufficiente.
+   Anche cambi soltanto agli script esterni richiedono nuove identità delle prove;
+   mantenere il ciclo rebuild/reinstall richiesto dal repository, pur se il payload
+   wheel risulta identico. Non attribuire E precedente a script cambiato.
+6. Preparare target a002 del `run_offline.py`, environment pubblico chiuso,
+   HOME/XDG/TMP/cache scratch, startup/config assenti e daemon/IP negati.
+   Nuovo R PASS padre/figli nella stessa invocazione del comando con snapshot
+   a002. `--preflight-config` contiene check_preflight **e** audit del manifest
+   esterno benchmark. Non basta un PASS R storico o uv --offline.
+7. Tutti i figli Python usano `sys.executable` venv, `-I -B`; nessun Python
+   globale per corpus ufficiale, test o workload. Launcher proprio, se serve
+   import tra script esterni con -I, carica solo root scripts/benchmarks validata
+   via spec o root esplicita confinata come run_trusted_script. Non inserire
+   root prodotto nel sys.path del child di conversione installato; verificare
+   `unified_converter.__file__`/hash contro I prima di istanziare PandocConverter.
+8. Verifica identità prima/dopo di fixture/gold/code e input S/B/I; audit dei
+   raw in directory dedicate. Modifiche invalidano solo prove dipendenti:
+   nuova versione, nuovi input/snapshot se necessario e rerun nella stessa chat.
+
+Il package distribuisce dieci moduli, non `scripts/`, test, fixture o protocolli.
+S/B/I non attesta da solo il nuovo runner: il suo manifest esterno e lo snapshot
+legano path/hash e moduli caricati effettivi, compresi expander/reader/scorer e
+config. Audit esterno prima/dopo, digest nelle receipt e tests di tampering
+negativo; niente codice eseguibile nascosto nell'archivio a001.
+
+Runner R esistente: timeout CLI ammesso **≤900 s**, log stdout/stderr del comando
+≤1 MiB per stream e RLIMIT_FSIZE 32 MiB. Non aggiungere limiti ereditati ai costi
+totali a002; rispettare invece questi vincoli tecnici del tool. Suddividere i
+32 tentativi in invocazioni entro900, con input/snapshot medesimi e receipt R
+nuova per ciascuna; stdout conciso, dettagli su file <32 MiB. Un raster A4 RGB
+180 dpi è circa9 MiB, quindi compatibile; generazione pagina per pagina per
+limitare picco. Deadline singolo native iniziale60s, render120s, build/test stage
+fino900; correggibili entro quota e compatibilità tool senza nuova autorizzazione.
+R monitora `/proc`: processo troppo breve può sfuggire; launcher attende una
+handshake locale di readiness osservabile prima del lavoro, senza appoggiarsi
+a sleep ciechi o a un PID non osservato. Receipt distingue limiti d'osservazione.
+
+Per EPERM/EACCES conservare errore/argv, diagnosticare; se disponibile richiedere
+escalation **del tool** per launcher già autorizzato, mantenendo R/netns/D4 e
+stessi dati sintetici. Nessun sudo, sysctl, AppArmor/setuid o daemon persistente
+modificato. Rifiuto effettivo approvazione→non aggirare, bloccare attività
+dipendente e continuare indipendenti; se isolamento ufficiale resta indisponibile,
+report IMPEDITA, non PASS e non benchmark ufficiale surrogato fuori R.
+
+### 9. Verifiche mirate, report e documentazione
+
+Nuovi test in `tests/unit/test_conversion_benchmark.py` per reader/metriche,
+allineamento, denominatori, numeri/formule/celle/assets/link, manifest/provenienza
+e matrice positivi/negativi; `tests/integration/test_conversion_benchmark.py`
+per ciclo runner, omonimia/rerun/partial/timeout, tampering e isolamento pertinente.
+Test stdlib eventualmente separati per generatori e archivi; niente download.
+Unit test con piccoli output controllati non vengono dichiarati native benchmark.
+Il primo percorso nativo e gli otto percorsi reali hanno evidenze separatamente.
+
+Preflight/installazione, tokenizer cache, Pandoc e R pronti **prima** della
+collection. Con `run_tests.py` e selezione mirata esplicita, verificare nodeid,
+exit e stati; su collection fallita diagnosticare senza installare/scaricare.
+I test di modifica a runner/hash impediscono PASS con script nuovo su receipt vecchia.
+
+Eseguire la suite veloce selezionata una volta sugli input finali: nuovo reader
+e test inseriti sotto tests/ interferiscono potenzialmente con collection e
+con i diagnostici, quindi è una regressione pertinente e poco costosa. Se
+successive modifiche sono solo documentali, link/diff-check bastano; se cambiano
+reader/scorer/launcher, ripetere mirati e sola parte della suite invalidata.
+Comando dopo i gate, dentro R:
+
+```bash
+"$RUN_DEV_PY" -I -B -m pytest tests/ --ignore=tests/api --ignore=tests/packaging --ignore=tests/docker -q
+```
+
+`tests/conftest.py` inserisce root repository in sys.path: la suite veloce
+non dimostra da sola il percorso installato. S/B/I e child converter installato
+senza root prodotto sono le prove pertinenti della wheel. Non correggere ora
+questa convenzione storica fuori scope e non attribuire alla suite garanzie che
+non ha. API, campagne packaging complete, Docker, discovery globale e smoke
+radice esclusi, salvo delta concreto che ne invalida un requisito. La build/audit
+sdist/wheel e I restano comunque obbligatori, distinti dalla campagna packaging.
+
+Report datato creato **solo dopo** esperimento reale in
+`documentation/benchmarks/<data>-a002-native.md`: corpus/versioni/licenze,
+hardware/config/comandi/hash, matrice coverage e metriche/errori per tentativo,
+tempo/memoria/metodo, scope/cache/preparazione, ledger e limiti. Se i gold
+non sono ancora verificati, tutte le misure relative marcate provvisorie;
+non presentare soglie PASS definitive. Documentare FAIL reali e dati mancanti
+anche quando non suggeriscono motore migliore. Nessuna scelta motori/ADR nuova
+necessaria per il contratto minimale del benchmark; una variazione architetturale
+vera ritorna al supervisore e registro ADR secondo skill pertinente.
+
+Uso in `docs/how-to/benchmark-fedelta.md`, contratto in
+`docs/reference/benchmark-fedelta.md` secondo Diátaxis/skill pertinente durante
+implementazione, basati su help e chiamate **verificate**. Il protocollo scientifico
+e le soglie proposte vanno in `scripts/benchmarks/PROTOCOL.md`, collegati anziché
+duplicati. Indice docs può essere aggiornato per le guide effettivamente nuove;
+README generale non deve dichiarare il nuovo prodotto Web implementato.
+
+Per evitare snapshot STALE durante le prove, completare guide/protocollo e
+test prima del loro snapshot tecnico, tenendo i risultati in temp/evidence
+che non altera l'impronta worktree. Dopo l'ultimo workload promuovere report
+reale e guide finali: registrare il delta documentale rispetto allo stage e
+verificare equivalenza byte di package, runner, fixture, gold e config consumati.
+Receipt S/B/I/E/R dello stage conservano la propria attribuzione, non vengono
+dichiarate preflight correnti del worktree documentale cambiato. Il supervisore
+include delta/equivalenza nel freeze finale per review; nessun PASS trasferito
+senza prova d'identità. Se serve un altro workload dopo quei cambi, creare
+nuovi snapshot/S/B/I e preflight secondo guida, ripetendo le prove invalidate.
+Non congelare il report futuro o un ledger vivo come input dello stesso workload.
+
+### 10. File/componenti proposti e ordine di realizzazione
+
+| Destinazione proposta | Contenuto e motivo |
+| --- | --- |
+| `tests/fixtures/conversion-corpus/{sources,inputs,assets,gold,controls}/`, manifest/NOTICE/README | Corpus versionato offline e riferimenti leggibili; binary piccoli redistribuibili, controlli separati dagli output dei motori |
+| `scripts/benchmarks/generate_corpus.py` e helper confinati | Generatori stdlib e orchestration render dei tool host già presenti; hash/prevenzione sovrascrittura |
+| `scripts/benchmarks/benchmark.py` | CLI, tentativi/status/receipt e aggregati; confine esplicito di tool riutilizzabile fuori wheel |
+| `scripts/benchmarks/native_adapters.py` | TXT/Pandoc/legacy installato/expander TeX, selezione esplicita e zero fallback |
+| `scripts/benchmarks/observations.py`, `metrics.py` | Reader gold-blind e comparatore separati, normalizzazioni tipizzate, profilo limitato |
+| `scripts/benchmarks/PROTOCOL.md` e contratti dati di versione1 | Metriche/denominatori/stati/limiti, non API/domain schema |
+| `tests/unit/test_conversion_benchmark.py`, `tests/integration/test_conversion_benchmark.py` | Positivi, mutazioni, sicurezza e contratti runner; eventuale separazione in più file è mezzo ordinario |
+| `documentation/benchmarks/<data>-a002-native.md` | Primo esperimento realmente eseguito e limiti del confronto |
+| `docs/how-to/benchmark-fedelta.md`, `docs/reference/benchmark-fedelta.md`, indice docs | Istruzioni verificate e reference, distinte dal report transitorio |
+| `temp/run-a002-fase1-corpus/{work,evidence,implementation,handovers}/` | Raw, parziali, receipt/ledger/report/checkpoint del rispettivo ruolo, niente codice prodotto solo in temp |
+
+Sequenza: (1) gate/ledger/input e contratti, (2) specifiche e gold draft,
+(3) generatori/render/verifica indipendente, avvio controllo umano,
+(4) reader/scorer e positivi/negativi mentre arriva verifica,
+(5) adapters/runner e test di stato/sicurezza,
+(6) stabilizzare codice/fixture, nuovi snapshot e S/B/I,
+(7) R e test mirati/regressione selezionata,
+(8) esperimento reale 32 tentativi, scoring e controllo degli output,
+(9) completare eventuali controlli umani/manuali, report/docs/check,
+(10) report completo implementatore/checkpoint al supervisore.
+Fix ordinari nello stesso mandato; nessuna consegna intermedia per freeze o
+test rosso. Se il fix cambia input, nuove identità e ripetizione prove invalide.
+
+## Criteri di accettazione e verifiche
+
+Esiti nella tabella sono **attesi**, non risultati eseguiti. Tutte le prove
+di contenuto/runner sono locali e senza ML; gli stub di errore sono dichiarati.
+Le stime per riga si sovrappongono alle fasi della stima totale, non si sommano
+una seconda volta. L'esperimento può consegnare qualità FAIL del motore, ma
+non gold falsamente verificati, prove del runner assenti o batch falsamente completo.
+
+| ID / requisito | Prova e artefatto atteso | Esito di accettazione / dipendenze | Costo stimato |
+| --- | --- | --- | --- |
+| A01 base/mandato | Branch/base/delta e piano/arbitrato reali, entry ledger | Feature da dev verificata; niente Git automatico o base nascosta; quota disposta dal supervisore | 15 min preparazione |
+| A02 corpus tutte classi | Inventario 10ID/9pPDF/asset/sorgenti, hash/licenze, due generazioni | Copertura tabella, fixture piccole offline, nessun dato terzo incerto; byte o contenuto riproducibile distinto | 75 min generation/spec più test |
+| A03 gold indipendente | Trascrizione/annotazioni, render effettivi e receipt checklist | Tutte 12 pagine di controllo e capitoli EPUB controllati; umano reale nominato; TeX compilation lacuna accettata esplicitamente | 85 min verificatore + authoring incluso A02 |
+| A04 observations | Reader su bundle positivo, raw/offset e test gold differente | Digest osservazioni invariato al cambiare gold; no expected injection; unknown visibile | 40 min sviluppo/test entro runner |
+| A05 metriche | Assert di numeratori/denominatori/diff per ogni fenomeno | Positivi passano gates automatici; tutti i negativi critici rilevati, manual/unavailable distinti | 70 min sviluppo/test entro runner |
+| A06 pagine/ordine/ambiguità | Controllo 3pC10, swap colonne, ripetuti, allineamenti salvati | Page loss distinta da block loss; niente matching duplicato, ambiguo non PASS | 25 min test entro A05 |
+| A07 identità e batch | Omonimia, rerun, empty, mixed-error, interruzione; status/exit per tentativo | Nessuna sovrascrittura; incompleto/errori visibili; report completo non implica batch COMPLETE | 35 min sviluppo/test entro runner |
+| A08 contenuti non fidati | Archivi/path/link/HTML/include/file-size fixtures negative; R su parent/figli | Rifiuto prima di scritture/fetch/comandi; network zero, confinamento non indebolito | 25 min test entro runner |
+| A09 toolchain nuova | Input inventory/snapshot/S/B/I e dieci hash, R nuova e manifest esterno | Official per input finali; installato nel medesimo managed dei figli, non solo sync/no-sync | 25 min build/install, 20 min preparazione |
+| A10 baseline reale | 32attempt, raw/native + 3percorsi legacy, tempi/RSS/limiti, output audit | ≥1 nativo completo con media realmente presenti, fedeltà misurata; FAIL conservati; nessun OCR mock spacciato reale | 25 min workload/scoring automatico |
+| A11 regressioni | Mirati, suite veloce, collection/exit/nodi; preflight prima | Nuovo codice/test PASS; regressioni rilevanti non occultate; a001 non riconvalidata per cambio chat | 45 min inclusi diagnosi/rerun |
+| A12 consegna e costi | Report reale, guide/help verificati, ledger/checkpoint e link/diff | Ruoli/stati/costi corretti; 5PDF NOT_MEASURED visibili; nessuna scelta motori/fase2 | 45 min registri/docs + riserva |
+
+### Stima numerica e quota unica proposta
+
+Stima per l'**intera implementazione e consegna**, non per questa pianificazione
+né autorizzazione di spesa. Assunzioni: hardware CPU locale indicato, tool host
+presenti, backend/lock/cache/tokenizer conservati utilizzabili dopo audit,
+32conversioni brevi sequenziali, due generazioni corpus, nessun download.
+Se una dipendenza offline manca, non compensare con acquisizione implicita:
+proporre lacuna o nuova risorsa al supervisore. Non usare quote residue a001.
+
+| Fase | Tempo trascorso stimato, incluso ragionamento/diagnosi | CPU user+system stimata | Picco disco aggiunto / RAM campionata stimati |
+| --- | --- | --- | --- |
+| Preparazione/input/gate/ledger | 45 min | 120 s | 100 MiB / 256 MiB |
+| Specifiche/generatori/2corpus/render | 90 min | 450 s | 500 MiB / 1,5 GiB |
+| Runner/adapters/reader/metriche | 240 min | 180 s | 100 MiB / 512 MiB |
+| Build sdist/wheel, installazione base/dev/preflight | 25 min | 180 s | 700 MiB / 1 GiB |
+| Positivi/negativi/regressioni | 45 min | 600 s | 300 MiB / 1 GiB |
+| Workload32 + scoring | 25 min | 300 s | 200 MiB / 512 MiB |
+| Verifica gold e output, incluso umano | 85 min | 120 s | 100 MiB / 1,5 GiB |
+| Report/guide/identità/checkpoint e checks | 45 min | 150 s | 200 MiB / 512 MiB |
+| **Base** | **600 min = 10 h = 36.000 s** | **2.100 s = 35 min CPU** | Somma prudente ≤2,2 GiB nuovi; picco RAM stimato ≤2 GiB |
+| Margine fix ordinari 30% del tempo base | 180 min = 3 h | 2.100 s aggiuntivi prudenziali | fino1 GiB ulteriore per tentativi/registri |
+| Riserva consegna/chiusura e verifiche finali | 120 min = 2 h | 300 s | 0,8 GiB riservati per receipt/report/archive-ready |
+| **Inviluppo unico proposto** | **900 min = 15 h = 54.000 s** | Atteso ≤4.500 s; tetto proposto **7.200 CPU-s** | **4 GiB** crescita disco e **8 GiB** RAM obiettivo operativo massimo |
+
+Quota unica multidimensionale da disporre **una volta** nel mandato: 15h wall,
+2h CPU aggregate dei processi propri, 4GiB aggiuntivi, traffico di acquisizione/
+documenti **0byte**, costo nuovi servizi/acquisizioni **€0**. Costi fissi della
+sessione/energia non stimati; non presentarli come costo totale dell'agente.
+8GiB RAM è limite operativo proposto, non upper RSS già garantito dai tool:
+campionamento può perdere picchi. Stop prudenziale se RSS aggregato osservato
+supera6GiB; uso di limiti standard per processo solo se compatibili. Se serve
+un hard cap RSS aggregato certificato, il supervisore deve disporre un cgroup
+già disponibile/altro confine prima del workload; niente privilegi persistenti
+impliciti. Riportare limite di misura, non attestare un massimo non osservabile.
+
+Contabilizzazione: ledger append-only con start/end UTC+monotonic, stage,
+tentativo/config/hash, durata, CPU misurata o UNAVAILABLE, delta byte logici
+e blocchi allocati senza sommare hardlink; disco gross retained/parziali e
+picco, strumenti/processi propri. Timer dell'obiettivo parte dal mandato di
+implementazione, include ragionamento, diagnosi, build/test, attese e registri,
+non soltanto runtime dei figli. Per nuove chat timestamp e ledger preservati,
+nessun reset. Tempo umano può sovrapporsi al lavoro indipendente: per prudenza
+la stima sopra lo conta per intero. Pause esplicite registrate, non azzerano
+contatori o estendono automaticamente la quota. CPU inferita dichiarata tale;
+non sommare tempo wall a CPU o dichiarare upper quando manca misura di figli.
+
+Prima di ogni stage: gate con elapsed reale e costo previsto, inclusa riserva
+**2h e0,8GiB** della consegna. Stop nuovo workload a wall13h, disco3,2GiB
+o CPU stimata/misurata prossima al tetto senza margine; consegnare registri/
+checkpoint nella riserva. Se stima residua supera quella disponibile, segnalare
+limite sostanziale e continuare soli indipendenti compatibili; non espandere
+cap/traffic e non eliminare raw per far rientrare il ledger. Controllo periodico
+≤30s dei processi propri, chiusura process group su timeout, parziali conservati.
+Preflight di spazio attuale richiesto prima delle copie; 117GiB precedente
+non è una misura odierna né un cap. Nessun prune/pulizia globale preventiva.
+
+I tempi stimati comprendono un giro ordinario di fix interno, non numero
+illimitato di review. Review indipendenti e arbitrato del supervisore sono
+passaggi di ruolo successivi, con propri costi; non vengono finti come lavoro
+eseguito né addebitati a questo workload. I fix richiesti rientrano nel mandato
+finché resta quota; eventuale estensione è decisione sostanziale reale.
+
+## Rischi, migrazione e recupero
+
+| Rischio / alternativa significativa | Trattamento entro mandato | Limite o arresto sostanziale |
+| --- | --- | --- |
+| Gold condiviso con generatore può replicare errore | Render effettivo indipendente, checklist completa, controllo umano; correggere prima canonizzazione, nuova revision/hash | Nessuna firma inventata; indisponibilità umano→PROVISIONAL, criterio non completato |
+| SVG export produce glifi/overflow o font fallback | Coordinate/box espliciti, font identificato, Poppler tutte pagine, correggere layout in stesso incremento; mutool fonte alternativa | Nessuna perdita contenuto accettata per ridurre file/pagine; tool nuovo/licenza incerta torna al supervisore |
+| DOCX/RTF writer minimale malformato | Validazione ZIP/XML/relationship, render LO e apertura indipendente; fix generatore e ripetere gold/input/prove | Non adottare output motore come riferimento per sopperire |
+| EPUB viewer o render formula non disponibile sotto isolamento | Bundle XHTML actual e controllo offline designato; distinguere resa gold/output/TeX | Nessuna pretesa tipografica senza renderer; lacuna esplicita, non N/A automatico |
+| Pandoc/legacy perde asset, formula o riferimento | FAIL motore conservato e scanner controllato dal positivo; ramo diretto distinto dal legacy | ≥1 nativo completo resta criterio; mancata riuscita di tutti richiede diagnosi concreta, non mock sostitutivo |
+| Parser limitato può sbagliare token/normalizzazione | Test escape/fence/HTML/table/math; unknown e margine allineamento; nessun gold access nel reader | Ambiguità/unavailable impediscono PASS complessivo, futura estensione controllata |
+| Metriche manuali formula/asset hanno costo e discrezionalità | Checklist/diff/ritagli e motivazione, giudizio distinto dalla sintassi; esaminare output diversi per hash, riuso solo su byte identici verificati | Non dichiarare semantica/tipografia verificate da sola renderizzabilità o stringa |
+| R/toolchain non funzionano o alias venv errato | Diagnosi, nuova venv/input audit offline, escalation tool se disponibile mantenendo R; fix propri launcher in stessa chat | Rifiuto approvazione, assenza risorsa offline o confinamento irrealizzabile→blocco dipendente e limiti espliciti |
+| Crescita disco/log o timer incompleto | Ledger globale, stream concisi, page-at-a-time, tentativi esclusivi e stop con riserva | Non resettare quote o omettere registri; niente costo aggiuntivo tacito |
+| Cambio fixture/code dopo prova | Nuova identità/snapshot tecnico autonomo, repeat invalidati; prima canonizzazione conserva draft/fallimenti utili | Input protetti/gold canonico difforme irrecuperabile è arresto; non riscrivere baseline approvata |
+
+Nessuna migrazione dati operativi, schema prodotto o servizio da riavviare.
+Le modifiche sono additive nelle destinazioni proposte; il prodotto legacy
+resta sorgente di caratterizzazione. Recupero: correggere solo propri file
+autorizzati, nuove directory per tentativi, nessun reset/clean/stash automatico.
+Conservare baseline, gold canonici, receipt/a001 e arbitrati. Una correzione del
+gold già convalidato richiede revisione esplicita con motivo e nuove prove,
+mai sostituzione silenziosa per migliorare il motore.
+
+Distinguere tre categorie nel mandato:
+
+- Protetti: a001 receipt/snapshot/keeper, corpus/gold convalidati e control
+  baseline usati per confronto, output precedenti e piano/arbitrato consegnati.
+- Determinanti prova: codice runner/expander/reader/scorer e generatori,
+  input canonici/config profilo/lock/backend/interprete/installazione/tool/font;
+  autorizzate correzioni proprie con nuove versioni e ripetizione invalidati.
+- Adattabili: timeout entro≤900tool/quota, log senza soppressione errori,
+  path/suffissi esclusivi in work/evidence, launcher/reader tecnici propri
+  che conservano contratto e confinamento. Argv effettivi sempre registrati,
+  non riscrivere argv storico né chiedere autorizzazione per ogni tentativo.
+
+Arresti sostanziali esclusivamente quelli del protocollo: cambio obiettivo/
+requisito o assunzione decisiva, costi/confini nuovi, irreversibile non autorizzato,
+input protetti irrecuperabili, impossibilità concreta criteri/isolamento,
+rifiuto effettivo approvazione, risorse esaurite o pausa esplicita. Continuare
+intanto indipendenti autorizzati; errore ordinario/test rosso non è handover.
+
+### Lacune da sottoporre al supervisore e alle due review
+
+| ID | Lacuna proposta / stato | Perché compatibile o dipendenza necessaria | Prova successiva |
+| --- | --- | --- | --- |
+| L01 | Conversione C06–C10 PDF/OCR NOT_MEASURED | Corpus costruito/verificato, ML/pesi/remoto fuori scope; non omissione del corpus | Run successiva Docling/Marker autorizzata con stessi hash/gold e resource envelope |
+| L02 | Compilazione TeX progetto C05 NOT_MEASURED | Source gold/include/asset controllabili e native Pandoc reale; SVG illustrativo non render del progetto | Ambiente TeX isolato esplicito con costi/tool/font identificati |
+| L03 | Controllo umano gold/output non ancora svolto | È dipendenza **da assegnare**, non deroga automatica; supervisore designa verificatore e sessione unica, niente approvazioni per ogni comando | Receipt umane effettive durante implementazione; senza di esse consegna gold resta incompleta/provvisoria |
+| L04 | Tipografia/semantica formule output UNAVAILABLE finché manca metodo/controllo | Sintassi/simboli misurati indipendentemente; nessuna garanzia semantica dalla stringa | Verifica manuale del campione e renderer identificato dove necessario, oppure limite dichiarato nell'arbitrato |
+| L05 | Cache OS fredda/hard peak RSS/GPU/altre piattaforme non misurati | Workload locale leggero con metodo trasparente; non serve certificazione universale | Esperimento separato mirato, senza trasferimento prestazioni |
+
+L01/L02/L04/L05 sono limiti dichiarati da valutare nelle review, non motivi per
+omettere metriche applicabili. L03 è requisito reale di verifica dei riferimenti:
+il piano non autorizza a etichettare gold VERIFIED senza quella prova.
+
+## Consegne e handover
+
+Consegna corrente del pianificatore: questo piano, proprie sonde/versioni/
+identità e [checkpoint planning-r001](../handovers/planning-r001.md).
+Nessun corpus, runner, benchmark o risultato di conversione è stato creato.
+Nessuno STATE, evento, indice condiviso, changelog o checkpoint supervisore
+modificato dal pianificatore. Nessuno snapshot comune o report reviewer.
+
+Alla futura consegna implementatrice: file/tool/fixture/documentazione indicati,
+report di implementazione con requisiti A01–A12 e lacune L01–L05, decisioni
+significative/fix/prove invalidate, raw/errori/negativi/positivi/ledger,
+S/B/I/R e manifest esterni finali, checklist reale di verifica gold,
+coverage per tutti i dieci documenti e checkpoint implementatore senza processi
+propri pendenti. Il supervisore aggiorna stato/changelog/indici per avanzamenti
+significativi e crea lo snapshot comune del **risultato completo** per le due
+review. Archive-ready mantiene byte/hash, non ordina pulizia o Git.
+
+Prossimo ruolo: **supervisore per ricezione e avvio delle review piano**.
+Ricevere piano/evidenze, riconciliare feature già presente, valutare quota e
+assegnazione controllo umano/lacune, creare/verificare snapshot comune,
+preparare due prompt con identico perimetro/criteri per nuove chat indipendenti
+ChatGPT e Claude e output separati. Arbitrato reale prima del mandato;
+nessun GO anticipato. Commit/merge/push/main restano manuali dell'utente dopo
+GO sul risultato; nessun deploy incluso.
+
+Questo piano **non è autorizzazione a implementare**. Correzioni locali delle
+review possono essere recepite come errata verificate nell'arbitrato senza
+riscrivere revisioni precedenti; cambio decisivo richiede piano nuovo motivato.

@@ -1,0 +1,16 @@
+{
+  "path": "temp/run-a002-fase1-corpus/snapshots/closure-reduced-scope-r001.json",
+  "sha256": "d758940478324564f987208fc90f8844af529f1314a888b3348b3280ea6ab3f7",
+  "worktree_sha256": "e355f10610d6faec7d67ecd3b7742121fb767f527df91ad4e57006c77495a6f8",
+  "files": 352,
+  "artifacts": 8,
+  "meaning": "Closure identity only; explicit user reduced-scope acceptance, not technicalGO",
+  "cwd": "/home/davide/workarea/markdown-for-llms",
+  "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/tmp/a002-close-reduced-scope.py"
+  ],
+  "manager": "scripts/run_context.py snapshot(root,Namespace(...))"
+}

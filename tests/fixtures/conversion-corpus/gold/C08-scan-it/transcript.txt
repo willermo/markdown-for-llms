@@ -1,0 +1,37 @@
+[b01; pagina=1; tipo=heading]
+Misure soltanto visibili
+
+[b02; pagina=1; tipo=paragraph]
+Valori italiani visibili 0012, 123,45 e −7. Accenti: città, perché, più; ambiguità O/0 e l/1. Questa scansione sintetica non ha testo nascosto. Ogni parola visibile va controllata sul render, e la trascrizione Unicode è una convenzione dichiarata, non un encoding recuperato dal PDF.
+
+[b03; pagina=1; tipo=formula]
+
+
+\frac{x_i+1}{2}
+
+[b04; pagina=1; tipo=formula]
+
+
+\sum_{i=1}^{n}x_i
+
+[b05; pagina=1; tipo=table]
+
+
+Codice | Valore | Nota
+
+0012 | 0 | 
+
+Celle misurate
+
+[b06; pagina=1; tipo=figure]
+Figura 1 — Tre regioni e assi del laboratorio.
+
+[b07; pagina=1; tipo=paragraph]
+Fonte visibile
+
+link: fonte → https://example.invalid/ricerca?serie=0012&mode=a_b#nota
+
+note_call: nota → n1
+
+[b08; pagina=1; tipo=note]
+Nota scansione: temperatura −4.

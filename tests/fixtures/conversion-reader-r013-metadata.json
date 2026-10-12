@@ -1,0 +1,130 @@
+[
+  {
+    "id": "metadata-LF-quote-span-0",
+    "raw": "> È [x]{#safe\n> onclick=\"x\"} <script>x</script>",
+    "attr_char": 16,
+    "attr_byte": 17,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-quote-span-1",
+    "raw": "> È [x]{title=\"long\n> value\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 29,
+    "attr_byte": 30,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-quote-link-0",
+    "raw": "> È [x](https://example.invalid){#safe\n> onclick=\"x\"} <script>x</script>",
+    "attr_char": 41,
+    "attr_byte": 42,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-quote-link-1",
+    "raw": "> È [x](https://example.invalid){title=\"long\n> value\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 54,
+    "attr_byte": 55,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-list-span-0",
+    "raw": "- È [x]{#safe\n    onclick=\"x\"} <script>x</script>",
+    "attr_char": 18,
+    "attr_byte": 19,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-list-span-1",
+    "raw": "- È [x]{title=\"long\n    value\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 31,
+    "attr_byte": 32,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-list-link-0",
+    "raw": "- È [x](https://example.invalid){#safe\n    onclick=\"x\"} <script>x</script>",
+    "attr_char": 43,
+    "attr_byte": 44,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-list-link-1",
+    "raw": "- È [x](https://example.invalid){title=\"long\n    value\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 56,
+    "attr_byte": 57,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-tab-span-0",
+    "raw": "Text[^n].\n\n[^n]: È [x]{#safe\n\tonclick=\"x\"} <script>x</script>",
+    "attr_char": 30,
+    "attr_byte": 31,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-tab-span-1",
+    "raw": "Text[^n].\n\n[^n]: È [x]{title=\"long\n\tvalue\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 43,
+    "attr_byte": 44,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-tab-link-0",
+    "raw": "Text[^n].\n\n[^n]: È [x](https://example.invalid){#safe\n\tonclick=\"x\"} <script>x</script>",
+    "attr_char": 55,
+    "attr_byte": 56,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-tab-link-1",
+    "raw": "Text[^n].\n\n[^n]: È [x](https://example.invalid){title=\"long\n\tvalue\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 68,
+    "attr_byte": 69,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-spaces-span-0",
+    "raw": "Text[^n].\n\n[^n]: È [x]{#safe\n    onclick=\"x\"} <script>x</script>",
+    "attr_char": 33,
+    "attr_byte": 34,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-spaces-span-1",
+    "raw": "Text[^n].\n\n[^n]: È [x]{title=\"long\n    value\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 46,
+    "attr_byte": 47,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-spaces-link-0",
+    "raw": "Text[^n].\n\n[^n]: È [x](https://example.invalid){#safe\n    onclick=\"x\"} <script>x</script>",
+    "attr_char": 58,
+    "attr_byte": 59,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  },
+  {
+    "id": "metadata-LF-note-spaces-link-1",
+    "raw": "Text[^n].\n\n[^n]: È [x](https://example.invalid){title=\"long\n    value\" onclick=\"x\"} <script>x</script>",
+    "attr_char": 71,
+    "attr_byte": 72,
+    "snippet": "onclick=\"x\"",
+    "detail": "Active markdown attribute"
+  }
+]

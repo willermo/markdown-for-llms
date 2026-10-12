@@ -82,6 +82,9 @@ def binding_check(args):
 
 def target_files_check(target):
     """Legge startup/prerequisiti prima di avviare l'interprete target."""
+    monitor=Path(__file__).resolve().parents[2]/'benchmarks/resources.py'
+    if not any(item['path']==str(monitor) for item in target['files']):
+        raise ValueError('Monitor dei figli non legato al target')
     for item in target['files']:
         p = Path(item['path'])
         if not p.is_file() or p.stat().st_size != item['bytes'] or digest(p) != item['sha256']:
@@ -122,47 +125,25 @@ def snapshot_check(repo, snapshot, python):
 
 
 def monitored_command(argv, cwd, output, timeout):
-    observed = {}
-    start = time.monotonic()
-    with (output / "command-stdout.txt").open("xb") as stdout, (output / "command-stderr.txt").open("xb") as stderr:
-        proc = subprocess.Popen(argv, cwd=cwd, stdout=stdout, stderr=stderr, close_fds=True, start_new_session=True)
-        timed_out = False
-        while True:
-            # Sola lettura dei PID del processo proprio, mai segnali a processi altrui.
-            pending = [proc.pid]
-            seen = set()
-            while pending:
-                pid = pending.pop()
-                if pid in seen:
-                    continue
-                seen.add(pid)
-                try:
-                    root = Path(f"/proc/{pid}")
-                    ns = os.readlink(root / "ns/net")
-                    cmdline = (root / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
-                    observed[f"{pid}:{ns}:{cmdline}"] = {"pid": pid, "netns": ns, "cmdline": cmdline}
-                    for task in (root / "task").iterdir():
-                        pending.extend(int(child) for child in (task / "children").read_text().split())
-                except (FileNotFoundError, ProcessLookupError, PermissionError):
-                    pass
-            if proc.poll() is not None:
-                break
-            if (time.monotonic() - start > timeout or stdout.tell() > 1048576 or stderr.tell() > 1048576):
-                os.killpg(proc.pid, signal.SIGTERM)
-                try:
-                    proc.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    os.killpg(proc.pid, signal.SIGKILL)
-                    proc.wait()
-                timed_out = True
-                break
-            time.sleep(0.01)
-    ns = os.readlink("/proc/self/ns/net")
-    return {"argv": argv, "cwd": str(cwd), "pid": proc.pid, "exit_code": proc.returncode, "timed_out": timed_out,
-            "duration_seconds": time.monotonic() - start, "observed_processes": list(observed.values()),
-            "command_namespace_observed": any(item["pid"] == proc.pid and item["netns"] == ns for item in observed.values()),
-            "observed_namespaces_match": all(item["netns"] == ns for item in observed.values()),
-            "stdout": "command-stdout.txt", "stderr": "command-stderr.txt"}
+    # Trusted stdlib-only resource helper, bound by the target and snapshot.
+    path=Path(__file__).resolve().parents[2]/'benchmarks/resources.py'
+    spec=importlib.util.spec_from_file_location('a002_resources_monitor',path)
+    monitor=importlib.util.module_from_spec(spec);spec.loader.exec_module(monitor)
+    # R's output already exists. The helper writes into a fresh child directory.
+    temporary=output/'command-monitor'
+    ns=os.readlink('/proc/self/ns/net')
+    receipt=monitor.run(argv,cwd,temporary,dict(os.environ),timeout,
+                        stdout_name='command-stdout.txt',stderr_name='command-stderr.txt',expected_netns=ns)
+    for name in ('command-stdout.txt','command-stderr.txt'):
+        (temporary/name).rename(output/name)
+    write_new(output/'command-resources.json',receipt)
+    observed=receipt['observed_processes']
+    return {'argv':argv,'cwd':str(cwd),'pid':receipt['pid'],'exit_code':receipt['adapter_exit'],
+            'timed_out':bool(receipt['stop_reason']),'deadline_exceeded':receipt['timeout'],'guard_reason':receipt['stop_reason'],
+            'duration_seconds':receipt['conversion_elapsed_s'],'children_reaped':receipt['children_reaped'],
+            'observed_processes':observed,'command_namespace_observed':any(i['pid']==receipt['pid'] and i['netns']==ns for i in observed),
+            'observed_namespaces_match':all(i['netns'] in (None,ns) for i in observed),
+            'resources':'command-resources.json','stdout':'command-stdout.txt','stderr':'command-stderr.txt'}
 
 
 def inside(args, target):
@@ -194,9 +175,14 @@ def inside(args, target):
         command = args.command[1:] if args.command[0] == "--" else args.command
         if not command or not Path(command[0]).is_absolute():
             raise ValueError("Il comando deve iniziare con un eseguibile assoluto")
-        result["command"] = monitored_command(command, args.cwd, output, args.timeout)
+        try:
+            result["command"] = monitored_command(command, args.cwd, output, args.timeout)
+        except (OSError,ValueError,RuntimeError) as exc:
+            result.update(status='FAIL',error=f'{type(exc).__name__}: {exc}')
+            write_new(output/'inside.json',result)
+            return 2
         item = result["command"]
-        passed = (item["exit_code"] == args.expected_exit and not item["timed_out"] and
+        passed = (item["exit_code"] == args.expected_exit and not item["timed_out"] and not item["guard_reason"] and item["children_reaped"] and
                   item["command_namespace_observed"] and item["observed_namespaces_match"])
         result["status"] = "PASS" if passed else "FAIL"
     else:

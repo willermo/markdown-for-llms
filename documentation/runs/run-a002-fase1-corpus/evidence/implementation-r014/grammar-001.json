@@ -1,0 +1,4817 @@
+{
+  "rows": [
+    {
+      "id": "grammar-0",
+      "raw_sha256": "82de431f2f67deddf8b4acf9b1690b24cccc457bf2c47899f6b6ee9a882d47c2",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "82de431f2f67deddf8b4acf9b1690b24cccc457bf2c47899f6b6ee9a882d47c2",
+        "raw_bytes": 12,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{x}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 7,
+              "byte_start": 0,
+              "byte_end": 7,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "unknown": [
+                    "x"
+                  ]
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 8,
+              "char_end": 12,
+              "byte_start": 8,
+              "byte_end": 12,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 8,
+                  "byte": 8,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 9,
+                  "byte": 9,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 12,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "82de431f2f67deddf8b4acf9b1690b24cccc457bf2c47899f6b6ee9a882d47c2"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "82de431f2f67deddf8b4acf9b1690b24cccc457bf2c47899f6b6ee9a882d47c2",
+        "observations_sha256": "584dd68603f02f3120d790f7ea5b2804f7e1d7f43338d03a3018e9359b56926d"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[a]{x}\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-1",
+      "raw_sha256": "74f49488a1be32edb53d936cd80935a22f31c153c74290e6e906cc1253ce7432",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "74f49488a1be32edb53d936cd80935a22f31c153c74290e6e906cc1253ce7432",
+        "raw_bytes": 13,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{#1}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 8,
+              "byte_start": 0,
+              "byte_end": 8,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [
+              "1"
+            ],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "id": "1"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 9,
+              "char_end": 13,
+              "byte_start": 9,
+              "byte_end": 13,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 9,
+                  "byte": 9,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 13,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "74f49488a1be32edb53d936cd80935a22f31c153c74290e6e906cc1253ce7432"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "74f49488a1be32edb53d936cd80935a22f31c153c74290e6e906cc1253ce7432",
+        "observations_sha256": "f84fd89fc21b686a119e8a5c79a6e994d82535ce491a28ddbd1aefda9099fa8e"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"1\",[],[]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-2",
+      "raw_sha256": "e41b70cff0fcc8d2d6980b8e6d06940bb513a3dad24fe0679c690fa1b54d0d83",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "e41b70cff0fcc8d2d6980b8e6d06940bb513a3dad24fe0679c690fa1b54d0d83",
+        "raw_bytes": 13,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{.1}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 8,
+              "byte_start": 0,
+              "byte_end": 8,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "classes": [
+                    "1"
+                  ]
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 9,
+              "char_end": 13,
+              "byte_start": 9,
+              "byte_end": 13,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 9,
+                  "byte": 9,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 13,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "e41b70cff0fcc8d2d6980b8e6d06940bb513a3dad24fe0679c690fa1b54d0d83"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "e41b70cff0fcc8d2d6980b8e6d06940bb513a3dad24fe0679c690fa1b54d0d83",
+        "observations_sha256": "0f07bdb34af363bbc61bb0736c97bd9ba9366cbe4b5f8457bc00255b57d1152b"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[a]{.1}\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-3",
+      "raw_sha256": "01ad4882ae34ea2b15e79be2e2d3d8fb9c883c65148faac6faccb1926bccc106",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "01ad4882ae34ea2b15e79be2e2d3d8fb9c883c65148faac6faccb1926bccc106",
+        "raw_bytes": 18,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{key='x'}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 13,
+              "byte_start": 0,
+              "byte_end": 13,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "key": "'x'"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 14,
+              "char_end": 18,
+              "byte_start": 14,
+              "byte_end": 18,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 16,
+                  "byte": 16,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 18,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "01ad4882ae34ea2b15e79be2e2d3d8fb9c883c65148faac6faccb1926bccc106"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "01ad4882ae34ea2b15e79be2e2d3d8fb9c883c65148faac6faccb1926bccc106",
+        "observations_sha256": "15127220223c5387a5382d609557c4fe237c456a7c1746839bdf5cccfa3224f3"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"key\",\"x\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-4",
+      "raw_sha256": "e024a244fa2b4eb7ef39b1624b6a09c897ce91808cf1a549ecc76c2a8ae2adf6",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "e024a244fa2b4eb7ef39b1624b6a09c897ce91808cf1a549ecc76c2a8ae2adf6",
+        "raw_bytes": 14,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{a=b}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 9,
+              "byte_start": 0,
+              "byte_end": 9,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "a": "b"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 10,
+              "char_end": 14,
+              "byte_start": 10,
+              "byte_end": 14,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 14,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "e024a244fa2b4eb7ef39b1624b6a09c897ce91808cf1a549ecc76c2a8ae2adf6"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "e024a244fa2b4eb7ef39b1624b6a09c897ce91808cf1a549ecc76c2a8ae2adf6",
+        "observations_sha256": "a94855ef68c6e766e8c37c1f303a782755c36c2b658564a16f3dfb1d80b18dbe"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"a\",\"b\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-5",
+      "raw_sha256": "746a5fae568fcb6d2282e024df5752f6781232f82b2d752eb68db6774f1b036a",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "746a5fae568fcb6d2282e024df5752f6781232f82b2d752eb68db6774f1b036a",
+        "raw_bytes": 13,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{a=}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 8,
+              "byte_start": 0,
+              "byte_end": 8,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "a": ""
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 9,
+              "char_end": 13,
+              "byte_start": 9,
+              "byte_end": 13,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 9,
+                  "byte": 9,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 13,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "746a5fae568fcb6d2282e024df5752f6781232f82b2d752eb68db6774f1b036a"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "746a5fae568fcb6d2282e024df5752f6781232f82b2d752eb68db6774f1b036a",
+        "observations_sha256": "8c351fd97bfd06541ee6941f31860fd8efb347a77462b781f2c404137d7b0b2e"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"a\",\"\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-6",
+      "raw_sha256": "30ed25f4de7709e969bb126f5fdb526bb896f79b244ccef286ecb168474fdd67",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "30ed25f4de7709e969bb126f5fdb526bb896f79b244ccef286ecb168474fdd67",
+        "raw_bytes": 16,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{a = b}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 11,
+              "byte_start": 0,
+              "byte_end": 11,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "": "",
+                  "unknown": [
+                    "a",
+                    "b"
+                  ]
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 12,
+              "char_end": 16,
+              "byte_start": 12,
+              "byte_end": 16,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 16,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "30ed25f4de7709e969bb126f5fdb526bb896f79b244ccef286ecb168474fdd67"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "30ed25f4de7709e969bb126f5fdb526bb896f79b244ccef286ecb168474fdd67",
+        "observations_sha256": "89f53eec82fac2fd30c295a2542e0995d12b744fba5aa244cf1495167a82aa94"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[a]{a\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"=\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"b}\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-7",
+      "raw_sha256": "0f58651d1914099e6e2e90a3dac100d59b5620a812bc4949b4cdb82c0bd811f8",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "0f58651d1914099e6e2e90a3dac100d59b5620a812bc4949b4cdb82c0bd811f8",
+        "raw_bytes": 19,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{key=a<b>}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 14,
+              "byte_start": 0,
+              "byte_end": 14,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "key": "a<b>"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 15,
+              "char_end": 19,
+              "byte_start": 15,
+              "byte_end": 19,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 16,
+                  "byte": 16,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 19,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "0f58651d1914099e6e2e90a3dac100d59b5620a812bc4949b4cdb82c0bd811f8"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "0f58651d1914099e6e2e90a3dac100d59b5620a812bc4949b4cdb82c0bd811f8",
+        "observations_sha256": "c1fc36f9c62a6768e32131964f5012e8a6b3997165e2c9641aba93c13b95a95a"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"key\",\"a<b>\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-8",
+      "raw_sha256": "7956fa6e3d6fa6f9fe97cc6237a574da45b475609b00ba49fd2025d2e5df5fff",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "7956fa6e3d6fa6f9fe97cc6237a574da45b475609b00ba49fd2025d2e5df5fff",
+        "raw_bytes": 21,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{key=\"a{b}\"}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 16,
+              "byte_start": 0,
+              "byte_end": 16,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "[a]{key=\"a{b}\"}",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "[a]{key=\"a{b}\"}",
+            "segments": [
+              {
+                "type": "text",
+                "text": "[",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 0,
+                  "byte": 0,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "]",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 2,
+                  "byte": 2,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "{",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 3,
+                  "byte": 3,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "k",
+                "start": 4,
+                "end": 5,
+                "source_position": {
+                  "char": 4,
+                  "byte": 4,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "e",
+                "start": 5,
+                "end": 6,
+                "source_position": {
+                  "char": 5,
+                  "byte": 5,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "y",
+                "start": 6,
+                "end": 7,
+                "source_position": {
+                  "char": 6,
+                  "byte": 6,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "=",
+                "start": 7,
+                "end": 8,
+                "source_position": {
+                  "char": 7,
+                  "byte": 7,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "\"",
+                "start": 8,
+                "end": 9,
+                "source_position": {
+                  "char": 8,
+                  "byte": 8,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "a",
+                "start": 9,
+                "end": 10,
+                "source_position": {
+                  "char": 9,
+                  "byte": 9,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "{",
+                "start": 10,
+                "end": 11,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "b",
+                "start": 11,
+                "end": 12,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "}",
+                "start": 12,
+                "end": 13,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "\"",
+                "start": 13,
+                "end": 14,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "}",
+                "start": 14,
+                "end": 15,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 17,
+              "char_end": 21,
+              "byte_start": 17,
+              "byte_end": 21,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 19,
+                  "byte": 19,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 20,
+                  "byte": 20,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 21,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "7956fa6e3d6fa6f9fe97cc6237a574da45b475609b00ba49fd2025d2e5df5fff"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "7956fa6e3d6fa6f9fe97cc6237a574da45b475609b00ba49fd2025d2e5df5fff",
+        "observations_sha256": "5e882b623953cc10a0b4a424844aa3de79a282b4bb9fee0d8c8ff18c31bd7327"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"key\",\"a{b}\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-9",
+      "raw_sha256": "2bb3a39916fe9547623e718604cbe949cab6d744b9db61325667925bf51600f3",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "2bb3a39916fe9547623e718604cbe949cab6d744b9db61325667925bf51600f3",
+        "raw_bytes": 21,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{key=\"a\\\"b\"}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 16,
+              "byte_start": 0,
+              "byte_end": 16,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "key": "a\\",
+                  "unknown": [
+                    "b\""
+                  ]
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 17,
+              "char_end": 21,
+              "byte_start": 17,
+              "byte_end": 21,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 19,
+                  "byte": 19,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 20,
+                  "byte": 20,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 21,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "2bb3a39916fe9547623e718604cbe949cab6d744b9db61325667925bf51600f3"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "2bb3a39916fe9547623e718604cbe949cab6d744b9db61325667925bf51600f3",
+        "observations_sha256": "e890b7b538535248030f10867cb3226aa74e8ee4fc8f66e7e07921d60dad7b78"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"key\",\"a\\\"b\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-10",
+      "raw_sha256": "0210fbb26a36e3ceeb611cf5fd34fa53c64db5b3ce7dc115a26c41e6dc54e435",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "0210fbb26a36e3ceeb611cf5fd34fa53c64db5b3ce7dc115a26c41e6dc54e435",
+        "raw_bytes": 12,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{-}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 7,
+              "byte_start": 0,
+              "byte_end": 7,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "unknown": [
+                    "-"
+                  ]
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 8,
+              "char_end": 12,
+              "byte_start": 8,
+              "byte_end": 12,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 8,
+                  "byte": 8,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 9,
+                  "byte": 9,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 12,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "0210fbb26a36e3ceeb611cf5fd34fa53c64db5b3ce7dc115a26c41e6dc54e435"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "0210fbb26a36e3ceeb611cf5fd34fa53c64db5b3ce7dc115a26c41e6dc54e435",
+        "observations_sha256": "f7aed524ea0b7c8a161d19fa17088f6a5b2f3917441fcc8413571e66e08556ac"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[\"unnumbered\"],[]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-11",
+      "raw_sha256": "9d7ce74b1317bff95bd77893665a3f2a49616e464c7705905b64cc91685165b1",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "9d7ce74b1317bff95bd77893665a3f2a49616e464c7705905b64cc91685165b1",
+        "raw_bytes": 16,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{=html}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 11,
+              "byte_start": 0,
+              "byte_end": 11,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "": "html"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 12,
+              "char_end": 16,
+              "byte_start": 12,
+              "byte_end": 16,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 16,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "9d7ce74b1317bff95bd77893665a3f2a49616e464c7705905b64cc91685165b1"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "9d7ce74b1317bff95bd77893665a3f2a49616e464c7705905b64cc91685165b1",
+        "observations_sha256": "1a45db693395f517deccf717cc3392417cf626ae5f940b874faeea7b251ad5de"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[a]{=html}\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-12",
+      "raw_sha256": "942414dfa9744a0ed0d994bc954a0943da212757ec9c372ff6911383fdc7f540",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "942414dfa9744a0ed0d994bc954a0943da212757ec9c372ff6911383fdc7f540",
+        "raw_bytes": 15,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{_x=x}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 10,
+              "byte_start": 0,
+              "byte_end": 10,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "_x": "x"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 11,
+              "char_end": 15,
+              "byte_start": 11,
+              "byte_end": 15,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 15,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "942414dfa9744a0ed0d994bc954a0943da212757ec9c372ff6911383fdc7f540"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "942414dfa9744a0ed0d994bc954a0943da212757ec9c372ff6911383fdc7f540",
+        "observations_sha256": "d87649d324ffe5c15746dd935f5b628026fd3d6257f28cf78e5f062388ac833f"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[a]{_x=x}\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-13",
+      "raw_sha256": "85cc528813c2700bc956e28ba1df5fe1810ba609cd80a3307b9e799ee202b9f8",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "85cc528813c2700bc956e28ba1df5fe1810ba609cd80a3307b9e799ee202b9f8",
+        "raw_bytes": 19,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{data-x=x}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 14,
+              "byte_start": 0,
+              "byte_end": 14,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "data-x": "x"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 15,
+              "char_end": 19,
+              "byte_start": 15,
+              "byte_end": 19,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 16,
+                  "byte": 16,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 19,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "85cc528813c2700bc956e28ba1df5fe1810ba609cd80a3307b9e799ee202b9f8"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "85cc528813c2700bc956e28ba1df5fe1810ba609cd80a3307b9e799ee202b9f8",
+        "observations_sha256": "3028ad3d83c0c4e53045ad5fe124e3dec3a9f4ff7c3aaa6b8dbc685451ae6d61"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"data-x\",\"x\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-14",
+      "raw_sha256": "0e1183ac4cb6429f19dd3dd9043ba1867233dfdda0b16a2e9b43b1ab974832b8",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "0e1183ac4cb6429f19dd3dd9043ba1867233dfdda0b16a2e9b43b1ab974832b8",
+        "raw_bytes": 22,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{xml:lang=it}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 17,
+              "byte_start": 0,
+              "byte_end": 17,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "xml:lang": "it"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 18,
+              "char_end": 22,
+              "byte_start": 18,
+              "byte_end": 22,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 19,
+                  "byte": 19,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 20,
+                  "byte": 20,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 21,
+                  "byte": 21,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 22,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "0e1183ac4cb6429f19dd3dd9043ba1867233dfdda0b16a2e9b43b1ab974832b8"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "0e1183ac4cb6429f19dd3dd9043ba1867233dfdda0b16a2e9b43b1ab974832b8",
+        "observations_sha256": "eec754376eb0be165244b482a31c0ab879fd2838409a013f26e50d34a00de81f"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"xml:lang\",\"it\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-15",
+      "raw_sha256": "87e1aaeb7a1114e49131650deb6168f8ac92da1f6ac63faba905eab7d3f6adfe",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "87e1aaeb7a1114e49131650deb6168f8ac92da1f6ac63faba905eab7d3f6adfe",
+        "raw_bytes": 15,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{#a.b}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 10,
+              "byte_start": 0,
+              "byte_end": 10,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [
+              "a.b"
+            ],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "id": "a.b"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 11,
+              "char_end": 15,
+              "byte_start": 11,
+              "byte_end": 15,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 15,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "87e1aaeb7a1114e49131650deb6168f8ac92da1f6ac63faba905eab7d3f6adfe"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "87e1aaeb7a1114e49131650deb6168f8ac92da1f6ac63faba905eab7d3f6adfe",
+        "observations_sha256": "d75a4fc1b952070569bcd5c78e31e5ccb63af37d994f2346896974af8cb8e8a0"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"a.b\",[],[]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-16",
+      "raw_sha256": "376d784c245fa9007bbfc1282e1d426ad2cde9c4c759f6420b2bbd43029ad28c",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "376d784c245fa9007bbfc1282e1d426ad2cde9c4c759f6420b2bbd43029ad28c",
+        "raw_bytes": 15,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{.a.b}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 10,
+              "byte_start": 0,
+              "byte_end": 10,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "classes": [
+                    "a.b"
+                  ]
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 11,
+              "char_end": 15,
+              "byte_start": 11,
+              "byte_end": 15,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 15,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "376d784c245fa9007bbfc1282e1d426ad2cde9c4c759f6420b2bbd43029ad28c"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "376d784c245fa9007bbfc1282e1d426ad2cde9c4c759f6420b2bbd43029ad28c",
+        "observations_sha256": "1cc7ba2fdd63ed89fe7d3ccfaffe003d30cbb553d2b25f59bf25a6ec0f0d64b5"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[\"a.b\"],[]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-17",
+      "raw_sha256": "9bfc3112e547aade2bef4d1c1ead08d80ed4d3f08e160d9b6485b3a323dbc106",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "9bfc3112e547aade2bef4d1c1ead08d80ed4d3f08e160d9b6485b3a323dbc106",
+        "raw_bytes": 21,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{a=\"x\"b=\"y\"}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 16,
+              "byte_start": 0,
+              "byte_end": 16,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "a": "x",
+                  "b": "y"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 17,
+              "char_end": 21,
+              "byte_start": 17,
+              "byte_end": 21,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 19,
+                  "byte": 19,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 20,
+                  "byte": 20,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 21,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "9bfc3112e547aade2bef4d1c1ead08d80ed4d3f08e160d9b6485b3a323dbc106"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "9bfc3112e547aade2bef4d1c1ead08d80ed4d3f08e160d9b6485b3a323dbc106",
+        "observations_sha256": "5d7df62126534bf6275f8d93522492f70a56adf15599a4d418e55da1f1ba0150"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"a\",\"x\"],[\"b\",\"y\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-18",
+      "raw_sha256": "1ae66fdac3c54f40a216edb142ab8acbababeafe59c95278975ae59168365586",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "1ae66fdac3c54f40a216edb142ab8acbababeafe59c95278975ae59168365586",
+        "raw_bytes": 16,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{#x .c}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 11,
+              "byte_start": 0,
+              "byte_end": 11,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [
+              "x"
+            ],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "id": "x",
+                  "classes": [
+                    "c"
+                  ]
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 12,
+              "char_end": 16,
+              "byte_start": 12,
+              "byte_end": 16,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 16,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1ae66fdac3c54f40a216edb142ab8acbababeafe59c95278975ae59168365586"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "1ae66fdac3c54f40a216edb142ab8acbababeafe59c95278975ae59168365586",
+        "observations_sha256": "1b3863985e72e26018af940f5f848ef466b236e83371c0addd6bc4fa6d185e72"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"x\",[\"c\"],[]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-19",
+      "raw_sha256": "5956a73981cc9b57c898a23a0ae01bc6b1bf1b9b98992ae09fa59af5459da33b",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "5956a73981cc9b57c898a23a0ae01bc6b1bf1b9b98992ae09fa59af5459da33b",
+        "raw_bytes": 22,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{title=\"a\nb\"}\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 17,
+              "byte_start": 0,
+              "byte_end": 17,
+              "line_start": 1,
+              "line_end": 2
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "a",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "a",
+            "segments": [
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "attrs": {
+                  "title": "a\nb"
+                },
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 18,
+              "char_end": 22,
+              "byte_start": 18,
+              "byte_end": 22,
+              "line_start": 4,
+              "line_end": 4
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 19,
+                  "byte": 19,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 20,
+                  "byte": 20,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 21,
+                  "byte": 21,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 22,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "5956a73981cc9b57c898a23a0ae01bc6b1bf1b9b98992ae09fa59af5459da33b"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "5956a73981cc9b57c898a23a0ae01bc6b1bf1b9b98992ae09fa59af5459da33b",
+        "observations_sha256": "20200a75a7bfb6e9bcbe0bf6de077e307dc701abf7bb8811d9a8e4b50169fcff"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Span\",\"c\":[[\"\",[],[[\"title\",\"a b\"]]],[{\"t\":\"Str\",\"c\":\"a\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-20",
+      "raw_sha256": "3165361f2451bcc4ece1edcaae261e2bbbde53e51f1a94a5e0b76da79ba328b4",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "3165361f2451bcc4ece1edcaae261e2bbbde53e51f1a94a5e0b76da79ba328b4",
+        "raw_bytes": 23,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "[a]{a=\"x\"\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 10,
+              "byte_start": 0,
+              "byte_end": 10,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "[a]{a=\"x\"",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "[a]{a=\"x\"",
+            "segments": [
+              {
+                "type": "text",
+                "text": "[",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 0,
+                  "byte": 0,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "a",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "]",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 2,
+                  "byte": 2,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "{",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 3,
+                  "byte": 3,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "a",
+                "start": 4,
+                "end": 5,
+                "source_position": {
+                  "char": 4,
+                  "byte": 4,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "=",
+                "start": 5,
+                "end": 6,
+                "source_position": {
+                  "char": 5,
+                  "byte": 5,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "\"",
+                "start": 6,
+                "end": 7,
+                "source_position": {
+                  "char": 6,
+                  "byte": 6,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "x",
+                "start": 7,
+                "end": 8,
+                "source_position": {
+                  "char": 7,
+                  "byte": 7,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "\"",
+                "start": 8,
+                "end": 9,
+                "source_position": {
+                  "char": 8,
+                  "byte": 8,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "b=\"y\"}\n",
+            "offset": {
+              "char_start": 11,
+              "char_end": 18,
+              "byte_start": 11,
+              "byte_end": 18,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "b=\"y\"}",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "b=\"y\"}",
+            "segments": [
+              {
+                "type": "text",
+                "text": "b",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "=",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "\"",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "y",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "\"",
+                "start": 4,
+                "end": 5,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "}",
+                "start": 5,
+                "end": 6,
+                "source_position": {
+                  "char": 16,
+                  "byte": 16,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0003",
+            "type": "paragraph",
+            "raw": "End.",
+            "offset": {
+              "char_start": 19,
+              "char_end": 23,
+              "byte_start": 19,
+              "byte_end": 23,
+              "line_start": 5,
+              "line_end": 5
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "End.",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "End.",
+            "segments": [
+              {
+                "type": "text",
+                "text": "E",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 19,
+                  "byte": 19,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "n",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 20,
+                  "byte": 20,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 21,
+                  "byte": 21,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": ".",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 22,
+                  "byte": 22,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 23,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "3165361f2451bcc4ece1edcaae261e2bbbde53e51f1a94a5e0b76da79ba328b4"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "3165361f2451bcc4ece1edcaae261e2bbbde53e51f1a94a5e0b76da79ba328b4",
+        "observations_sha256": "05d5a4be256539acbc00e965421c07efd6d60e54deb07f8306d2962aca1f8b3f"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"[a]{a=\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"x\"}]]}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"b=\"},{\"t\":\"Quoted\",\"c\":[{\"t\":\"DoubleQuote\"},[{\"t\":\"Str\",\"c\":\"y\"}]]},{\"t\":\"Str\",\"c\":\"}\"}]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"End.\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-21",
+      "raw_sha256": "09d7a6c2fc0af3efb2dae59990114fd3df9da6e4e7a80482ada85e4ed2d70085",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "09d7a6c2fc0af3efb2dae59990114fd3df9da6e4e7a80482ada85e4ed2d70085",
+        "raw_bytes": 18,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "Body\n",
+            "offset": {
+              "char_start": 10,
+              "char_end": 15,
+              "byte_start": 10,
+              "byte_end": 15,
+              "line_start": 2,
+              "line_end": 2
+            },
+            "containers": [
+              {
+                "unknown": [
+                  "class"
+                ]
+              }
+            ],
+            "landmark": null,
+            "text": "Body",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "Body",
+            "segments": [
+              {
+                "type": "text",
+                "text": "B",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 10,
+                  "byte": 10,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "o",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 11,
+                  "byte": 11,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 12,
+                  "byte": 12,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "y",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 13,
+                  "byte": 13,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 18,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "09d7a6c2fc0af3efb2dae59990114fd3df9da6e4e7a80482ada85e4ed2d70085"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "09d7a6c2fc0af3efb2dae59990114fd3df9da6e4e7a80482ada85e4ed2d70085",
+        "observations_sha256": "116d873006481da90f50acffc86d5a4ed3b60a481864c010742269d2114e4195"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Div\",\"c\":[[\"\",[\"class\"],[]],[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Body\"}]}]]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-22",
+      "raw_sha256": "019590096b038e6e903fa471e156d81252430e3c4eb368a9dec962f25ba01e36",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "019590096b038e6e903fa471e156d81252430e3c4eb368a9dec962f25ba01e36",
+        "raw_bytes": 23,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "Body\n",
+            "offset": {
+              "char_start": 15,
+              "char_end": 20,
+              "byte_start": 15,
+              "byte_end": 20,
+              "line_start": 2,
+              "line_end": 2
+            },
+            "containers": [
+              {
+                "unknown": [
+                  "class",
+                  "more"
+                ]
+              }
+            ],
+            "landmark": null,
+            "text": "Body",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "Body",
+            "segments": [
+              {
+                "type": "text",
+                "text": "B",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "o",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 16,
+                  "byte": 16,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "y",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 18,
+                  "byte": 18,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 23,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "019590096b038e6e903fa471e156d81252430e3c4eb368a9dec962f25ba01e36"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "019590096b038e6e903fa471e156d81252430e3c4eb368a9dec962f25ba01e36",
+        "observations_sha256": "dd90712ec2a1413190754fda85f3c1d058ca1542391e87c1919277510e1d70ed"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\":::\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"class\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"more\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\":::\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-23",
+      "raw_sha256": "2f2f037eaffcba12edc6dd78bf3c59a6ac6c5e80c17f3de6ad9e97ddf5352ddd",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "2f2f037eaffcba12edc6dd78bf3c59a6ac6c5e80c17f3de6ad9e97ddf5352ddd",
+        "raw_bytes": 22,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "paragraph",
+            "raw": "Text\n",
+            "offset": {
+              "char_start": 0,
+              "char_end": 5,
+              "byte_start": 0,
+              "byte_end": 5,
+              "line_start": 1,
+              "line_end": 1
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "Text",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "Text",
+            "segments": [
+              {
+                "type": "text",
+                "text": "T",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 0,
+                  "byte": 0,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "e",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 1,
+                  "byte": 1,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "x",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 2,
+                  "byte": 2,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "t",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 3,
+                  "byte": 3,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          },
+          {
+            "observation_id": "o0002",
+            "type": "paragraph",
+            "raw": "Body\n",
+            "offset": {
+              "char_start": 14,
+              "char_end": 19,
+              "byte_start": 14,
+              "byte_end": 19,
+              "line_start": 3,
+              "line_end": 3
+            },
+            "containers": [
+              {
+                "classes": [
+                  "x"
+                ]
+              }
+            ],
+            "landmark": null,
+            "text": "Body",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "body_text": "Body",
+            "segments": [
+              {
+                "type": "text",
+                "text": "B",
+                "start": 0,
+                "end": 1,
+                "source_position": {
+                  "char": 14,
+                  "byte": 14,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "o",
+                "start": 1,
+                "end": 2,
+                "source_position": {
+                  "char": 15,
+                  "byte": 15,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "d",
+                "start": 2,
+                "end": 3,
+                "source_position": {
+                  "char": 16,
+                  "byte": 16,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              },
+              {
+                "type": "text",
+                "text": "y",
+                "start": 3,
+                "end": 4,
+                "source_position": {
+                  "char": 17,
+                  "byte": 17,
+                  "basis": "raw-block-relative-inline-v1"
+                }
+              }
+            ],
+            "unknown": [],
+            "reason": null
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 22,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "2f2f037eaffcba12edc6dd78bf3c59a6ac6c5e80c17f3de6ad9e97ddf5352ddd"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "2f2f037eaffcba12edc6dd78bf3c59a6ac6c5e80c17f3de6ad9e97ddf5352ddd",
+        "observations_sha256": "ec53d64d8f9607919e61bd157fc523e2de2dcfcf67b19e0ddcefef03376d8cfe"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\":::\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"{.x}\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"Body\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\":::\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-24",
+      "raw_sha256": "fc164ba6ee2b0085fb90fd532c104d00b15cd547c180eca781668153ff17fc95",
+      "observation": null,
+      "detail": "HTML attivo/sconosciuto: script",
+      "error": null,
+      "events": [
+        {
+          "kind": "html",
+          "source_start": 16,
+          "snippet": "<script>",
+          "tag": "script",
+          "attributes": []
+        }
+      ],
+      "visits": [
+        {
+          "tag": "script",
+          "attributes": [],
+          "event": {
+            "kind": "html",
+            "source_start": 16,
+            "snippet": "<script>",
+            "tag": "script",
+            "attributes": []
+          },
+          "char": 16,
+          "byte": 16,
+          "snippet": "<script>",
+          "validated": "Unsafe",
+          "detail": "HTML attivo/sconosciuto: script"
+        }
+      ],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "INCOMPLETE",
+        "reason": "UNSAFE_REFERENCE",
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 38,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "fc164ba6ee2b0085fb90fd532c104d00b15cd547c180eca781668153ff17fc95"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "fc164ba6ee2b0085fb90fd532c104d00b15cd547c180eca781668153ff17fc95",
+        "detail": "HTML attivo/sconosciuto: script"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"Text\"},{\"t\":\"SoftBreak\"},{\"t\":\"Str\",\"c\":\"~~~{=html}\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"<script>x</script>\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"~~~\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-25",
+      "raw_sha256": "32d3b95e00bd7d0d1f115ef5cc1b8fefde244830146b6a237f5d9ae6ba46d159",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "32d3b95e00bd7d0d1f115ef5cc1b8fefde244830146b6a237f5d9ae6ba46d159",
+        "raw_bytes": 33,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "code",
+            "raw": "~~~py-thon\n<script>x</script>\n~~~",
+            "offset": {
+              "char_start": 0,
+              "char_end": 33,
+              "byte_start": 0,
+              "byte_end": 33,
+              "line_start": 1,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "<script>x</script>\n",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "attrs": {
+              "language": "py-thon"
+            }
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 33,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "32d3b95e00bd7d0d1f115ef5cc1b8fefde244830146b6a237f5d9ae6ba46d159"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "32d3b95e00bd7d0d1f115ef5cc1b8fefde244830146b6a237f5d9ae6ba46d159",
+        "observations_sha256": "c5a4615a60072f9c87b0080d034040a0fd2a02b49af931b50f00bc1c0d38f78b"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"py-thon\"],[]],\"<script>x</script>\"]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-26",
+      "raw_sha256": "aa971b727df7962a7a8d76096adb30973ef87300a48ce0d1246bc57133201360",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "aa971b727df7962a7a8d76096adb30973ef87300a48ce0d1246bc57133201360",
+        "raw_bytes": 33,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "code",
+            "raw": "~~~py.thon\n<script>x</script>\n~~~",
+            "offset": {
+              "char_start": 0,
+              "char_end": 33,
+              "byte_start": 0,
+              "byte_end": 33,
+              "line_start": 1,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "<script>x</script>\n",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "attrs": {
+              "language": "py.thon"
+            }
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 33,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "aa971b727df7962a7a8d76096adb30973ef87300a48ce0d1246bc57133201360"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "aa971b727df7962a7a8d76096adb30973ef87300a48ce0d1246bc57133201360",
+        "observations_sha256": "8d0bbc91ea810c671fe6c20b9ad98c20cec64837132eda99eed6aad34a8bb79a"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"py.thon\"],[]],\"<script>x</script>\"]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-27",
+      "raw_sha256": "c9138dd49d2fcdd8fadba3863abbb1c714abceb7c7b70da5745b27c848651771",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "c9138dd49d2fcdd8fadba3863abbb1c714abceb7c7b70da5745b27c848651771",
+        "raw_bytes": 29,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "code",
+            "raw": "~~~c++\n<script>x</script>\n~~~",
+            "offset": {
+              "char_start": 0,
+              "char_end": 29,
+              "byte_start": 0,
+              "byte_end": 29,
+              "line_start": 1,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "<script>x</script>\n",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "attrs": {
+              "language": "c++"
+            }
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 29,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "c9138dd49d2fcdd8fadba3863abbb1c714abceb7c7b70da5745b27c848651771"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "c9138dd49d2fcdd8fadba3863abbb1c714abceb7c7b70da5745b27c848651771",
+        "observations_sha256": "3edee0c0e6bc3a8a6ea443daf4196fb6ed4c44cf464326bf6867ff7414042b4e"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"cpp\"],[]],\"<script>x</script>\"]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-28",
+      "raw_sha256": "ac82007262f5e8ef58d5b24cee9499c8eb627fdeaa2ee45f9198e8fbc466d8ff",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "ac82007262f5e8ef58d5b24cee9499c8eb627fdeaa2ee45f9198e8fbc466d8ff",
+        "raw_bytes": 34,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "code",
+            "raw": "~~~ py thon\n<script>x</script>\n~~~",
+            "offset": {
+              "char_start": 0,
+              "char_end": 34,
+              "byte_start": 0,
+              "byte_end": 34,
+              "line_start": 1,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "<script>x</script>\n",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "attrs": {
+              "language": "py thon"
+            }
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 34,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "ac82007262f5e8ef58d5b24cee9499c8eb627fdeaa2ee45f9198e8fbc466d8ff"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "ac82007262f5e8ef58d5b24cee9499c8eb627fdeaa2ee45f9198e8fbc466d8ff",
+        "observations_sha256": "27911b7bc3273486dfc328102060b420f4ff4140c6991eb0c7a4c8f161d1e71e"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"~~~\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"py\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"thon\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"<script>x</script>\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"~~~\"}]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-29",
+      "raw_sha256": "65478fd6d2fcc066b7f04ebcd74fcfe0a0c64b0e1b1d0340836635ee6ee9c2ea",
+      "observation": {
+        "schema_version": 1,
+        "reader": "observations-v13-ordered-guards-fences",
+        "raw_sha256": "65478fd6d2fcc066b7f04ebcd74fcfe0a0c64b0e1b1d0340836635ee6ee9c2ea",
+        "raw_bytes": 33,
+        "nodes": [
+          {
+            "observation_id": "o0001",
+            "type": "code",
+            "raw": "~~~\tpython\n<script>x</script>\n~~~",
+            "offset": {
+              "char_start": 0,
+              "char_end": 33,
+              "byte_start": 0,
+              "byte_end": 33,
+              "line_start": 1,
+              "line_end": 3
+            },
+            "containers": [],
+            "landmark": null,
+            "text": "<script>x</script>\n",
+            "references": [],
+            "formulas": [],
+            "anchors": [],
+            "attrs": {
+              "language": "python"
+            }
+          }
+        ],
+        "unknown": 0
+      },
+      "detail": null,
+      "error": null,
+      "events": [],
+      "visits": [],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "reason": null,
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 33,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "65478fd6d2fcc066b7f04ebcd74fcfe0a0c64b0e1b1d0340836635ee6ee9c2ea"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "65478fd6d2fcc066b7f04ebcd74fcfe0a0c64b0e1b1d0340836635ee6ee9c2ea",
+        "observations_sha256": "a1fbd38f94257b32923409602b6c6a3d9942ff209a7dd42a7582e1c0c500fb55"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"CodeBlock\",\"c\":[[\"\",[\"python\"],[]],\"<script>x</script>\"]}]}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": "grammar-30",
+      "raw_sha256": "d0c678c985adbd8eb941be137ad26b538b44c2e575d38357b0714e398087ef18",
+      "observation": null,
+      "detail": "HTML attivo/sconosciuto: script",
+      "error": null,
+      "events": [
+        {
+          "kind": "html",
+          "source_start": 11,
+          "snippet": "<script>",
+          "tag": "script",
+          "attributes": []
+        }
+      ],
+      "visits": [
+        {
+          "tag": "script",
+          "attributes": [],
+          "event": {
+            "kind": "html",
+            "source_start": 11,
+            "snippet": "<script>",
+            "tag": "script",
+            "attributes": []
+          },
+          "char": 11,
+          "byte": 11,
+          "snippet": "<script>",
+          "validated": "Unsafe",
+          "detail": "HTML attivo/sconosciuto: script"
+        }
+      ],
+      "reset": true,
+      "audit": {
+        "schema_version": 1,
+        "status": "INCOMPLETE",
+        "reason": "UNSAFE_REFERENCE",
+        "assets": [],
+        "references": [],
+        "inventory": [
+          {
+            "path": "document.md",
+            "bytes": 33,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "d0c678c985adbd8eb941be137ad26b538b44c2e575d38357b0714e398087ef18"
+          },
+          {
+            "path": "p.png",
+            "bytes": 529,
+            "mode": 32768,
+            "nlink": 1,
+            "kind": "regular",
+            "sha256": "1654f249fccaac16f3d84ec53c1c89892a2091bb36eab6f8571772bcd7dd1e90"
+          }
+        ],
+        "raw_sha256": "d0c678c985adbd8eb941be137ad26b538b44c2e575d38357b0714e398087ef18",
+        "detail": "HTML attivo/sconosciuto: script"
+      },
+      "pandoc": {
+        "argv": [
+          "/usr/bin/pandoc",
+          "-f",
+          "markdown",
+          "-t",
+          "json"
+        ],
+        "cwd": "/home/davide/workarea/markdown-for-llms",
+        "exit": 0,
+        "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Plain\",\"c\":[{\"t\":\"Str\",\"c\":\"~~~~python\"}]},{\"t\":\"RawBlock\",\"c\":[\"html\",\"<script>x</script>\"]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"~~~\"}]}]}\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "reader_sha256": "27d1b5809bc2dca51b75e50222aaab1eef86b2c907732c33537fbb5df20c43ad",
+  "adapter_sha256": "31aa1d14aeb8bf31894e3ff0b53765dbf1ea1ec52acf57028571f513231332d0",
+  "pandoc_sha256": "3dd273647f0265cb439f22976d5366a54b071a3783f6fec50838b47fb53d701b"
+}

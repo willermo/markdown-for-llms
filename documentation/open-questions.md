@@ -19,3 +19,11 @@ documentazione e governance.
 Ipotesi operative iniziali: applicazione su singolo host, uso locale, italiano e
 inglese, pieno documento come risultato principale, proposta di correzioni con
 revisione manuale. Sono ipotesi di progetto, non limiti definitivi del prodotto.
+
+## Decisione2026-10-12: parser e debito a002
+
+[ADR0008](decisions/0008-maintained-parser-and-provisional-benchmark.md) accetta
+il parser mantenuto; [registro](benchmarks/a002-residual-debt.md) vincola
+ripresa/chiusura. Da verificare idoneità dell’AST pinned a intervalli/source-map,
+profilo e adattatore; la decisione non è un’implementazione. La scelta dei
+motori e il modello documentale restano aperti per il prossimo incremento fase1.

@@ -1,0 +1,104 @@
+# Arbitrato piano a002 — r002, verifica errata e GO
+
+- Data: 2026-10-08, Europe/Rome. Supervisore: Codex/OpenAI, GPT-6; deployment
+  esatto e chat ID non esposti. Ruolo esclusivo supervisione.
+- Esito: **GO sul piano r001 integrato dall'addendum errata r001**.
+- Piano originale: [plan-r001](../plans/plan-r001.md), SHA256
+  `3ac23bce82817c3a2781a1dded78b8ac6352d78675aea355cd794950dedd4ab8`.
+- Addendum verificato: [errata-plan-r001-r001](../plans/errata-plan-r001-r001.md),
+  SHA256 `a09cbb8bcedd0fd9c7cca5dc45f45de82d66776539e573ec1c716011aee0dfd9`.
+- [Arbitrato r001](arbitration-plan-r001.md) NO_GO locale conservato;
+  [prompt04](../prompts/04-planning-r001-local-errata.md) soddisfatto.
+- Report reali originali: [ChatGPT GO](../reviews/review-plan-r001-chatgpt.md)
+  e [Claude NO_GO](../reviews/review-plan-r001-claude.md), stesso piano/snapshot,
+  indipendenza dichiarata ricevuta in r001. Non sono nuove review dell'addendum,
+  non vengono riscritti e non si attribuisce a Claude un GO successivo.
+- Branch feature/run-a002-corpus; HEAD/dev/origin-dev locale/merge-base
+  `80c31da46e5caab990d3596c79c44e524ec1dc95`; indice vuoto, delta documentali
+  ereditati. Nessuna nuova query Git remota o operazione Git di scrittura.
+- Contesto tecnico plan-fix-context-r001 MATCH alla ricezione; 28 input
+  protetti dell'autore immutati. Prove in
+  [reception.json](../../../../../temp/run-a002-fase1-corpus/evidence/supervisor-plan-errata-r001/reception.json).
+
+## Decisione sui rilievi e chiusura delle errata
+
+La chiusura qui riguarda la **specifica del piano**, non PASS dei parser futuri,
+gold già verificati o conversioni eseguite. L'addendum prevale nelle sezioni
+originali precisamente mappate; questo arbitrato dispone quota e passaggio.
+
+| Rilievo / errata | Decisione | Evidenza verificata e requisito preservato | Prova dovuta nell'implementazione |
+| --- | --- | --- | --- |
+| CLA-P001 / E01 | Risolto nel piano | E01 r47–213: grammatica finita, Arg/Seq e coordinate, gold AST manuale indipendente, meno contestuale, numeri lessicali, raw distinto e unsupported visibile. FP01–13 e FN01–14 distinguono grafie equivalenti e perdita di contenuto; CER prosa non ripenalizza la grafia math ammessa. | Positivi alternativi PASS automatici, negativi localizzati FAIL, FU01 UNAVAILABLE; controllo M sul source e indipendenza da parser/scorer. |
+| CLA-P002 / E02 | Risolto nel piano; dipendenza V assegnata | E02 r214–361: M canonico/locatori e code point, V render/leggibilità, encoded/visible/provenance distinti, raster senza encoding attribuito. Packet HTML passivo + trascrizioni/checklist e import risposta reale, stati per proprietà/documento; corpus/controlli/output separati. Utente designato, durata ancora sul pacchetto pronto. | M reale e V reale richiesti per gold VERIFIED; assenza risposta non diventa ACCEPTED. Controlli M alterazioni invisibili, import incompleto/stale/rejected e indipendenza. Nessuna impersonazione umana. |
+| CLA-P003 / E03 | Risolto nel piano | E03 r362–463: manifest prima del workload, harness expected0 fisso sotto R, exit run/score e stati effettivi conservati. H01–H16 separano esiti motore legittimi da preflight/integrità/test/record mancanti. Deadline motore distinta da R, raccolta figli e segmentazione ≤900s. | Harness corretto rendiconta motore FAIL/ERROR sotto R PASS; harness rotto non è verde. Gli attesi dei controlli interni possono essere nonzero; expected del target ufficiale R resta0. |
+| CLA-P004 / E04 | Risolto nel piano; quota disposta sotto | E04 r464–627: conteggi per classe/fenomeno, 17 componenti, M/V/harness/math/reader, unità e percorso critico espliciti. Ricalcolo autonomo: min1090/proposta1620/max2745min, CPU4800s centrale; quote e conteggi tornano. 15h restano proposta storica. | Ledger reale e stop con riserva; stime non diventano misure o garanzia di disponibilità V. Tutti i criteri essenziali restano dovuti. |
+| CLA-P005 / E05 | Risolto nel piano | E05 r628–729:22 estensioni enabled incluse nell'inventario locale, complemento disabled, smart e multiline/simple/grid off; handling math/raw/div/span/anchor/note e unknown espliciti,14 controlli autonomi, config/hash prima del workload. | Validare profilo sul binario effettivo e controlli indipendenti, nessuna taratura a posteriori sul gold. Compatibilità runtime non ancora attestata. |
+| CLA-P006 / E06 | Risolto nel piano | E06 r730–794: input4 prima tool vs output2/score3 unsafe, raw preservato, lstat/no-follow confinati e target non visitati; viewer passivo. Violazione effettiva di scrittura/integrità resta errore harness, non normale motor-loss. | Negativi sui due lati e positivi confinati; sentinelle sintetiche, nessuna lettura/fetch esterna dal codice valutato. |
+| CLA-P007 / E07 | Risolto nel piano | E07 r795–827: unico txt-literal-v1, A10 richiede Pandoc C02/C03 con figura attesa presente/referenziata/contenuto controllato,4 ripetizioni valide; tutti i FAIL preservati. | Baseline reale con asset e misure; TXT o PNG qualunque non soddisfano A10. |
+| CLA-P008 / E08 | Risolto nel piano nei limiti accolti | E08 r828–883: PATH chiuso/binario hashato, scratch/copied-source, capture e argv ricostruito distinti da osservati; tempi legacy separati. Campagna default e rewrite legacy restano rinviati. | Test identità/PATH/scratch, provenienza installata e raw realmente restituito; nessun exit Pandoc inventato se non esposto. |
+
+Le posizioni sono riferimenti all'addendum identificato, non al codice futuro.
+A01–A12 e L01–L05 derivati sono coerenti con il brief: nessuna classe tolta,
+nessun denominator diminuito per far passare un risultato, nessun schema
+applicativo o motore scelto. M/V nuovi contratti chiudono anche il difetto del
+mandato della supervisione riconosciuto in r001. La ristima è motivata e
+prudenziale; non è dimostrato che sia un upper garantito né che ogni componente
+richieda precisamente quei minuti. La riserva e il margine permettono i fix
+ordinari senza piccoli cap ripetuti.
+
+## Disposizione unica di risorse e dipendenze
+
+Autorizzata l'implementazione completa con [prompt05](../prompts/05-implementation-r001-corpus-and-measurement.md).
+Quota **52h wall cumulativo =187200s**, dalla prima azione implementativa;
+27h base+22h margine+3h riserva. Include preparazione, ragionamento, attese,
+M/V, test, workload, fix, guide e registri, anche attraverso nuove chat.
+Non comprende il tempo già speso dai ruoli pianificazione/review/supervisione
+né le successive due chat di review e arbitrato; non azzera storia o costi a001.
+
+Limiti congiunti: CPU propria aggregata21600s; crescita disco6GiB; RAM obiettivo
+operativo8GiB, stop prudenziale al RSS albero osservato6GiB; acquisizioni e
+invio documenti0byte, nuovi servizi/provider€0. CPU/RSS dei figli devono avere
+metodo/limiti dichiarati; il campionamento non è hard cap RAM universale.
+Resta la riserva1800CPU-s/1GiB/3h: stop nuovo workload a19800CPU-s/5GiB/49h,
+o prima se il residuo essenziale più riserva non entra. Nessun aumento autonomo.
+Disco peak/gross/retained e costi separati; nessuna cancellazione di prove per
+rientrare. I limiti tecnici R≤900s/stream1MiB/file32MiB restano vincolanti.
+
+La durata di V gold corpus+controlli è stimata185+25min (non accettata come
+appuntamento); utente designato. L'implementatore deve prima preparare materiale
+leggibile completo con conteggi e stima reali, poi concordare durata e raccogliere
+risposte; continua il lavoro indipendente. L'assenza prolungata di V è una
+dipendenza effettiva da riferire se impedisce A03 entro quota, non un PASS
+provisional da consegnare come completo. Nessuna nuova conferma sul verificatore.
+Giudizi umani sugli **output** non disposti: inventario/pacchetto dovuti,
+tipografia/semantica L04 UNAVAILABLE/PENDING, gate automatici rendicontati.
+Questa lacuna non è deroga alla verifica gold.
+
+L01 PDF/OCR e L02 compilazione TeX NOT_MEASURED accettati nei confini già
+revisionati; corpus PDF reale e verifica del suo contenuto restano obbligatori.
+L05 niente certificazioni GPU/altre piattaforme/hard peak; font/tool locali
+identificati e licenze verificabili. Nessuna acquisizione/nuovo lock/peso/remoto
+necessari o autorizzati. Eventuale risorsa offline mancante: diagnosi, alternativa
+reversibile consentita o limite sostanziale, senza download riparativo.
+
+## Passaggio e limiti delle prove
+
+Stato **IMPLEMENTATION / MANDATE_READY**, risultato ancora non prodotto.
+L'implementatore completa obiettivo e fix nella stessa chat; snapshot esecuzione
+autonomi attribuiscono input, non nuove approvazioni. Il contesto d'ingresso
+implementation-context-r001 sarà registrato dopo gli aggiornamenti documentali:
+non è snapshot di un benchmark o nuova review. Non serve ripetere le due review
+integrali del piano per queste errata locali, secondo il protocollo.
+
+Alla consegna completa il supervisore crea snapshot comune del risultato e
+due prompt per nuove chat ChatGPT e Claude, poi arbitra realmente. Nessun GO
+implementativo, integrazione, commit/merge/push o fine fase1 anticipati.
+Controlli del supervisore: lettura integrale addendum/checkpoint, verifiche
+identità/hash/snapshot, ricalcolo somme/conteggi e congruenza statica E01–E08.
+Receipt autore r001/r002 FAIL conservate, r003 PASS verificata come documento.
+Per A11 distinguere regressioni/nuovi contratti a002 da difetti legacy fuori
+scope realmente attribuiti sugli input attuali: questi restano FAIL nel report
+e nelle receipt pytest/harness/R, senza sanatoria o rewrite generale implicito.
+Le prove ufficiali della baseline sono target separati; nuovi test del benchmark
+e criteri essenziali devono passare. Nessun esito a001 trasferito per inferenza.
+Nessuna conversione/build/installazione/R/prova prodotto o V svolta qui.
