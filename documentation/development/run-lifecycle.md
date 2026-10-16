@@ -36,6 +36,11 @@ creati soltanto quando il lavoro corrispondente è stato svolto. Non compilare
 segnaposto con `GO`. I nomi dei revisori identificano chat distinte; nel report
 registrare provider/modello effettivo e, se disponibile, riferimento alla chat.
 
+Le prove e i relativi output nascono e rimangono in `temp/<run-id>/` durante
+implementazione, review e arbitrato. Non creare in `documentation/` un bundle
+per ogni giro né copiarvi ricorsivamente la run. La selezione documentale
+permanente segue la sezione [Archivio e pulizia](#archivio-e-pulizia).
+
 I file globali contengono indicazioni valide per tutte le run; `STATE.md` contiene
 lo stato corrente della singola run. Gli ADR sono la fonte delle decisioni stabili.
 Un conflitto tra file locali e repository va segnalato e riconciliato dal supervisore,
@@ -115,6 +120,40 @@ quando serve, non una copia integrale della storia a ogni modifica. Ripetere le
 verifiche invalidate; un negativo previsto è PASS se rifiuta l'input alterato.
 Un FAIL di sviluppo non è un NO_GO di arbitrato. Un'istruzione tecnicamente errata
 può essere adattata dichiarando motivo e prova, senza ridurre requisiti o garanzie.
+
+Dal 2026-10-13, su ulteriore disposizione esplicita dell'utente in a003,
+la diagnosi e il recupero spettano all'implementatore fino alla consegna completa.
+Un errore di syscall, di nesting fra sandbox o di uno strumento non è da solo
+un arresto sostanziale: prova il fallimento della configurazione eseguita,
+non l'impossibilità del requisito. L'autore identifica causa e input effettivi,
+formula alternative compatibili, corregge e riprova nella stessa chat con
+prove dei requisiti. Non consegna il problema alla supervisione affinché questa
+svolga la diagnosi o scelga il prossimo comando.
+
+Se il mandato indica strumenti standard e una composizione operativa, distinguere
+la ricetta dai requisiti motivati. Ordine dei launcher, backend di isolamento e
+integrazione nei diagnostici esistenti sono adattabili per lo stesso obiettivo
+quando restano equivalenti rete/file/PID, privacy, input, costi e raccolta dei
+processi. Una restrizione specifica della run va chiarita con addendum una volta;
+non si riapre pianificazione/doppia review per ogni alternativa o retry.
+Necessità di modifiche reversibili al proprio strumento non è, da sola, un cambio
+di architettura o una nuova infrastruttura. I reviewer giudicano delta e prove
+delle scelte reali alla consegna completa.
+
+Un checkpoint o report parziale può conservare progressi e un fallimento, ma
+non conclude il mandato e non avvia automaticamente le review del codice.
+Suite verde, tooling pronto e matrice NOT_MEASURED non sostituiscono il risultato
+autorizzato quando un recupero ordinario resta praticabile. Non fissare un numero
+arbitrario di errori o varianti dopo il quale scaricare il lavoro al supervisore;
+evitare anche retry identici senza nuova diagnosi. Continuare intanto le parti
+indipendenti, riusare input/ambienti stabili e ripetere solo le prove invalidate.
+
+Restano gli arresti sostanziali effettivi sotto elencati. Per dichiarare impossibile
+un requisito, spiegare il vincolo concreto, le alternative pertinenti valutate e
+le prove che impediscono un recupero nei mezzi ammessi; non pretendere una prova
+universale su ogni ambiente né attribuirla a un singolo EPERM. Un rifiuto effettivo
+di approvazione o un nuovo confine necessario non si aggirano. La prosecuzione
+autonoma non autorizza spese escluse, privilegi persistenti o isolamento ridotto.
 
 **Arresti sostanziali:** base/input protetti difformi o mancanti senza recupero
 locale, assunzione decisiva smentita, scope/requisito nuovo, costo o download non
@@ -338,6 +377,22 @@ rilievi osservati non sostituiscono criteri mancanti. Se ricorre la stessa class
 di difetto, riesaminare contratto, produttori e prova richiesta prima di aggiungere
 altro apparato; non indebolire il requisito di fedeltà per chiudere il ciclo.
 
+Quando la stessa classe torna dopo un fix, il successivo arbitrato deve
+esplicitare l'assunzione rimasta errata e perché il metodo proposto può chiuderla.
+Non emettere automaticamente un altro mandato limitato ai nuovi esempi. Se
+occorre cambiare metodo, perimetro o fonte della prova, usare `FIX_PLANNING` e
+riesaminare soltanto le parti invalidate del piano. Non serve una terza review
+dello stesso oggetto per riconoscere questa necessità. Il riesame non costituisce
+GO, accettazione di debito o autorizzazione implicita a un nuovo parser.
+
+Il mandato successivo deve definire forme supportate, fonte della prova,
+comportamento conservativo per i casi non qualificabili e criterio di uscita.
+Verificare prima il nucleo della soluzione con le controprove e i positivi
+pertinenti, poi completare integrazione e controlli invalidati. Le prove ufficiali
+richieste restano obbligatorie; i conteggi crescenti di varianti non sostituiscono
+la dimostrazione dell'invariante. Le chiusure non invalidate restano valide per
+gli input identificati, senza ripetere conversioni o review integrali per abitudine.
+
 STATE è il registro breve autorevole; HANDOVER indica prossima azione e letture;
 eventi append-only conservano la storia. documentation/ registra decisioni,
 traguardi, risultati e debito tecnico; docs/ resta la documentazione d'uso. Aggiornare
@@ -406,7 +461,7 @@ python3 scripts/run_context.py verify run-a001-fase0-uv --label plan-r001
 Lo snapshot contiene branch, HEAD, hash di file tracciati e nuovi non ignorati,
 eliminazioni e link simbolici, più gli artefatti esplicitamente indicati. `temp/` e
 `documentation/runs/` sono esclusi dall'impronta del working tree perché ospitano
-contesto e archivio dei report; gli artefatti della run da revisionare sono inclusi
+contesto e sintesi dei report; gli artefatti della run da revisionare sono inclusi
 esplicitamente con `--artifact`, ripetibile per piano, report o evidenze essenziali.
 L'esclusione dell'archivio non consente di nascondervi codice eseguibile del prodotto.
 
@@ -440,28 +495,65 @@ in chat i percorsi dei report e il prossimo passo richiesto.
 
 ## Archivio e pulizia
 
-| Materiale da preservare | Destinazione permanente |
+Dal 2026-10-15, per disposizione esplicita dell'utente, `documentation/` conserva
+la traccia dello sviluppo in forma selezionata e leggibile. Non è un deposito
+delle esecuzioni. Questa regola supera le indicazioni precedenti di copia estesa
+in archivio, anche nei mandati della run, senza cancellare prove ancora necessarie.
+
+| Materiale | Destinazione e durata |
 | --- | --- |
-| Piani finali, review, arbitrati, sintesi e manifest | `documentation/runs/<run-id>/reports/` e `manifest.md` |
-| Evidenze e note utili, prive di segreti/documenti privati | `documentation/runs/<run-id>/evidence/` e `notes/` |
-| Probe riutilizzabile a fini diagnostici | `scripts/diagnostics/<run-id>/` con istruzioni e dipendenze |
-| Regressione automatizzabile | `tests/regression/<run-id>/` o suite pertinente, con provenienza delle fixture |
+| Sintesi della run, risultato, decisioni, rilievi/esiti e limiti | Un `manifest.md` leggibile in `documentation/runs/<run-id>/`; report/nota finali selezionati solo quando aggiungono informazione durevole |
+| Piani, prompt, review complete, arbitrati e checkpoint di ogni giro | `temp/<run-id>/` durante il ciclo; riportare nella sintesi permanente decisioni e attribuzioni essenziali, senza copiare ogni giro |
+| Stdout/stderr, receipt, matrici, inventari, snapshot, tentativi falliti e copie raw/gold/asset | `temp/<run-id>/evidence/` o `work/`; conservarli fino a validazione e risoluzione delle dipendenze, poi pulizia selettiva |
+| Probe necessario e riutilizzabile | Promozione selettiva in `scripts/diagnostics/` con istruzioni; gli output di esecuzione restano in `temp/` |
+| Regressione automatizzabile | Test e fixture minima con provenienza in `tests/`; niente copia dell'intera matrice generata |
 | Decisione architetturale | ADR in `documentation/decisions/`, collegato alla run |
 
-Prima della chiusura selezionare ciò che serve, copiare/promuovere, adattare riferimenti,
-verificare integrità e comandi delle prove promosse. Aggiornare manifest e indice
-permanente con file di origine, destinazione, hash, motivo di conservazione e limiti.
+Un benchmark permanente conserva metodo, risultati aggregati, differenze
+significative, provenienza e limiti in un report; non tutti i derivati di ogni
+revisione. Evitare copie di codice, report e dipendenze già presenti altrove.
+In un eventuale confronto umano selezionare solo gli output necessari al giudizio,
+tenendoli in `temp/` finché il giudizio è pendente; una conservazione durevole di
+asset richiede motivazione specifica nel manifest, non l'intero pacchetto di prove.
+
+Prima della chiusura selezionare i documenti da conservare e le sole promozioni
+riutilizzabili, adattare i riferimenti e verificarli. Nel manifest riportare
+obiettivo, base/commit effettivi, risultati, limiti, verifiche decisive e relativo
+stato di disponibilità. Hash e percorsi identificano prove locali ma non ne
+garantiscono la disponibilità dopo la pulizia. I collegamenti di lettura permanenti
+devono risolvere; i path operativi in `temp/` vanno dichiarati come riferimenti
+locali, eventualmente eliminati, senza fingere riproducibilità integrale.
 Istruzioni documentali per utenti e sviluppatori confluiscono in `docs/` secondo Diátaxis.
 
 Il supervisore elenca esattamente gli elementi eliminabili e li pulisce soltanto
-dopo aver verificato l'archivio e l'assenza di riferimenti necessari. La richiesta
+dopo aver verificato la sintesi e l'assenza di dipendenze ancora necessarie. La richiesta
 dell'utente autorizza questa pulizia di fine run; se proprietà o utilità di un file
 sono dubbie, conservarlo e segnalarlo. Non eliminare l'intera `temp/`, altre run attive,
-il registro globale o l'unico esemplare di un report. Aggiornare l'handover affinché
+il registro globale o l'unica registrazione di una decisione ancora necessaria.
+Non è obbligatorio promuovere ogni prova prima di poterla eliminare dopo validazione.
+Aggiornare l'handover affinché
 punti all'archivio o alla run successiva. Lo strumento non implementa cancellazioni.
 
 A fine sprint applicare la stessa selezione e pulizia alle run chiuse, preservando
 il contesto delle run ancora attive e le dipendenze tra run.
+
+### Transizione dei bundle già prodotti
+
+I bundle operativi a003 non tracciati sono esclusi da Git tramite `.gitignore`.
+Dopo l'arbitrato r007, il 2026-10-15 il supervisore ha trasferito i 8973 file
+in `temp/`, verificando i byte e la risoluzione delle referenze con una mappa
+dei path storici. Ricevute e comandi originali non sono riscritti: ogni nuova
+lettura o esecuzione deve risolvere i percorsi e registrare la chiamata effettiva.
+Nessuna prova cancellata o nuova copia in `documentation/`.
+[Sintesi e disponibilità](../runs/run-a003-fase1-engine-comparison/manifest.md#disponibilità-delle-prove).
+Una migrazione non è attuata dalla sola modifica di `.gitignore`; eventuali
+copie ridondanti si eliminano solo dopo verifica delle dipendenze.
+
+I file storici già tracciati non vengono esclusi retroattivamente da Git né
+rimossi automaticamente. Il loro eventuale alleggerimento è un intervento
+selettivo successivo; nessuna riscrittura della storia Git o perdita di un
+giudizio umano ancora necessario. I vecchi snapshot restano documenti storici:
+una variazione documentale autorizzata non deve essere annullata per ottenere MATCH.
 
 ## Template
 

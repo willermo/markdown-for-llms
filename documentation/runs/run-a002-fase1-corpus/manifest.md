@@ -1,5 +1,15 @@
 # Archivio — run-a002-fase1-corpus
 
+**Aggiornamento amministrativo2026-10-12:** commit registri/24log completato
+e osservato localmente a `9f702a2d368cb8f4a3a6bfb7b9146c6757ecd9df`, padre7caff33;
+delta soltanto documentazione/Gitignore, workingtree pulito all'ingresso a003.
+Dev/HEAD/origin-dev locali coincidono,senza query remota/prova di push.
+[Completamento manuale](manual-integration.md),
+[nuova preparazione a003](../../development/a003-engine-comparison-brief.md).
+Stato CLOSED e debito invariati,nessuna review tecnica riaperta. Le diciture
+«registri da committare» e i ref precedenti sotto sono la fotografia storica
+della ricezione precedente al commit amministrativo.
+
 - Obiettivo/fase: corpus e strumenti di misura, primo incremento fase1.
 - Esito: **CLOSED / ACCEPTED_REDUCED_SCOPE_WITH_DEBT**, accettazione utente12ott2026.
 - Review finale: ClaudeNO_GO statico,OpenAIINCOMPLETA; nessun GOtecnico retroattivo.

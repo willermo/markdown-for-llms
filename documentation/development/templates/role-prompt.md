@@ -13,6 +13,8 @@ file di contesto, richiedi il trasferimento necessario senza inventarne il conte
 - Obiettivo e criteri di accettazione:
 - Piano/arbitrato/snapshot pertinenti:
 - File necessari e ordine di lettura:
+- Destinazione locale delle prove in `temp/<run-id>/`; documenti permanenti
+  selezionati e motivati, senza bundle in `documentation/` a ogni giro:
 - Mandato per risultato, directory e costi ammessi (elenco dei mezzi non esaustivo):
 - Input protetti, correzioni autonome e arresti sostanziali:
 - Distinzione fra input di confronto, input della prova e parametri adattabili;
@@ -50,7 +52,10 @@ Il supervisore compila soltanto le istruzioni pertinenti:
 - Supervisione: ricevere il risultato completo, congelarlo per le due review,
   arbitrare i due report, aggiornare stato/handover e produrre il prompt
   successivo insieme a NO_GO: fix locale senza pianificazione intermedia, oppure
-  nuovo piano motivato per cambi sostanziali. Non simulare review mancanti e non eseguire operazioni Git manuali dell'utente.
+  riesame mirato del piano per cambi sostanziali. Se ricorre la stessa classe,
+  diagnosticare l'assunzione prima di un altro mandato di fix; non aumentare
+  soltanto il numero degli esempi. Non simulare review mancanti e non eseguire
+  operazioni Git manuali dell'utente.
 
 ## Output obbligatori
 

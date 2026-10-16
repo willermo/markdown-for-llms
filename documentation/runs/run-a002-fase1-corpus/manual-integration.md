@@ -1,5 +1,14 @@
 # Integrazione manuale della consegna sperimentale a002
 
+**Completamento amministrativo osservato il2026-10-12:** `dev` a
+`9f702a2d368cb8f4a3a6bfb7b9146c6757ecd9df`, padre7caff33, commit
+«Registra integrazione a002 e completa archivio». Verificati24log nel delta,
+solo documentazione/Gitignore e workingtree pulito all'ingresso a003.
+Il ref locale origin/dev coincide; nessuna query remota o attestazione di push.
+Non ripetere i comandi sotto. A002 resta accettata con debito,senzaGOtecnico.
+La [preparazione a003](../../development/a003-engine-comparison-brief.md)
+parte da questa base effettiva; nessuna nuova integrazione a002 necessaria.
+
 **Sequenza applicativa già eseguita:** commit/fast-forward ricevuti e verificati
 a `7caff336119b6d7d78978204142cfdc16d620fff`. Non ripetere i comandi storici sotto.
 
