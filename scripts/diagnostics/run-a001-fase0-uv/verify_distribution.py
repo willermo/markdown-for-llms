@@ -274,7 +274,69 @@ def check_direct_url(direct, wheel_path):
     return 'DECLARED_AND_VERIFIED' if archive else 'NOT_DECLARED; verified B digest and all wheel payload bytes'
 
 
-def check_installed(payload, wheel_files, wheel_path, profile):
+def docling_metadata_member(names):
+    members = [n for n in names if len(n.split('/')) == 2 and n.endswith('.dist-info/METADATA')]
+    if len(members) != 1:
+        raise ValueError('Metadata closure Docling ambigua')
+    return members[0]
+
+
+def check_docling_closure(payload, packages, closure_path):
+    """Profilo puntuale a003: closure da wheel identificate, senza import ML."""
+    if closure_path is None:
+        raise ValueError('Docling richiede manifest closure separato')
+    source_tool.no_symlinks(closure_path)
+    manifest = source_tool.load_json(closure_path)
+    if manifest.get('schema') != 1 or manifest.get('profile') != 'docling-cpu-auto-v1':
+        raise ValueError('Manifest Docling non riconosciuto')
+    inventory = source_tool.load_json(Path(payload['host_repo']) / payload['input_inventory']['path'])
+    indexed = {r['path']: r for r in inventory['files']}
+    if descriptor(closure_path) != indexed.get(str(closure_path)):
+        raise ValueError('Closure Docling non identificata in S')
+    normalize = lambda name: name.lower().replace('_', '-').replace('.', '-')
+    actual = {normalize(r['name']): r['version'] for r in packages if normalize(r['name']) != 'markdown-for-llms'}
+    expected = {normalize(r['name']): r['version'] for r in manifest['packages']}
+    if len(expected) != len(manifest['packages']) or actual != expected:
+        raise ValueError('Closure Docling installata difforme')
+    required = {'docling-slim', 'docling-core', 'docling-ibm-models', 'docling-parse', 'torch'}
+    if not required <= expected.keys() or not expected['torch'].endswith('+cpu'):
+        raise ValueError('Closure CPU Docling incompleta/non CPU')
+    if any(n.startswith('nvidia-') or n in {'marker-pdf', 'surya-ocr'} for n in actual):
+        raise ValueError('Runtime estraneo/GPU nel profilo Docling')
+    archives = []
+    for package in manifest['packages']:
+        archive = package['wheel']
+        if archive != indexed.get(archive['path']) or descriptor(Path(archive['path'])) != archive:
+            raise ValueError('Wheel closure Docling difforme da S')
+        with zipfile.ZipFile(archive['path']) as wheel:
+            metadata_member = docling_metadata_member(wheel.namelist())
+            installed = importlib.metadata.distribution(package['name'])
+            meta = Path(installed.locate_file(metadata_member))
+            source_tool.no_symlinks(meta)
+            if meta.read_bytes() != wheel.read(metadata_member):
+                raise ValueError('Metadata installata Docling difforme')
+            record = installed.read_text('RECORD')
+            if not record:
+                raise ValueError('RECORD closure Docling mancante')
+            archives.append(dict(archive, installed_metadata=descriptor(meta), installed_record_sha256=hashlib.sha256(record.encode()).hexdigest()))
+    site = Path(sysconfig.get_path('purelib'))
+    startup = [descriptor(p) for p in sorted(site.glob('*.pth'))]
+    expected_startup = {'_virtualenv.pth': b'import _virtualenv'}
+    # torch has a runtime dependency on setuptools: the already identified
+    # backend84 hook can also be present in this exact CPU dependency closure.
+    if 'setuptools' in expected:
+        backend = next(r['wheel'] for r in manifest['packages'] if normalize(r['name']) == 'setuptools')
+        if expected['setuptools'] != '84.0.0' or backend['sha256'] != '51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670':
+            raise ValueError('Startup setuptools Docling non identificato')
+        with zipfile.ZipFile(backend['path']) as wheel:
+            expected_startup['distutils-precedence.pth'] = wheel.read('distutils-precedence.pth')
+    if {Path(p['path']).name for p in startup} != expected_startup.keys() or any((site/name).read_bytes()!=content for name,content in expected_startup.items()) or list(site.glob('*customize*')):
+        raise ValueError('Startup Docling inatteso')
+    return {'manifest':descriptor(closure_path), 'archives':archives, 'startup':startup,
+            'scope':'exact dependency versions and archive/METADATA identity; RECORD presence+digest; no ML import or inference'}
+
+
+def check_installed(payload, wheel_files, wheel_path, profile, closure_path=None):
     roots = {Path(sysconfig.get_path(k)).resolve() for k in ('purelib','platlib')}
     distributions = [d for d in importlib.metadata.distributions()
                      if (d.metadata.get('Name') or '').lower().replace('_','-') == 'markdown-for-llms']
@@ -326,11 +388,26 @@ def check_installed(payload, wheel_files, wheel_path, profile):
         raise ValueError('Extra server incompleto')
     if profile == 'cpu' and not {'marker-pdf','surya-ocr','torch','beautifulsoup4'} <= names:
         raise ValueError('Extra CPU incompleto')
+    closure = check_docling_closure(payload, packages, closure_path) if profile == 'docling' else None
     files = [descriptor(installed_paths[n]) for n in sorted(installed)]
     if DIST+'/direct_url.json' not in installed_paths:
         files.append(descriptor(Path(dist.locate_file(DIST+'/direct_url.json'))))
-    return {'origins':origins,'dependencies':packages,'direct_url':direct,'files':files,
-            'canonical_archive':descriptor(wheel_path),'direct_url_hash_status':direct_hash_status}
+    result = {'origins':origins,'dependencies':packages,'direct_url':direct,'files':files,
+              'canonical_archive':descriptor(wheel_path),'direct_url_hash_status':direct_hash_status}
+    if closure is not None:
+        result['docling_closure'] = closure
+    return result
+
+
+def receipt_closure_path(receipt):
+    if receipt['profile'] != 'docling':
+        return None
+    declared = receipt['installed']['docling_closure']['manifest']
+    path = Path(declared['path'])
+    source_tool.no_symlinks(path)
+    if descriptor(path) != declared:
+        raise ValueError('Manifest closure Docling cambiato dalla receipt I')
+    return path
 
 
 def validate_receipt(receipt_path, source_path, repo, official=True):
@@ -368,7 +445,7 @@ def validate_receipt(receipt_path, source_path, repo, official=True):
             raise ValueError('Interprete diverso dalla receipt I')
         tar, wheel = (Path(x['path']) for x in r['archives'])
         files = check_archives(payload,tar,wheel)
-        if check_installed(payload,files,wheel,r['profile']) != r['installed']:
+        if check_installed(payload,files,wheel,r['profile'],receipt_closure_path(r)) != r['installed']:
             raise ValueError('Installazione diversa dalla receipt I')
     return r
 
@@ -377,7 +454,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('repo','source-manifest','sdist','wheel','expected-managed','receipt'):
         parser.add_argument('--'+name,type=Path,required=True)
-    parser.add_argument('--profile',choices=('base','dev','api','cpu','cache-probe'),required=True)
+    parser.add_argument('--profile',choices=('base','dev','api','cpu','cache-probe','docling'),required=True)
+    parser.add_argument('--dependency-manifest',type=Path)
     parser.add_argument('--archives-only',action='store_true')
     args = parser.parse_args()
     try:
@@ -390,7 +468,9 @@ def main():
         payload = source_tool.validate_current(source,args.repo)
         before = [descriptor(p) for p in (args.source_manifest,args.sdist,args.wheel)]
         wheel_files = check_archives(payload,args.sdist,args.wheel)
-        installed = None if args.archives_only else check_installed(payload,wheel_files,args.wheel,args.profile)
+        if args.profile != 'docling' and args.dependency_manifest is not None:
+            raise ValueError('Manifest closure riservato al profilo Docling')
+        installed = None if args.archives_only else check_installed(payload,wheel_files,args.wheel,args.profile,args.dependency_manifest)
         source_tool.validate_current(source,args.repo)
         if before != [descriptor(p) for p in (args.source_manifest,args.sdist,args.wheel)]:
             raise ValueError('Input cambiato durante il preflight')

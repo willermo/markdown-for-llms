@@ -52,14 +52,14 @@ def _signal_owned(item, signum):
 
 
 def _run(argv, cwd, output, environment, timeout, stream_cap, cleanup_executables, interrupted,
-         stdout_name='stdout.bin',stderr_name='stderr.bin',expected_netns=None):
+         stdout_name='stdout.bin',stderr_name='stderr.bin',expected_netns=None,rss_limit_bytes=6*1024**3,pass_fds=()):
     """Guard the owned process tree until all writers exit and are reaped.
 
     Invocations are serial within a caller. Preexisting children are excluded;
     only the new command's observed descendants and subreaper adoptions enter
     this execution. Signals use pidfds plus the sampled start identity.
     """
-    if not argv or not Path(argv[0]).is_absolute() or not 0 < timeout <= 900:
+    if not argv or not Path(argv[0]).is_absolute() or not 0 < timeout <= 900 or type(rss_limit_bytes) is not int or rss_limit_bytes <= 0:
         raise ValueError('argv/deadline invalido')
     output=Path(output);output.mkdir(exist_ok=False)
     import ctypes
@@ -71,7 +71,7 @@ def _run(argv, cwd, output, environment, timeout, stream_cap, cleanup_executable
     baseline_children=set(_process(os.getpid())['children'])
     reaped=[];helper_cleanup=[];status=usage=None;leader_end=None;stop_started=None
     with (output/stdout_name).open('xb') as stdout,(output/stderr_name).open('xb') as stderr:
-        proc=subprocess.Popen(argv,cwd=cwd,env=environment,shell=False,close_fds=True,start_new_session=True,stdout=stdout,stderr=stderr)
+        proc=subprocess.Popen(argv,cwd=cwd,env=environment,shell=False,close_fds=True,pass_fds=pass_fds,start_new_session=True,stdout=stdout,stderr=stderr)
         while True:
             roots=[p for p in _process(os.getpid())['children'] if p not in baseline_children]
             pending=list(roots);current={};rss=0
@@ -112,7 +112,7 @@ def _run(argv, cwd, output, environment, timeout, stream_cap, cleanup_executable
             if interrupted[0]:reason=reason or 'INTERRUPTED'
             elif os.fstat(stdout.fileno()).st_size>stream_cap or os.fstat(stderr.fileno()).st_size>stream_cap:reason=reason or 'STREAM_LIMIT'
             elif (now-start)/1e9>=timeout:reason=reason or 'TIMEOUT'
-            elif rss>6*1024**3:reason=reason or 'RSS_STOP'
+            elif rss>rss_limit_bytes:reason=reason or 'RSS_STOP'
             elif expected_netns and any(i['netns'] and i['netns']!=expected_netns for i in current.values()):reason=reason or 'NAMESPACE_MISMATCH'
             if status is not None and leader_end is not None and (now-leader_end)/1e9>=0.25 and not reason:
                 for item in current.values():
@@ -176,12 +176,13 @@ def _worker(config_path):
     def interrupt(signum,frame):interrupted[0]=True
     signal.signal(signal.SIGINT,interrupt);signal.signal(signal.SIGTERM,interrupt)
     try:
-        result=_run(cfg['argv'],cfg['cwd'],cfg['output'],cfg['environment'],cfg['timeout'],cfg['stream_cap'],cfg['cleanup_executables'],interrupted,cfg['stdout_name'],cfg['stderr_name'],cfg['expected_netns'])
+        result=_run(cfg['argv'],cfg['cwd'],cfg['output'],cfg['environment'],cfg['timeout'],cfg['stream_cap'],cfg['cleanup_executables'],interrupted,cfg['stdout_name'],cfg['stderr_name'],cfg['expected_netns'],cfg['rss_limit_bytes'],tuple(cfg.get('pass_fds', [])))
+        result['rss_limit_bytes']=cfg['rss_limit_bytes']
         with Path(cfg['receipt']).open('x') as f:json.dump(result,f);f.write('\n')
     finally:_private_cleanup()
 
 
-def run(argv, cwd, output, environment, timeout=60, stream_cap=1048576, cleanup_executables=(), *, stdout_name="stdout.bin", stderr_name="stderr.bin", expected_netns=None):
+def run(argv, cwd, output, environment, timeout=60, stream_cap=1048576, cleanup_executables=(), *, stdout_name="stdout.bin", stderr_name="stderr.bin", expected_netns=None, rss_limit_bytes=6*1024**3, pass_fds=()):
     """One private supervisor per command: foreign caller children untouched.
 
     The stdlib supervisor is in the same interpreter, closed environment and
@@ -190,10 +191,12 @@ def run(argv, cwd, output, environment, timeout=60, stream_cap=1048576, cleanup_
     """
     import json
     import sys
+    if type(rss_limit_bytes) is not int or rss_limit_bytes <= 0 or not 0 < timeout <= 900:
+        raise ValueError('argv/deadline invalido')
     output=Path(output).absolute();prefix=output.with_name(output.name+'-monitor')
     if output.exists():raise FileExistsError(output)
     config_path=prefix.with_name(prefix.name+'-input.json');receipt_path=prefix.with_name(prefix.name+'-receipt.json')
-    cfg={'argv':list(map(str,argv)),'cwd':str(cwd),'output':str(output),'environment':environment,'timeout':timeout,'stream_cap':stream_cap,'cleanup_executables':cleanup_executables,'stdout_name':stdout_name,'stderr_name':stderr_name,'expected_netns':expected_netns,'receipt':str(receipt_path)}
+    cfg={'argv':list(map(str,argv)),'cwd':str(cwd),'output':str(output),'environment':environment,'timeout':timeout,'stream_cap':stream_cap,'cleanup_executables':cleanup_executables,'stdout_name':stdout_name,'stderr_name':stderr_name,'expected_netns':expected_netns,'rss_limit_bytes':rss_limit_bytes,'receipt':str(receipt_path),'pass_fds':list(pass_fds)}
     with config_path.open('x') as f:json.dump(cfg,f);f.write('\n')
     supervisor_argv=[sys.executable,'-I','-B',str(Path(__file__).absolute()),'--private-supervisor',str(config_path)]
     previous=signal.getsignal(signal.SIGINT);interrupted=[False];worker_item=None
@@ -203,7 +206,7 @@ def run(argv, cwd, output, environment, timeout=60, stream_cap=1048576, cleanup_
     signal.signal(signal.SIGINT,interrupt)
     try:
         with prefix.with_name(prefix.name+'-stdout.bin').open('xb') as stdout,prefix.with_name(prefix.name+'-stderr.bin').open('xb') as stderr:
-            proc=subprocess.Popen(supervisor_argv,env=environment,stdin=subprocess.DEVNULL,stdout=stdout,stderr=stderr,close_fds=True)
+            proc=subprocess.Popen(supervisor_argv,env=environment,stdin=subprocess.DEVNULL,stdout=stdout,stderr=stderr,close_fds=True,pass_fds=pass_fds)
             try:worker_item=_process(proc.pid)
             except OSError:pass
             if interrupted[0] and worker_item:_signal_owned(worker_item,signal.SIGINT)

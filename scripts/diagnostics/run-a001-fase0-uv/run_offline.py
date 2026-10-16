@@ -192,6 +192,79 @@ def inside(args, target):
     return 0 if result["status"] == "PASS" else 2
 
 
+def confined_command(args, target, helper, synthetic_socket):
+    """Backend a003: preflight host, R nel consumer, un solo mount/PID/netns."""
+    if args.bundle or args.inside or args.command or not args.confinement or not args.preflight_config:
+        raise ValueError('bwrap richiede snapshot, manifest e preflight, senza comando alternativo')
+    manifest = json.loads(args.confinement.read_text())
+    path = args.repo/'scripts/diagnostics/run-a003-fase1-engine-comparison/confinement.py'
+    spec = importlib.util.spec_from_file_location('a003_standard_confinement', path)
+    confinement = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(confinement)
+    confinement.validate(manifest)
+    if manifest['phase'] != 'conversion' or manifest['python'] != args.python or manifest['scratch'] != str(args.cwd):
+        raise ValueError('Consumer incompatibile con target/cwd')
+    cfg = json.loads(Path(manifest['consumer_config']).read_text())
+    if manifest.get('consumer') != str(path.with_name('consumer.py')) or cfg.get('argv') != manifest['argv']:
+        raise ValueError('Authentic consumer/argv required')
+    if cfg.get('runtime') != {k: target[k] for k in ('python','prefix','base_prefix','python_version','dependencies','startup')}:
+        raise ValueError('Runtime consumer non legato al target')
+    if cfg.get('daemon_paths') != [row['path'] for row in target['daemons']]:
+        raise ValueError('Sonde daemon non legate al target')
+    checks = helper.prerequisites(target)
+    if not all(row['matches'] for row in checks):
+        raise ValueError('Prerequisiti host FAIL')
+    conf = json.loads(args.preflight_config.read_text())
+    if conf.get('schema') != 1 or not conf.get('commands'):
+        raise ValueError('Preflight host obbligatorio')
+    result = {'schema':1, 'host_prerequisites':checks, 'preflights':[],
+              'probe_phase':'consumer before engine; private net/pid/proc/mount',
+              'preflight_phase':'host before confinement; source/archives/installation', 'status':'IMPEDITA'}
+    for command in conf['commands']:
+        if not command or command[0] != args.python or not all(isinstance(x,str) for x in command):
+            raise ValueError('argv preflight incompatibile')
+        child = subprocess.run(command, cwd=args.repo, env=clean_env(target), capture_output=True, text=True, close_fds=True, timeout=60)
+        result['preflights'].append({'argv':command,'exit_code':child.returncode,'stdout':child.stdout,'stderr':child.stderr})
+        if child.returncode:
+            result['status']='FAIL'
+            write_new(args.output/'inside.json',result)
+            return 2
+    monitor_path=args.repo/'scripts/benchmarks/resources.py'
+    spec=importlib.util.spec_from_file_location('a003_standard_monitor',monitor_path)
+    monitor=importlib.util.module_from_spec(spec);spec.loader.exec_module(monitor)
+    probes_path=Path(cfg['probe_receipt'])
+    if not probes_path.is_relative_to(args.cwd) or '..' in probes_path.parts:
+        raise ValueError('Probe receipt outside scratch')
+    admission_fd = confinement.memfd_create()
+    try:
+        command = confinement.argv(manifest, netns=args.host_netns or os.readlink('/proc/self/ns/net'), synthetic_socket=synthetic_socket, admission_fd=admission_fd)
+        receipt=monitor.run(command,args.cwd,Path(manifest['process_output']),clean_env(target),manifest['timeout_s'],
+                            rss_limit_bytes=manifest.get('rss_limit_bytes',6*1024**3), pass_fds=(admission_fd,))
+        write_new(manifest['result'],receipt)
+        try:
+            authentic, probes = confinement.sealed_admission(admission_fd)
+            (args.output/'admission.json').write_bytes(authentic)
+            actual = confinement.safe_bytes(args.cwd, str(probes_path.relative_to(args.cwd)), expected_identity=probes['copy_identity'])
+            if actual != authentic:
+                raise ValueError('Probe copy replaced after admission')
+            if probes['argv_after_probes'] != manifest['argv']:
+                raise ValueError('Admission argv mismatch')
+            result['admission'] = {'method':'host memfd inherited by consumer, sealed and closed before exec; no engine FD', 'sha256':hashlib.sha256(authentic).hexdigest(), 'copy_matches':True}
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            result['admission_error'] = repr(exc)
+            probes = {'status':'UNAVAILABLE'}
+    finally:
+        os.close(admission_fd)
+    result.update(command={'argv':command,'resources':manifest['result']},
+                  consumer_receipt={'path':str(probes_path),'sha256':result.get('admission',{}).get('sha256')},
+                  namespaces=probes.get('namespaces'), monitor_phase='host; includes boundary and children')
+    # R attesta l'ammissione; l'exit del motore resta un risultato separato.
+    passed=probes['status']=='PASS' and receipt['children_reaped'] and not receipt['stop_reason']
+    result['status']='PASS' if passed else 'FAIL'
+    write_new(args.output/'inside.json',result)
+    return 0 if passed else 2
+
+
 def outside(args, target):
     args.output.mkdir(exist_ok=False)
     result = {"schema": 1, "captured_at_utc": datetime.now(timezone.utc).isoformat(), "runner_candidate": args.runner,
@@ -228,17 +301,23 @@ def outside(args, target):
             if args.preflight_config:
                 inner += ["--preflight-config", str(args.preflight_config)]
             inner += args.command
-            if args.runner == "unshare":
+            if args.runner == 'bwrap':
+                exit_code=confined_command(args,target,helper,str(path))
+                proc=type('Exit', (), {'returncode':exit_code})()
+                result['invocation']={'backend':'single bwrap boundary','exit_code':exit_code,'manifest':str(args.confinement),
+                                      'manifest_sha256':digest(args.confinement)}
+            elif args.runner == "unshare":
                 runner = [target["binaries"]["unshare"], "--user", "--map-root-user", "--net", "--"]
             else:
                 blacklist = sorted({item["path"] for item in target["daemons"]} | {str(path)})
                 runner = [target["binaries"]["firejail"], "--noprofile", "--net=none", f"--env=TMPDIR={target['tmpdir']}", *[f"--blacklist={p}" for p in blacklist], "--"]
-            proc = subprocess.run(runner + inner, env=clean_env(target), capture_output=True, text=True,
-                                  close_fds=True, timeout=args.timeout + 180)
-            (args.output / "runner-stdout.txt").write_text(proc.stdout)
-            (args.output / "runner-stderr.txt").write_text(proc.stderr)
-            result["invocation"] = {"argv": runner + inner, "exit_code": proc.returncode,
-                                    "stdout": "runner-stdout.txt", "stderr": "runner-stderr.txt"}
+            if args.runner != 'bwrap':
+                proc = subprocess.run(runner + inner, env=clean_env(target), capture_output=True, text=True,
+                                      close_fds=True, timeout=args.timeout + 180)
+                (args.output / "runner-stdout.txt").write_text(proc.stdout)
+                (args.output / "runner-stderr.txt").write_text(proc.stderr)
+                result["invocation"] = {"argv": runner + inner, "exit_code": proc.returncode,
+                                        "stdout": "runner-stdout.txt", "stderr": "runner-stderr.txt"}
             result["synthetic_host_after"] = helper.connect_only(socket.AF_UNIX, str(path))
         result["host_daemons_after"] = [dict(item, probe=helper.connect_only(socket.AF_UNIX, item["path"]))
                                          for item in target["daemons"] if item["exists"]]
@@ -250,10 +329,12 @@ def outside(args, target):
             result["status"] = inner_result["status"] if proc.returncode == 0 else "IMPEDITA" if inner_result["status"] == "IMPEDITA" else "FAIL"
         if not result["inputs_unchanged"] or not result["synthetic_host_after"]["connected"]:
             result["status"] = "FAIL"
-    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
         if isinstance(exc, ValueError):
             result["status"] = "FAIL"
         result["error"] = f"{type(exc).__name__}: {exc}"
+        if isinstance(exc, RuntimeError):
+            result.update(status='FAIL', stop_reason='HOST_RUN_ERROR', children_reaped=None)
     finally:
         if socket_dir is not None:
             # Unica directory socket appena creata dal wrapper, mai cleanup globale.
@@ -275,7 +356,8 @@ def outside(args, target):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--runner", choices=("unshare", "firejail"), default="unshare")
+    parser.add_argument("--runner", choices=("unshare", "firejail", "bwrap"), default="unshare")
+    parser.add_argument('--confinement', type=Path, help='Manifest conversione a003 per backend bwrap')
     parser.add_argument("--python", required=True)
     parser.add_argument("--repo", required=True, type=Path)
     parser.add_argument("--target", required=True, type=Path)
@@ -295,7 +377,7 @@ def main():
     if not 0 < args.timeout <= 900:
         parser.error('Deadline figlio deve essere <=900s')
     resource.setrlimit(resource.RLIMIT_FSIZE, (33554432, 33554432))
-    for name in ("repo", "target", "snapshot", "bundle", "output", "cwd", "preflight_config"):
+    for name in ("repo", "target", "snapshot", "bundle", "output", "cwd", "preflight_config", "confinement"):
         path = getattr(args, name)
         if path is not None:
             if not path.is_absolute() or any(part.is_symlink() for part in (path, *path.parents)):
@@ -304,6 +386,8 @@ def main():
     if target.get("schema") != 1 or target["repo"] != str(args.repo) or target["python"] != args.python:
         parser.error("Schema/repo/interprete del target incompatibile")
     clean_env(target)
+    if (args.runner == 'bwrap') != bool(args.confinement):
+        parser.error('Manifest confinement esclusivo e obbligatorio per bwrap')
     if args.inside:
         if not args.host_netns or not args.synthetic_socket:
             parser.error("Parametri inside mancanti")
