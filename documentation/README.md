@@ -1,4 +1,24 @@
-# Progettazione del convertitore di documenti
+# Documentazione progettuale
+
+**Stato al 2026-10-16:** priorità approvata al convertitore utilizzabile, con
+CLI/Web UI e successivi incrementi della roadmap. Parser/validazione avanzata
+differiti; trace r005 consegnato senza review, nessun GO retroattivo e debito
+a002 aperto. Controlli operativi e qualità del contenuto restano distinti.
+Prodotto ancora da realizzare; prima preparazione/pianificazione a004 in temp.
+[Svolta di priorità](decisions/0008-maintained-parser-and-provisional-benchmark.md),
+[roadmap](roadmap.md), [storia a003](runs/run-a003-fase1-engine-comparison/manifest.md).
+
+Il lavoro di validazione non conclusivo rimane **debito tecnico riconosciuto**,
+da consolidare appena tempo e risorse lo consentiranno.
+[Registro trasversale](development/technical-debt.md). La pulizia selettiva ha
+liberato8,18GiB di ambienti/build Haskell in temp; disponibilità e limiti nella
+sintesi a003, senza cancellare report, sorgenti o risultati di conversione.
+
+Qui si conservano decisioni, sintesi e report selezionati; le prove operative
+sono in temp. I bundle a003 sono stati trasferiti con hash invariati, senza
+cancellazioni; non sono candidati al commit.
+[Conservazione](development/run-lifecycle.md#archivio-e-pulizia),
+[cronologia](CHANGELOG.md). I riepiloghi antecedenti sotto sono storici.
 
 Questa cartella è la memoria progettuale del repository: conserva motivazioni,
 decisioni, proposte e avanzamento. La documentazione d'uso e sviluppo vive invece in

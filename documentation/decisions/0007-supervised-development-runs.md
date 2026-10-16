@@ -22,7 +22,9 @@ autorizza un singolo agente a simulare i due revisori indipendenti.
 
 Conservare contesto globale in `temp/` e contesto per run in una sottocartella dedicata.
 Versionare skill, protocollo, template e strumento di inizializzazione. Conservare
-evidenze utili in posizioni permanenti prima della pulizia selettiva. Commit e merge,
+sintesi e report selezionati in posizioni permanenti prima della pulizia selettiva;
+le prove operative restano in `temp/` secondo la precisazione del 2026-10-15.
+Commit e merge,
 eventuale push e promozione sono eseguiti dall'utente con comandi forniti dall'agente.
 
 ## Miglioramenti operativi adottati
@@ -183,3 +185,18 @@ risoluzione futura obbligatoria, [ADR0008](0008-maintained-parser-and-provisiona
 NO_GO statica euna incompleta restano tali. Il ciclo ordinario delle nuove
 run e le operazioni Git manuali restano invariati; non estendere questa
 eccezione a future consegne. [Archivio](../runs/run-a002-fase1-corpus/manifest.md).
+
+### Ricorrenza dei difetti e archivio controllato — 2026-10-15
+
+Dopo le due review NO_GO r007 di a003, l'utente richiede di evitare una sequenza
+indefinita di fix e review e di non versionare migliaia di prove generate.
+La ricorrenza di una classe richiede nell'arbitrato una diagnosi dell'assunzione
+errata prima del nuovo mandato; un cambiamento di metodo passa al riesame mirato
+del piano, senza una terza review dello stesso oggetto. Restano i requisiti
+di fedeltà, le due review reali e il divieto di GO o debito accettato impliciti.
+Non viene scelta né implementata qui una nuova soluzione del comparatore.
+
+La [precisazione ADR0005](0005-documentation-and-governance.md) distingue sintesi
+permanenti e prove temporanee. Il protocollo ne attua selezione e pulizia, con
+transizione protetta degli archivi a003 non tracciati. Gli archivi a001/a002 già
+versionati restano storia; nessuna loro cancellazione o migrazione è dichiarata.

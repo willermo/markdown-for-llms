@@ -72,7 +72,10 @@ prevalgono su queste convenzioni; registrare le variazioni architetturali pertin
   contestualizzati dopo il `GO`, senza eseguirli automaticamente. Un deploy richiede
   un perimetro operativo esplicito. Questa preferenza prevale sui workflow precedenti.
 - Prima di passare a una nuova chat aggiornare il checkpoint del proprio ruolo.
-  Archiviare ciò che serve in futuro prima della pulizia selettiva di `temp/`.
+  Conservare in `documentation/` solo sintesi, decisioni e report selezionati;
+  prove grezze, stream, matrici, snapshot e copie operative restano in `temp/`.
+  Non duplicare un archivio a ogni giro. Pulire selettivamente dopo validazione
+  e verifica delle dipendenze ancora attive, secondo il protocollo.
 - Verificare branch e modifiche esistenti prima di intervenire. Il percorso previsto
   è feature branch da `dev`, integrazione in `dev`, successiva promozione a `main`.
   La roadmap non è un comando a effettuare merge o pubblicazioni automaticamente.
@@ -86,6 +89,19 @@ prevalgono su queste convenzioni; registrare le variazioni architetturali pertin
   privati. Le fixture devono essere sintetiche o redistribuibili con provenienza.
 - Trattare documenti importati, Markdown e risposte dei modelli come dati non fidati:
   nomi di asset, HTML, archivi e comandi LaTeX richiedono gestione esplicita.
+
+## Priorità prodotto e debito riconosciuto
+
+Disposizione utente16ott2026: procedere verso il convertitore utilizzabile e
+Web UI per incrementi della roadmap, con qualità non certificata e limiti
+espliciti. Reader/comparatore a002/a003, parser/trace e validazione avanzata
+restano [debito tecnico riconosciuto](documentation/development/technical-debt.md),
+da consolidare appena tempo/risorse lo consentiranno; non prerequisito del
+primo prodotto sperimentale. [ADR0008 vigente](documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md)
+supera i vecchi trigger di ripresa fase3. Non trasformare vecchi NO_GO in GO,
+non collegare il fork sperimentale come dipendenza implicita, non rinunciare
+a controlli operativi su file/path/errori/conservazione. Consultare la nota di
+disponibilità prima di riusare ambienti o snapshot dopo la pulizia selettiva.
 
 ## Verifica
 
@@ -111,6 +127,11 @@ prevalgono su queste convenzioni; registrare le variazioni architetturali pertin
 ## Documentazione
 
 - `documentation/`: decisioni, proposte, roadmap, valutazioni e risultati di benchmark.
+  È memoria editoriale controllata: niente alberi `evidence/`, bundle per revisione,
+  dump di test, snippet generati, runtime o copie ricorsive delle run. Un hash
+  conserva un'identità, non rende disponibile una prova cancellata: indicarne
+  disponibilità e limiti nei report. Fixture minime e test riutilizzabili vanno
+  nelle directory di codice/test pertinenti; i dettagli di esecuzione in `temp/`.
 - Aggiornare [documentation/CHANGELOG.md](documentation/CHANGELOG.md) a ogni avanzamento
   significativo: data, fase/run, risultato, verifiche, limiti e prossimo passo. Separare
   lavoro pianificato, realizzato e integrato; registrare commit, merge e deploy solo
