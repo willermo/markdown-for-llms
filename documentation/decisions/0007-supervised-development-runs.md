@@ -1,5 +1,7 @@
 # ADR 0007 — Run supervisionate e handover persistenti
 
+> **Superseded by [ADR 0010](0010-multi-model-agent-governance.md) (2026-10-17).** Kept unchanged as history of the runs a001–a004.
+
 - Data: 2026-10-02
 - Stato decisione: accettata
 - Stato implementazione: Protocollo iniziale integrato a66ba822; ciclo continuo richiesto dall'utente adottato nel working tree il 2026-10-06: implementazione, fix e prove senza freeze intermedi del supervisore; snapshot comune alla consegna per le due review; efficacia da verificare

@@ -1,5 +1,7 @@
 # ADR 0005 — Documentazione e governance locali
 
+> **Partially superseded by [ADR 0010](0010-multi-model-agent-governance.md) (2026-10-17):** the agent governance part (`.agents/workflows/`, instructions for a single tool) is replaced. The split between `documentation/`, `docs/` and `temp/` remains valid until the documentation tranche revises it.
+
 - Data: 2026-10-02
 - Stato decisione: accettata
 - Stato implementazione: struttura iniziale presente; guide del nuovo prodotto da scrivere

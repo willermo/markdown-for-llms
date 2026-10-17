@@ -207,6 +207,6 @@ aggiornare il registro e collegare la fase interessata. Conservare gli ADR super
 indicando quale nuovo ADR li sostituisce. Le evidenze dei futuri benchmark saranno
 salvate qui con versioni, corpus, hardware e limiti del confronto.
 
-Le [istruzioni del repository](../AGENTS.md), le
-[skill locali](../.agents/README.md) e i
-[workflow](../.agents/workflows/README.md) indicano come lavorare su questi materiali.
+Le [istruzioni del repository](../AGENTS.md) e le
+[skill locali](../.agents/README.md) indicano come lavorare su questi materiali
+(governance multi-modello: [ADR 0010](decisions/0010-multi-model-agent-governance.md)).

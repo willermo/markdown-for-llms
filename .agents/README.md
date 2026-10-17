@@ -1,40 +1,24 @@
-# Strumenti locali per lo sviluppo assistito
+# Agent rules and skills
 
-Questa cartella è versionata nel repository. Non installa skill globali, non modifica
-la configurazione personale e non avvia servizi.
+This folder is the canonical source of the agent governance of this repository ([ADR 0010](../documentation/decisions/0010-multi-model-agent-governance.md)). It installs no global skills, changes no personal configuration and starts no services.
 
-## Skill
+- `rules/` — topic rules with a `trigger` frontmatter (Antigravity loads them; Claude Code reaches them through `.claude/rules/`; Codex reads them when `AGENTS.md` lists them). `90-local.md` is local and untracked.
+- `skills/` — procedures, one folder per skill with a `SKILL.md` (`name`, `description`). Claude Code reaches them through the thin wrappers in `.claude/skills/`.
 
-| Skill | Quando usarla |
+There is no `workflows/` folder: procedures are skills.
+
+## Skills
+
+| Skill | When to use it |
 | --- | --- |
-| [record-architecture-decision](skills/record-architecture-decision/SKILL.md) | Formalizzare o aggiornare una decisione, mantenendo ADR e roadmap coerenti |
-| [verify-conversion-fidelity](skills/verify-conversion-fidelity/SKILL.md) | Valutare modifiche a parser, OCR, cleaning, formule, asset o serializer |
-| [write-diataxis-docs](skills/write-diataxis-docs/SKILL.md) | Scrivere documentazione utente/sviluppatore nella categoria Diátaxis appropriata |
-| [manage-implementation-run](skills/manage-implementation-run/SKILL.md) | Avviare, supervisionare o riprendere una run con doppie review, arbitrati e handover |
+| [plan-before-code](skills/plan-before-code/SKILL.md) | Before changing files in a non-trivial task, or in a planning-only run |
+| [session-start](skills/session-start/SKILL.md) | At the start of a session, or when resuming after a pause |
+| [session-handover](skills/session-handover/SKILL.md) | At the end of a session, or when the context is close to saturation |
+| [record-architecture-decision](skills/record-architecture-decision/SKILL.md) | To record or update an architecture decision, keeping ADRs and roadmap consistent |
+| [verify-conversion-fidelity](skills/verify-conversion-fidelity/SKILL.md) | When parsers, OCR, cleaning, formulas, assets or the serializer change, and for engine benchmarks |
+| [write-diataxis-docs](skills/write-diataxis-docs/SKILL.md) | To write user or developer documentation in the right Diátaxis form |
+| [prepare-release](skills/prepare-release/SKILL.md) | To prepare the integration of a reviewed run or a release, with the commands for the owner |
 
-Le skill hanno il formato `SKILL.md` con metadati e istruzioni; Codex supporta
-la scoperta da `.agents/skills/` nel repository, come descritto nella
-[documentazione ufficiale](https://learn.chatgpt.com/docs/build-skills).
-Possono essere richiamate esplicitamente per nome o selezionate dal client quando
-pertinenti. Non sono necessarie dipendenze MCP. La skill delle run usa, quando utile,
-`scripts/run_context.py`, eseguibile con la libreria standard Python.
+## Maintenance
 
-## Workflow
-
-I [workflow](workflows/README.md) sono procedure Markdown del progetto richiamate
-dalle skill o dalle istruzioni di lavoro. Non sono hook, job GitHub Actions o comandi
-speciali di Codex. La CI eseguibile sarà introdotta con il package nella fase 2.
-
-## Manutenzione
-
-Mantenere nelle skill soltanto le procedure specifiche e rimandare ad ADR e workflow
-per i dettagli condivisi. Quando cambiano, verificare frontmatter, collegamenti e
-istruzioni su una richiesta concreta; la validazione del formato non dimostra da
-sola che il client le abbia caricate o che la procedura sia efficace.
-
-Esempi di impiego: «Registra la scelta del frontend» attiva la skill ADR;
-«Verifica che il nuovo OCR preservi gli indici matematici» attiva la verifica di
-fedeltà; «Scrivi la guida per ripristinare un backup» attiva la skill Diátaxis.
-
-Riferimenti comuni: [AGENTS.md](../AGENTS.md),
-[base progettuale](../documentation/README.md).
+Edit only the canonical files here; the wrappers in `.claude/` repeat `name` and `description` and point to the source. After a change, check frontmatter and links, and test the skill on a concrete request: a valid format does not prove that a client loaded the skill or that the procedure works.

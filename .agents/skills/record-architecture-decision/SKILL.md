@@ -1,24 +1,15 @@
 ---
 name: record-architecture-decision
-description: "Registra o aggiorna decisioni architetturali di questo convertitore in documentation/, mantenendo coerenti ADR, questioni aperte e roadmap. Usare per scelte di motori, modello documentale, API, storage, frontend o distribuzione; non per piccoli refactoring senza conseguenze architetturali."
+description: "Records or updates architecture decisions of this converter in documentation/decisions/, keeping ADRs, the public roadmap and known limitations consistent. Use for choices about engines, document model, API, storage, frontend or distribution; not for small refactorings without architectural consequences."
 ---
 
-# Registrare una decisione architetturale
+# Record an architecture decision
 
-1. Leggere il [registro ADR](../../../documentation/decisions/README.md) e gli ADR
-   pertinenti. Distinguere la richiesta attuale, le scelte già concordate e le ipotesi.
-2. Seguire il [workflow architetturale](../../workflows/architecture-change.md).
-   Riutilizzare il [template](../../../documentation/decisions/template.md) per una
-   nuova decisione significativa; aggiornare una proposta esistente se è lo stesso tema.
-3. Motivare la scelta con vincoli del convertitore: fedeltà, provenienza, CPU/GPU,
-   uso locale/remoto, manutenzione e verificabilità. Citare fonti primarie aggiornate
-   quando la decisione dipende da capacità, licenze o versioni di strumenti.
-4. Riportare separatamente stato della decisione e dell'implementazione. Registrare
-   come accettata una scelta già autorizzata dalla conversazione; non chiedere di
-   approvarla di nuovo. Se manca una decisione sostanziale, registrare una proposta
-   esplicita e il punto da risolvere, continuando il lavoro indipendente.
-5. Aggiornare indice, roadmap e questioni aperte senza riscrivere il draft storico.
-   Se una scelta accettata viene sostituita, collegare vecchio e nuovo ADR.
+1. Read the [ADR index](../../../documentation/decisions/README.md) and the relevant ADRs. Separate the current request, the choices already agreed and the hypotheses.
+2. Describe the problem and compare realistic alternatives with proportionate evidence. For engines, models and APIs, separate declared capabilities from measured ones; cite up-to-date primary sources when the decision depends on capabilities, licences or tool versions.
+3. Reuse the [template](../../../documentation/decisions/template.md) for a new significant decision (next free number); update an existing ADR when the topic is the same. Motivate the choice with the converter's constraints: fidelity, provenance, CPU/GPU, local or remote use, maintenance and verifiability.
+4. Report the decision status (proposed, accepted, superseded, withdrawn) separately from the implementation status, and state the origin. Record as accepted a choice Davide has already authorized; do not ask for approval again. If a substantial decision is missing, record an explicit proposal and the open point, and continue the independent work.
+5. Update the ADR index and the [roadmap](../../../documentation/roadmap.md) where relevant, without rewriting historical drafts. When an accepted choice is replaced, link the old and the new ADR. Priorities and process decisions belong to the project knowledge base, not to an ADR.
+6. Check links and consistency between documents; report the choice and its practical effect.
 
-Consegnare ADR e collegamenti coerenti, con alternative, conseguenze e criterio di
-verifica. Non trasformare automaticamente l'ADR in un'implementazione o un merge.
+Deliver the ADR with alternatives, consequences and a verification criterion. An ADR is not an implementation, a merge or a promise of an available feature.
