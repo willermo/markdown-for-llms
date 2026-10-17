@@ -2,7 +2,7 @@
 
 - Data: 2026-10-02
 - Stato decisione: accettata come indirizzo architetturale
-- Stato implementazione: I1 Linux CPU r004 GO il 2026-10-17, integrazione manuale pendente; altri profili da verificare
+- Stato implementazione: I1 Linux CPU r004 GO, integrato in dev a f8bf44c e push verificato il 2026-10-17; altri profili da verificare
 - Origine: requisiti locale/remoto, CPU/GPU, Docker e `.env` dell'utente
 
 ## Decisione

@@ -103,6 +103,12 @@ di spazio libero recuperato, runtime/pesi e prove finali conservati.
 [Disponibilità e limiti](development/cleanup-2026-10-17.md); niente nuova
 certificazione, integrazione o cambiamento dei cinque ID del debito.
 
+Integrazione verificata17ott2026: feature323f172 confluita in devf8bf44c,
+alberi identici e push di entrambi confermato direttamente su origin.
+731 file selezionati invariati e commit sui2051percorsi approvati, comprese
+le1967cancellazioni. Primo uso/P14 PENDING; nessun deploy o avvio automatico
+del prossimo incremento. Registri di ricezione aggiornati localmente.
+
 ## Quadro delle fasi
 
 | Fase | Risultato verificabile | Dipendenze | Stato |
@@ -110,8 +116,8 @@ certificazione, integrazione o cambiamento dei cinque ID del debito.
 | 0 | Governance, decisioni e documentazione iniziale | Nessuna | Bootstrap integrato in dev a `66ba822` |
 | 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio verificato; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; push verificato a `80c31da` |
 | 1 | Corpus, benchmark e scelta motivata dei motori | Fase0.1, campioni e profili hardware | Risultati parziali a003 conservati, debito a002 aperto; trace r005 non revisionato e validazione avanzata differita. Non blocca il prodotto sperimentale autorizzato |
-| 2 | Package applicativo, contratti, configurazione, DB e worker | Evidenza operativa dei motori e dati locali | Fondazioni I1 r004 GO dopo GO/GO e arbitrato; integrazione manuale pendente, residui bassi tracciati |
-| 3 | Prima applicazione completa con FastAPI e Web UI minima | Fondazioni necessarie e frontend | Primo percorso CLI/API/Web UI I1 r004 GO, browser e replay esplicito provati; C06 reale r003, qualità unverified e P14 PENDING. Funzioni avanzate successive |
+| 2 | Package applicativo, contratti, configurazione, DB e worker | Evidenza operativa dei motori e dati locali | Fondazioni I1 r004 GO e integrate in dev f8bf44c, push verificato; residui bassi tracciati |
+| 3 | Prima applicazione completa con FastAPI e Web UI minima | Fondazioni necessarie e frontend | Primo percorso CLI/API/Web UI I1 r004 integrato in dev f8bf44c, push verificato; browser/replay e C06 reale r003 provati, qualità unverified/P14 PENDING. Funzioni avanzate successive |
 | 4 | Formati richiesti, PDF scientifici, OCR e asset | Fasi 1–3 | Da iniziare |
 | 5 | Revisione OCR/AI e confronto sorgente/risultato | Provenienza e asset della fase 4 | Da iniziare |
 | 6 | Distribuzione e collaudo CPU/GPU/remoto sui sistemi previsti | Fasi 3–5; prove preliminari già in fase 1 | Da iniziare |

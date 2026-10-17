@@ -12,6 +12,23 @@ La [roadmap](roadmap.md) descrive il percorso previsto, gli
 [archivio delle run](runs/README.md) conserva le sintesi permanenti. Il contesto
 operativo corrente rimane in `temp/`, esclusa da Git.
 
+## 2026-10-17 — I1 integrato in dev, push verificato
+
+Utente: commit feature `323f17208bb70d9fc8ee5ad3303d7874516fac5b`, merge dev
+`f8bf44c86736bae503f345bcab99fff8eeee2708`, primo genitore9f702a2.
+Alberi feature/dev identici `e65a374b56d6e9aa7039d5b9eaa3649a5550f78b`;
+interrogazione diretta origin conferma entrambi i branch, main428d404 invariato.
+Worktree pulito alla ricezione,731file selezionati e561artefatti invariati,
+2051percorsi committati uguali alla selezione, comprese1967cancellazioni.
+
+Verify pre-commit STALE atteso per HEAD/branch e omissione dei13record deleted
+ora assenti dall'index Git; tutti384file presenti e artefatti identici.
+Nessuna regressione o nuova review richiesta per il solo passaggio Git;
+nessun runtime/suite/build/ML eseguito. [Sintesi](runs/run-a004-fase2-prodotto-utilizzabile/manifest.md).
+Registri di ricezione aggiornati localmente, commit amministrativo ancora
+da eseguire dall'utente. Stato INTEGRATED; primo uso/P14 PENDING, qualità
+unverified, residui e debito invariati. Nessun deploy o promozione a main.
+
 ## 2026-10-17 — Pulizia autorizzata prima del commit I1
 
 Eliminati scratch, cache/build superate e copie operative, compresi vecchi

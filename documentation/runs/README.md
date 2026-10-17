@@ -28,7 +28,8 @@ va verificata separatamente e registrata nel manifest.
 
 - [run-a004-fase2-prodotto-utilizzabile](run-a004-fase2-prodotto-utilizzabile/manifest.md):
   primo incremento PDF→Markdown/asset con CLI/API/Web UI. GO I1 r004 dopo
-  review GO/GO e arbitrato; integrazione manuale pendente, nessun deploy.
+  review GO/GO e arbitrato; integrato in dev `f8bf44c` dalla feature `323f172`,
+  alberi identici e push verificato17ott2026; nessun deploy.
   Qualità unverified/P14 PENDING e debito riconosciuto; solo sintesi e comandi
   Git qui, prove operative locali conservate in temp.
 

@@ -3,8 +3,8 @@
 ## Stato e fonti
 
 La pipeline Python a script convive con il primo prodotto sperimentale I1
-(`markdown_for_llms/`), GO r004 del 2026-10-17 nel worktree, in attesa di
-integrazione manuale. Distinguere funzioni provate, qualità non verificata e
+(`markdown_for_llms/`), GO r004 e integrazione in dev a `f8bf44c` con push
+verificato il 2026-10-17. Distinguere funzioni provate, qualità non verificata e
 incrementi ancora pianificati; non dichiarare l'intera roadmap disponibile.
 Leggere [indice architetturale](documentation/README.md),
 [decisioni](documentation/decisions/README.md) e [roadmap](documentation/roadmap.md)

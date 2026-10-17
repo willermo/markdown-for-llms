@@ -2,7 +2,7 @@
 
 - Data: 2026-10-02
 - Stato decisione: accettata
-- Stato implementazione: I1 r004 GO il 2026-10-17; UI statica secondo ADR0009, integrazione manuale pendente, funzioni avanzate successive
+- Stato implementazione: I1 r004 GO, integrato in dev a f8bf44c e push verificato il 2026-10-17; UI statica secondo ADR0009, funzioni avanzate successive
 - Origine: preferenza esplicita FastAPI e richiesta GUI/Web UI dell'utente
 
 ## Contesto e decisione
@@ -39,5 +39,5 @@ Dettagli: [progetto Web UI](../architecture/web-ui.md), [roadmap](../roadmap.md)
 [ADR0009](0009-first-usable-product.md) adotta HTML/CSS/JavaScript serviti da
 FastAPI, con testo inerte e galleria raster, e coda SQLite/worker separato.
 CLI sugli stessi servizi. Primo incremento realizzato e GO r004 dopo due
-review indipendenti; integrazione manuale pendente. Confronto e revisione
+review indipendenti; integrato in dev a f8bf44c, push verificato. Confronto e revisione
 avanzati restano successivi; perimetro iniziale provato Linux CPU/loopback.

@@ -1,15 +1,27 @@
 # A004 — Primo prodotto locale utilizzabile
 
 17 ottobre 2026, sintesi del supervisore. **GO tecnico I1 r004004 dopo due
-review indipendenti GO/GO e arbitrato.** Stato READY_FOR_MANUAL_INTEGRATION:
-codice nel worktree, nessun commit, merge, push o deploy di I1 ancora registrato.
+review indipendenti GO/GO e arbitrato.** Stato **INTEGRATED**: merge e push
+di dev verificati il 17 ottobre; nessun deploy. Primo uso/P14 PENDING.
 
-Branch `feature/run-a004-usable-product`, HEAD
+Alla consegna: branch `feature/run-a004-usable-product`, HEAD
 `f0260568aa544b36b15c351d366583ddd9f8973f`, base/dev
 `9f702a2d368cb8f4a3a6bfb7b9146c6757ecd9df`.
 [Passaggio Git manuale](manual-integration.md),
 [guida d'avvio](../../../docs/tutorials/primo-pdf-locale.md),
 [decisione ADR0009](../../decisions/0009-first-usable-product.md).
+
+Integrazione manuale eseguita dall'utente e verificata: feature
+`323f17208bb70d9fc8ee5ad3303d7874516fac5b`, merge dev
+`f8bf44c86736bae503f345bcab99fff8eeee2708` (primo genitore base9f702a2).
+Albero identico feature/dev: `e65a374b56d6e9aa7039d5b9eaa3649a5550f78b`.
+Interrogazione diretta origin conferma entrambi i branch; main ancora
+`428d404d84fa01ce4ba6f5c74c12a26bdf06d109`. 731 file e 561 artefatti del
+contesto precedente invariati, 2051 percorsi del commit uguali alla selezione
+approvata, incluse 1967 cancellazioni. Worktree pulito alla ricezione.
+Il verify storico segnala HEAD/branch e omissione dei 13 record deleted dei
+JSON ormai cancellati dall'index Git: tutti i 384 file presenti e gli
+artefatti coincidono. Non sono necessarie nuove review per questo passaggio.
 
 ## Risultato e verifiche
 
@@ -75,4 +87,7 @@ payload superati; preservati primo uso, integrazione e dipendenze attive.
 Questa sintesi e le istruzioni Git sono gli unici nuovi documenti d'archivio
 selezionati: nessun albero evidence, ZIP, modello, DB o copia del runtime qui.
 Link locali e coerenza dei registri verificati con git diff --check prima
-della consegna. Commit e integrazione effettivi saranno aggiunti dopo riscontro.
+della consegna. Ricevute locali d'integrazione e push in
+`evidence/supervisor-integration-reception-r001/` della run; nessuna nuova
+suite/build/ML. Gli aggiornamenti editoriali di ricezione restano da
+committare separatamente dall'integrazione applicativa già verificata.

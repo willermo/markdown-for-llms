@@ -1,7 +1,9 @@
 # A004 — Integrazione manuale del primo prodotto
 
 17 ottobre 2026. **GO I1 r004004**, [esito e limiti](manifest.md).
-L'utente esegue i comandi; integrazione non ancora avvenuta. Nessun deploy
+Integrazione e push eseguiti dall'utente e verificati: feature `323f172`,
+dev `f8bf44c`, alberi identici e731 file selezionati invariati. Le sezioni
+di commit/merge sotto conservano i comandi storici: non ripeterli. Nessun deploy
 pubblico o promozione a main è incluso. P14 resta una lettura umana pendente,
 non una certificazione sostituita dai test.
 
@@ -69,3 +71,23 @@ aggiornare i registri con fatti osservati. Per iniziare l'uso locale seguire
 il [tutorial](../../../docs/tutorials/primo-pdf-locale.md) e confrontare un
 proprio PDF con Markdown/asset, annotando utilità e perdite per P14.
 Nessun altro incremento o nuovo giro di fix parte automaticamente.
+
+## Registrazione della verifica — 17 ottobre 2026
+
+Verificati i commit completi e la topologia nel [manifest](manifest.md).
+Origin interrogato direttamente: dev/feature coincidono coi commit locali,
+main invariato. Working tree pulito prima di aggiornare i registri; questi
+aggiornamenti editoriali successivi sono ancora locali su dev.
+
+Per salvarli dopo averli letti, usando la selezione della ricezione:
+
+```bash
+git add --pathspec-from-file=temp/run-a004-fase2-prodotto-utilizzabile/evidence/supervisor-integration-reception-r001/record-paths.txt
+git diff --cached --check
+git diff --cached --stat
+git commit -m "docs: record verified integration of usable converter"
+git push origin dev
+```
+
+Questi comandi non sono stati eseguiti dal supervisore. P14 resta pendente;
+il prossimo passo applicativo è il primo uso locale con feedback dell'utente.

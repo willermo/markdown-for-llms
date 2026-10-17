@@ -7,12 +7,13 @@ resi testo; esiti storici invariati. [Disponibilità delle prove](development/cl
 CLI/Web UI e successivi incrementi della roadmap. Parser/validazione avanzata
 differiti; trace r005 consegnato senza review, nessun GO retroattivo e debito
 a002 aperto. Controlli operativi e qualità del contenuto restano distinti.
-I1 consegnato nel working tree del branch feature/run-a004-usable-product:
+I1 integrato in dev a `f8bf44c` dalla feature `323f172`, push verificato:
 PDF→Markdown/asset, CLI/API/Web UI, archivio e worker separato. Ricevute
 C06/C07, browser/ZIP e recupero crash corroborati dalle due review; arbitrato
 r001/r002/r003 **NO_GO con fix locali** conservati. R004 **GO tecnico dopo
 review GO/GO e arbitrato**, con sei rilievi chiusi e tre residui bassi tracciati.
-C06 reale e chiusure non invalidate preservati. Integrazione manuale pendente:
+C06 reale e chiusure non invalidate preservati. Alberi feature/dev identici,
+731 file selezionati invariati; primo uso e feedback P14 ancora da ricevere:
 [sintesi e limiti](runs/run-a004-fase2-prodotto-utilizzabile/manifest.md),
 [comandi Git](runs/run-a004-fase2-prodotto-utilizzabile/manual-integration.md).
 Qualità unverified,

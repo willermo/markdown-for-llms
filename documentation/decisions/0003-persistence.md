@@ -2,7 +2,7 @@
 
 - Data: 2026-10-02
 - Stato decisione: accettata per la prima versione locale
-- Stato implementazione: fondazioni I1 r004 GO il 2026-10-17, integrazione manuale pendente; revisioni, backup/ripristino e ulteriori funzioni restano da realizzare/provare
+- Stato implementazione: fondazioni I1 r004 GO, integrate in dev a f8bf44c e push verificato il 2026-10-17; revisioni, backup/ripristino e ulteriori funzioni restano da realizzare/provare
 - Origine: preferenza SQLite dell'utente e impostazione generale accettata
 
 ## Contesto e decisione

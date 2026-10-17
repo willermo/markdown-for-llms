@@ -2,7 +2,7 @@
 
 - Data: 2026-10-17
 - Stato decisione: accettata per il primo incremento sperimentale
-- Stato implementazione: I1 r004 GO dopo review indipendenti GO/GO e arbitrato il 2026-10-17; integrazione manuale pendente, residui bassi tracciati
+- Stato implementazione: I1 r004 GO, integrato in dev a f8bf44c dalla feature323f172 e push verificato il 2026-10-17; residui bassi tracciati, P14 PENDING
 - Origine: priorità utente del 16 ottobre, piano a004 r001 e arbitrato delle
   review indipendenti ChatGPT/Claude, con errata locali verificate
 - Sostituisce / sostituito da: nessuno; precisa ADR0002/0003/0004/0008
@@ -138,3 +138,9 @@ senza dichiararli risolti o ampliare il supporto. Scelte invariate;
 e comandi Git manuali predisposti. Implementazione presente e provata nel
 worktree, non ancora integrata. Qualità unverified/P14 PENDING, nessun GO
 retroattivo al validatore o certificazione degli asset rispetto al PDF.
+
+Integrazione poi verificata17ott2026: feature323f172, devf8bf44c con albero
+identico, push confermato interrogando origin. 731 identità selezionate e
+artefatti invariati; nessuna nuova review o inferenza necessaria per il solo
+passaggio Git. Primo uso/P14 pendente; gli aggiornamenti editoriali di
+ricezione non sono ancora committati. Nessun deploy o cambio del debito.

@@ -14,7 +14,7 @@ limiti dichiarati; non chiude i difetti o converte vecchi NO_GO in GO.
 | Fedeltà di contenuti/asset | Nessuna certificazione automatica completa; errori dei motori possono sfuggire ai controlli operativi | Verifiche di contenuto e copertura delle proprietà effettivamente promesse; valutazione umana e regressioni pertinenti |
 
 Le fasi2/3 hanno ora il primo incremento applicativo I1 r004 **GO dopo due
-review e arbitrato**, nel worktree e con integrazione manuale pendente.
+review e arbitrato**, integrato in dev a `f8bf44c`, push verificato17ott2026.
 Non sono completate in tutta la roadmap. I tentativi non conclusivi storici
 riguardano comparatore, reader e validazione della fase1; il loro rinvio
 non è stato usato per ignorare i blocchi operativi di I1.
