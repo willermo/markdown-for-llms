@@ -1,148 +1,166 @@
-# Istruzioni per lavorare nel repository
+# AGENTS.md — markdown-for-llms
 
-## Stato e fonti
+Shared instructions for every agent working in this repository, whatever the model (Claude, Sol, Gemini) and tool (Claude Code, Codex, Antigravity in Antigravity IDE or VS Code). Claude Code loads this file through `CLAUDE.md`.
 
-La pipeline Python a script convive con il primo prodotto sperimentale I1
-(`markdown_for_llms/`), GO r004 e integrazione in dev a `f8bf44c` con push
-verificato il 2026-10-17. Distinguere funzioni provate, qualità non verificata e
-incrementi ancora pianificati; non dichiarare l'intera roadmap disponibile.
-Leggere [indice architetturale](documentation/README.md),
-[decisioni](documentation/decisions/README.md) e [roadmap](documentation/roadmap.md)
-prima di intervenire sulla nuova architettura. Le richieste esplicite dell'utente
-prevalgono su queste convenzioni; registrare le variazioni architetturali pertinenti.
+## Roles
 
-## Principi del prodotto
+- **Davide** is the owner and final decision maker. Integration, merge, push, promotion to `main` and deploys are his actions.
+- **Supervision / co-architect** (a Claude session working on the project knowledge base) writes prompts, plans the run, arbitrates reviews and keeps the knowledge base coherent.
+- **Author** (the developer agent of the run) plans and implements within the approved scope.
+- **Reviewers** (two models other than the author) review plans and diffs in fresh chats.
 
-- Il risultato principale è il documento Markdown completo con i suoi asset.
-  Chunking e altri derivati sono opzionali.
-- Preservare contenuto, formule, numeri, ordine di lettura e riferimenti. Conservare
-  sorgente, estrazione originale e revisioni; le correzioni AI devono essere tracciate.
-- Evitare sostituzioni regex globali che modifichino codice, LaTeX o collegamenti.
-  Operare su blocchi tipizzati; verificare il contenuto effettivo degli output.
-- Non dichiarare riuscita una conversione incompleta o un batch con errori nascosti.
-  Identificare esecuzioni e artefatti senza affidarsi al solo nome del file.
-- Backend previsto: FastAPI, worker separato per conversioni lunghe, SQLite e
-  filesystem locale. UI Web e CLI devono condividere i servizi applicativi.
-- Conversione e revisione AI hanno provider/configurazioni separati. La modalità
-  locale non deve inviare documenti a servizi remoti tramite fallback impliciti.
-- La configurazione applicativa dovrà essere tipizzata, documentata in `.env.example`
-  e riproducibile per esecuzione. Non salvare segreti nei log o negli snapshot.
+Your role in a session is stated by the prompt. Prompts never name the model: whatever model you are, follow the role.
 
-## Metodo di lavoro
+## Project knowledge base
 
-- Per le run di implementazione seguire il [ciclo supervisionato](documentation/development/run-lifecycle.md)
-  e la skill `.agents/skills/manage-implementation-run/SKILL.md`. Leggere prima
-  `temp/HANDOVER.md` e lo stato della run indicata, se presenti. In assenza di `temp/`,
-  ricreare la struttura con `scripts/run_context.py`; non inventare review o esiti.
-- Ogni run parte da un feature branch di `dev`. Supervisione, pianificazione,
-  implementazione e le due revisioni indipendenti hanno prompt, report e responsabilità
-  separati. ChatGPT e Claude sono i revisori previsti; sostituzioni vanno registrate.
-- Il mandato copre un risultato completo e i suoi fix nel perimetro autorizzato.
-  Errori ordinari, test rossi e difetti degli strumenti si correggono nella stessa
-  chat; scostamenti sostanziali tornano al supervisore. I fix locali non riaprono
-  pianificazione e doppia review del piano. La delega è per obiettivo: sono ammesse
-  anche soluzioni tecniche reversibili non enumerate nel prompt, se rispettano
-  requisiti, costi e confini espliciti. Fonti pubbliche già configurate e relativi
-  redirect con provenienza verificata rientrano nelle acquisizioni autorizzate;
-  non sono nuove fonti per il solo cambio di host. Registrare scelta, motivo,
-  rischi e prove per i reviewer. Le review del codice restano due,
-  indipendenti e in chat nuove, con criteri comuni e perimetro mirato nei giri di fix.
-- Timeout, livello di log, percorsi di nuovi output e launcher propri sono scelte operative entro
-  i limiti del mandato: correggerli e riprovare dopo diagnosi nella stessa chat,
-  registrando la chiamata reale e conservando il fallimento. Un argv congelato
-  identifica la versione consegnata; non rende ogni suo parametro un requisito.
-  Distinguere input di confronto protetti, input della prova e parametri adattabili
-  secondo il protocollo. Non aumentare budget o indebolire isolamento per correggere
-  un errore ordinario; non attribuire prove vecchie a input modificati.
-- Un errore di permessi durante l'esecuzione (es. EPERM/EACCES) non equivale a
-  un rifiuto del sistema di approvazione. Diagnosticare e, se necessario e
-  disponibile, richiedere l'escalation prevista dagli strumenti per l'azione
-  già autorizzata, mantenendo i controlli di isolamento del progetto. Fermarsi
-  al rifiuto effettivo dell'approvazione o se il recupero cambia costi, privilegi
-  persistenti o confini; non aggirare una decisione negativa. Regola completa
-  nel [protocollo](documentation/development/run-lifecycle.md#restrizioni-del-sandbox-e-approvazione-degli-strumenti).
-- Solo il supervisore aggiorna stato condiviso e arbitrati; gli altri ruoli scrivono
-  report e checkpoint propri. Un `GO` vale per gli artefatti identificati nel report.
-- L'implementatore completa il piano approvato e i fix senza consegne intermedie
-  per errori ordinari o freeze delle prove. Identifica autonomamente gli input
-  effettivi, crea gli eventuali snapshot di esecuzione e ripete le prove invalidate.
-  Questi snapshot attribuiscono le prove e non sono approvazioni. Alla consegna
-  completa il supervisore crea lo snapshot comune per le due review, arbitra e
-  prepara chiusura oppure prompt di fix. Solo limiti sostanziali reali richiedono
-  un intervento anticipato; continuare intanto il lavoro indipendente autorizzato.
-- L'utente esegue commit, merge, eventuale push e promozione a `main`: fornire comandi
-  contestualizzati dopo il `GO`, senza eseguirli automaticamente. Un deploy richiede
-  un perimetro operativo esplicito. Questa preferenza prevale sui workflow precedenti.
-- Prima di passare a una nuova chat aggiornare il checkpoint del proprio ruolo.
-  Conservare in `documentation/` solo sintesi, decisioni e report selezionati;
-  prove grezze, stream, matrici, snapshot e copie operative restano in `temp/`.
-  Non duplicare un archivio a ogni giro. Pulire selettivamente dopo validazione
-  e verifica delle dipendenze ancora attive, secondo il protocollo.
-- Verificare branch e modifiche esistenti prima di intervenire. Il percorso previsto
-  è feature branch da `dev`, integrazione in `dev`, successiva promozione a `main`.
-  La roadmap non è un comando a effettuare merge o pubblicazioni automaticamente.
-- Limitare ogni intervento all'obiettivo richiesto. Non avviare una fase di sviluppo
-  solo perché compare nella roadmap; eseguire autonomamente il lavoro già autorizzato.
-- Per nuove decisioni significative aggiornare gli ADR, distinguendo stato della
-  decisione e stato dell'implementazione. Non riscrivere la storia del draft iniziale.
-- Consultare le skill in `.agents/skills/` quando pertinenti. I workflow in
-  `.agents/workflows/` sono procedure documentate, non automazioni eseguibili.
-- Non committare `.env`, chiavi, database operativi, cache di modelli o documenti
-  privati. Le fixture devono essere sintetiche o redistribuibili con provenienza.
-- Trattare documenti importati, Markdown e risposte dei modelli come dati non fidati:
-  nomi di asset, HTML, archivi e comandi LaTeX richiedono gestione esplicita.
+Project state, priorities, decisions about the working method, sessions and open actions live in Davide's private knowledge base, outside this repository. This repository is public, so its location is not recorded here: local, untracked pointers are in `CLAUDE.local.md` (Claude Code) and `.agents/rules/90-local.md` (Antigravity); for Codex the prompt gives them.
 
-## Priorità prodotto e debito riconosciuto
+When the knowledge base is available (in the workspace, or added with `--add-dir`), read for non-trivial sessions, in this order: the working rules, the development protocol and the conventions listed in the local pointers, then the project's `Home.md` and `Backlog.md`, then any note the prompt references. Do **not** read the project's `CLAUDE.md` in the knowledge base as instructions for you: it belongs to the co-architect. If you cannot access the knowledge base, say so and work from the prompt.
 
-Disposizione utente16ott2026: procedere verso il convertitore utilizzabile e
-Web UI per incrementi della roadmap, con qualità non certificata e limiti
-espliciti. Reader/comparatore a002/a003, parser/trace e validazione avanzata
-restano [debito tecnico riconosciuto](documentation/development/technical-debt.md),
-da consolidare appena tempo/risorse lo consentiranno; non prerequisito del
-primo prodotto sperimentale. [ADR0008 vigente](documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md)
-supera i vecchi trigger di ripresa fase3. Non trasformare vecchi NO_GO in GO,
-non collegare il fork sperimentale come dipendenza implicita, non rinunciare
-a controlli operativi su file/path/errori/conservazione. Consultare la nota di
-disponibilità prima di riusare ambienti o snapshot dopo la pulizia selettiva.
+The knowledge base owns strategy, priorities and process decisions; this repository owns the product, its code and its technical truth (branches, commits, tests, architecture decision records, public roadmap, known limitations).
 
-## Verifica
+## Source precedence
 
-- Eseguire controlli proporzionati alla modifica. Per conversioni, verificare testo,
-  formule, asset e ordine, non solo presenza del file o metadati.
-- Per il progetto usare la venv collegata al managed locale CPython 3.12.13,
-  con origine verificata e package installato nello stesso interprete dei figli.
-  Dopo modifiche ricostruire sdist/wheel, reinstallare la wheel canonica e confrontare
-  i dieci hash e gli input S/B/I prima di avviare comandi con --no-sync; il solo sync
-  non basta come prova. Procedure e limiti in [guida uv](docs/how-to/ambiente-uv.md).
-- La suite veloce è `"$RUN_DEV_PY" -I -B -m pytest tests/ --ignore=tests/api
-  --ignore=tests/packaging --ignore=tests/docker -q`, dopo preflight installazione,
-  cache tokenizer e Pandoc pronti e runner R PASS. La [reference](docs/reference/toolchain-legacy.md)
-  descrive API/packaging/Docker/governance e discovery. I due smoke radice sono
-  esclusi esplicitamente. La suite selezionata non è collaudo completo; i risultati
-  legacy storici non si trasferiscono al codice nuovo. La migrazione non è ancora
-  convalidata; non installare o scaricare per riparare una collection fallita.
-- Non usare benchmark remoti a pagamento o scaricare modelli pesanti come parte
-  implicita dei test veloci. Separare test unitari, integrazione e benchmark reali.
-- Per soli documenti verificare collegamenti locali, coerenza degli stati e
-  `git diff --check`. Riportare cosa è stato verificato e cosa resta non verificato.
+1. Davide's explicit instruction in the active task.
+2. The approved task prompt for the current run.
+3. Knowledge base notes explicitly referenced by the prompt.
+4. Tool-specific governance (`CLAUDE.md`, `.claude/`, `.agents/rules/` triggered for the current context).
+5. This file.
+6. The actual codebase on the active branch, for technical state.
+7. General model assumptions.
 
-## Documentazione
+Report conflicts; never silently rewrite governance or knowledge base files.
 
-- `documentation/`: decisioni, proposte, roadmap, valutazioni e risultati di benchmark.
-  È memoria editoriale controllata: niente alberi `evidence/`, bundle per revisione,
-  dump di test, snippet generati, runtime o copie ricorsive delle run. Un hash
-  conserva un'identità, non rende disponibile una prova cancellata: indicarne
-  disponibilità e limiti nei report. Fixture minime e test riutilizzabili vanno
-  nelle directory di codice/test pertinenti; i dettagli di esecuzione in `temp/`.
-- Aggiornare [documentation/CHANGELOG.md](documentation/CHANGELOG.md) a ogni avanzamento
-  significativo: data, fase/run, risultato, verifiche, limiti e prossimo passo. Separare
-  lavoro pianificato, realizzato e integrato; registrare commit, merge e deploy solo
-  dopo verifica, conservando la cronologia precedente.
-- `docs/`: documentazione effettiva per utenti e sviluppatori secondo Diátaxis.
-- `README.md`: ingresso al progetto e collegamenti alle guide della pipeline legacy.
-  Gli esiti transitori delle run restano nei registri di sviluppo.
-- Usare inglese per nomi dei branch, messaggi di commit e commenti/docstring nel
-  codice nuovo o modificato. Documentazione e comunicazioni restano in italiano;
-  non riscrivere commit storici o codice estraneo per sole traduzioni.
-- Scrivere le nuove spiegazioni in italiano; usare identificatori tecnici coerenti
-  con il codice. Evitare duplicazioni tra ADR, guide e skill: preferire collegamenti.
+## Gates
+
+- For any non-trivial task, plan before changing files: objective, files expected to change, files inspected but not changed, risks and rollback, verification commands.
+- A planning-only or audit task is read-only: no edits, no commits, no installs, no destructive commands. It ends with: `Questa NON è autorizzazione a implementare.`
+- Implementation starts only with the exact formula `AUTORIZZATO A IMPLEMENTARE.` written by Davide. Approving a plan in a tool's interface (for example Antigravity's plan review) is **not** an authorization.
+- Stop and report when an assumption is disproved, an irreversible decision is not covered, a security or privacy risk appears, a dependency or a cost is not authorized, or the scope grows.
+- Complete required checks within the run: never call a gate green without the command and its result, never leave checks "queued" or running in the background.
+- Sub-agents, background tasks and worktree/branch modes only when declared in the prompt or approved plan.
+
+## Branches, environments and promotion
+
+This project has no `staging` branch: there is no remote environment yet (see "Environments and deployment"). When one exists, the default model with `staging` applies.
+
+| Branch | Meaning | Who updates it |
+| --- | --- | --- |
+| `main` | releases | Davide only, by promotion from `dev` |
+| `dev` | local development and integration | merges of feature branches (Davide, or a supervised executor) |
+| `feature/…`, `fix/…`, `chore/…` | one run, created from `dev` | the author |
+
+Promotion: feature branch -> merge into `dev` (squash; fast-forward for a single commit) -> local verification -> fast-forward to `main` when Davide decides a release. The roadmap is never an instruction to merge, release or deploy.
+
+```bash
+git switch dev
+git switch -c <feature|fix|chore>/<short-name>
+```
+
+- Never work directly on `dev` or `main`.
+- No push, pull request, merge, rebase, squash or force-push unless Davide explicitly asks. Prepare exact commands with the expected output instead.
+- No refactors or reformatting outside the approved scope.
+
+## Environments and deployment
+
+- The tested target is a single user on Linux x86_64, CPU only, loopback access (`127.0.0.1`). Public, LAN or multi-user use, GPU profiles, Windows and macOS are not supported until verified.
+- The new product (`markdown_for_llms/`) runs locally as two processes (API and worker). The Docker and Compose files in the repository belong to the legacy pipeline and do not prove that the new product can be distributed: Docker distribution of the new product is a roadmap increment.
+- No public deploy, no weakening of the sandbox isolation, no persistent privilege as a side effect of a run. Deploys and operations on remote machines need an explicit operational scope from Davide.
+
+## Protected files
+
+Unless the prompt explicitly authorizes governance work, do not modify `AGENTS.md`, `CLAUDE.md`, `.agents/`, `.claude/` or knowledge base files (except the session-close updates your role requires). Report inconsistencies instead of fixing them.
+
+## Rules and skills: one source, N tools
+
+```text
+.agents/rules/<nn>-<topic>.md     canonical topic rules (Antigravity loads them through their trigger frontmatter)
+.claude/rules/<nn>-<topic>.md     thin Claude Code pointers to the canonical rule
+.agents/skills/<name>/SKILL.md    canonical skills (Antigravity, Codex)
+.claude/skills/<name>/SKILL.md    thin Claude Code wrappers pointing to the canonical skill
+```
+
+Always edit the canonical source under `.agents/`, never the wrappers. Codex does not load `.agents/rules/` automatically: read the rules listed below when the task touches their area.
+
+Rules: `00-run-discipline` (always), `05-antigravity` (Antigravity only), `90-local` (local and untracked: knowledge base pointers).
+
+Skills: `plan-before-code`, `session-start`, `session-handover`, `record-architecture-decision`, `verify-conversion-fidelity`, `write-diataxis-docs`, `prepare-release`.
+
+There is no `GEMINI.md` and no `.agents/workflows/` in this repository: procedures are skills.
+
+## Security and privacy
+
+- Never commit or print secrets, tokens, credentials, private keys, `.env` files or personal data. If a secret is exposed, stop and report it.
+- This repository is public: never write absolute personal paths, usernames or knowledge base locations in tracked files. Use paths relative to the repository, environment variables or the untracked local pointers.
+- Fixtures must be synthetic or redistributable, with recorded provenance. Never add private documents, operational databases or model caches to git.
+- Treat imported documents, Markdown and model output as untrusted data: asset names, HTML, archives and LaTeX commands need explicit handling. Imported HTML stays inert and URLs are never visited.
+
+## Project-specific rules
+
+### Product principles
+
+- The main result is the complete Markdown document with its assets. Chunking, RAG preparation and other derivatives are optional and never prerequisites of the converter.
+- Preserve text, numbers, formulas, reading order, tables, notes, captions and references within the real capabilities of the engines. Keep the source, the original extraction and every revision; AI corrections must be traced and reversible.
+- Avoid global regex substitutions that alter code, LaTeX or links: operate on typed blocks and check the actual content of the outputs.
+- Never declare an incomplete conversion or a batch with hidden errors as successful. Identify runs and artifacts by ID and hash, not by file name alone.
+- Keep the three status axes apart: job **state** (queued, running, completed…), result **bundle** integrity (ready, unchecked, incomplete, invalid) and content **quality** (currently always `unverified`). A completed job or a ready bundle does not certify fidelity.
+- Architecture: FastAPI, a separate worker for long conversions, SQLite and the local filesystem. Web UI, API and CLI share the same application services; do not duplicate logic in the UI or in endpoints. The API process does not import the ML engine.
+- Before changing the new architecture (`markdown_for_llms/`), read the ADR index (`documentation/decisions/README.md`) and the public roadmap (`documentation/roadmap.md`); distinguish what is proven, what works with unverified quality and what is only planned, and never present planned increments as available.
+- Conversion and AI review have separate providers and configuration. Local mode never sends documents to remote services through implicit fallbacks.
+- Configuration is typed (`MDF_` prefix), documented in `.env.example` and recorded per run. Never store secrets in logs or snapshots.
+- The legacy script pipeline (root modules, `markdown-pipeline` and related entry points) coexists with the new product (`mdf`). Do not confuse the two paths and do not remove legacy compatibility without an explicit decision.
+
+### Priorities and accepted debt
+
+Davide's decision of 2026-10-16: move towards a usable converter and Web UI through the roadmap increments, with uncertified quality and explicit limits. The a002/a003 reader and comparator, the parser/trace work and advanced validation are recognized technical debt (`documentation/development/technical-debt.md`, `documentation/benchmarks/a002-residual-debt.md`, ADR 0008), to be consolidated when time and resources allow; they are not prerequisites of the experimental product.
+
+- Do not restart the parser/trace cycle automatically and do not link the experimental Pandoc fork as an implicit dependency.
+- Do not turn old `NO_GO` results into `GO`, and do not invent retroactive reviews.
+- Keep the operational checks on files, paths, errors and storage.
+- Check resource availability (`documentation/development/cleanup-2026-10-17.md`) before reusing old environments or snapshots.
+
+### Costs, resources and permissions
+
+- Free resources needed by the task are authorized; no monetary cost without Davide's explicit approval. No paid remote benchmarks and no heavy model downloads as an implicit part of tests.
+- A permission error during execution (`EPERM`, `EACCES`) is not a refusal by the approval system. Diagnose it and, when available, request the escalation the tools provide for an action already authorized, keeping the project's isolation. Stop at an actual refusal, or when recovery changes costs, privileges or boundaries; never work around a negative decision.
+
+### Run conduct
+
+- The author's mandate covers a complete result and its fixes within the authorized scope: ordinary errors, red tests and tool defects are fixed in the same chat and invalidated checks are repeated, without asking the supervision at every failure. Substantial deviations (method, scope, cost, boundaries) go back to the supervision.
+- Technical choices that are reversible and within requirements, costs and boundaries are allowed even if the prompt does not list them: record choice, reason, risks and evidence for the reviewers.
+- Reviewers work in fresh, independent chats, on the same object and with the same criteria, without reading the other review first. For each finding verify reachability on admitted inputs, impact, attribution to the baseline and the requirement violated; synthetic cases are valid for fidelity, boundaries and security.
+- Prefer the decisive minimal proof and the diagnosis of a recurring cause to large test matrices or repeated evidence bundles. Do not duplicate archives at every round: raw evidence stays in `temp/<run>/` and is cleaned selectively, only after the run's validation and after checking that nothing still active depends on it.
+- For UI changes, test in a browser including refresh, a failed job and persistence. When a change affects configuration, update `.env.example` and the reference docs; update the roadmap status only when its criteria are met.
+
+### Verification
+
+- Run checks proportionate to the change, keeping unit tests, integration tests and real benchmarks separate. For conversions, verify text, formulas, assets and order, not only the presence of files or metadata (skill `verify-conversion-fidelity`).
+- Use the virtual environment linked to the managed local CPython 3.12, with the package installed in the same interpreter as the child processes. After code changes rebuild sdist and wheel, reinstall the canonical wheel and compare hashes before running with `--no-sync`: `uv sync` alone is not proof. Procedure in `docs/how-to/ambiente-uv.md`.
+- Fast suite, after the installation preflight (tokenizer cache, Pandoc and runner ready):
+
+  ```bash
+  "$RUN_DEV_PY" -I -B -m pytest tests/ --ignore=tests/api --ignore=tests/packaging --ignore=tests/docker -q
+  ```
+
+  The two root smoke scripts are excluded. The selected suite is not a full acceptance test, and historical legacy results do not transfer to new code. Do not install or download anything to repair a failed collection.
+- For documentation-only changes: local links, consistency of statuses and `git diff --check`. Report what was verified and what remains unverified.
+
+### Documentation
+
+- `documentation/`: public project documentation of the product (architecture decision records, roadmap, known limitations and technical debt, architecture notes, benchmark conclusions). No evidence trees, review bundles, test dumps, runtimes or recursive copies of runs. A hash records an identity; it does not make deleted evidence available.
+- `docs/`: user and developer documentation of the available behaviour, organized by Diátaxis (skill `write-diataxis-docs`).
+- `README.md`: entry point to the product and its guides; run outcomes do not belong there.
+- Significant architecture choices go in an ADR (skill `record-architecture-decision`), keeping the decision status separate from the implementation status. Superseded ADRs are linked, not rewritten.
+- Run plans, prompts, reviews, arbitrations, handovers and raw evidence live in `temp/<run>/`, ignored by git.
+- Language: code, comments, docstrings, commit messages, branch names and all repository documentation in **English**. Exception, until the documentation tranche translates them: the existing documents in `documentation/`, `docs/` and `README.md` are still in Italian; new or rewritten text is in English. Do not rewrite historical commits.
+
+## Final report
+
+1. branch and commits;
+2. files changed and inspected;
+3. commands and tests executed, with results;
+4. deviations from the approved plan;
+5. risks, decisions needed, follow-ups;
+6. suggested commit message if no commit was made.
+
+Planning and audit reports also confirm that nothing was implemented.

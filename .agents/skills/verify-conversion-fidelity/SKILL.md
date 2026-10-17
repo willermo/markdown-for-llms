@@ -1,29 +1,23 @@
 ---
 name: verify-conversion-fidelity
-description: "Verifica la preservazione dei contenuti quando si cambiano o confrontano parser, OCR, cleaning, formule, immagini, ordine di lettura e serializer Markdown del convertitore. Usare per regressioni di conversione e benchmark dei motori; non per sole modifiche editoriali o confronti prestazionali senza contenuti."
+description: "Verifies content preservation when parsers, OCR, cleaning, formulas, images, reading order or the Markdown serializer of the converter change, and when engines are compared. Use for conversion regressions and engine benchmarks; not for editorial-only changes or performance comparisons without content checks."
 ---
 
-# Verificare la fedeltà della conversione
+# Verify conversion fidelity
 
-1. Leggere [ADR 0001](../../../documentation/decisions/0001-document-fidelity.md),
-   la fase interessata della [roadmap](../../../documentation/roadmap.md) e i contratti
-   effettivamente implementati. Non assumere che l'architettura prevista esista già.
-2. Selezionare il campione più piccolo che espone il rischio: per esempio indici
-   LaTeX, una pagina a due colonne, una tabella o immagini con didascalie. Usare
-   fixture sintetiche o redistribuibili; non aggiungere documenti privati al Git.
-3. Confrontare sorgente, rappresentazione intermedia se disponibile e output reale.
-   Verificare testo/Unicode, omissioni, numeri, ordine dei blocchi, formule, note,
-   celle e asset pertinenti. Un file presente, un voto del validatore o un LaTeX
-   renderizzabile non dimostrano correttezza del contenuto.
-4. Riprodurre il difetto prima della modifica quando possibile e dimostrare il
-   risultato dopo. Per stato/storage includere il caso pertinente: stesso nome,
-   riesecuzione, output incompleto o interruzione. Non ampliare indiscriminatamente
-   la suite se non riguarda il cambiamento.
-5. Per confronti tra motori seguire il [workflow benchmark](../../workflows/converter-benchmark.md).
-   Registrare versioni, configurazione effettiva e hardware; separare mock da prove
-   reali. Non avviare implicitamente chiamate a pagamento o download pesanti.
-6. Riportare errori e limiti osservati, inclusi quelli non risolti. Non normalizzare
-   via regex simboli o spazi significativi soltanto per far coincidere i risultati.
+1. Read [ADR 0001](../../../documentation/decisions/0001-document-fidelity.md), the relevant phase of the [roadmap](../../../documentation/roadmap.md) and the contracts actually implemented. Do not assume the planned architecture already exists.
+2. Select the smallest sample that exposes the risk: for example LaTeX indices, a two-column page, a table or images with captions. Use synthetic or redistributable fixtures with recorded provenance; never add private documents to git.
+3. Compare the source, the intermediate representation when available, and the real output. Check text and Unicode, omissions, numbers, block order, formulas, notes, cells and relevant assets. A present file, a validator score or renderable LaTeX does not prove content correctness.
+4. Reproduce the defect before the change when possible and show the result after it. For state and storage include the relevant case: same name, re-run, incomplete output or interruption. Do not grow the suite indiscriminately when it does not concern the change.
+5. Do not normalize significant symbols or spaces with regexes just to make results match. Report observed errors and limits, including unresolved ones.
 
-Consegnare evidenze prima/dopo e verifiche pertinenti. Quando mancano sorgente di
-riferimento, modello o hardware, delimitare la conclusione alle prove eseguite.
+## Engine comparisons and benchmarks
+
+- Define the formats and phenomena to compare (columns, formulas, languages, scan quality, figures, tables) and the reference transcriptions.
+- Record provenance, licence and hash of the samples; pin engine, weights, dependencies, configuration, hardware and the actual commands. Separate preparation or download from conversion, and cold from warm cache. Separate mocks from real runs.
+- Measure text, order, formulas, tables, assets, time, memory and cost; keep failures and negative results, never only the successful examples. Distinguish typographic, syntactic and semantic equivalence, and state where a metric is not reliable.
+- Examine the scientific elements (formulas, tables, notes, references) manually, together with a sample of the corrections, and state the comparison method.
+- No paid remote benchmarks or heavy downloads unless explicitly authorized; an authorized remote benchmark also needs the data in scope (which documents may leave the machine), not only the cost, and the independent local checks run meanwhile. Raw outputs stay in `temp/<run>/`; only conclusions that support a decision go into `documentation/benchmarks/` and the relevant ADR. Never create placeholder results that look like executed benchmarks.
+- A major engine or model update needs a new comparison on the affected cases, not an assumption of equivalence.
+
+Deliver before/after evidence and the relevant checks. When the reference source, the model or the hardware is missing, limit the conclusion to the checks actually performed.

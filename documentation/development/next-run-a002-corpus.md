@@ -466,4 +466,4 @@ esposto in questo contesto. Le altre macchine non sono state verificate.
 
 Riferimenti: [roadmap](../roadmap.md), [fedeltà](../decisions/0001-document-fidelity.md),
 [questioni aperte](../open-questions.md), [ciclo supervisionato](run-lifecycle.md),
-[workflow benchmark](../../.agents/workflows/converter-benchmark.md).
+workflow benchmark `.agents/workflows/converter-benchmark.md` (retired by ADR 0010; available at tag `pre-kit-2026-10-17`).

@@ -124,8 +124,9 @@ discordanti sono rifiutate.
 
 Negativi D2/D3, probe di cache, R, F1–F6, S/B/I/E e receipt con hash/argv/CWD/env
 sono requisiti della run. La suite non costruisce o installa per riparare un
-mismatch. Una modifica invalida le prove dipendenti secondo la catena descritta nella guida uv;
-il protocollo permanente è il [ciclo delle run](../../documentation/development/run-lifecycle.md).
+mismatch. Una modifica invalida le prove dipendenti secondo la catena descritta nella guida uv.
+The current governance is [`AGENTS.md`](../../AGENTS.md) with [ADR 0010](../../documentation/decisions/0010-multi-model-agent-governance.md);
+the [run cycle](../../documentation/development/run-lifecycle.md) is historical.
 Per un clone senza temp, i dettagli della catena sono nella
 [guida uv](../how-to/ambiente-uv.md).
 

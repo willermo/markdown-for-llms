@@ -3921,7 +3921,7 @@ supervisione predisposti localmente sul branch della run.
 - Creato il [protocollo delle run supervisionate](development/run-lifecycle.md):
   pianificazione, doppia review indipendente, arbitrato, implementazione, doppia
   review e arbitrato finale, con ritorno alla pianificazione in caso di `NO_GO`.
-- Aggiunta la [skill locale del ciclo di implementazione](../.agents/skills/manage-implementation-run/SKILL.md)
+- Aggiunta la skill locale del ciclo di implementazione `.agents/skills/manage-implementation-run/SKILL.md` (retired by ADR 0010; available at tag `pre-kit-2026-10-17`)
   e aggiornati `AGENTS.md` e i workflow per rispettare ruoli e integrazione Git manuale.
 - Predisposti template per stato, piani, review, arbitrati, report, handover e archivio.
 - Creata `temp/`, ignorata da Git, con contesto globale, run `run-a001-fase0-uv`

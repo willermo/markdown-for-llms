@@ -183,13 +183,16 @@ Consegna completa r014 F58–F62 ricevuta: 157/157 contratti (159 input distinti
 5. [Questioni aperte](open-questions.md) e [debito tecnico legacy](legacy-findings.md).
 6. [Strumenti di sviluppo e valutazione MCP](tooling/mcp.md).
 7. [Ciclo supervisionato delle run](development/run-lifecycle.md) e
-   [archivio permanente delle run](runs/README.md).
+   [archivio permanente delle run](runs/README.md) (historical: the run lifecycle is
+   superseded by [ADR 0010](decisions/0010-multi-model-agent-governance.md)).
 8. [Changelog degli avanzamenti e stato dello sviluppo](CHANGELOG.md).
 
 La migrazione a uv è ora [approvata](decisions/0006-python-toolchain-uv.md) e precede
-i benchmark. Il contesto operativo locale si recupera da `temp/HANDOVER.md`, ignorato
-da Git; dopo un clone si usa lo strumento descritto nel ciclo delle run. Nessuna review
-o implementazione della migrazione viene dichiarata completata dal solo bootstrap.
+i benchmark. Nessuna review o implementazione della migrazione viene dichiarata
+completata dal solo bootstrap.
+
+Agents follow [`AGENTS.md`](../AGENTS.md) and the skills in [`.agents/skills/`](../.agents/skills/)
+([ADR 0010](decisions/0010-multi-model-agent-governance.md)); the previous run cycle is historical.
 
 ## Come mantenere questa base
 
@@ -207,6 +210,6 @@ aggiornare il registro e collegare la fase interessata. Conservare gli ADR super
 indicando quale nuovo ADR li sostituisce. Le evidenze dei futuri benchmark saranno
 salvate qui con versioni, corpus, hardware e limiti del confronto.
 
-Le [istruzioni del repository](../AGENTS.md), le
-[skill locali](../.agents/README.md) e i
-[workflow](../.agents/workflows/README.md) indicano come lavorare su questi materiali.
+Le [istruzioni del repository](../AGENTS.md) e le
+[skill locali](../.agents/README.md) indicano come lavorare su questi materiali
+(governance multi-modello: [ADR 0010](decisions/0010-multi-model-agent-governance.md)).

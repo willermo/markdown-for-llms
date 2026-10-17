@@ -1,5 +1,7 @@
 # Ciclo di implementazione supervisionato
 
+> **Superseded by [ADR 0010](../decisions/0010-multi-model-agent-governance.md) (2026-10-17).** No longer the procedure for new runs; kept as history of the runs a001–a004 until the documentation tranche archives it.
+
 Stato: procedura adottata con [ADR 0007](../decisions/0007-supervised-development-runs.md).
 Vale per le run di sviluppo del progetto. Le normali domande o letture della repository
 non aprono automaticamente una run. La supervisione è una chat distinta con memoria
