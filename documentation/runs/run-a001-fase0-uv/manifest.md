@@ -1,5 +1,17 @@
 # Archivio — run-a001-fase0-uv
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../../development/cleanup-2026-10-17.md).
+
+## Disponibilità aggiornata — 2026-10-17
+
+La pulizia autorizzata rimuove archivi operativi, duplicati, build e cache
+superati; conserva sintesi/esiti, casi decisivi del debito e dipendenze del
+prodotto. Le descrizioni di conservazione nelle sezioni storiche sotto si
+riferiscono alla data originaria, non alla disponibilità attuale.
+
+[Inventario selettivo e limiti](../../development/cleanup-2026-10-17.md).
+
 - Obiettivo/fase: toolchain Python uv, packaging e verifiche legacy, fase0.1.
 - Base/HEAD alla chiusura tecnica:66ba82200e5def5a4db76f9bafccb0731b506091;
   feature/run-a001-uv. Feature commit `8479f975618034abfcfaeb4c9e47ba925d5e356e`;
@@ -31,17 +43,17 @@ GPU/Windows/V10/V11 e universalità delle ABI non verificate.
 ## Materiale conservato
 
 Elenco completo con origine, destinazione e hash sorgente/archivio in
-[archive-files.json](archive-files.json). Copie JSON/TXT/PY sono byte-identiche;
+archive-files.json (riferimento storico non disponibile). Copie JSON/TXT/PY sono byte-identiche;
 i Markdown cambiano solo i collegamenti locali, con trasformazioni in
-[link-adaptations](notes/link-adaptations.json). Nessun codice prodotto spostato
+link-adaptations (riferimento storico non disponibile). Nessun codice prodotto spostato
 qui; gli script di evidenza sono conservati come dati storici.
 
-- [Arbitrato finale](reports/arbitrations/arbitration-implementation-r003.md).
-- [Review finale ChatGPT](reports/reviews/review-implementation-r003-chatgpt.md).
-- [Review finale Claude](reports/reviews/review-implementation-r003-claude.md).
-- [Report-r020](reports/implementation/report-r020.md).
-- [Snapshot finale](evidence/snapshots/impl-r001-stage-final-s003.json).
-- [Comandi manuali](reports/prompts/62-user-close-run-a001-manual-git.md).
+- Arbitrato finale (riferimento storico non disponibile).
+- Review finale ChatGPT (riferimento storico non disponibile).
+- Review finale Claude (riferimento storico non disponibile).
+- Report-r020 (riferimento storico non disponibile).
+- Snapshot finale (riferimento storico non disponibile).
+- Comandi manuali (riferimento storico non disponibile).
 - [Materiale locale/limiti](notes/materiale-locale-conservato.md).
 
 ## Verifica e pulizia
@@ -54,9 +66,9 @@ dell'integrazione; nessun rilascio o collaudo fuori dal perimetro è implicito.
 
 ## Integrazioni dopo la chiusura tecnica
 
-- [Verifica del commit dei registri e del push](evidence/integration-push-2026-10-07.json).
+- Verifica del commit dei registri e del push (riferimento storico non disponibile).
 - [Valutazione delle pulizie](notes/cleanup-assessment-2026-10-07.md) e
-  [lista esatta dei payload duplicati](notes/cleanup-duplicate-payloads.json).
+  lista esatta dei payload duplicati (riferimento storico non disponibile).
   Nessuna cancellazione eseguita; archivio266record nuovamente MATCH.
 - [Prossimo incremento a002](../../development/next-run-a002-corpus.md), solo PREPARATION.
 - [Pulizia manuale completata e ricevuta](notes/cleanup-completion-2026-10-07.md):

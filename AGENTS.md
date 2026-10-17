@@ -2,8 +2,10 @@
 
 ## Stato e fonti
 
-Il codice attuale è una pipeline Python a script. La nuova applicazione è in fase
-di progettazione: non descrivere le funzionalità pianificate come già disponibili.
+La pipeline Python a script convive con il primo prodotto sperimentale I1
+(`markdown_for_llms/`), GO r004 del 2026-10-17 nel worktree, in attesa di
+integrazione manuale. Distinguere funzioni provate, qualità non verificata e
+incrementi ancora pianificati; non dichiarare l'intera roadmap disponibile.
 Leggere [indice architetturale](documentation/README.md),
 [decisioni](documentation/decisions/README.md) e [roadmap](documentation/roadmap.md)
 prima di intervenire sulla nuova architettura. Le richieste esplicite dell'utente
@@ -139,5 +141,8 @@ disponibilità prima di riusare ambienti o snapshot dopo la pulizia selettiva.
 - `docs/`: documentazione effettiva per utenti e sviluppatori secondo Diátaxis.
 - `README.md`: ingresso al progetto e collegamenti alle guide della pipeline legacy.
   Gli esiti transitori delle run restano nei registri di sviluppo.
+- Usare inglese per nomi dei branch, messaggi di commit e commenti/docstring nel
+  codice nuovo o modificato. Documentazione e comunicazioni restano in italiano;
+  non riscrivere commit storici o codice estraneo per sole traduzioni.
 - Scrivere le nuove spiegazioni in italiano; usare identificatori tecnici coerenti
   con il codice. Evitare duplicazioni tra ADR, guide e skill: preferire collegamenti.

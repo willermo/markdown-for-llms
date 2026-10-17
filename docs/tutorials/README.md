@@ -1,10 +1,9 @@
 # Tutorial
 
 Percorsi guidati per imparare eseguendo attività con un risultato verificabile.
-Questa sezione è predisposta; non contiene ancora tutorial della nuova applicazione.
+È disponibile il [primo PDF locale](primo-pdf-locale.md), nel browser o nella CLI.
 
-Primi percorsi da pubblicare: prima conversione locale con download degli asset;
-prima revisione OCR; ambiente di sviluppo e prima modifica verificata. Ogni tutorial
+Percorsi successivi: prima revisione OCR; ambiente di sviluppo e prima modifica verificata. Ogni tutorial
 indicherà versione, prerequisiti, campione utilizzabile e risultato atteso.
 
 [Indice documentazione](../README.md).

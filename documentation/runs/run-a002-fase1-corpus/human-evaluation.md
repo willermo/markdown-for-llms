@@ -1,5 +1,13 @@
 # Valutazione umana dei risultati a002
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../../development/cleanup-2026-10-17.md).
+
+Disponibilità17ott2026: alcune prove e copie storiche sono state rimosse
+dalla pulizia autorizzata; i riferimenti successivi descrivono la consegna
+storica. Corpus/gold e casi decisivi restano; nessuna nuova firma umana
+o chiusura del debito. [Dettagli](../../development/cleanup-2026-10-17.md).
+
 Indice di ispezione locale, NON nuova UI o nuova conversione. Tutti i giudizi
 automatici qui sono ricevuti e provvisori secondo il debito; non certificazioni.
 Aprire sorgente/riferimento e Markdown, controllare testo, numeri, formule,
@@ -34,69 +42,69 @@ non il risultato di una nuova valutazione umana o un GO sul prodotto.
 
 | Set | Documento | Percorso | Markdown e asset | Metriche provvisorie | Qualità ricevuta |
 | --- | --- | --- | --- | --- | --- |
-| historical-r001 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r1/metrics.json) | PASS |
-| historical-r001 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r2/metrics.json) | PASS |
-| historical-r001 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r3/metrics.json) | PASS |
-| historical-r001 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-txt-r4/metrics.json) | PASS |
-| historical-r001 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r1/metrics.json) | FAIL |
-| historical-r001 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r2/metrics.json) | FAIL |
-| historical-r001 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r3/metrics.json) | FAIL |
-| historical-r001 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-epub-r4/metrics.json) | FAIL |
-| historical-r001 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r1/metrics.json) | FAIL |
-| historical-r001 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r2/metrics.json) | FAIL |
-| historical-r001 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r3/metrics.json) | FAIL |
-| historical-r001 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-epub-r4/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r1/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r2/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r3/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-docx-r4/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r1/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r2/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r3/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-rtf-r4/metrics.json) | FAIL |
-| historical-r001 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r1/metrics.json) | FAIL |
-| historical-r001 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r2/metrics.json) | FAIL |
-| historical-r001 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r3/metrics.json) | FAIL |
-| historical-r001 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-direct-tex-r4/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r1/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r2/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r3/metrics.json) | FAIL |
-| historical-r001 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-docx-r4/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r1/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r2/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r3/metrics.json) | FAIL |
-| historical-r001 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-historical-historical-r002b-legacy-rtf-r4/metrics.json) | FAIL |
-| baseline-r002 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r1/metrics.json) | FAIL |
-| baseline-r002 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r2/metrics.json) | FAIL |
-| baseline-r002 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r3/metrics.json) | FAIL |
-| baseline-r002 | C02-docx-it | direct-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-docx-r4/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r1/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r2/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r3/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | direct-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-epub-r4/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r1/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r2/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r3/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | direct-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-rtf-r4/metrics.json) | FAIL |
-| baseline-r002 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r1/metrics.json) | FAIL |
-| baseline-r002 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r2/metrics.json) | FAIL |
-| baseline-r002 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r3/metrics.json) | FAIL |
-| baseline-r002 | C05-tex-en | direct-tex | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-tex-r4/metrics.json) | FAIL |
-| baseline-r002 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r1/metrics.json) | PASS |
-| baseline-r002 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r2/metrics.json) | PASS |
-| baseline-r002 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r3/metrics.json) | PASS |
-| baseline-r002 | C01-txt-it | direct-txt | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-direct-txt-r4/metrics.json) | PASS |
-| baseline-r002 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r1/metrics.json) | FAIL |
-| baseline-r002 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r2/metrics.json) | FAIL |
-| baseline-r002 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r3/metrics.json) | FAIL |
-| baseline-r002 | C02-docx-it | legacy-docx | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-docx-r4/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r1/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r2/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r3/metrics.json) | FAIL |
-| baseline-r002 | C03-epub-en | legacy-epub | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-epub-r4/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r1/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r1/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r2/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r2/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r3/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r3/metrics.json) | FAIL |
-| baseline-r002 | C04-rtf-it | legacy-rtf | [Markdown](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r4/raw/document.md) | [JSON](evidence/derived-r014/r014aa-r009a-r008b-baseline-a002-r002-baseline-003-legacy-rtf-r4/metrics.json) | FAIL |
+| historical-r001 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| historical-r001 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| historical-r001 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| historical-r001 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| historical-r001 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| historical-r001 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C02-docx-it | direct-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | direct-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | direct-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C05-tex-en | direct-tex | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| baseline-r002 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| baseline-r002 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| baseline-r002 | C01-txt-it | direct-txt | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | PASS |
+| baseline-r002 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C02-docx-it | legacy-docx | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C03-epub-en | legacy-epub | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
+| baseline-r002 | C04-rtf-it | legacy-rtf | Markdown (riferimento storico non disponibile) | JSON (riferimento storico non disponibile) | FAIL |
 
 [Debito e criteri](../../benchmarks/a002-residual-debt.md), [manifest archivio](manifest.md).

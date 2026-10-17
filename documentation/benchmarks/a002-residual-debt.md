@@ -1,5 +1,10 @@
 # Debito a002 — misuratore sperimentale e parser mantenuto
 
+Disponibilità17ott2026: alcune prove e copie storiche sono state rimosse
+dalla pulizia autorizzata; i riferimenti successivi descrivono la consegna
+storica. Corpus/gold e casi decisivi restano; nessuna nuova firma umana
+o chiusura del debito. [Dettagli](../development/cleanup-2026-10-17.md).
+
 2026-10-16. **APERTO, risoluzione differita per priorità al prodotto utilizzabile**.
 [ADR0008](../decisions/0008-maintained-parser-and-provisional-benchmark.md),
 [chiusura e prove](../runs/run-a002-fase1-corpus/manifest.md).

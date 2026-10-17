@@ -1,5 +1,14 @@
 # A003 — Confronto motori, riesame del metodo
 
+## Disponibilità aggiornata — 2026-10-17
+
+La pulizia autorizzata rimuove archivi operativi, duplicati, build e cache
+superati; conserva sintesi/esiti, casi decisivi del debito e dipendenze del
+prodotto. Le descrizioni di conservazione nelle sezioni storiche sotto si
+riferiscono alla data originaria, non alla disponibilità attuale.
+
+[Inventario selettivo e limiti](../../development/cleanup-2026-10-17.md).
+
 Aggiornata al 2026-10-16. Fase1 aperta, branch
 `feature/run-a003-engine-comparison`, base/dev `9f702a2`.
 Lavoro nel working tree, nessun commit o integrazione della run.

@@ -1,10 +1,13 @@
 # A002 r011 — ownership e metadati inline
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Realizzato il 2026-10-10, run `run-a002-fase1-corpus`, reader
 `observations-v11-inline-ownership`, SHA256 `af5299bb0c52bd4a0634a1aebb8a28743e2793c315eec5bbaf9b6424a98d8482`.
 Consegna implementatore da ricevere e sottoporre a due NUOVE review
 ChatGPT/Claude e arbitrato; nessun GO autore o integrazione Git.
-[Dati](2026-10-10-a002-r011-ownership-inline-data.json),
+Dati (riferimento storico non disponibile),
 [report autore](../../temp/run-a002-fase1-corpus/reports/implementation-r011.md).
 Il [report r010](2026-10-10-a002-r010-confini-html-markdown.md) resta storico:
 le due review reali NO_GO hanno dimostrato F46–F48.

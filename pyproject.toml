@@ -18,11 +18,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+app = ["fastapi==0.142.2", "uvicorn==0.54.0", "python-multipart", "markdown-it-py==4.0.0", "mdit-py-plugins==0.5.0", "pillow==10.4.0"]
 marker-server = ["fastapi", "uvicorn", "python-multipart"]
 marker-cpu = ["marker-pdf[full]==1.10.2", "surya-ocr==0.17.1", "torch==2.7.1", "beautifulsoup4"]
 marker-cu126 = ["marker-pdf[full]==1.10.2", "surya-ocr==0.17.1", "torch==2.7.1", "beautifulsoup4"]
 
 [project.scripts]
+mdf = "markdown_for_llms.cli:main"
 markdown-pipeline = "master_workflow:main"
 markdown-config = "config:main"
 markdown-clean = "clean_markdown:main"
@@ -40,8 +42,11 @@ py-modules = [
     "config", "logging_config", "exceptions", "unified_converter", "master_workflow",
     "clean_markdown", "validate_markdown", "chunk_markdown", "batch_monitor", "marker_api_server",
 ]
-packages = []
+packages = ["markdown_for_llms", "markdown_for_llms.engines"]
 include-package-data = false
+
+[tool.setuptools.package-data]
+markdown_for_llms = ["web/*.html", "web/*.css", "web/*.js", "migrations/*.sql", "models.json"]
 
 [tool.uv]
 required-version = "==0.10.10"

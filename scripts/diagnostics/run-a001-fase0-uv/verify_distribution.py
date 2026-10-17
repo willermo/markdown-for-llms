@@ -39,7 +39,7 @@ origin_tool = load_helper('check_python_origin')
 MODULE_FILES = {m+'.py' for m in source_tool.MODULES}
 ENTRYPOINTS = {'markdown-pipeline':'master_workflow:main','markdown-config':'config:main',
                'markdown-clean':'clean_markdown:main','markdown-validate':'validate_markdown:main',
-               'markdown-chunk':'chunk_markdown:main'}
+               'markdown-chunk':'chunk_markdown:main', 'mdf':'markdown_for_llms.cli:main'}
 DIST = 'markdown_for_llms-1.0.0.dist-info'
 EGG = 'markdown_for_llms.egg-info'
 SDIST_FILES = MODULE_FILES | {'pyproject.toml','MANIFEST.in','README.md','LICENSE',
@@ -50,6 +50,12 @@ WHEEL_FILES = MODULE_FILES | {DIST+'/'+n for n in ('METADATA','WHEEL','RECORD',
                                                  'entry_points.txt','top_level.txt','licenses/LICENSE')}
 MAX_FILE = 16 * 1024 * 1024
 MAX_TOTAL = 64 * 1024 * 1024
+APP_REQUIREMENTS = {'fastapi==0.142.2', 'uvicorn==0.54.0', 'python-multipart',
+                    'markdown-it-py==4.0.0', 'mdit-py-plugins==0.5.0', 'pillow==10.4.0'}
+
+
+def archive_directories(files):
+    return {str(parent) for name in files for parent in PurePosixPath(name).parents if str(parent) != '.'}
 
 
 def descriptor(path):
@@ -80,7 +86,7 @@ def read_archive(path, wheel):
                 if stat.S_IFMT(mode) not in (0,stat.S_IFREG,stat.S_IFDIR) or member.flag_bits & 1:
                     raise ValueError('Link/tipo speciale/ZIP cifrato')
                 if member.is_dir():
-                    if name not in {DIST,DIST+'/licenses'}:
+                    if name not in archive_directories(WHEEL_FILES):
                         raise ValueError('Directory ZIP inattesa')
                     continue
                 total += member.file_size
@@ -98,7 +104,7 @@ def read_archive(path, wheel):
                 if parts[0] != 'markdown_for_llms-1.0.0':
                     raise ValueError('Radice sdist inattesa')
                 if member.isdir():
-                    if name not in {'markdown_for_llms-1.0.0','markdown_for_llms-1.0.0/'+EGG}:
+                    if name not in {'markdown_for_llms-1.0.0'} | {'markdown_for_llms-1.0.0/' + p for p in archive_directories(SDIST_FILES)}:
                         raise ValueError('Directory tar inattesa')
                     continue
                 if not member.isfile():
@@ -122,27 +128,27 @@ def check_metadata(data, entrypoints):
     parser.optionxform = str
     parser.read_string(entrypoints.decode('utf-8'))
     if parser.sections() != ['console_scripts'] or dict(parser['console_scripts']) != ENTRYPOINTS:
-        raise ValueError('Cinque entrypoint difformi')
+        raise ValueError('Distribution entrypoints differ')
     requirements = metadata.get_all('Requires-Dist', [])
     base = {r.split(';')[0].strip() for r in requirements if ';' not in r}
     if base != {'requests>=2.31.0','tiktoken>=0.5.1','tqdm>=4.66.0','python-dotenv>=1.0.0'}:
         raise ValueError('Dipendenze runtime base difformi')
     extras = metadata.get_all('Provides-Extra', [])
-    if len(extras) != 3 or set(extras) != {'marker-server','marker-cpu','marker-cu126'}:
+    if len(extras) != 4 or set(extras) != {'app','marker-server','marker-cpu','marker-cu126'}:
         raise ValueError('Extra distribuzione difformi')
     for requirement in requirements:
         if ';' in requirement:
             dependency, marker = requirement.split(';',1)
-            match = re.fullmatch(r'\s*extra\s*==\s*[\"\'](marker-server|marker-cpu|marker-cu126)[\"\']\s*',marker)
+            match = re.fullmatch(r'\s*extra\s*==\s*[\"\'](app|marker-server|marker-cpu|marker-cu126)[\"\']\s*',marker)
             if not match:
                 raise ValueError('Marker Requires-Dist inatteso')
-            allowed = ({'fastapi','uvicorn','python-multipart'} if match[1] == 'marker-server' else
+            allowed = (APP_REQUIREMENTS if match[1] == 'app' else {'fastapi','uvicorn','python-multipart'} if match[1] == 'marker-server' else
                        {'marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4'})
             if dependency.strip() not in allowed:
                 raise ValueError('Dipendenza extra inattesa')
     for extra in extras:
         selected = [r.split(';',1)[0].strip() for r in requirements if re.search(r'extra\s*==\s*[\"\']'+extra+r'[\"\']',r)]
-        expected = ({'fastapi','uvicorn','python-multipart'} if extra == 'marker-server' else
+        expected = (APP_REQUIREMENTS if extra == 'app' else {'fastapi','uvicorn','python-multipart'} if extra == 'marker-server' else
                     {'marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4'})
         if len(selected) != len(expected) or set(selected) != expected:
             raise ValueError('Extra incompleto/duplicato')
@@ -156,8 +162,8 @@ def check_record(data, files, installed=False):
             raise ValueError('RECORD malformato/duplicato')
         name, digest, size = row
         seen.add(name)
-        # Solo i cinque script generati possono avere il path relativo fuori
-        # purelib; il lettore installazione li vincola al bin del prefix.
+        # Only declared generated scripts may escape purelib; installation
+        # validation confines them to the interpreter prefix bin directory.
         scripts = {'../../../bin/'+n for n in ENTRYPOINTS}
         if not (installed and name in scripts):
             safe_name(name)
@@ -219,6 +225,13 @@ def installation_record_files(data, locate, roots, prefix):
 
 
 def check_archives(payload, sdist, wheel):
+    # Application files are pinned in S alongside the ten legacy modules.
+    app = {str((Path(payload['host_repo']) / r['path']).relative_to(payload['repo'])): r
+           for r in payload['build_inputs'] if r['kind'] == 'file' and
+           (Path(payload['host_repo']) / r['path']).is_relative_to(Path(payload['repo']) / 'markdown_for_llms')}
+    global WHEEL_FILES, SDIST_FILES
+    WHEEL_FILES = {n for n in WHEEL_FILES if not n.startswith('markdown_for_llms/')} | set(app)
+    SDIST_FILES = {n for n in SDIST_FILES if not n.startswith('markdown_for_llms/')} | set(app)
     required_inputs = {'pyproject.toml','.python-version','uv.lock','build-constraints.txt','README.md','LICENSE','MANIFEST.in'}
     incoming = {Path(r['path']).name for r in payload['build_inputs'] if r['kind'] == 'file'}
     if not required_inputs <= incoming:
@@ -228,6 +241,10 @@ def check_archives(payload, sdist, wheel):
     if not required_tar <= tar.keys() or set(zipdata) != WHEEL_FILES:
         raise ValueError('Archivio incompleto')
     host = Path(payload['host_repo'])
+    for name, item in app.items():
+        current = (host / item['path']).read_bytes()
+        if len(current) != item['bytes'] or hashlib.sha256(current).hexdigest() != item['sha256'] or tar.get(name) != current or zipdata.get(name) != current:
+            raise ValueError('Application archive differs from S: ' + name)
     for item in payload['modules']:
         name = Path(item['path']).name
         current = (host/item['path']).read_bytes()

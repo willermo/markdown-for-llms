@@ -2,7 +2,7 @@
 
 - Data: 2026-10-02
 - Stato decisione: accettata
-- Stato implementazione: da realizzare; framework frontend non scelto
+- Stato implementazione: I1 r004 GO il 2026-10-17; UI statica secondo ADR0009, integrazione manuale pendente, funzioni avanzate successive
 - Origine: preferenza esplicita FastAPI e richiesta GUI/Web UI dell'utente
 
 ## Contesto e decisione
@@ -33,3 +33,11 @@ HTTP, attesa in coda e inferenza. Le librerie AI restano dietro adattatori, senz
 legare la logica di conversione al framework HTTP.
 
 Dettagli: [progetto Web UI](../architecture/web-ui.md), [roadmap](../roadmap.md).
+
+## Precisazione 2026-10-17 — Primo incremento
+
+[ADR0009](0009-first-usable-product.md) adotta HTML/CSS/JavaScript serviti da
+FastAPI, con testo inerte e galleria raster, e coda SQLite/worker separato.
+CLI sugli stessi servizi. Primo incremento realizzato e GO r004 dopo due
+review indipendenti; integrazione manuale pendente. Confronto e revisione
+avanzati restano successivi; perimetro iniziale provato Linux CPU/loopback.

@@ -1,8 +1,11 @@
 # A002 r004 — profili HTML e misure testuali distinte
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Misure derivate il 2026-10-09 UTC, implementazione locale ancora soggetta a due
 nuove review e arbitrato. Nessun GO autore, nuova conversione o V umana.
-[Dati dei64 tentativi](2026-10-09-a002-r004-profili-html-e-bound-data.json).
+Dati dei64 tentativi (riferimento storico non disponibile).
 Questa rettifica integra il [report r003](2026-10-09-a002-r003-html-e-metriche.md)
 senza modificarlo, e mantiene separati i risultati di
 [r002](2026-10-09-a002-r002-rettifica-e-baseline.md),

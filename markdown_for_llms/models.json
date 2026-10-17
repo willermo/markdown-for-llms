@@ -1,0 +1,257 @@
+{
+  "schema": 1,
+  "profile": "marker-cpu-v1",
+  "files": [
+    {
+      "path": "fonts/GoNotoCJKCore.ttf",
+      "bytes": 18499972,
+      "sha256": "bfe18b47612e58ff28b568f32b55e35fde4505d6137581bf11d2363e257e2ad4"
+    },
+    {
+      "path": "fonts/GoNotoCurrent-Regular.ttf",
+      "bytes": 14700060,
+      "sha256": "882afbab965608c2d2bc627fd8016b962aa5a6be2d358f9de24a7b5967c5632e"
+    },
+    {
+      "path": "layout/2025_09_23/.gitattributes",
+      "bytes": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+    },
+    {
+      "path": "layout/2025_09_23/README.md",
+      "bytes": 5174,
+      "sha256": "0336368f8274a5ed09f54cee8d56a851ecee96026d9f391a6735762c16608a60"
+    },
+    {
+      "path": "layout/2025_09_23/config.json",
+      "bytes": 51567,
+      "sha256": "303838105f85ce795322fe97b94db5d4ef37baa0ec7ef3b2a3355c72671f3fd5"
+    },
+    {
+      "path": "layout/2025_09_23/manifest.json",
+      "bytes": 262,
+      "sha256": "7f683384c9d18cd4b12ad52bfd05fea1c9e7814caa35a2f181a7d1c0ce793721"
+    },
+    {
+      "path": "layout/2025_09_23/model.safetensors",
+      "bytes": 1445441662,
+      "sha256": "c3611c5221a825d02dedf1beaada30d0f968831207d764217b0b2e90fe73884e"
+    },
+    {
+      "path": "layout/2025_09_23/preprocessor_config.json",
+      "bytes": 419,
+      "sha256": "d164ad496629e84733225af0d7af0a71e3f0ceecfcceb7e0fd4da960c45caef9"
+    },
+    {
+      "path": "layout/2025_09_23/processor_config.json",
+      "bytes": 411,
+      "sha256": "fba86e949c27a2c02ad8c65ccd321f5d2bc2f1c451e98582debd1c2ca14c497c"
+    },
+    {
+      "path": "layout/2025_09_23/special_tokens_map.json",
+      "bytes": 278,
+      "sha256": "d3399c9cc75ffa4513f4c055673a35bbbc0317218e3c4cd25a3578944d6dbc75"
+    },
+    {
+      "path": "layout/2025_09_23/specials.json",
+      "bytes": 20116,
+      "sha256": "ca52649007ff824a61a99da32d5a237f8883807a398c870bf33dc4bf96e51b43"
+    },
+    {
+      "path": "layout/2025_09_23/specials_dict.json",
+      "bytes": 44510,
+      "sha256": "e9ef2acbf88b3998a2e4bebc1672e7f10f4ef4dfca74863ce02fac994b3e0936"
+    },
+    {
+      "path": "layout/2025_09_23/tokenizer_config.json",
+      "bytes": 694,
+      "sha256": "96af51d686a557f221d9553ecdfd7c89572a923b433fff90a1604adebf46cbaf"
+    },
+    {
+      "path": "layout/2025_09_23/training_args.bin",
+      "bytes": 7633,
+      "sha256": "e72b841abbff68eaf26ecde03b48678ef52085b5d75542d3818391f8cac43be0"
+    },
+    {
+      "path": "layout/2025_09_23/vocab_math.json",
+      "bytes": 20574,
+      "sha256": "963a928f2385cea48e29461af980dee3d319d30365088282635a6846aba9861b"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/.gitattributes",
+      "bytes": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/README.md",
+      "bytes": 32,
+      "sha256": "a9d7ccd967379ca368a6495f523a63d1d582513406d2da37899f8bf51815db6b"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/config.json",
+      "bytes": 647,
+      "sha256": "e11e04c98a43e1ed1eff099b4d6cb6dffbeb24fd226f709365defcb0f9e9ef83"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/manifest.json",
+      "bytes": 161,
+      "sha256": "51408a4e2a69aa6ca91de4e91e953244b619ecf8bc28badfc3c30d653d643505"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/model.safetensors",
+      "bytes": 270664948,
+      "sha256": "42cd5698d62dcdd408628fe6d67c3e1981fc90523ca286f358f1dea8e212de3e"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/special_tokens_map.json",
+      "bytes": 695,
+      "sha256": "5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/tokenizer.json",
+      "bytes": 2919362,
+      "sha256": "bf1b59b7b11c95f194f51708d918eea378e09d05f84c0e1656dc5180e8117088"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/tokenizer_config.json",
+      "bytes": 1198,
+      "sha256": "228e2c7cc6d20d298f7a3d69b89103f6dcb0b533c0b1146a6e6b6e7bb511ae35"
+    },
+    {
+      "path": "ocr_error_detection/2025_02_18/vocab.txt",
+      "bytes": 995526,
+      "sha256": "fe0fda7c425b48c516fc8f160d594c8022a0808447475c1a7c6d6479763f310c"
+    },
+    {
+      "path": "table_recognition/2025_02_18/.gitattributes",
+      "bytes": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+    },
+    {
+      "path": "table_recognition/2025_02_18/README.md",
+      "bytes": 33,
+      "sha256": "8739f354b75bf1aa6310a0ffac9b7dcafed012c42b771947e48b7f4da8b9d800"
+    },
+    {
+      "path": "table_recognition/2025_02_18/config.json",
+      "bytes": 6374,
+      "sha256": "68788909681f0dbe69d16a9b1ad99f87a435a8e14e9f704a2bf0d892fec034a9"
+    },
+    {
+      "path": "table_recognition/2025_02_18/manifest.json",
+      "bytes": 106,
+      "sha256": "a533041c5f33dbd55dbd65fc0f2bbd5abe9053749d487e867cce45e75f8a3312"
+    },
+    {
+      "path": "table_recognition/2025_02_18/model.safetensors",
+      "bytes": 211226808,
+      "sha256": "8e5093c424a4c8b98d153519f5240532388e209158f656ee701989174dcad6c4"
+    },
+    {
+      "path": "table_recognition/2025_02_18/preprocessor_config.json",
+      "bytes": 564,
+      "sha256": "3beeaf69ac26ca221ccf981c43212d793a79311033831c88809ad1cce75f432e"
+    },
+    {
+      "path": "text_detection/2025_05_07/.gitattributes",
+      "bytes": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+    },
+    {
+      "path": "text_detection/2025_05_07/README.md",
+      "bytes": 393,
+      "sha256": "aab5b4ba5afb1d27b08f4dd6ab4900b588050b6d41a3b6ed0448105b08d87f24"
+    },
+    {
+      "path": "text_detection/2025_05_07/config.json",
+      "bytes": 858,
+      "sha256": "0f99d8176e3fc194966659cf6f1c52ab9ca1d573f47ba57aca55036ff5267d69"
+    },
+    {
+      "path": "text_detection/2025_05_07/manifest.json",
+      "bytes": 127,
+      "sha256": "f57a95d3da7d182c4ef556171115a6557455c98f847e81e59a30f37898d994c0"
+    },
+    {
+      "path": "text_detection/2025_05_07/model.safetensors",
+      "bytes": 76930732,
+      "sha256": "38c3749eeb5f06fc93ed71eeee5cbd86b1945d08f8f74746bda035d41324bd3e"
+    },
+    {
+      "path": "text_detection/2025_05_07/preprocessor_config.json",
+      "bytes": 373,
+      "sha256": "594344843fcd54db03240194c7677b5c459e78d349e68d4a89d7d91e4fa90587"
+    },
+    {
+      "path": "text_detection/2025_05_07/training_args.bin",
+      "bytes": 5624,
+      "sha256": "7e605d76a38a3739d8372218370b9d5a008b8ff4299cfe61fb2a46e1fa91b525"
+    },
+    {
+      "path": "text_recognition/2025_09_23/.gitattributes",
+      "bytes": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+    },
+    {
+      "path": "text_recognition/2025_09_23/README.md",
+      "bytes": 5174,
+      "sha256": "0336368f8274a5ed09f54cee8d56a851ecee96026d9f391a6735762c16608a60"
+    },
+    {
+      "path": "text_recognition/2025_09_23/config.json",
+      "bytes": 51403,
+      "sha256": "71f612967b4c51fe9d1ec74c2f51639070ce3db7a73f9c1274360f1400021db6"
+    },
+    {
+      "path": "text_recognition/2025_09_23/manifest.json",
+      "bytes": 262,
+      "sha256": "7f683384c9d18cd4b12ad52bfd05fea1c9e7814caa35a2f181a7d1c0ce793721"
+    },
+    {
+      "path": "text_recognition/2025_09_23/model.safetensors",
+      "bytes": 1438882494,
+      "sha256": "dd07d624d42dc1b2f6bd871777c088052635294e1637805304300bc4ec8fb3ed"
+    },
+    {
+      "path": "text_recognition/2025_09_23/preprocessor_config.json",
+      "bytes": 419,
+      "sha256": "d164ad496629e84733225af0d7af0a71e3f0ceecfcceb7e0fd4da960c45caef9"
+    },
+    {
+      "path": "text_recognition/2025_09_23/processor_config.json",
+      "bytes": 411,
+      "sha256": "fba86e949c27a2c02ad8c65ccd321f5d2bc2f1c451e98582debd1c2ca14c497c"
+    },
+    {
+      "path": "text_recognition/2025_09_23/special_tokens_map.json",
+      "bytes": 278,
+      "sha256": "d3399c9cc75ffa4513f4c055673a35bbbc0317218e3c4cd25a3578944d6dbc75"
+    },
+    {
+      "path": "text_recognition/2025_09_23/specials.json",
+      "bytes": 20116,
+      "sha256": "ca52649007ff824a61a99da32d5a237f8883807a398c870bf33dc4bf96e51b43"
+    },
+    {
+      "path": "text_recognition/2025_09_23/specials_dict.json",
+      "bytes": 44510,
+      "sha256": "e9ef2acbf88b3998a2e4bebc1672e7f10f4ef4dfca74863ce02fac994b3e0936"
+    },
+    {
+      "path": "text_recognition/2025_09_23/tokenizer_config.json",
+      "bytes": 694,
+      "sha256": "96af51d686a557f221d9553ecdfd7c89572a923b433fff90a1604adebf46cbaf"
+    },
+    {
+      "path": "text_recognition/2025_09_23/training_args.bin",
+      "bytes": 7633,
+      "sha256": "e72b841abbff68eaf26ecde03b48678ef52085b5d75542d3818391f8cac43be0"
+    },
+    {
+      "path": "text_recognition/2025_09_23/vocab_math.json",
+      "bytes": 20574,
+      "sha256": "963a928f2385cea48e29461af980dee3d319d30365088282635a6846aba9861b"
+    }
+  ],
+  "provenance": "Retained a003 public Datalab model/font acquisitions; observed SHA256, not publisher signatures. Model licenses separate from code; no weights redistributed."
+}

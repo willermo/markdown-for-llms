@@ -1,5 +1,8 @@
 # a002 r012 — Atomi condivisi e raw nei container
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 2026-10-11 Europe/Rome. Implementazione nel mandato40 F50–F53, stessa run e
 incremento; consegna tecnica da ricevere e sottoporre alle due review reali.
 Nessun GO autore, integrazione Git o scelta di motore. La nuova applicazione
@@ -91,7 +94,7 @@ input. L01/L02NOT_MEASURED, L04outputUNAVAILABLE distinta dalla V sul gold,
 L05/ChromeNONPASS/helper12gap/H15/E9/errori intermedi restano. Deadline della
 run rimossa, entry/contatori e quote CPU/disco/RAM/R/rete invariati.
 
-[Dati permanenti](2026-10-11-a002-r012-atomi-e-container-data.json) includono
+Dati permanenti (riferimento storico non disponibile) includono
 inventario iniziale, sorgente del generatore, attesi, risultati effettivi,
 CLI,64catene, limiti e hardware. [Fixture](../../tests/fixtures/conversion-reader-r012.json)
 è sintetica; [test](../../tests/unit/test_conversion_fix_r012.py) verifica i

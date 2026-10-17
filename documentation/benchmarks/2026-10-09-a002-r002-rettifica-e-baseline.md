@@ -1,5 +1,8 @@
 # a002 r002 — rettifica del benchmark e baseline finale
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Registrato il 9 ottobre 2026, Europe/Rome; prove concluse l'8 ottobre UTC.
 Run `run-a002-fase1-corpus`, implementazione r002, feature `feature/run-a002-corpus`,
 base/HEAD `80c31da46e5caab990d3596c79c44e524ec1dc95`. Risultati realizzati,
@@ -142,7 +145,7 @@ validi. L01 PDF/OCR,L02 TeX compile,L05 hardware non misurati. CPU lowerbound,
 RSS sampled/processi brevi/shared pages/cache OS restano limiti; R non è sandbox
 universale filesystem. Rete/acquisizioni/document-send0, nuovi servizi€0.
 
-[Dati effettivi e rettifica prima/dopo](2026-10-09-a002-r002-data.json) e
+Dati effettivi e rettifica prima/dopo (riferimento storico non disponibile) e
 [report implementatore con prove F01–F12](../../temp/run-a002-fase1-corpus/reports/implementation-r002.md).
 Le evidenze complete e i byte sono in temp per le due review; prima della futura
 pulizia il supervisore dovrà archiviarli. Nessuna pulizia o aggiornamento dei

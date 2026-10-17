@@ -1,5 +1,8 @@
 # Valutazione della pulizia dopo a001 — 2026-10-07
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../../../development/cleanup-2026-10-17.md).
+
 **Esito:** integrazione e push verificati; nessuna cancellazione eseguita.
 La richiesta era verificare ciò che si può eliminare e preparare il passaggio.
 La prossima run può partire senza questa pulizia: circa 117 GiB liberi sul filesystem
@@ -8,7 +11,7 @@ alla sonda. I residui non sono una nuova implementazione da chiudere.
 ## Verifiche svolte
 
 - Dev e remoto `refs/heads/dev` coincidono a `80c31da46e5caab990d3596c79c44e524ec1dc95`.
-  La [receipt](../evidence/integration-push-2026-10-07.json) separa squash e registri.
+  La receipt (riferimento storico non disponibile) separa squash e registri.
 - Verificati i 266 record di `archive-files.json`: tutte le copie permanenti MATCH.
   Questo non rende l'archivio un backup completo: gli oggetti esclusi restano esclusi.
 - Inventario senza seguire symlink: vecchia run circa 1.43 GiB allocati, di cui
@@ -31,7 +34,7 @@ alla sonda. I residui non sono una nuova implementazione da chiudere.
 | `run-a001-marker-cpu:r005`, ID `27b5f840f990…` | Come sopra | 1.40 GB, layer condivisi |
 | `run-a001-marker-cpu:r006`, ID `b7331b907c97…` | Come sopra | 1.40 GB, layer condivisi |
 
-La [lista macchina esatta](cleanup-duplicate-payloads.json) contiene path,
+La lista macchina esatta (riferimento storico non disponibile) contiene path,
 SHA-256, byte, copia conservata e la selezione motivata; non autorizza a cancellare
 le tre directory intere. Rimane valida solo se hash e keeper restano quelli osservati.
 I vecchi path eliminati non sarebbero più direttamente rieseguibili: i riferimenti

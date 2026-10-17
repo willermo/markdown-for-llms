@@ -1,9 +1,12 @@
 # A002 r005 — diagnosi HTML, heading e domini testuali
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Misure derivate reali del 2026-10-09 UTC, run `run-a002-fase1-corpus`.
 Conversioni storiche r001 e baseline003 r002 conservate; nessun motore o nuovo
 render/V. Questo report rettifica e completa il [report r004](2026-10-09-a002-r004-profili-html-e-bound.md)
-senza riscriverlo. [Dati r005](2026-10-09-a002-r005-diagnosi-html-e-domini-data.json),
+senza riscriverlo. Dati r005 (riferimento storico non disponibile),
 con tutti i64 record e i legami raw→osservazione→audit→score→final.
 
 Reader `observations-v5-html-diagnostics`, scorer invariato

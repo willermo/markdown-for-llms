@@ -13,12 +13,30 @@ documentazione e governance.
 | Motori e licenze | Versioni, pesi, licenze e capacità misurate | Chiusura fase 1 |
 | Documento interno | DoclingDocument o schema indipendente e adattatori | Fasi 1–2 |
 | Markdown | Estensioni ammesse, tabelle complesse, note e riferimenti | Fase 2 con fixture rappresentative |
-| Frontend | React/TypeScript o alternativa, visualizzatore e componenti | Prima della fase 3 |
+| Frontend | I1 statica inerte realizzata, GO r004; confronto/revisione avanzati da scegliere | Integrazione I1 e primo uso, riesame per revisione |
 | Export | Priorità PDF, HTML e DOCX; eventuale esigenza di RAG immediata | Prima della fase 7 |
 
 Ipotesi operative iniziali: applicazione su singolo host, uso locale, italiano e
 inglese, pieno documento come risultato principale, proposta di correzioni con
 revisione manuale. Sono ipotesi di progetto, non limiti definitivi del prodotto.
+
+## Stato17ott2026: primo percorso GO, integrazione manuale pendente
+
+[I1 r004](runs/run-a004-fase2-prodotto-utilizzabile/manifest.md) ha ottenuto
+due GO indipendenti e arbitrato GO. Tre residui bassi nel registro del debito;
+primo uso/P14 pendente, qualità unverified. Le prove inizialmente future sotto
+sono state eseguite nel perimetro dichiarato; restano aperti ulteriori
+formati, cancellazione, revisione avanzata e distribuzione.
+
+## Decisione17ott2026: primo percorso scelto, situazione iniziale
+
+[ADR0009](decisions/0009-first-usable-product.md): Marker CPU, UI statica
+inerte, servizi condivisi e SQLite per I1 locale. Piano con errata approvato;
+implementazione e compatibilità del lettore operativo restano da collaudare.
+Download unchecked ammesso con limiti e inventario integro; guasti noti
+bloccanti. Pin/plugin del lettore, durate e requisiti reali saranno registrati
+in implementazione. Gestione selettiva/cancellazione dell'archivio successiva
+ad I1, senza rimozioni automatiche per quota. Debito avanzato invariato.
 
 ## Priorità16ott2026: prodotto prima della certificazione
 

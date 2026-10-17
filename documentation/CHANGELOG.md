@@ -1,5 +1,8 @@
 # Changelog dello sviluppo
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](development/cleanup-2026-10-17.md).
+
 Registro degli avanzamenti della nuova versione del progetto, in ordine cronologico
 inverso. Distingue decisioni approvate, lavoro realizzato, verifiche e integrazione
 Git; la presenza di una voce non equivale a un rilascio.
@@ -8,6 +11,209 @@ La [roadmap](roadmap.md) descrive il percorso previsto, gli
 [ADR](decisions/README.md) conservano le motivazioni delle decisioni e l'
 [archivio delle run](runs/README.md) conserva le sintesi permanenti. Il contesto
 operativo corrente rimane in `temp/`, esclusa da Git.
+
+## 2026-10-17 — Pulizia autorizzata prima del commit I1
+
+Eliminati scratch, cache/build superate e copie operative, compresi vecchi
+bundle a001/a002 e dump JSON in documentation. Temp21,14→5,04GiB,
+documentation83,89→0,97MiB alla misura post-cancellazione; spazio libero
+filesystem +16,17GiB. 1967 file tracciati rimossi dal worktree, storia Git
+immutata. [Selezione e limiti](development/cleanup-2026-10-17.md).
+
+948 file protetti e50 file modello/font verificati prima/dopo; codice,
+test, guide operative, corpus/gold, venv e modelli del prodotto preservati.
+Prove finali GO e casi decisivi del debito conservati; riproducibilità di
+vecchie campagne non più integrale. Link operativi indisponibili dichiarati,
+nuovo contesto di integrazione e staging con cancellazioni predisposti.
+Nessuna suite/ML/build o operazione Git mutativa; GO r004, unverified/P14
+PENDING, debito avanzato e residui invariati. Commit/merge/push manuali pendenti.
+
+## 2026-10-17 — GO I1 r004, pronto per integrazione manuale e primo uso
+
+Due review indipendenti GO/GO sul comune r004; arbitrato del supervisore GO
+per il primo prodotto sperimentale Linux x86_64/CPU, singolo utente/loopback.
+Sei ID r003 chiusi, tre residui bassi accolti nel
+[debito operativo](development/technical-debt.md): copertura UTF-8, breve
+contesa worker.lock e recupero con voce estranea non sicura nell'archivio.
+Nessun altro giro automatico di fix; storia dei NO_GO preservata.
+
+Ricezione650file/1blob MATCH prima dei registri;69record autoriali e33file
+reviewer identificati. Suite autoriale3240test/440subtest PASS ricontata;
+ciascun reviewer25test/62subtest mirati PASS, senza sommarli alla suite.
+Nessuna esecuzione prodotto/build/ML del supervisore. Canonica004/suite005,
+browser002 e replay003; C06 ML r003 conservata con attribuzione e perdite.
+Aggiornamenti editoriali, prodotto/test/guide operative invariati.
+
+[Sintesi permanente](runs/run-a004-fase2-prodotto-utilizzabile/manifest.md)
+e [integrazione manuale](runs/run-a004-fase2-prodotto-utilizzabile/manual-integration.md)
+predisposte; prove in temp, nessun bundle o pulizia. Commit/merge/push ancora
+da eseguire dall'utente, nessun deploy. Qualità unverified, P14 PENDING e
+debito avanzato a002/a003/parser/trace aperti; fasi2/3 avviate con I1,
+resto della roadmap ancora da realizzare.
+
+## 2026-10-17 — R004 ricevuta, review mirate su pubblicazione e manifest
+
+R004 consegnata per i sei ID r003 in quattro cause: pubblicazione completa
+nelle due posizioni con lease/proprietà, serializzazione unica validata prima
+publishing, confine del documento malformato e diagnosi passiva. Chiusure
+dichiarate dall'autore, ancora da giudicare nelle due review indipendenti.
+
+Ricezione conforme:64artefatti selezionati,555/572input precedenti invariati
+con17delta dichiarati,22file package fra sorgente/wheel/installato e10legacy;
+ZIP replay C06 verificato. Receipt3240test/440subtest PASS ricontate senza
+rieseguire suite o ML; browser reale e prove crash/recupero attribuiti alla
+canonica004/suite005. C06 reale r003 e C07 conservati come prove storiche,
+replay nuovo esplicito. Nuovo comune e due chat indipendenti mirate, poi arbitrato:
+nessun GO al codice, integrazione o Git mutativo. Qualità unverified, P14 PENDING
+e debito avanzato invariati; prove solo temp, nessun bundle o pulizia generale.
+
+## 2026-10-17 — Arbitrato r003 NO_GO locale, fix r004 autorizzati
+
+Ricevute review Claude GO con tre rilievi bassi e ChatGPT NO_GO. Arbitrato sul
+contratto: il rename fallito dopo publishing persistito lascia output completi
+in attempts, quindi non rientra nel limite dello scratch incompleto. Blocco
+GPT-R003-I001 accolto. Rilievi manifest writer/reader consolidati e altri residui
+inclusi nello stesso giro locale: sei ID, quattro cause, severità conservate.
+
+R004 autorizzata per recupero/proprietà, serializzazioni esatte rileggibili,
+confine del documento malformato e diagnosi passiva. Ricezione comune
+MATCH536file/1blob e31file reviewer identificati; codice/controprove letti,
+nessun runtime o prodotto modificato in supervisione. Piano/architettura e
+chiusure non invalidate conservati, inclusa nuova C06 reale r003; niente nuova
+inferenza obbligatoria se le dipendenze restano uguali. Nessun GO al codice,
+integrazione o Git mutativo. Qualità unverified, P14 PENDING e debito avanzato
+invariati; prove solo temp, nessuna pulizia o nuova campagna di benchmark.
+
+## 2026-10-17 — R003 ricevuta: C06 reale e nuove review mirate
+
+R003 consegnata per i sette ID r002: errori espliciti, barriera durevole
+comune, metadata limitati, tick locali, parziali attribuiti e riferimenti
+leciti. Chiusure dichiarate dall'autore, ancora da giudicare indipendentemente.
+Canonica003 e suite004:3231test/409subtest PASS ricontati dalle receipt;
+nessuna suite o inferenza rieseguita dal supervisore.
+
+Ricezione conforme di77artefatti selezionati,426/447input precedenti invariati
+con21delta dichiarati,22file package fra sorgente/wheel/installato e10legacy.
+Verificato ZIP della nuova C06 reale sul monitor finale; browser sul risultato
+reale e fixture di errore distinti dai replay storici C07. Due nuove review
+indipendenti mirate, poi arbitrato: nessun GO al codice o integrazione.
+Venv prodotto aggiornata r003003 autorizzata, wheel/prove precedenti conservate;
+qualità unverified, P14 PENDING e debito avanzato invariati. Nessuna copia del
+sintetico ampio o bundle in documentation, nessuna pulizia generale/Git mutativo.
+
+## 2026-10-17 — Arbitrato r002 NO_GO, r003 per errori e recupero durevole
+
+Entrambe le review r002 NO_GO: accolti regressione della classificazione
+corruzione (offset UTF-8/quota) e recupero che dichiara completed dopo fsync
+fallito senza ristabilirlo. Chiusure principali quota/staging/cache corroborate;
+restano aperti i due percorsi e residui locali su JSON, scansioni, parziali e
+riferimenti. Cause consolidate nell'arbitrato: classe base di eccezione non
+prova corruzione, hash leggibili non provano durabilità. Nessun nuovo piano.
+
+Ricezione MATCH416file/1blob e26file dei reviewer identificati; fonti e sonde
+lette senza eseguire prodotto o suite. R003 autorizzata con tabella finita di
+errori/stadi, barriera durevole comune e regressioni, senza riaprire il
+certificatore. Richiesta una C06 reale finale per verificare Marker col monitor
+corrente, finora provato solo con figli inerti; non un benchmark generale.
+Codice/prove precedenti preservati, nessun GO/integrazione o Git mutativo.
+Qualità unverified, P14 PENDING e debito avanzato invariati.
+
+## 2026-10-17 — Fix I1 r002 ricevuti, nuove review mirate
+
+R002 consegnata: capacità condivisa, staging/replay e cache ZIP, errori di
+lettura ritentabili, configurazione amministrativa e chiusure complementari
+dei dieci rilievi r001. L'autore dichiara chiusure e prove sulla canonica004;
+la validazione indipendente resta da svolgere. Nessun GO o integrazione.
+
+Ricezione:47artefatti selezionati conformi,335/354input precedenti invariati,
+19delta dichiarati,22file applicativi concordi fra sorgente/wheel/installato,
+10legacy concordi e ZIP selezionato verificato. Ricontati3215test/378subtest
+PASS dalle receipt, senza rieseguire suite o ML. Browser reale con replay
+C06/C07 dichiarati, nuove prove quota/crash/stop/configurazione/disconnessione.
+La venv prodotto ora contiene r002; vecchie wheel/prove conservate e identità
+installate r001 storiche. Nuovo comune e due review indipendenti mirate,
+poi arbitrato. Qualità unverified, P14 PENDING e debito avanzato invariati.
+Prove solo temp, nessuna copia ricorsiva o nuova pulizia.
+
+## 2026-10-17 — Arbitrato I1 r001 NO_GO, fix locali r002 autorizzati
+
+Ricevute e arbitrate due review indipendenti NO_GO. Accolti quota concorrente
+senza prenotazione, staging/ZIP accumulati e invalidazione permanente per errori
+di lettura transitori; rilievi sovrapposti consolidati per causa. Inclusi nello
+stesso giro i sei fix non bloccanti su fsync, scratch, stop, riferimenti leciti,
+risultato raster ed errori del worker. Piano/errata e architettura invariati;
+precisato percorso amministrativo compatibile per quota/timeout.
+
+Ricezione del comune MATCH320file/1blob,29file dei reviewer identificati;
+controprove e percorsi del codice esaminati, nessun runtime o suite in
+supervisione. Prompt completo r002 pronto per nuova chat implementatrice:
+fix, regressioni, nuova build/installazione e prove dipendenti, con riuso
+attribuito di C06/C07 non invalidati. Nessun GO al codice, integrazione o
+nuova inferenza già effettuati. Prodotto utile corroborato dalle review,
+qualità unverified, P14 PENDING e debito avanzato riconosciuto invariati.
+
+## 2026-10-17 — Consegna a004 I1 ricevuta, due review del codice predisposte
+
+Ricevuti package applicativo, CLI/API/Web UI, worker separato, SQLite/storage,
+configurazione e guide per PDF→Markdown/asset su Linux CPU locale. L'autore
+consegna C06/C07 reali, browser e ZIP, crash/riavvio, errori e prove operative.
+Ricevute selezionate:3194test e378subtest PASS, zero skip; il supervisore ha
+ricontato gli esiti senza rieseguire suite o inferenze.
+
+Ricezione conforme di99artefatti,135/138input precedenti invariati con tre
+modifiche autorizzate,21file applicativi concordi fra sorgente/wheel/installato,
+10moduli legacy invariati e tre ZIP verificati per membri/CRC/digest. Nuovo
+comune e due nuove chat indipendenti ChatGPT/Claude per la prima review completa
+del delta e delle prove. Codice presente nel working tree, **nessun GO o
+integrazione**. Guide d'uso disponibili, qualità unverified e P14 utente PENDING.
+
+Debito avanzato riconosciuto invariato: le review riguardano il prodotto e i
+suoi contratti operativi, senza ricreare il certificatore. Prove solo temp;
+nessun bundle aggiunto in documentation, nuova pulizia o Git mutativo.
+Prossimo passo due report reali e arbitrato del supervisore.
+
+## 2026-10-17 — Piano a004 approvato con errata, I1 autorizzato
+
+Ricevute le due review reali: GO ChatGPT, NO_GO locale Claude. Arbitrato del
+supervisore con errata vincolanti verificate: HTML inerte e ancore interne,
+ZIP unchecked con inventario integro e limiti visibili, guasti noti bloccanti;
+20 attese sintetiche da provare nell'implementazione. Precisati validatore
+raster separato da Marker, provenienza opzioni, lettore operativo, timeout e CLI.
+
+[ADR0009](decisions/0009-first-usable-product.md) adotta Marker CPU, UI statica
+inerte, servizi condivisi CLI/API e coda SQLite per I1 Linux locale.
+Mandato completo pronto in temp; nessuna implementazione ancora avviata,
+P01–P14 future e nessun GO al codice. Ricezione comune102file/1blob MATCH,
+cinque sorgenti del pin verificati come testo; controlli documentali, identità
+protette e diff-check eseguiti. Nessuna inferenza/build/suite prodotto.
+Debito riconosciuto invariato. Alla consegna, due review indipendenti del codice
+prima del GO. Nessun commit, merge, push o deploy eseguito dal supervisore.
+
+## 2026-10-16 — Piano prodotto a004 r001 ricevuto, due review predisposte
+
+Proposti Marker CPU, UI statica testuale con galleria, FastAPI/SQLite e worker
+separato per il primo PDF→Markdown/asset→CLI/browser. Limiti di contenuto
+osservati e qualità non verificata espliciti; P01–P14 sono prove future.
+Piano e successione degli incrementi consegnati, nessuna implementazione.
+
+Ricezione ingresso55/55input e63fonti conformi,12file consegna identificati;
+nessuna conversione, installazione o suite. Nuovo comune e due chat indipendenti
+ChatGPT/Claude, poi arbitrato prima del codice. Scelte motore/frontend ancora
+proposte; debito di validazione riconosciuto/differito, controlli operativi
+necessari. Prove/campioni riferiti in temp senza altri bundle in documentation.
+
+## 2026-10-16 — Branch prodotto a004 verificato, pianificazione avviata
+
+Checkpoint a003 ricevuti:53aa4e3 documentazione e9034ca2 codice sperimentale,
+con riferimento remoto locale allineato. L'utente crea feature/run-a004-usable-product
+da dev9f702a2 e applica solo il commit documentale:HEAD f026056, albero identico
+a53aa4e3 e nessun delta di codice/test rispetto a dev. Nessuna integrazione in dev.
+
+Mandato a004 aggiornato, stato PLANNING e nuovo ingresso sul branch effettivo;
+convenzione inglese per branch/commit/commenti nel codice registrata in AGENTS.
+Primo obiettivo PDF/CLI/Web UI con limiti dichiarati; debito di validazione
+riconosciuto e differito. Nessun piano consegnato, codice prodotto o GO inventato.
+Prossimo passo nuova chat pianificatrice, poi due review e arbitrato del piano.
 
 ## 2026-10-16 — Debito riconosciuto e pulizia selettiva effettiva
 
@@ -1015,7 +1221,7 @@ Git manuale dopo GO finale,nessun GO r011/integrazione/fase2/motore/cleanup/nuov
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Consegna completa r010 ricevuta,
 [report](benchmarks/2026-10-10-a002-r010-confini-html-markdown.md) e
-[dati](benchmarks/2026-10-10-a002-r010-confini-html-markdown-data.json).
+dati (riferimento storico non disponibile).
 F43/F44/F45 dichiarati verificati: aperture reali dal lexer prima di fallback,
 HTMLTree/lookahead entro la propria foglia, code esterno letterale preservato.
 A9 usa INCOMPLETE/UNSUPPORTED consentito; F36 B1–B4 limite deliberato dichiarato.
@@ -1072,7 +1278,7 @@ Git/integrazione/fase1 conclusa/fase2/scelta motore/cleanup/nuovaV.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r009
 con [report](benchmarks/2026-10-10-a002-r009-confini-reader.md) e
-[dati](benchmarks/2026-10-10-a002-r009-confini-reader-data.json).
+dati (riferimento storico non disponibile).
 F39–F42 dichiarati completati: guardia indipendente dalla proiezione,
 decisione lessicale condivisa, dominio/mapping trasportati dal producer e
 matrice finita di interazioni. Delta7, reader v9/scorer v4 invariato.
@@ -1125,7 +1331,7 @@ Nessun GO futuro/Git automatico/integrazione,fase2 o scelta motore.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r008 e
 [report permanente](benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md)
-con [dati](benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline-data.json).
+con dati (riferimento storico non disponibile).
 F35–F38 dichiarati completati: progresso raw LaTeX dopo blank, veri token
 inermi dopo delimitatori incompleti nello stesso blocco, code soft-line
 nelle label condiviso fra scanner e consumer, documenti e prove. Delta7,
@@ -1193,7 +1399,7 @@ Git automatico, acquisizioni o fase2.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r007 e
 [report permanente](benchmarks/2026-10-10-a002-r007-contesti-markdown.md)
-con [dati](benchmarks/2026-10-10-a002-r007-contesti-markdown-data.json).
+con dati (riferimento storico non disponibile).
 F31–F34 dichiarati completati: domini finiti scanner/consumer condivisi,
 lookahead delimitato per producer, autolink/metadata/raw TeX, barriere
 label/trasporti e rettifiche. Delta7,scorer/audit invariati;1112 test mirati/
@@ -1242,7 +1448,7 @@ GO codice, Git automatico/integrazione o fase2.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r006 e
 [report permanente](benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md)
-con [dati](benchmarks/2026-10-09-a002-r006-confini-lessicali-html-data.json).
+con dati (riferimento storico non disponibile).
 F27–F30 dichiarati completati: chiusura vuota diagnosticata, commenti/CDATA
 interi e inerti, confini Markdown/trasporti inline condivisi e reason neutra.
 Delta7,scorer/audit invariati;936mirati/1093veloci+310subtest dichiarati PASS,
@@ -1290,7 +1496,7 @@ nessun Git automatico/integrazione o fase2.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa
 r005 e [report permanente](benchmarks/2026-10-09-a002-r005-diagnosi-html-e-domini.md)
-con [dati](benchmarks/2026-10-09-a002-r005-diagnosi-html-e-domini-data.json).
+con dati (riferimento storico non disponibile).
 F22–F26 dichiarati completati: diagnosi dei wrapper non chiusi indipendenti
 dalla proiezione, heading HTML senza prefisso ATX, host inline heading/code,
 commenti/dichiarazioni/PI conservati fuori profilo. Il bound globale limita
@@ -1333,7 +1539,7 @@ poi arbitrato reale. Nessun GO codice/integrazione/Git automatico/fase2.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa
 r004 e [report permanente](benchmarks/2026-10-09-a002-r004-profili-html-e-bound.md)
-con [dati](benchmarks/2026-10-09-a002-r004-profili-html-e-bound-data.json).
+con dati (riferimento storico non disponibile).
 F17–F21 completati secondo autore, non GO: profili HTML finiti con foglie
 residue conservate/auditate, caption aggiunte, letterale < e conteggi
 strutturali condizionati separati dal bound globale garantito. Zero
@@ -1380,7 +1586,7 @@ Nessun GO codice/integrazione/motore scelto/fase2 o Git automatico.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta consegna completa r003,
 [report permanente](benchmarks/2026-10-09-a002-r003-html-e-metriche.md) e
-[dati](benchmarks/2026-10-09-a002-r003-html-e-metriche-data.json): F13–F16
+dati (riferimento storico non disponibile): F13–F16
 realizzati secondo autore, non GO. Delta9 file: reader/audit/scorer/protocollo,
 nuovi test e guide/report. Trasporto HTML tipizzato, audit risorse/fallback,
 CER/WER UNAVAILABLE sul testo non misurabile e decomposizione strutturale WER.
@@ -1425,7 +1631,7 @@ Nessun GO codice, integrazione Git, motore scelto o fase2 anticipati.
 
 **Fase/run:**1/a002, IMPLEMENTATION_REVIEW. Ricevuta la consegna completa
 r002 del [report di rettifica e baseline](benchmarks/2026-10-09-a002-r002-rettifica-e-baseline.md)
-e [dati](benchmarks/2026-10-09-a002-r002-data.json). F01–F12 realizzati secondo
+e dati (riferimento storico non disponibile). F01–F12 realizzati secondo
 l’autore, non GO del supervisore. Corpus rev5 aggiorna metadati header e
 11caption in9transcript; sorgenti/render/asset invariati,20PDF ora versionabili.
 Vreale originale conservata in13receipt derivate schema3, nessuna nuova

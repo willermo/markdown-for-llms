@@ -1,9 +1,14 @@
 # Archivio permanente delle run
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Qui si conservano sintesi dello sviluppo, decisioni e report selezionati. Dal
 2026-10-15 le prove operative restano in `temp/` e non vengono copiate qui a ogni
 giro. Gli archivi storici già tracciati conservano la propria struttura; la nuova
-regola non ne dispone la cancellazione. La prima run è integrata in `dev` a `b90c6d4`.
+regola non ne disponeva la cancellazione automatica. La successiva
+[pulizia autorizzata del 17 ottobre](../development/cleanup-2026-10-17.md)
+rimuove i bundle storici superati preservando sintesi e prove ancora necessarie. La prima run è integrata in `dev` a `b90c6d4`.
 
 Ogni run archiviata ha una directory `<run-id>/`, un `manifest.md` derivato dal
 [template](../development/templates/archive-manifest.md) e sottocartelle per
@@ -20,6 +25,12 @@ per consentire l'archiviazione dei report dopo le review. L'integrità dell'arch
 va verificata separatamente e registrata nel manifest.
 
 ## Run archiviate
+
+- [run-a004-fase2-prodotto-utilizzabile](run-a004-fase2-prodotto-utilizzabile/manifest.md):
+  primo incremento PDF→Markdown/asset con CLI/API/Web UI. GO I1 r004 dopo
+  review GO/GO e arbitrato; integrazione manuale pendente, nessun deploy.
+  Qualità unverified/P14 PENDING e debito riconosciuto; solo sintesi e comandi
+  Git qui, prove operative locali conservate in temp.
 
 - [run-a003-fase1-engine-comparison](run-a003-fase1-engine-comparison/manifest.md):
   sintesi della run con validazione differita per priorità utente al prodotto.
@@ -40,5 +51,5 @@ va verificata separatamente e registrata nel manifest.
   integrazione o pulizia dichiarati. Fase1complessiva ancora aperta.
 
 Integrazione a002 ricevuta12ott2026: dev/feature a `7caff336119b6d7d78978204142cfdc16d620fff`,
-352filegenerali/2artefatti identici; [ricevuta](run-a002-fase1-corpus/evidence/integration-reception-2026-10-12.json).
+352filegenerali/2artefatti identici; ricevuta (riferimento storico non disponibile).
 Registri/24log predisposti per commit amministrativo,push/main/deploy assenti.

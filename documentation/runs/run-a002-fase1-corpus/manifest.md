@@ -1,5 +1,17 @@
 # Archivio — run-a002-fase1-corpus
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../../development/cleanup-2026-10-17.md).
+
+## Disponibilità aggiornata — 2026-10-17
+
+La pulizia autorizzata rimuove archivi operativi, duplicati, build e cache
+superati; conserva sintesi/esiti, casi decisivi del debito e dipendenze del
+prodotto. Le descrizioni di conservazione nelle sezioni storiche sotto si
+riferiscono alla data originaria, non alla disponibilità attuale.
+
+[Inventario selettivo e limiti](../../development/cleanup-2026-10-17.md).
+
 **Aggiornamento amministrativo2026-10-12:** commit registri/24log completato
 e osservato localmente a `9f702a2d368cb8f4a3a6bfb7b9146c6757ecd9df`, padre7caff33;
 delta soltanto documentazione/Gitignore, workingtree pulito all'ingresso a003.
@@ -20,8 +32,8 @@ della ricezione precedente al commit amministrativo.
 - Archiviazione:2026-10-12,supervisore Codex/OpenAI, hoststdlib/hash solamente.
 
 [Sintesi della chiusura](closure.md),
-[decisione originale conservata](reports/arbitrations/decision-close-reduced-scope-r001.md),
-[disposizione utente](reports/notes/user-accepted-reduced-scope-2026-10-12.md),
+decisione originale conservata (riferimento storico non disponibile),
+disposizione utente (riferimento storico non disponibile),
 [debito obbligatorio](../../benchmarks/a002-residual-debt.md),
 [ADR0008](../../decisions/0008-maintained-parser-and-provisional-benchmark.md),
 [prossimo incremento](../../development/next-run-a003-engine-comparison.md).
@@ -37,7 +49,7 @@ della ricezione precedente al commit amministrativo.
   `evidence/`; nessuno script archiviato eseguito, codice attuale resta nel repo.
 - 64bundle raw/asset e misure ricevute:`evidence/derived-r014/`; nessuna nuova
   conversione, misura oV. [Indice di valutazione umana](human-evaluation.md).
-- Provenienza/origine/destinazione/SHA/motivo:[inventario JSON](evidence/archive-inventory.json).
+- Provenienza/origine/destinazione/SHA/motivo:inventario JSON (riferimento storico non disponibile).
 
 L’inventario contiene ogni originale selezionato e relativa copia; hash ebyte
 confrontati. JSON originali conservano percorsi assoluti storici: usare la mappa
@@ -61,13 +73,13 @@ selettivo reale, non promessa di portabilità completa di ogni runtime storico.
 Corpus/gold restano nel repo tests/fixtures/conversion-corpus;versioni/byte
 runtime sono identificati, non migliorati dalla chiusura.
 
-Controllo aggiuntivo: 2886 hash originali/copie di lettura PASS; 11 collegamenti storici già indisponibili, elencati in [receipt](evidence/archive-integrity-check.json). Non sanati o trasformati in prove.
+Controllo aggiuntivo: 2886 hash originali/copie di lettura PASS; 11 collegamenti storici già indisponibili, elencati in receipt (riferimento storico non disponibile). Non sanati o trasformati in prove.
 
-Contesto vivo alla chiusura: [STATE](evidence/context-at-closure/STATE.md) e [HANDOVER](evidence/context-at-closure/HANDOVER.md). Le copie in reports/context sono la fotografia precedente alla finalizzazione; gli originali sono conservati.
+Contesto vivo alla chiusura: STATE (riferimento storico non disponibile) e HANDOVER (riferimento storico non disponibile). Le copie in reports/context sono la fotografia precedente alla finalizzazione; gli originali sono conservati.
 
 ## Ricezione Git2026-10-12
 
-[Ricevuta](evidence/integration-reception-2026-10-12.json):352filegenerali e2artefatti
+Ricevuta (riferimento storico non disponibile):352filegenerali e2artefatti
 identici alla consegna,soloHEAD/branch diversi. Workingtree pulito alla ricezione;
 24logarchiviati erano ignorati e assenti nel commit. RegolaGitignore corretta
 per il solo archivio,byte immutati; completamento con commitdocumentale.

@@ -1,14 +1,19 @@
 # Markdown for LLMs
 
-Pipeline Python legacy per convertire documenti in Markdown, pulirlo, validarlo e
-produrre chunk opzionali. Il risultato principale del progetto è il documento
-completo con i suoi asset; la pipeline attuale ha perdite note nel cleaning e
-nella copia degli asset. Conservare sempre i sorgenti e l'estrazione originale.
+Convertitore locale sperimentale da PDF a Markdown con asset: CLI `mdf`, Web UI
+testuale, worker separato e archivio SQLite/filesystem. Conserva sorgenti,
+estrazione originale e tentativi distinti. Primo profilo Linux x86_64/CPU con
+Marker1.10.2: qualità `unverified`, formule e contenuti da controllare sul PDF.
 
-La nuova applicazione Web è in progettazione, descritta in
-[documentation](documentation/README.md). Le procedure seguenti descrivono la
-pipeline a script, con prerequisiti e limiti espliciti. Gli stati delle run,
-le revisioni e gli esiti di integrazione sono nei registri di sviluppo.
+- [Prima conversione nel browser o nella CLI](docs/tutorials/primo-pdf-locale.md).
+- [Preparare package, runtime e modelli locali](docs/how-to/prodotto-locale.md).
+- [Configurazione, comandi e API](docs/reference/prodotto-locale.md).
+- [Stati del bundle e limiti del prodotto sperimentale](docs/explanation/prodotto-sperimentale.md).
+
+La pipeline a script rimane separata. I suoi comandi `markdown-*` e le procedure
+seguenti sono legacy e hanno perdite note nel cleaning e nella copia degli asset.
+Gli stati delle run e le integrazioni sono nei registri di sviluppo; il codice
+implementato non equivale a un GO di review o a una versione integrata.
 
 - [Preparare l'ambiente uv e ricostruire la distribuzione](docs/how-to/ambiente-uv.md).
 - [Toolchain, comandi, configurazione e strati di test](docs/reference/toolchain-legacy.md).
@@ -63,6 +68,7 @@ Gli script di analisi, embedding, RAG e fine tuning citati nella vecchia guida
 non fanno parte del repository. Gli esempi precedenti di quegli script erano
 pseudocodice esterno; non sono comandi di questo progetto.
 
-Licenza [MIT](LICENSE). Il codice è organizzato ancora in moduli flat;
+Licenza [MIT](LICENSE); le condizioni dei pesi sono distinte. Package applicativo
+`markdown_for_llms` e moduli flat legacy convivono;
 [docs](docs/README.md) raccoglie le istruzioni operative e
 [documentation](documentation/README.md) le decisioni, i limiti e gli avanzamenti.
