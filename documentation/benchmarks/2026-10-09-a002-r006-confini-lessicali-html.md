@@ -1,8 +1,11 @@
 # A002 r006 — confini lessicali HTML e contenuti inerti
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Misure derivate e prove reali del 2026-10-09 UTC, run `run-a002-fase1-corpus`.
 Questo report rettifica F25 del [report r005](2026-10-09-a002-r005-diagnosi-html-e-domini.md)
-senza modificarlo. [Dati r006](2026-10-09-a002-r006-confini-lessicali-html-data.json):
+senza modificarlo. Dati r006 (riferimento storico non disponibile):
 64 nuovi legami raw→osservazione→audit→score→final, su conversioni r001 e
 baseline003 r002 storiche. Zero motori, render o nuove verifiche umane.
 

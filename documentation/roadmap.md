@@ -1,8 +1,107 @@
 # Roadmap del convertitore
 
-Aggiornata al 2026-10-12. Le fasi descrivono il percorso fino al prodotto; non sono una
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](development/cleanup-2026-10-17.md).
+
+Aggiornata al 2026-10-17. Le fasi descrivono il percorso fino al prodotto; non sono una
 stima temporale né un'autorizzazione ad avviare ogni attività in anticipo. Dipendenze,
 hardware e corpus determineranno dimensione e durata degli incrementi.
+
+## Priorità vigente — prodotto utilizzabile, 2026-10-16
+
+L'utente autorizza il percorso verso le funzionalità della roadmap, iniziando
+con conversione reale, Markdown/asset consultabili, CLI e Web UI. Si accetta
+un prodotto sperimentale con qualità non certificata e limiti dichiarati.
+Parser/trace e validazione avanzata non sono più prerequisiti delle fasi2–8
+per tale uso; debito e vecchi NO_GO restano aperti. Nessun GO tecnico a003
+retroattivo o adozione del fork. [Disposizione vigente ADR0008](decisions/0008-maintained-parser-and-provisional-benchmark.md).
+
+Primo incremento: verificare l'utilità degli output PDF già disponibili,
+selezionare una configurazione motivata e realizzare un percorso completo
+con le sole fondazioni necessarie. Poi estendere formati, revisione,
+distribuzione ed esportazione per incrementi verificabili. La pianificazione
+produrrà sequenza e criteri, senza promettere tutte le piattaforme o i profili
+hardware prima di prove. Fase1 resta parziale; serve evidenza d'uso del motore,
+non una certificazione del comparatore. Risorse gratuite autorizzate,
+€0/remoti0 invariati; nessun deploy pubblico o integrazione Git automatica.
+
+Gestione degli errori, presenza/identità degli artefatti, conservazione del
+raw e confinamento rimangono obblighi. Distinguere job terminato, integrità
+del bundle e fedeltà non verificata; non nascondere asset mancanti noti o
+introdurre cleaning distruttivo. Il prodotto iniziale non dipende dal trace
+sperimentale; le sue prove restano in temp senza ulteriori campagne automatiche.
+
+**Debito tecnico riconosciuto:** reader/comparatore a002/a003, parser/trace e
+validazione avanzata restano aperti e da consolidare appena tempo/risorse lo
+consentiranno. Riesame al primo prodotto utilizzabile e quando una funzione ne
+richiede le proprietà; nessuna promessa di chiusura già realizzata.
+[Registro e responsabilità](development/technical-debt.md).
+
+Aggiornamento17ott2026: due review del piano ricevute, GO ChatGPT e NO_GO
+locale Claude. Blocco del contratto risolto con errata vincolanti su HTML,
+ancore e download unchecked; chiarimenti su immagini, configurazione e CLI.
+[ADR0009](decisions/0009-first-usable-product.md): scelte I1 accettate,
+All’approvazione del piano P01–P14 erano ancora da eseguire.
+Cancellazione selettiva dall’archivio da pianificare dopo I1; nessuna
+cancellazione automatica per quota.
+
+Consegna I1 ricevuta17ott2026: codice applicativo e guide presenti, prove
+realistiche PDF/CLI/browser/ZIP/crash attribuite alla build008. Ricevute
+3194test e378subtest PASS ricontate; nessuna suite rieseguita in supervisione.
+Due review indipendenti sul delta completo, poi arbitrato: nessun GO al
+codice, rilascio o integrazione già eseguiti. Validazione avanzata differita
+invariata; P14 utente PENDING non sostituito da giudizi dell’agente.
+
+Arbitrato successivo17ott2026: entrambe le review r001 NO_GO; il percorso
+utile è corroborato, ma servono correzioni operative di quota/temporanei e
+letture transitorie. R002 autorizzata con fix locali e regressioni, senza
+nuovo piano o riapertura del certificatore. Nessuna cancellazione generale
+dell'archivio aggiunta; capacità e limiti amministrativi devono essere gestibili
+senza perdere i risultati conservati.
+
+Consegna r002 ricevuta17ott2026: fix dichiarati sui dieci ID e prove nuove di
+quota/crash/recupero,3215test/378subtest nelle ricevute canoniche004. C06/C07
+sono replay verificati per le nuove prove applicative, non nuove inferenze.
+Seguono due review indipendenti mirate e arbitrato; nessun GO al codice o
+certificazione di qualità già ottenuti.
+
+Arbitrato r00217ott2026: NO_GO locale per falsi stati su errori recuperabili
+e durabilità non ripristinata dopo fsync fallito. R003 autorizzata con prove
+per causa e chiusure non invalidate conservate. Una C06 reale sulla build
+finale verificherà la compatibilità del monitor corrente con Marker; nessuna
+nuova campagna del parser o modifica delle priorità del prodotto.
+
+Consegna r003 ricevuta17ott2026: fix dei sette ID dichiarati, nuova C06
+integrale col monitor finale e browser sul risultato reale; canonica003,
+suite004 con3231test/409subtest nelle ricevute. Le chiusure passano a due
+nuove review indipendenti mirate; nessun GO al codice, integrazione o
+certificazione automatica. Debito e limiti del prodotto invariati.
+
+Arbitrato r00317ott2026: GO Claude e NO_GO ChatGPT valutati sul contratto,
+NO_GO locale per pubblicazione già persistita prima del rename fallito.
+R004 autorizzata con sei ID consolidati in quattro cause: recupero/lease,
+manifest rileggibili, documento guasto e diagnosi passiva. Chiusure e C06 reale
+non invalidate conservate; niente nuovo piano o campagne ML non necessarie.
+
+Consegna r004 ricevuta17ott2026: chiusure dichiarate dei sei ID, nuova
+canonica004/suite005 con3240test/440subtest nelle receipt, browser e recupero
+stesso ID dopo errore prima rename. Passa a due review indipendenti mirate,
+nessun GO al codice o integrazione. Replay C06 esplicito e prova ML r003
+conservata; nessun nuovo benchmark o cambiamento del debito avanzato.
+
+Arbitrato r00417ott2026: **GO tecnico I1 dopo due review indipendenti GO/GO**.
+Sei ID r003 chiusi, tre residui bassi riconosciuti nel registro del debito;
+nessun nuovo ciclo di fix automatico. Prodotto sperimentale pronto per
+integrazione manuale e primo uso, qualità unverified e P14 PENDING.
+[Sintesi e limiti](runs/run-a004-fase2-prodotto-utilizzabile/manifest.md),
+[istruzioni Git](runs/run-a004-fase2-prodotto-utilizzabile/manual-integration.md).
+Le fasi2/3 hanno il primo percorso funzionante; non sono completate in tutte
+le funzionalità previste. Nessun merge/push/deploy ancora registrato.
+
+Pulizia pre-commit17ott2026 completata su richiesta utente: circa16,17GiB
+di spazio libero recuperato, runtime/pesi e prove finali conservati.
+[Disponibilità e limiti](development/cleanup-2026-10-17.md); niente nuova
+certificazione, integrazione o cambiamento dei cinque ID del debito.
 
 ## Quadro delle fasi
 
@@ -10,9 +109,9 @@ hardware e corpus determineranno dimensione e durata degli incrementi.
 | --- | --- | --- | --- |
 | 0 | Governance, decisioni e documentazione iniziale | Nessuna | Bootstrap integrato in dev a `66ba822` |
 | 0.1 | Migrazione Python a uv e packaging riproducibile | Bootstrap governance integrato in dev; ciclo run a001 | GO finale implementazione r003 dopo GO/GO; deviazioni temporali NON PASS conservate, archivio verificato; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; push verificato a `80c31da` |
-| 1 | Corpus, benchmark e scelta motivata dei motori | Fase0.1, campioni e profili hardware | A002 chiusa con perimetro ridotto/debito accettato, integrata in dev a7caff33; parser futuro ADR0008. Fase1 ancora aperta: prossimo confronto motori con valutazione umana; nessuna scelta definitiva |
-| 2 | Package applicativo, contratti, configurazione, DB e worker | Risultati essenziali della fase 1 | Da iniziare |
-| 3 | Prima applicazione completa con FastAPI e Web UI minima | Fase 2 e scelta frontend | Da iniziare |
+| 1 | Corpus, benchmark e scelta motivata dei motori | Fase0.1, campioni e profili hardware | Risultati parziali a003 conservati, debito a002 aperto; trace r005 non revisionato e validazione avanzata differita. Non blocca il prodotto sperimentale autorizzato |
+| 2 | Package applicativo, contratti, configurazione, DB e worker | Evidenza operativa dei motori e dati locali | Fondazioni I1 r004 GO dopo GO/GO e arbitrato; integrazione manuale pendente, residui bassi tracciati |
+| 3 | Prima applicazione completa con FastAPI e Web UI minima | Fondazioni necessarie e frontend | Primo percorso CLI/API/Web UI I1 r004 GO, browser e replay esplicito provati; C06 reale r003, qualità unverified e P14 PENDING. Funzioni avanzate successive |
 | 4 | Formati richiesti, PDF scientifici, OCR e asset | Fasi 1–3 | Da iniziare |
 | 5 | Revisione OCR/AI e confronto sorgente/risultato | Provenienza e asset della fase 4 | Da iniziare |
 | 6 | Distribuzione e collaudo CPU/GPU/remoto sui sistemi previsti | Fasi 3–5; prove preliminari già in fase 1 | Da iniziare |
@@ -50,8 +149,20 @@ la parte di packaging della fase 2; il nuovo dominio applicativo resta in fase 2
 
 ## Fase 1 — Corpus e scelta dei motori
 
+Aggiornamento corrente 2026-10-15: [a003](runs/run-a003-fase1-engine-comparison/manifest.md)
+r007 NO_GO arbitrato; riesame mirato del metodo e nuova pianificazione da svolgere.
+Risultati del campione conservati, firma umana pendente, fase1 aperta.
+
+Storia di preparazione 2026-10-12: commit amministrativo registri/24log a002
+osservato a `9f702a2`, padre7caff33; base locale dev verificata,nessuna query
+remota/prova di push. [Preparazione a003](development/a003-engine-comparison-brief.md)
+con sette casi proposti e [ricognizione statica](development/a003-local-reconnaissance.md).
+Allora branch manuale,piano e budget workload pendenti; nessuna conversione o scelta
+di motore ancora eseguita. Fase1 aperta,nessuna nuova autorizzazione fase2.
+Il riepilogo di ricezione a002 sotto precede il commit amministrativo.
+
 Integrazione a002 verificata12ott2026 a `7caff336119b6d7d78978204142cfdc16d620fff`, contenuti
-identici; registri/log da committare separatamente. [Ricevuta](runs/run-a002-fase1-corpus/evidence/integration-reception-2026-10-12.json).
+identici; registri/log da committare separatamente. Ricevuta (riferimento storico non disponibile).
 Push/main/deploy non eseguiti; la chiusura con debito non completa la fase1.
 
 **Decisione corrente2026-10-12:** a002 chiusa per [accettazione utente della
@@ -150,16 +261,15 @@ riconciliabili dopo scrittura interrotta; le opzioni effettive sono verificabili
 
 ## Fase 3 — Primo percorso utilizzabile con Web UI
 
-**Obbligo di follow-up:** all’uscita di questa fase aprire la run dedicata al
-parser mantenuto e risolvere il [debito a002](benchmarks/a002-residual-debt.md).
-La prima app resta valutabile manualmente; il reader sperimentale non è una
-barriera di sicurezza o una certificazione automatica. Debito da chiudere
-prima di automatismi di attestazione e rilascio, con nuove prove e review.
-
+**Follow-up aggiornato il2026-10-16:** il debito del validatore resta aperto,
+ma l'uscita fase3 non impone la ripresa immediata del parser. L'utente può usare
+il prodotto sperimentale e distribuire nel tempo il lavoro di validazione.
+Nessuna attestazione automatica di fedeltà/completezza semantica senza prove;
+controlli operativi, sicurezza dei file e limiti esposti restano necessari.
 
 Esporre API FastAPI per upload, avvio, stato, archivio e download, con schema OpenAPI.
-Il worker esegue una conversione reale di un formato semplice, inizialmente TXT e/o
-DOCX. La CLI richiama gli stessi servizi. Scegliere il frontend con un ADR e fornire
+Il worker esegue una conversione reale anche su un PDF rappresentativo,
+con TXT/DOCX come ulteriori controlli quando pertinenti. La CLI richiama gli stessi servizi. Scegliere il frontend con un ADR e fornire
 UI per caricamento, coda, archivio, anteprima e download del bundle Markdown.
 
 Servire UI e API con una configurazione locale semplice. Distinguere stato del job
@@ -243,6 +353,10 @@ conservando sempre la figura originale e verificando eventuali dati ricostruiti.
 opzionali: la loro mancata attivazione non impedisce il rilascio del convertitore.
 
 ## Fase 8 — Migrazione e rilascio
+
+Per disposizione16ott2026 è ammessa una consegna/rilascio sperimentale locale
+con validazione avanzata differita e limiti espliciti, senza promessa di
+certificazione o deploy pubblico. Le review delle funzioni operative restano.
 
 Definire cosa importare degli output legacy e cosa riconvertire perché privo di
 provenienza. Non fabbricare versioni del motore o parametri che non sono disponibili.

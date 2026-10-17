@@ -1,7 +1,7 @@
 # Spiegazioni
 
-Contesto per comprendere il funzionamento del prodotto. La sezione è predisposta;
-le spiegazioni del sistema realizzato cresceranno insieme all'implementazione.
+Contesto per comprendere il funzionamento del prodotto:
+[bundle disponibile e qualità non verificata](prodotto-sperimentale.md).
 
 Argomenti previsti: fedeltà e limiti dell'OCR; ordine di lettura e formule; documento
 strutturato, asset e provenienza; revisioni AI; differenza tra conversione e RAG;

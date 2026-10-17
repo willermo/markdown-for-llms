@@ -2,7 +2,7 @@
 
 - Data: 2026-10-02
 - Stato decisione: accettata come indirizzo architetturale
-- Stato implementazione: da realizzare; compatibilità dei motori da misurare
+- Stato implementazione: I1 Linux CPU r004 GO il 2026-10-17, integrazione manuale pendente; altri profili da verificare
 - Origine: requisiti locale/remoto, CPU/GPU, Docker e `.env` dell'utente
 
 ## Decisione
@@ -33,3 +33,10 @@ pubblicate dopo prove reali, insieme a requisiti RAM/VRAM e prestazioni.
 Marker resta un candidato insieme a Docling e parser nativi. Nessun motore viene
 selezionato sulla sola base di una demo. Riferimenti e candidati sono nel
 [draft](../architecture/preliminary-draft.md); criteri nella [roadmap](../roadmap.md).
+
+## Precisazione 2026-10-17 — Profilo iniziale
+
+[ADR0009](0009-first-usable-product.md) seleziona Marker 1.10.2 CPU per il
+primo prodotto sperimentale Linux locale; adapter provato con C06/C07 e
+nuova C06 reale r003, GO I1 r004. La candidatura generale sopra resta storia; non è promessa di
+supporto degli altri profili o di fedeltà del contenuto.

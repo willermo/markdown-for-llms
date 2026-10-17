@@ -1,10 +1,13 @@
 # A002 r009 — confini del reader
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Realizzato il 2026-10-10 (Europe/Rome), creazione UTC 2026-10-10T14:58:26.170486+00:00, run
 `run-a002-fase1-corpus`. Reader `observations-v9-reader-boundaries`.
 Rettifica le tre cause documentate nelle review r008 senza riscrivere il
 [report precedente](2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md).
-[Dati r009](2026-10-10-a002-r009-confini-reader-data.json),
+Dati r009 (riferimento storico non disponibile),
 [report autore](../../temp/run-a002-fase1-corpus/reports/implementation-r009.md).
 Consegna dell'implementatore: review indipendenti e arbitrato ancora da svolgere.
 

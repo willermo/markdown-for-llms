@@ -1,4 +1,40 @@
-# Progettazione del convertitore di documenti
+# Documentazione progettuale
+
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](development/cleanup-2026-10-17.md).
+
+**Stato al 2026-10-17:** priorità approvata al convertitore utilizzabile, con
+CLI/Web UI e successivi incrementi della roadmap. Parser/validazione avanzata
+differiti; trace r005 consegnato senza review, nessun GO retroattivo e debito
+a002 aperto. Controlli operativi e qualità del contenuto restano distinti.
+I1 consegnato nel working tree del branch feature/run-a004-usable-product:
+PDF→Markdown/asset, CLI/API/Web UI, archivio e worker separato. Ricevute
+C06/C07, browser/ZIP e recupero crash corroborati dalle due review; arbitrato
+r001/r002/r003 **NO_GO con fix locali** conservati. R004 **GO tecnico dopo
+review GO/GO e arbitrato**, con sei rilievi chiusi e tre residui bassi tracciati.
+C06 reale e chiusure non invalidate preservati. Integrazione manuale pendente:
+[sintesi e limiti](runs/run-a004-fase2-prodotto-utilizzabile/manifest.md),
+[comandi Git](runs/run-a004-fase2-prodotto-utilizzabile/manual-integration.md).
+Qualità unverified,
+P14 utente PENDING. [Scelte ADR0009](decisions/0009-first-usable-product.md),
+[guida del prodotto sperimentale](../docs/tutorials/primo-pdf-locale.md).
+[Svolta di priorità](decisions/0008-maintained-parser-and-provisional-benchmark.md),
+[roadmap](roadmap.md), [storia a003](runs/run-a003-fase1-engine-comparison/manifest.md).
+
+Il lavoro di validazione non conclusivo rimane **debito tecnico riconosciuto**,
+da consolidare appena tempo e risorse lo consentiranno.
+[Registro trasversale](development/technical-debt.md). La pulizia selettiva ha
+liberato8,18GiB di ambienti/build Haskell in temp; disponibilità e limiti nella
+sintesi a003. La [successiva pulizia pre-commit](development/cleanup-2026-10-17.md)
+ha ridotto temp a circa5GiB e documentation a circa1MiB, mantenendo runtime,
+modelli, prove del GO e casi decisivi del debito; non tutte le campagne storiche
+sono ancora riproducibili integralmente.
+
+Qui si conservano decisioni, sintesi e report selezionati; le prove operative
+sono in temp. I bundle a003 sono stati trasferiti con hash invariati, senza
+cancellazioni; non sono candidati al commit.
+[Conservazione](development/run-lifecycle.md#archivio-e-pulizia),
+[cronologia](CHANGELOG.md). I riepiloghi antecedenti sotto sono storici.
 
 Questa cartella è la memoria progettuale del repository: conserva motivazioni,
 decisioni, proposte e avanzamento. La documentazione d'uso e sviluppo vive invece in
@@ -116,7 +152,7 @@ autonomamente, snapshot comune e due review alla consegna; nessun GO finale.
 ## Stato corrente2026-10-12
 
 A002 integrata manualmente in dev a `7caff336119b6d7d78978204142cfdc16d620fff`; corrispondenza
-dei contenuti verificata. [Ricevuta](runs/run-a002-fase1-corpus/evidence/integration-reception-2026-10-12.json).
+dei contenuti verificata. Ricevuta (riferimento storico non disponibile).
 Registri e24log predisposti per commit amministrativo; nessun push/main/deploy.
 Il riepilogo di chiusura sotto è storico rispetto all’integrazione.
 

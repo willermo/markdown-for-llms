@@ -1,5 +1,10 @@
 # Chiusura a002 — consegna sperimentale accettata
 
+Disponibilità17ott2026: alcune prove e copie storiche sono state rimosse
+dalla pulizia autorizzata; i riferimenti successivi descrivono la consegna
+storica. Corpus/gold e casi decisivi restano; nessuna nuova firma umana
+o chiusura del debito. [Dettagli](../../development/cleanup-2026-10-17.md).
+
 A002 chiusa il2026-10-12 per accettazione esplicita del perimetro ridotto, con debito aperto. Reader r014 sperimentale; ClaudeNO_GO statico e reviewGPTincompleta conservati, nessun GOtecnico retroattivo. Corpus/raw/prove archiviati, parser mantenuto adottato come direzione (ADR0008), implementazione futura obbligatoria. Primo incremento fase1 concluso nel perimetro accettato; confronto/scelta motori e fase1 complessiva ancora aperti. Nessuna integrazione o UI dichiarata.
 
 La disposizione utente è conservata nell’archivio, insieme alla decisione di

@@ -26,6 +26,15 @@ INPUTS = ("pyproject.toml", ".python-version", "uv.lock", "build-constraints.txt
           "MANIFEST.in", "setup.cfg", "setup.py", "requirements.txt", "uv.toml")
 
 
+def application_files(repo):
+    """Identify application source and package data without importing it."""
+    root = repo / 'markdown_for_llms'
+    if not root.exists():
+        return []
+    return sorted(p for p in root.rglob('*') if p.is_file() and
+                  p.suffix in {'.py', '.json', '.sql', '.html', '.css', '.js'})
+
+
 def canonical(value):
     return json.dumps(value, sort_keys=True, ensure_ascii=True, separators=(",", ":")).encode()
 
@@ -189,6 +198,11 @@ def validate_current(source, repo, official=False):
     if not required_inputs <= {x['path'] for x in payload['build_inputs']}:
         raise ValueError('Input build obbligatori mancanti')
     records = payload['modules'] + payload['build_inputs'] + payload['diagnostics']
+    app_paths = {p.relative_to(host).as_posix() for p in application_files(repo)}
+    recorded_app = {r['path'] for r in payload['build_inputs']
+                    if r['path'].startswith((repo / 'markdown_for_llms').relative_to(host).as_posix() + '/')}
+    if app_paths != recorded_app:
+        raise ValueError('Application package inputs differ from S')
     if payload['input_inventory']:
         records += [payload['input_inventory']]
     if len({x['path'] for x in records}) != len(records):
@@ -249,6 +263,7 @@ def capture(args, snapshot_data, indexed):
     if any(item["kind"] != "file" for item in modules):
         raise ValueError("Dieci moduli obbligatori mancanti")
     inputs = [entry(args.repo / name, host_repo) for name in INPUTS]
+    inputs.extend(entry(p, host_repo) for p in application_files(args.repo))
     pyproject = args.repo / "pyproject.toml"
     config = tomllib.loads(pyproject.read_text()) if pyproject.exists() else {}
     project = config.get("project", {})

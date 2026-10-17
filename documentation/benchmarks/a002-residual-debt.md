@@ -1,19 +1,82 @@
 # Debito a002 — misuratore sperimentale e parser mantenuto
 
-2026-10-12. **APERTO, accettato per uso esplorativo; risoluzione obbligatoria**.
+Disponibilità17ott2026: alcune prove e copie storiche sono state rimosse
+dalla pulizia autorizzata; i riferimenti successivi descrivono la consegna
+storica. Corpus/gold e casi decisivi restano; nessuna nuova firma umana
+o chiusura del debito. [Dettagli](../development/cleanup-2026-10-17.md).
+
+2026-10-16. **APERTO, risoluzione differita per priorità al prodotto utilizzabile**.
 [ADR0008](../decisions/0008-maintained-parser-and-provisional-benchmark.md),
 [chiusura e prove](../runs/run-a002-fase1-corpus/manifest.md).
-Decisione accettata distinta dall’implementazione, che non è iniziata.
+Decisione accettata distinta dall’implementazione dell’adattatore, che non è iniziata; il nucleo sperimentale è verificato separatamente.
 
-## Responsabile e ripresa
+## Responsabile e ripresa vigente
 
-Responsabile di programmazione/verifica: supervisore del progetto; autore della
-futura run parser per implementazione, due reviewer indipendenti per verifica.
-Trigger obbligatorio: completamento del primo percorso valutabile nel browser
-(uscita fase3), con apertura di run dedicata. Prima di automatizzare attestazioni
-di completezza/sicurezza o di dichiarare rilascio, questo debito deve essere
-chiuso tramite prove e arbitrato. Nessuna deadline nuova: trigger di prodotto,
-priorità di correttezza, non rinvio indefinito a discrezione di una chat futura.
+Responsabile di programmazione/verifica: supervisore del progetto. Disposizione
+utente16ott2026: il debito resta aperto, ma non blocca il prodotto sperimentale
+con conversione/Web UI e limiti dichiarati. Risoluzione dilazionabile dopo un
+prodotto utilizzabile; niente ripresa obbligatoria automatica all'uscita fase3.
+Il trigger precedente è superato da [ADR0008 aggiornato](../decisions/0008-maintained-parser-and-provisional-benchmark.md).
+Prima di introdurre funzioni che attestino automaticamente proprietà dipendenti
+da questi ID, servono ancora implementazione, prove e review pertinenti.
+Nessuna vecchia review trasformata in GO. Trace r005 consegnato/non revisionato,
+non dipendenza del primo prodotto; controlli operativi e guardie separati.
+Le disposizioni successive sotto conservano la cronologia del percorso precedente.
+
+### Debito riconosciuto — precisazione16ott2026
+
+I cinque ID restano debito tecnico da consolidare appena avremo modo e tempo;
+la priorità prodotto non autorizza cancellazione o etichette di completamento.
+[Registro trasversale](../development/technical-debt.md) include anche comparatore
+a003 e trace non revisionato. Pulizia dei soli ambienti/build ricostruibili:
+prove salvate e criteri conservati; per ripresa del trace occorre ricostruire
+l'ambiente Haskell, senza pretendere MATCH dei vecchi snapshot incompleti.
+
+### Ripresa anticipata autorizzata — 2026-10-15
+
+Per disposizione esplicita dell'utente, il lavoro viene anticipato nel riesame
+del metodo a003, senza attendere l'uscita fase3. Stato del debito: **APERTO,
+ripresa sperimentale sui ruoli sintattici**. Il piano r002 deve coprire fattibilità del nucleo
+mantenuto condiviso, adattamento specifico del modello osservato a002 e criteri
+di risoluzione dei cinque ID, insieme all'adattatore del comparatore a003.
+Le prove comuni si riusano; gli esiti di chiusura rimangono distinti.
+
+L'apertura originariamente prevista di una run dedicata non è un prerequisito
+per questa ripresa autorizzata in a003. Implementazione e prove restano future;
+chiusura per ID solo dopo nuove review e arbitrato. Nessuna modifica retroattiva
+agli esiti r014 o ai limiti sperimentali esterni alla sintassi.
+
+Ricezione piano r002, 2026-10-15: NOT_VIABLE preliminare dei profili provati
+anche per a002. Il pianificatore riporta nuove premesse sintattiche e controprove
+del reader sui casi D01–03; sono consegne da verificare nelle due review, non
+chiusure o arbitrati già svolti. Le classificazioni storiche della tabella sotto
+rimangono attribuite alla chiusura r014. [Stato a003](../runs/run-a003-fase1-engine-comparison/manifest.md).
+
+Arbitrato del piano, 2026-10-16: diagnosi circoscritta accolta, errata
+richieste. Controprovata su P/C l'omissione dall'AST di HTML/immagini nella
+cella eccedente di una tabella: caso obbligatorio D03/D04. Nessun nuovo
+adattatore o falso COMPLETE nei caller già dimostrato da questa sola sonda;
+risorse e residui devono avere prova esplicita. Tutti i cinque ID restano aperti.
+
+Verifica delle errata, 2026-10-16: accolta la prova di insufficienza del
+wrapper AST per residui/risorse e del testimone di soli valori. È disposto
+un esperimento di provenienza nei punti originali del reader con contabilità
+del raw ed equivalenza AST. Nessun nuovo adattatore/audit o stato COMPLETE
+convalidato; D01–05 restano aperti, la chiusura storica ridotta non cambia.
+
+Ricezione del trace, 2026-10-16: la visita osservativa del parser originale
+riporta risorse nelle celle scartate nei14controlli e conserva provenienza nei
+rientri provati. Le due review successive hanno portato a NO_GO del nucleo
+per trim e verificatore; nucleo r002 poi approvato con due GO e arbitrato.
+Prototipo ruoli r003 poi arbitrato NO_GO: false origini HTML possono occultare
+risorse senza diagnostica; D-A002-04 INSUFFICIENT fino al fix r004 disposto.
+Due review r004 poi arbitrate NO_GO: estensioni HTML errate e certificati
+respinti su input ammessi; sufficienza per il prototipo non confermata.
+Mandato r005 sui termini nativi, derivate incomplete e origini esclusive,
+con visita riferita a P/TagSoup e guardie separate dal modello di browser.
+Note e chiusure non invalidate preservate, nessuna chiusura D01–05.
+Caller/modello completo ancora assenti;
+il gate positivo non chiude D01–05 e non è un audit del prodotto.
 
 ## Elementi aperti e stato della prova
 

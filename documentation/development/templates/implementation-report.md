@@ -17,6 +17,9 @@ Descrivere comportamento, file e motivazioni, collegando i criteri del piano.
 | --- | --- | --- | --- |
 
 Distinguere test eseguiti, non eseguiti e falliti. Non confondere un mock con inferenza reale.
+Report di giro ed evidenze restano in `temp/<run-id>/`; non copiarli automaticamente
+in `documentation/`. A fine run selezionare la sola sintesi durevole, secondo
+il protocollo di archivio e pulizia.
 
 ## Correzioni locali e rilievi
 

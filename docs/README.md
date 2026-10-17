@@ -1,7 +1,9 @@
 # Documentazione per utenti e sviluppatori
 
-Le guide uv/Marker e la reference descrivono la pipeline legacy. La nuova applicazione è in progettazione;
-le sue funzionalità non sono disponibili. Il [README](../README.md) è l'ingresso.
+Il [tutorial PDF locale](tutorials/primo-pdf-locale.md) introduce il prodotto
+sperimentale CLI/Web UI; [reference](reference/prodotto-locale.md) e
+[limiti](explanation/prodotto-sperimentale.md) ne delimitano le capacità.
+Le altre guide uv/Marker e la reference legacy restano distinte. Il [README](../README.md) è l'ingresso.
 
 La struttura segue [Diátaxis](https://diataxis.fr/):
 

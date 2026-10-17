@@ -1,5 +1,8 @@
 # Confronto documentale e fix didascalie a002 — 2026-10-08
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Il corpus revisione 4 ripristina nei sorgenti DOCX, RTF e nell'include TeX le
 didascalie già previste dalla specifica manuale. Il nuovo confronto offre
 **13 documenti completi affiancati**, con formule MathML leggibili, celle vere,
@@ -31,7 +34,7 @@ fonte matematica manuale, campi PDF/locatori e due estrattori indipendenti;
 raster Unicode e forma visibile richiedono ancora V. Il render DOCX ora
 contiene «Celle misurate», confermato dagli estrattori e da agent_visual.
 
-Il [contratto sui canonici effettivi](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/caption-source-contract-001.json)
+Il contratto sui canonici effettivi (riferimento storico non disponibile)
 è R PASS: tutti e tre i vecchi sorgenti hanno **celle PASS, caption FAIL**;
 i nuovi hanno entrambi PASS. Nessuna presenza delle celle nasconde l'omissione.
 
@@ -63,7 +66,7 @@ non giudizi matematici di semantica o tipografia degli output.
 Tempi Pandoc diretti e child legacy comprendono perimetri differenti. Ogni
 processo/workspace è nuovo, page cache OS non controllata. wait4 CPU e sampled
 RSS10ms hanno i limiti dichiarati nel protocollo, non un hard cap aggregato.
-[Fatti e receipt dei20 tentativi](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/caption-fix-results-001.json).
+Fatti e receipt dei20 tentativi (riferimento storico non disponibile).
 
 L04output-packet002 conserva36 occorrenze/72 giudizi potenziali/9 casi distinti,
 non assegnati; il suo R PASS attesta inventario/composizione, nessun giudizio
@@ -71,8 +74,8 @@ output. L01PDF/OCR e L02compilazione TeX restano NOT_MEASURED.
 
 ## Confronto e risposte v2
 
-[C02 pronto](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-comparison-001/C02-docx-it.html),
-[indice delle13 coppie](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-comparison-001/index.html).
+C02 pronto (riferimento storico non disponibile),
+indice delle13 coppie (riferimento storico non disponibile).
 Il riferimento deriva dai blocchi manuali, non da observations/scorer o da
 Pandoc. A sinistra pagine reali/capitoli actual ordinati oppure sorgenti
 TXT/TeX/controlli con asset reali. TeX non compilato è dichiarato. La vista a

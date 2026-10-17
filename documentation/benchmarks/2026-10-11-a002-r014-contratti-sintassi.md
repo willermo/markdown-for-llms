@@ -1,5 +1,8 @@
 # a002 r014 — contratti di sintassi
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 2026-10-11. F58–F62 implementati e verificati nei domini finiti descritti,
 consegna al supervisore; nessun GO, integrazione o nuova V. La nuova applicazione
 resta in progettazione: questi risultati riguardano il reader del benchmark.
@@ -7,7 +10,7 @@ resta in progettazione: questi risultati riguardano il reader del benchmark.
 Fonti: [mandato46](../../temp/run-a002-fase1-corpus/prompts/46-implementation-r014-align-block-metadata-and-uri-contracts.md),
 [registro dei contratti e callsite](../../temp/run-a002-fase1-corpus/notes/implementation-r014-contracts.md),
 [report autore](../../temp/run-a002-fase1-corpus/reports/implementation-r014.md),
-[dati e provenienza](2026-10-11-a002-r014-contratti-sintassi-data.json).
+dati e provenienza (riferimento storico non disponibile).
 
 ## Contratti realizzati
 

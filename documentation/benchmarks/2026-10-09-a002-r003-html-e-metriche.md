@@ -1,8 +1,11 @@
 # A002 r003 — HTML, disponibilità testuale e composizione WER
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Data: 2026-10-09 Europe/Rome; misure derivate eseguite il 9 ottobre UTC.
 Report dell'implementatore, in attesa di due nuove review indipendenti e
-arbitrato. Nessun GO autore né scelta di motore. [Dati per tutti i tentativi](2026-10-09-a002-r003-html-e-metriche-data.json).
+arbitrato. Nessun GO autore né scelta di motore. Dati per tutti i tentativi (riferimento storico non disponibile).
 
 I fix locali F13–F16 correggono il benchmark consegnato r002 dopo NO_GO/NO_GO:
 formule e unknown dentro span/a HTML non raggiungevano lo scorer; immagini

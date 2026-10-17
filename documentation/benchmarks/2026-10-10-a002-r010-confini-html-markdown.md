@@ -1,9 +1,12 @@
 # A002 r010 — confini HTML e Markdown inline
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Realizzato il 2026-10-10, run `run-a002-fase1-corpus`, reader
 `observations-v10-inline-html-domains`. Consegna dell'implementatore, ancora
 da sottoporre a supervisione, due review indipendenti e arbitrato; nessun GO
-autore o integrazione Git. [Dati r010](2026-10-10-a002-r010-confini-html-markdown-data.json),
+autore o integrazione Git. Dati r010 (riferimento storico non disponibile),
 [report autore](../../temp/run-a002-fase1-corpus/reports/implementation-r010.md).
 Il [report r009](2026-10-10-a002-r009-confini-reader.md) conserva la storia.
 

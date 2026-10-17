@@ -1,11 +1,14 @@
 # A002 r008 — avanzamento scanner e domini inline
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Consegna datata 2026-10-10 (Europe/Rome), creazione UTC 2026-10-10T10:23:10.347814+00:00, run
 `run-a002-fase1-corpus`. Rettifica il [report r007](2026-10-10-a002-r007-contesti-markdown.md)
 e le affermazioni sul dominio LaTeX, sui delimitatori incompleti nello stesso
 blocco e sul codice soft-line nelle label. Le review r007 erano statiche; le
 riproduzioni seguenti sono nuove prove dell'implementatore. Storia, fallimenti,
-review e dati r007 restano immutati. [Dati r008](2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline-data.json).
+review e dati r007 restano immutati. Dati r008 (riferimento storico non disponibile).
 
 | Fix | Prima realmente riprodotto su r007 | Dopo sul reader v8 |
 | --- | --- | --- |

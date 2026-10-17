@@ -1,5 +1,8 @@
 # Riferimento verificato e consegna a002 — 2026-10-08
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 **Tutti i 13 documenti sono VERIFIED; A03/L03 è chiuso.** L'utente della chat
 implementatrice ha confermato la corrispondenza completa del confronto
 `V-comparison-001`. M required PASS, completezza della vista e risposta V reale
@@ -19,9 +22,9 @@ Testo ricevuto, conservato esattamente, compresi spazi e articolo attaccato:
 
 > Tutti  idocumenti corrispondono. Ad un esame visivo, valido le conversioni verificate.
 
-[Originale](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-received-chat-001.txt),
-[metadati di registrazione](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-received-chat-metadata-001.json),
-[receipt di importazione](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/V-response-document-001/response.json).
+Originale (riferimento storico non disponibile),
+metadati di registrazione (riferimento storico non disponibile),
+receipt di importazione (riferimento storico non disponibile).
 SHA256 originale `2b34e76549d084988bb09ba56d121e66b0b20d81443e2922f01ef1a3cda87f9e`.
 Packet SHA256 `ac0921defac79ca063ef89fe270ed09e8d991e7dc17d9a0aeae3c2c4c06a5c6f`.
 
@@ -50,7 +53,7 @@ disponibili.
 
 ## Verifica effettiva
 
-[Summary documentale](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/verification-document-001/summary.json)
+Summary documentale (riferimento storico non disponibile)
 schema2: `all_verified=true`, tredici documenti VERIFIED, M PASS e V ACCEPTED.
 La compilazione ricontrolla sorgenti/include/render/asset e vista completa
 contro il gold corrente, senza riscrivere annotazioni o il packet.
@@ -83,8 +86,8 @@ testo originale, ambito alterato e compilazione positiva di tutti i documenti.
 
 ## Metriche aggiornate senza nuove conversioni
 
-[Input congelati dello scoring](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/rescore-verified-reference-input-001.json)
-prima del workload; [risultato effettivo](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/rescore-verified-reference-001/summary.json).
+Input congelati dello scoring (riferimento storico non disponibile)
+prima del workload; risultato effettivo (riferimento storico non disponibile).
 Sono 12 output su input/gold invariati della campagna002 (TXT e due EPUB)
 più 20 output dipendenti della campagna003 (DOCX/RTF/TeX diretto e DOCX/RTF
 legacy). Gli otto percorsi conservano quattro tentativi ciascuno. Non è una
@@ -130,7 +133,7 @@ nessun fallimento è rinominato o attribuito al motore.
 
 ## Costi, limiti e prossimo ruolo
 
-[Ledger cumulativo](../../temp/run-a002-fase1-corpus/evidence/implementation-r001/ledger.jsonl)
+Ledger cumulativo (riferimento storico non disponibile)
 dal 07:06:54 UTC, senza reset. Il checkpoint007 misura circa **11 h 29 min wall**,
 inclusa l'attesa della risposta; CPU wait4 nota **1465.67 s** come lower bound,
 disco retained **465121280 byte** (circa 444 MiB, inodi unici). Nessuna nuova

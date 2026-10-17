@@ -1,0 +1,260 @@
+{
+  "schema": 1,
+  "scope": "Independent contract expectations for future P08/P10/P13; not parser execution or valid raster fixtures.",
+  "assumptions": "Job completed, source/raw valid, inventory files regular and hashes match unless fault stated; F14 pins unsupported srcset in I1; no network or rendering for any row.",
+  "cases": [
+    {
+      "id": "F01-span",
+      "raw": "<span id=\"page-1-2\">Titolo</span>",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "inert-html",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F02-fragment",
+      "raw": "[nota](#page-1-2)",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "internal-anchor",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F03-fragment-absent",
+      "raw": "[nota](#absent)",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "internal-anchor-informative-only",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F04-sup-sub",
+      "raw": "x<sup>2</sup> H<sub>2</sub>O",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "inert-html",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F05-br",
+      "raw": "| A | B |\n|---|---|\n| uno<br>due | tre |",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "inert-html",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F06-html-table",
+      "raw": "<table><tr><td>x<br>y</td></tr></table>",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "inert-html",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F07-html-fragment",
+      "raw": "<a href=\"#page-1-2\">nota</a>",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "internal-anchor",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F08-md-local",
+      "raw": "![figura](figure.jpeg)",
+      "inventory": [
+        "figure.jpeg"
+      ],
+      "fault": null,
+      "expected": {
+        "reference_kind": "local",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F09-html-local",
+      "raw": "<img src=\"figure.jpeg\">",
+      "inventory": [
+        "figure.jpeg"
+      ],
+      "fault": null,
+      "expected": {
+        "reference_kind": "local",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F10-html-remote",
+      "raw": "<img src=\"https://example.invalid/figure.jpeg\">",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "external-no-fetch",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F11-html-missing",
+      "raw": "<img src=\"missing.jpeg\">",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "local-missing",
+        "bundle": "incomplete",
+        "ordinary_download": false,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F12-md-missing",
+      "raw": "![figura](missing.jpeg)",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "local-missing",
+        "bundle": "incomplete",
+        "ordinary_download": false,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F13-md-file-fragment",
+      "raw": "[figura](figure.jpeg#part)",
+      "inventory": [
+        "figure.jpeg"
+      ],
+      "fault": null,
+      "expected": {
+        "reference_kind": "local-and-fragment",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F14-unsupported-srcset",
+      "raw": "<img srcset=\"figure.jpeg 1x, other.jpeg 2x\">",
+      "inventory": [
+        "figure.jpeg",
+        "other.jpeg"
+      ],
+      "fault": null,
+      "expected": {
+        "reference_kind": "unsupported-resource-context",
+        "bundle": "unchecked",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F15-unknown-plus-missing",
+      "raw": "<img srcset=\"figure.jpeg 1x\"> ![figura](missing.jpeg)",
+      "inventory": [
+        "figure.jpeg"
+      ],
+      "fault": null,
+      "expected": {
+        "reference_kind": "unsupported-and-local-missing",
+        "bundle": "incomplete",
+        "ordinary_download": false,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F16-tamper",
+      "raw": "![figura](figure.jpeg)",
+      "inventory": [
+        "figure.jpeg"
+      ],
+      "fault": "digest-mismatch",
+      "expected": {
+        "reference_kind": "local",
+        "bundle": "invalid",
+        "ordinary_download": false,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F17-path",
+      "raw": "![figura](../outside.jpeg)",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "unsafe-local",
+        "bundle": "invalid",
+        "ordinary_download": false,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F18-code",
+      "raw": "`<img src=\"missing.jpeg\">`",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "literal-code",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F19-math",
+      "raw": "$x_{![not-a-link](missing.jpeg)}$",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "literal-math",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    },
+    {
+      "id": "F20-external-link",
+      "raw": "[fonte](https://example.invalid/a)",
+      "inventory": [],
+      "fault": null,
+      "expected": {
+        "reference_kind": "external-no-fetch",
+        "bundle": "ready",
+        "ordinary_download": true,
+        "quality": "unverified"
+      }
+    }
+  ]
+}

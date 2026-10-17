@@ -6,14 +6,25 @@
 - Stato deploy / non pertinente:
 - Data e responsabile archiviazione:
 
-## Materiale conservato
+## Sintesi permanente
 
-| Origine in temp | Destinazione permanente | SHA-256 | Motivo e istruzioni di riuso |
-| --- | --- | --- | --- |
+Risultato, progressi, rilievi/esiti, verifiche decisive e limiti. Selezionare solo
+report e note che aggiungono informazione durevole; non una copia di ogni giro.
+
+| Documento o test selezionato | Destinazione | Motivo di conservazione |
+| --- | --- | --- |
+
+## Prove locali e disponibilità
+
+| Prova decisiva | Identità e percorso operativo locale | Disponibile / eliminata / da conservare per dipendenza |
+| --- | --- | --- |
+
+Le evidenze grezze restano in `temp/`, non in questo archivio. Un hash non
+sostituisce una prova eliminata; indicare i limiti della riproducibilità.
 
 ## Verifica e pulizia
 
-Integrità confrontata, collegamenti adattati, script promossi verificati, materiale
-sensibile escluso e posizione dell'eventuale archivio privato. Elencare i percorsi
+Integrità dei documenti selezionati, collegamenti permanenti e script/test promossi
+verificati, materiale sensibile escluso. Elencare i percorsi
 temporanei eliminati e quelli conservati, indicando il motivo. Aggiornare indice
 permanente e handover globale prima di chiudere la run.

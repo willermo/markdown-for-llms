@@ -1,9 +1,12 @@
 # A002 r007 — contesti Markdown e confini condivisi
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 Consegna datata 2026-10-10 (Europe/Rome), creazione UTC 2026-10-09T23:39:19.198652+00:00, run
 `run-a002-fase1-corpus`. Rettifica il [report r006](2026-10-09-a002-r006-confini-lessicali-html.md)
 e le sue affermazioni globali sui trasporti; non riscrive risultati o fallimenti
-storici. [Dati r007](2026-10-10-a002-r007-contesti-markdown-data.json): 64 misure derivate nuove dei medesimi
+storici. Dati r007 (riferimento storico non disponibile): 64 misure derivate nuove dei medesimi
 raw r001/r002, zero conversioni native di campagna e nuova V0. Le fixture dei test
 legacy possono invocare Pandoc; non sono nuove conversioni del corpus.
 

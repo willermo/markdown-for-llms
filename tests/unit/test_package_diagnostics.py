@@ -28,9 +28,10 @@ def record_bytes(name, content):
 def metadata_bytes():
     lines = ['Name: markdown-for-llms','Version: 1.0.0','Requires-Python: >=3.12,<3.13']
     lines += ['Requires-Dist: '+r for r in ('requests>=2.31.0','tiktoken>=0.5.1','tqdm>=4.66.0','python-dotenv>=1.0.0')]
-    for extra in ('marker-server','marker-cpu','marker-cu126'):
+    for extra in ('app','marker-server','marker-cpu','marker-cu126'):
         lines.append('Provides-Extra: '+extra)
-        deps = ('fastapi','uvicorn','python-multipart') if extra == 'marker-server' else ('marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4')
+        deps = (('fastapi==0.142.2','uvicorn==0.54.0','python-multipart','markdown-it-py==4.0.0','mdit-py-plugins==0.5.0','pillow==10.4.0') if extra == 'app' else
+                ('fastapi','uvicorn','python-multipart') if extra == 'marker-server' else ('marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4'))
         lines += ['Requires-Dist: '+d+'; extra == "'+extra+'"' for d in deps]
     return ('\n'.join(lines)+'\n\n').encode()
 
@@ -94,7 +95,7 @@ class ArchiveIntegrityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify.check_record(b'config.py,,\n'+(verify.DIST+'/RECORD,,\n').encode(),files,True)
 
-    def test_metadata_requires_five_exact_entrypoints(self):
+    def test_metadata_requires_legacy_and_product_entrypoints(self):
         metadata = metadata_bytes()
         ep = ('[console_scripts]\n'+'\n'.join(k+' = '+v for k,v in verify.ENTRYPOINTS.items())).encode()
         verify.check_metadata(metadata,ep)
@@ -110,14 +111,20 @@ class ArchiveIntegrityTests(unittest.TestCase):
             (self.root/name).write_bytes(data)
         metadata = metadata_bytes()
         ep = ('[console_scripts]\n'+'\n'.join(k+' = '+v for k,v in verify.ENTRYPOINTS.items())).encode()
+        app = {'markdown_for_llms/__init__.py': b'__version__ = "1.0.0"\n',
+               'markdown_for_llms/web/index.html': b'<p>Inert reader</p>',
+               'markdown_for_llms/migrations/001.sql': b'PRAGMA user_version=1;'}
         inputs = {'pyproject.toml':b'', 'README.md':b'readme', 'LICENSE':b'MIT',
                   '.python-version':b'3.12.13\n','build-constraints.txt':b'setuptools==84.0.0\n','MANIFEST.in':b'include config.py\n'}
+        inputs.update(app)
         tarfiles = dict(files, **inputs, **{'PKG-INFO':metadata,verify.EGG+'/entry_points.txt':ep})
         for name,data in inputs.items():
+            (self.root/name).parent.mkdir(parents=True, exist_ok=True)
             (self.root/name).write_bytes(data)
         # Solo descriptor in memoria per il gate unitario: nessun lock prodotto.
         inputs['uv.lock'] = b''
         zipfiles = dict(files)
+        zipfiles.update(app)
         zipfiles.update({verify.DIST+'/METADATA':metadata, verify.DIST+'/entry_points.txt':ep,
                          verify.DIST+'/WHEEL':b'Wheel-Version: 1.0\nRoot-Is-Purelib: true\nTag: py3-none-any\n',
                          verify.DIST+'/licenses/LICENSE':b'MIT',verify.DIST+'/top_level.txt':b''})
@@ -132,7 +139,7 @@ class ArchiveIntegrityTests(unittest.TestCase):
                 info = tarfile.TarInfo('markdown_for_llms-1.0.0/'+name); info.size = len(data)
                 f.addfile(info,io.BytesIO(data))
         wheel = self.zip(zipfiles.items())
-        payload = {'host_repo':str(self.root),'modules':[record_bytes(n,d) for n,d in files.items()],
+        payload = {'repo':str(self.root),'host_repo':str(self.root),'modules':[record_bytes(n,d) for n,d in files.items()],
                    'build_inputs':[record_bytes(n,d) for n,d in inputs.items()]}
         self.assertEqual(verify.check_archives(payload,tarpath,wheel),zipfiles)
         (self.root/'exceptions.py').write_bytes(b'changed\n')

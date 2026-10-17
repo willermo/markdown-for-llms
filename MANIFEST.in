@@ -9,3 +9,4 @@ include markdown_for_llms.egg-info/dependency_links.txt
 include markdown_for_llms.egg-info/entry_points.txt
 include markdown_for_llms.egg-info/requires.txt
 include markdown_for_llms.egg-info/top_level.txt
+recursive-include markdown_for_llms *.py *.json *.sql *.html *.css *.js

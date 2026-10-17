@@ -1,5 +1,8 @@
 # Run a002 r013 — guardie ordinate e proprietà dei fence
 
+Nota17ott2026: riferimenti operativi eliminati o già indisponibili sono
+resi testo; esiti storici invariati. [Disponibilità delle prove](../development/cleanup-2026-10-17.md).
+
 2026-10-11. Implementazione locale F54–F57, dopo NO_GO r012. Reader
 `observations-v13-ordered-guards-fences`, SHA256 `27d1b5809bc2dca51b75e50222aaab1eef86b2c907732c33537fbb5df20c43ad`.
 Questa è una consegna dell’implementatore: nuove review ChatGPT/Claude e
@@ -168,6 +171,6 @@ Il prossimo passo è del supervisore: congelare il comune, ottenere due
 nuove review reali ChatGPT/Claude e arbitrare. Registri condivisi e CHANGELOG
 sono riservati al supervisore. Nessuna promessa di ultimo ciclo.
 
-[Dati, AST e oracoli completi](2026-10-11-a002-r013-guardia-e-fence-data.json) ·
+Dati, AST e oracoli completi (riferimento storico non disponibile) ·
 [Protocollo](../../scripts/benchmarks/PROTOCOL.md#rettifica-r013-fonti-di-guardia-e-contesto-dei-fence) ·
 [Report precedente preservato](2026-10-11-a002-r012-atomi-e-container.md).
