@@ -41,7 +41,7 @@ pdftotext, pdftoppm e Tesseract non ne verifica profili o lingue OCR.
 
 ## Cache, immagine e licenze per versione
 
-Cache `/home/davide/.cache/datalab/models`: cinque famiglie, 40 file,
+Cache `~/.cache/datalab/models`: cinque famiglie, 40 file,
 2.222.300.876 byte osservati (circa 2,07 GiB). Famiglie:
 text_recognition/2025_08_29, text_detection/2025_05_07,
 table_recognition/2025_02_18, ocr_error_detection/2025_02_18 e layout/2025_02_18.

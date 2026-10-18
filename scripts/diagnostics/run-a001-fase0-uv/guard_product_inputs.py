@@ -80,8 +80,8 @@ def check_configuration(repo, environment):
     if any(k.startswith('COVERAGE') for k in environment) or 'PYTHONPATH' in environment:
         raise ValueError('Environment startup aperto')
     absent=[Path('/etc/uv/uv.toml'),Path('/etc/uv.toml'),repo/'uv.toml',
-            Path('/home/davide/.netrc'),Path('/home/davide/.pydistutils.cfg'),
-            Path('/home/davide/.local/share/uv/credentials/credentials.toml')]
+            Path.home()/'.netrc',Path.home()/'.pydistutils.cfg',
+            Path.home()/'.local/share/uv/credentials/credentials.toml']
     for p in absent:
         if os.path.lexists(p):raise ValueError('Configurazione inattesa, contenuto non letto: '+str(p))
     config=Path(environment['XDG_CONFIG_HOME'])

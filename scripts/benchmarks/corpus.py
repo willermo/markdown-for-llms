@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 import shutil
 
-from data import descriptor, digest_bytes, load, write_new, counts
+from data import descriptor, digest_bytes, load, provenance, write_new, counts
 
 
 def promote(first, second, destination, external):
@@ -21,7 +21,7 @@ def promote(first, second, destination, external):
         for key, p in sorted(ap.items()):
             q = bp[key]
             same = p.read_bytes() == q.read_bytes()
-            comparison.append({'path':key,'first':descriptor(p),'second':descriptor(q),'byte_identical':same})
+            comparison.append({'path':key,'first':provenance(p),'second':provenance(q),'byte_identical':same})
             if not same:
                 differences.append(key)
     if any(not (n.startswith('renders/') and n.endswith('.pdf')) for n in differences):
@@ -67,7 +67,7 @@ def promote(first, second, destination, external):
     notices=destination/'assets/font-notices';notices.mkdir()
     for name,origin in [('dejavu.txt','/usr/share/doc/fonts-dejavu-core/copyright'),('liberation.txt','/usr/share/doc/fonts-liberation/copyright'),('opensymbol.txt','/usr/share/doc/fonts-opensymbol/copyright'),('MPL-2.0.txt','/usr/share/common-licenses/MPL-2.0'),('Apache-2.0.txt','/usr/share/common-licenses/Apache-2.0')]:
         shutil.copyfile(origin,notices/name)
-    manifest={'schema_version':1,'corpus_id':'a002-synthetic-v1','revision':1,'documents':documents,'word_count':sum(d['word_count'] for d in documents),'word_count_method':'Unicode word runs of authored block text, captions once, cells and reference labels; formulas excluded','pdf_pages':sum(d.get('pages',0) for d in documents if d['format']=='pdf'),'fixed_renders':sum(len(d['renders']) for d in documents),'provenance':{'spec':descriptor(destination/'sources/documents.json'),'generator':descriptor(Path(__file__).with_name('generate_corpus.py')),'generations':[descriptor(first/'generation.json'),descriptor(second/'generation.json')],'comparison':comparison,'content_reproducibility':'Canonical files byte-identical; all page PNGs byte-identical. LibreOffice PDF IDs/timestamps not rewritten; pages/fonts/render receipts retained.'},'fonts':fonts,'verification':'PROVISIONAL: M on promoted locators and real human V required'}
+    manifest={'schema_version':1,'corpus_id':'a002-synthetic-v1','revision':1,'documents':documents,'word_count':sum(d['word_count'] for d in documents),'word_count_method':'Unicode word runs of authored block text, captions once, cells and reference labels; formulas excluded','pdf_pages':sum(d.get('pages',0) for d in documents if d['format']=='pdf'),'fixed_renders':sum(len(d['renders']) for d in documents),'provenance':{'spec':provenance(destination/'sources/documents.json'),'generator':provenance(Path(__file__).with_name('generate_corpus.py')),'generations':[provenance(first/'generation.json'),provenance(second/'generation.json')],'comparison':comparison,'content_reproducibility':'Canonical files byte-identical; all page PNGs byte-identical. LibreOffice PDF IDs/timestamps not rewritten; pages/fonts/render receipts retained.'},'fonts':fonts,'verification':'PROVISIONAL: M on promoted locators and real human V required'}
     manifest['revision']=load(destination/'sources/documents.json')['corpus_revision']
     write_new(destination/'manifest.json',manifest)
     (destination/'NOTICE').write_text('Testi, annotazioni, sorgenti e figure originali sintetici: MIT, copyright 2026 autori del progetto Markdown for LLMs. Vedere LICENSE del repository. Nessun dato privato.\nFont incorporati: DejaVu Sans/Mono e Bold (licenza DejaVu/Bitstream, assets/font-notices/dejavu.txt); Liberation Sans/Serif (SIL OFL 1.1, liberation.txt); OpenSymbol (MPL 2.0 / Apache 2.0, opensymbol.txt). Questi font non sono MIT. Hash dei file locali effettivi nel manifest. LibreOffice può scegliere i fallback identificati nei pdffonts conservati; i PDF e i PNG non attestano un font runtime futuro.\n',encoding='utf-8')

@@ -2,7 +2,7 @@
 import argparse
 from copy import deepcopy
 from pathlib import Path
-from data import canonical,descriptor,digest_bytes,load,write_new
+from data import canonical,descriptor,digest_bytes,load,provenance,write_new
 from generate_corpus import transcript
 
 
@@ -30,19 +30,19 @@ def revise(corpus,old,receipt):
     manifest=load(corpus/'manifest.json');manifest['revision']=5
     for d in manifest['documents']:
         g=load(corpus/d['gold']);headers(g['blocks'],d['format'])
-        g['metadata_revision']={'revision':5,'previous':descriptor(old/d['gold']),'change':'explicit-source-header-semantics-only; original V inherited only by separate invariant receipt'}
+        g['metadata_revision']={'revision':5,'previous':provenance(old/d['gold']),'change':'explicit-source-header-semantics-only; original V inherited only by separate invariant receipt'}
         save(corpus/d['gold'],g);d['blocks']=deepcopy(g['blocks']);d['gold_sha256']=descriptor(corpus/d['gold'])['sha256']
         path=corpus/'gold'/d['document_id']/'transcript.txt';content=transcript(g).encode()
         if path.read_bytes()!=content:path.write_bytes(content);changed.append(path.relative_to(corpus).as_posix())
     cspec=load(corpus/'controls/source.json')
     for d in cspec['controls']:headers(d['blocks'],'control-markdown')
     save(corpus/'controls/source.json',cspec)
-    cm=load(corpus/'controls/manifest.json');cm['metadata_revision']=5;cm['source']=descriptor(corpus/'controls/source.json')
+    cm=load(corpus/'controls/manifest.json');cm['metadata_revision']=5;cm['source']=provenance(corpus/'controls/source.json')
     for d in cm['documents']:
-        g=load(corpus/'controls'/d['gold']);headers(g['blocks'],'control-markdown');g['metadata_revision']={'revision':5,'previous':descriptor(old/'controls'/d['gold']),'change':'explicit-source-header-semantics-only'}
+        g=load(corpus/'controls'/d['gold']);headers(g['blocks'],'control-markdown');g['metadata_revision']={'revision':5,'previous':provenance(old/'controls'/d['gold']),'change':'explicit-source-header-semantics-only'}
         save(corpus/'controls'/d['gold'],g);d['gold_sha256']=descriptor(corpus/'controls'/d['gold'])['sha256']
     save(corpus/'controls/manifest.json',cm)
-    manifest['provenance']['metadata_revision']={'revision':5,'previous_manifest':descriptor(old/'manifest.json'),'helper':descriptor(__file__),'generator_current':descriptor(Path(__file__).with_name('generate_corpus.py')),'spec':descriptor(corpus/'sources/documents.json'),'source_and_render_regenerated':False,'transcript_change':'11 table captions in nine documents; no other visible annotation changes'}
+    manifest['provenance']['metadata_revision']={'revision':5,'previous_manifest':provenance(old/'manifest.json'),'helper':provenance(__file__),'generator_current':provenance(Path(__file__).with_name('generate_corpus.py')),'spec':provenance(corpus/'sources/documents.json'),'source_and_render_regenerated':False,'transcript_change':'11 table captions in nine documents; no other visible annotation changes'}
     save(corpus/'manifest.json',manifest)
     after={p.relative_to(corpus).as_posix():descriptor(p) for p in corpus.rglob('*') if p.is_file()}
     immutable=[k for k in original if k not in changed and k!='README.md']

@@ -71,7 +71,7 @@ def stage(repo, output, label, base_target):
     env = dict(base_target["environment"])
     managed = repo / ".venv-python"
     python = managed / "cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
-    uv = Path("/home/davide/.local/bin/uv")
+    uv = Path.home() / ".local/bin/uv"
     backend = repo / "temp/run-a001-fase0-uv/work/docker-cpu-r001/wheels/setuptools-84.0.0-py3-none-any.whl"
     diagnostic = repo / "scripts/diagnostics/run-a001-fase0-uv"
     env["UV_PYTHON_INSTALL_DIR"] = str(managed)

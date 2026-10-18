@@ -56,6 +56,24 @@ def descriptor(path):
     return {"path": str(path), "bytes": len(content), "sha256": digest_bytes(content)}
 
 
+REPOSITORY = Path(__file__).resolve().parents[2]
+
+
+def recorded_path(path):
+    """Path for tracked provenance: repository-relative POSIX ("." for the root), never a home path."""
+    path = Path(path).resolve()
+    if path.is_relative_to(REPOSITORY):
+        return path.relative_to(REPOSITORY).as_posix()
+    if path.is_relative_to(Path.home().resolve()):
+        raise ValueError("Personal path outside the repository cannot be recorded: " + str(path))
+    return str(path)
+
+
+def provenance(path):
+    """descriptor() for values written into tracked fixtures, with the path from recorded_path()."""
+    return dict(descriptor(path), path=recorded_path(path))
+
+
 def counts(gold):
     return {"blocks": len(gold["blocks"]),
             "formulas": sum(len(b.get("formulas", [])) for b in gold["blocks"]),

@@ -4,7 +4,7 @@ from copy import deepcopy
 from pathlib import Path
 import re
 import shutil
-from data import canonical, descriptor, digest_bytes, load, write_new, counts
+from data import canonical, descriptor, digest_bytes, load, provenance, write_new, counts
 
 
 def build(spec, corpus):
@@ -26,7 +26,7 @@ def build(spec, corpus):
         gold={'schema_version':1,'document_id':d['document_id'],'canonical_sha256':digest_bytes(body),'blocks':blocks,'note_order_policy':'definitions-collected-at-end','verification':{'status':'PROVISIONAL','M':'PENDING','V':'PENDING','kind':'human_visual','verifier':None},'authoring_method':d['authoring_method']}
         gold['denominators']=counts(gold);write_new(directory/'annotations.json',gold)
         documents.append({'document_id':d['document_id'],'format':'control-markdown','input':d['document_id']+'/document.md','gold':d['document_id']+'/annotations.json','input_sha256':digest_bytes(body),'gold_sha256':descriptor(directory/'annotations.json')['sha256'],'denominators':counts(gold),'license':'MIT'})
-    write_new(root/'manifest.json',{'schema_version':1,'controls':True,'documents':documents,'source':descriptor(root/'source.json')})
+    write_new(root/'manifest.json',{'schema_version':1,'controls':True,'documents':documents,'source':provenance(root/'source.json')})
     print('CONTROLS_CREATED',len(documents))
 
 

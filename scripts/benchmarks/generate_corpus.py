@@ -509,7 +509,7 @@ def pdf(root, document, tools):
             tools.call(["/usr/bin/pdftoppm", "-singlefile", "-r", "180", "-png", str(native), str(prefix)])
             image = prefix.with_suffix(".png")
             png(image.read_bytes())
-            script = put(root, "derivations/" + document["document_id"] + f"-{page}-image.txt", f'%%MediaBox 0 0 595 842\n%%Image Im {image}\nq 595 0 0 842 0 0 cm /Im Do Q\n')
+            script = put(root, "derivations/" + document["document_id"] + f"-{page}-image.txt", f'%%MediaBox 0 0 595 842\n%%Image Im {image.relative_to(root)}\nq 595 0 0 842 0 0 cm /Im Do Q\n')
             rasterpdf = root / "derivations" / f'{document["document_id"]}-{page}-raster.pdf'
             tools.call(["/usr/bin/mutool", "create", "-o", str(rasterpdf), str(script)])
             paths.append(rasterpdf)

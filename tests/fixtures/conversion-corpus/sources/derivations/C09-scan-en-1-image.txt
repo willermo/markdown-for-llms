@@ -1,3 +1,3 @@
 %%MediaBox 0 0 595 842
-%%Image Im /home/davide/workarea/markdown-for-llms/temp/run-a002-fase1-corpus/work/implementation-r001/generation-013/derivations/C09-scan-en-1-parent.png
+%%Image Im temp/run-a002-fase1-corpus/work/implementation-r001/generation-013/derivations/C09-scan-en-1-parent.png
 q 595 0 0 842 0 0 cm /Im Do Q

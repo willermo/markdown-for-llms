@@ -20,7 +20,7 @@
       "-t",
       "json"
     ],
-    "cwd": "/home/davide/workarea/markdown-for-llms",
+    "cwd": ".",
     "exit": 0,
     "stdout": "{\"pandoc-api-version\":[1,23,1],\"meta\":{},\"blocks\":[{\"t\":\"Header\",\"c\":[1,[\"x\",[],[]],[{\"t\":\"Str\",\"c\":\"x\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"{`\"},{\"t\":\"RawInline\",\"c\":[\"html\",\"<img src=\\\"../outside.png\\\">\"]},{\"t\":\"Str\",\"c\":\"}\"}]]},{\"t\":\"Header\",\"c\":[1,[\"visible-heading\",[],[]],[{\"t\":\"Str\",\"c\":\"Visible\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"heading\"}]]},{\"t\":\"Para\",\"c\":[{\"t\":\"Str\",\"c\":\"After\"},{\"t\":\"Space\"},{\"t\":\"Str\",\"c\":\"words.\"}]}]}\n",
     "stderr": ""

@@ -12,6 +12,23 @@ La [roadmap](roadmap.md) descrive il percorso previsto, gli
 [archivio delle run](runs/README.md) conserva le sintesi permanenti. Il contesto
 operativo corrente rimane in `temp/`, esclusa da Git.
 
+## 2026-10-18 — Personal home paths removed from tracked files
+
+Run fix-personal-paths (MFL002), diff review r1 GO on `c74f611..c404887`.
+Absolute home paths are gone from the tracked tree. Root cause: the corpus
+writers in `scripts/benchmarks/` recorded resolved absolute provenance paths;
+they now record repository-relative paths and refuse paths under the home
+directory. Hard-coded home paths in tools and one development note now use
+`Path.home()` or `~`.
+
+The corpus fixtures were rewritten path-only: content, locators, byte counts
+and source hashes are unchanged, but the 13 gold files have a new sha256
+(old→new map in `tests/fixtures/conversion-corpus/README.md`). Earlier M
+receipts and derived qualifications refer to the old hashes and are STALE
+by design. A guard in the fast suite (`tests/unit/test_repository_hygiene.py`)
+fails on new home paths and on tracked local pointer files. Git history is not
+rewritten: earlier commits still contain the old paths.
+
 ## 2026-10-17 — I1 integrato in dev, push verificato
 
 Utente: commit feature `323f17208bb70d9fc8ee5ad3303d7874516fac5b`, merge dev
