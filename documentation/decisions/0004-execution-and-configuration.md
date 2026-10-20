@@ -32,7 +32,7 @@ pubblicate dopo prove reali, insieme a requisiti RAM/VRAM e prestazioni.
 
 Marker resta un candidato insieme a Docling e parser nativi. Nessun motore viene
 selezionato sulla sola base di una demo. Riferimenti e candidati sono nel
-[draft](../architecture/preliminary-draft.md); criteri nella [roadmap](../roadmap.md).
+draft (archived: `documentation/architecture/preliminary-draft.md`, tag `pre-docs-2026-10-18`); criteri nella [roadmap](../roadmap.md).
 
 ## Precisazione 2026-10-17 — Profilo iniziale
 

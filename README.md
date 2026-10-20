@@ -1,36 +1,27 @@
 # Markdown for LLMs
 
-Convertitore locale sperimentale da PDF a Markdown con asset: CLI `mdf`, Web UI
-testuale, worker separato e archivio SQLite/filesystem. Conserva sorgenti,
-estrazione originale e tentativi distinti. Primo profilo Linux x86_64/CPU con
-Marker1.10.2: qualità `unverified`, formule e contenuti da controllare sul PDF.
+Experimental local converter from PDF to Markdown with assets: the `mdf` CLI, an inert text Web UI, a separate worker and a SQLite and filesystem archive. It keeps the source, the original extraction and every attempt.
 
-- [Prima conversione nel browser o nella CLI](docs/tutorials/primo-pdf-locale.md).
-- [Preparare package, runtime e modelli locali](docs/how-to/prodotto-locale.md).
-- [Configurazione, comandi e API](docs/reference/prodotto-locale.md).
-- [Stati del bundle e limiti del prodotto sperimentale](docs/explanation/prodotto-sperimentale.md).
+Status: the first increment I1 is integrated in `dev` and not released on `main`. The only profile is Linux x86_64 on CPU, single user, loopback access, with Marker 1.10.2. Quality is always `unverified`: check formulas and contents against the PDF.
 
-La pipeline a script rimane separata. I suoi comandi `markdown-*` e le procedure
-seguenti sono legacy e hanno perdite note nel cleaning e nella copia degli asset.
-Gli stati delle run e le integrazioni sono nei registri di sviluppo; il codice
-implementato non equivale a un GO di review o a una versione integrata.
+- [First conversion in the browser or the CLI](docs/tutorials/first-local-pdf.md).
+- [Prepare the package, runtime and local models](docs/how-to/local-product-setup.md).
+- [Configuration, commands and API](docs/reference/local-product.md).
+- [Bundle states and limits of the experimental product](docs/explanation/experimental-product.md).
 
-- [Preparare l'ambiente uv e ricostruire la distribuzione](docs/how-to/ambiente-uv.md).
-- [Toolchain, comandi, configurazione e strati di test](docs/reference/toolchain-legacy.md).
-- [Preparazione e verifica Docker Marker](docs/how-to/marker-legacy-docker.md).
-- [Configurazione JSON della pipeline](docs/reference/pipeline-config.md).
-- [Backend, documenti e scenari di conversione](docs/how-to/pipeline-backends.md).
-- [Decisioni e roadmap](documentation/roadmap.md), [contributi](AGENTS.md).
+## Legacy pipeline
 
-Per il client bastano runtime Python e Pandoc già installato; FastAPI e il motore
-Marker sono extra separati. Python della shell/pyenv non è l'interprete del
-progetto. Usare la venv collegata al managed locale, dopo ricostruzione e verifica
-dei dieci moduli installati contro i sorgenti e la wheel canonica.
+The script pipeline stays separate from the new converter. Its `markdown-*` commands and the procedures below are legacy and have known losses in cleaning and in the copy of assets.
 
-Da un workspace di dati esterno, con ambiente già verificato, questi sono esempi
-operativi dei percorsi base (Pandoc per HTML;
-nessuna inferenza Marker). `RUN_ENV` è il path assoluto della venv;
-`PYTHONPATH` e `PYTHONHOME` sono rimossi per le console script.
+- [Prepare the uv environment and rebuild the distribution](docs/how-to/uv-environment.md).
+- [Toolchain, commands, configuration and test layers](docs/reference/toolchain-legacy.md).
+- [Prepare and verify Marker in Docker](docs/how-to/marker-legacy-docker.md).
+- [JSON configuration of the pipeline](docs/reference/pipeline-config.md).
+- [Backends, documents and conversion scenarios](docs/how-to/pipeline-backends.md).
+
+The client needs only the Python runtime and an installed Pandoc; FastAPI and the Marker engine are separate extras. The shell or pyenv Python is not the project interpreter: use the virtual environment linked to the local managed Python, after rebuilding and verifying the ten installed modules against the sources and the canonical wheel.
+
+From an external data workspace, with a verified environment, these are operational examples of the base paths (Pandoc for HTML; no Marker inference). `RUN_ENV` is the absolute path of the virtual environment; `PYTHONPATH` and `PYTHONHOME` are removed for the console scripts.
 
 ```bash
 "$RUN_ENV/bin/python" -I -B -m config --create-default
@@ -41,34 +32,20 @@ nessuna inferenza Marker). `RUN_ENV` è il path assoluto della venv;
 "$RUN_ENV/bin/python" -I -B -m master_workflow --step chunking --force --llm custom --chunk-size 1000 --overlap 100
 ```
 
-Generare `pipeline_config.json` nel workspace e impostare il backend prima di
-convertire. PDF usa il client `local_marker` per default; i documenti supportati
-usano Pandoc, salvo una selezione esplicita di `marker_document_formats`. Il
-percorso cloud è opzionale e richiede una configurazione deliberata e credenziali.
-La migrazione non verifica inferenza Marker locale/remota o hardware GPU.
+Generate `pipeline_config.json` in the workspace and set the backend before converting. PDF uses the `local_marker` client by default; supported documents use Pandoc, unless `marker_document_formats` selects them explicitly. The cloud path is optional and needs a deliberate configuration and credentials. The migration does not verify local or remote Marker inference or GPU hardware.
 
-Le directory sono `source_pdfs`, `source_documents`, `converted_markdown`,
-`cleaned_markdown`, `validated_markdown`, `chunked_markdown` e `pipeline_logs`.
-`source_ebooks` è una directory storica: per i nuovi comandi usare la directory
-configurata `source_documents`. `validation_report.json` è nella radice del
-workspace; `pipeline_state.json` è nella directory dei log. Il validatore può
-scartare contenuto: un exit 0 non certifica la completezza del documento.
+The directories are `source_pdfs`, `source_documents`, `converted_markdown`, `cleaned_markdown`, `validated_markdown`, `chunked_markdown` and `pipeline_logs`. `source_ebooks` is a historical directory: new commands use the configured `source_documents`. `validation_report.json` is at the root of the workspace; `pipeline_state.json` is in the log directory.
 
-Le formule, il codice, i numeri, i collegamenti e gli asset vanno confrontati con
-il sorgente: il cleaning legacy usa trasformazioni globali che possono alterarli.
-I chunk non sostituiscono il Markdown completo; l'overlap semantico legacy può
-essere nullo. Non è disponibile un flag `--chunking-strategy`.
+Known limits of the legacy pipeline:
 
-Il wrapper Marker restituisce immagini vuote e riporta opzioni senza applicarle;
-`/health` misura liveness, anche dopo un errore di caricamento dei modelli. Build,
-contratto offline e inferenza reale sono verifiche distinte. Le istruzioni per
-startup/pesi/font e CPU/GPU rimangono fuori dalle prove veloci.
+- The validator can discard content: exit code 0 does not certify that the document is complete.
+- Legacy cleaning uses global transformations that can alter formulas, code, numbers, links and assets: compare them with the source.
+- Chunks do not replace the complete Markdown; the legacy semantic overlap can be zero. There is no `--chunking-strategy` flag.
+- The Marker wrapper returns empty images and reports options without applying them; `/health` measures liveness only, even after a model loading error. Build, offline contract and real inference are separate checks; the instructions for startup, weights, fonts and CPU/GPU stay outside the fast tests.
+- The analysis, embedding, RAG and fine-tuning scripts cited by the old guide are not part of the repository; their earlier examples were external pseudocode, not commands of this project.
 
-Gli script di analisi, embedding, RAG e fine tuning citati nella vecchia guida
-non fanno parte del repository. Gli esempi precedenti di quegli script erano
-pseudocodice esterno; non sono comandi di questo progetto.
+## Documentation and licence
 
-Licenza [MIT](LICENSE); le condizioni dei pesi sono distinte. Package applicativo
-`markdown_for_llms` e moduli flat legacy convivono;
-[docs](docs/README.md) raccoglie le istruzioni operative e
-[documentation](documentation/README.md) le decisioni, i limiti e gli avanzamenti.
+[`docs/`](docs/README.md) collects the user and developer guides, [`documentation/`](documentation/README.md) the decisions, the [roadmap](documentation/roadmap.md), the limits and the technical debt, and the [changelog](CHANGELOG.md) the changes for users. Contributors and agents follow [`AGENTS.md`](AGENTS.md).
+
+The application package `markdown_for_llms` and the flat legacy modules coexist. Licence [MIT](LICENSE); the conditions of the model weights are separate.

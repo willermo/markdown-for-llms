@@ -31,4 +31,4 @@ Le verifiche devono misurare omissioni, alterazioni, formule, riferimenti e asse
 Markdown sintatticamente valido o formule renderizzabili non provano fedeltà semantica.
 La ricostruzione di grafici o diagrammi resta un derivato distinto dall'immagine originale.
 
-Riferimenti: [draft](../architecture/preliminary-draft.md), [roadmap](../roadmap.md).
+Riferimenti: draft (archived: `documentation/architecture/preliminary-draft.md`, tag `pre-docs-2026-10-18`), [roadmap](../roadmap.md).

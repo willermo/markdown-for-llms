@@ -44,9 +44,9 @@ dipendenze possono essere eliminate senza copiarle tutte in Git.
 Implementazione della regola: protocollo, template, AGENTS e guardie `.gitignore`
 aggiornati nel working tree. Dopo l’arbitrato r007, spostati in temp gli
 8973 file operativi a003 non tracciati (721.430.863 byte), con hash identici e
-mappa dei percorsi storici. In documentation/runs/a003 resta la sintesi.
+mappa dei percorsi storici. In `documentation/runs/run-a003-fase1-engine-comparison/manifest.md` (archived, tag `pre-docs-2026-10-18`) resta la sintesi.
 Nessuna prova cancellata, rimozione degli archivi già tracciati o riscrittura
-Git; lo spostamento non riduce lo spazio complessivo del workspace. Il [protocollo](../development/run-lifecycle.md#archivio-e-pulizia)
+Git; lo spostamento non riduce lo spazio complessivo del workspace. Il protocollo (archived: `documentation/development/run-lifecycle.md#archivio-e-pulizia`, tag `pre-docs-2026-10-18`)
 definisce selezione, disponibilità delle prove e transizione.
 
 - [Diátaxis](https://diataxis.fr/).

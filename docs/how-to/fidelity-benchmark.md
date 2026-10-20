@@ -14,12 +14,12 @@ non la chiusura generale del debito. Nessuna nuova campagna avviata qui.
 Guida per sviluppatori che dispongono della toolchain locale verificata e di
 un target R con rete/socket isolati. Usa soltanto il corpus redistribuibile e
 Pandoc già locale; non installa motori o scarica modelli. La
-[reference](../reference/benchmark-fedelta.md) e il
+[reference](../reference/fidelity-benchmark.md) e il
 [protocollo](../../scripts/benchmarks/PROTOCOL.md) definiscono formati e limiti.
 
 ## Preparare la prova
 
-Seguire il preflight della [guida uv](ambiente-uv.md): origine managed CPython
+Seguire il preflight della [guida uv](uv-environment.md): origine managed CPython
 3.12.13, startup verificato, sdist/wheel ricostruite, wheel canonica reinstallata
 per ultima, dieci hash e input S/B/I confrontati. Disporre di Pandoc3.1.3 e
 cache tokenizer locale. L'inventario esterno copre helper/corpus/tests/tool,
@@ -291,7 +291,7 @@ F26 resta invariato: bound del flusso globale distinto da CER/WER strutturali e
 conteggi condizionati, stessi algoritmi/normalizzazioni/denominatori. Il rescore
 r006 crea nuove identità derivate dei 64 raw protetti, zero motori e nuova V0.
 
-[Report e dati r006](../../documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md).
+Report e dati r006 (archived: `documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r007: contesti Markdown e confini dei producer
 
@@ -325,7 +325,7 @@ TRIVIAL_ZERO non è misura completa0. Nuovi derivati64 con conversioni r001/r002
 originali preservate, nuova V0 e zero motori di campagna. Sonde CLI con writer
 sintetico e gold PROVISIONAL: automatic PASS/INDETERMINATE/evaluate5, senza nuova V.
 
-[Report e dati r007](../../documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md).
+Report e dati r007 (archived: `documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r008: avanzamento e domini inline
 
@@ -362,7 +362,7 @@ zero motori/V nuova. Scorer/F26/normalizzazioni/denominatori invariati;
 conteggi condizionati separati dal bound globale, TRIVIAL_ZERO non completo0.
 L04outputUNAVAILABLE distinta da V13; L01/L02/L05/ChromeNONPASS/helper12gap restano.
 
-[Report e dati r008](../../documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md).
+Report e dati r008 (archived: `documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md`, tag `pre-docs-2026-10-18`).
 
 ## Controllare un risultato con il reader r009
 
@@ -385,8 +385,8 @@ Le prove r008 rimangono riferite ai propri byte.
    resta FAIL. Non assegnare V o fullPASS da un bound TRIVIAL_ZERO.
 
 Per dettaglio dei confini, limiti e precedenze consultare la
-[reference r009](../reference/benchmark-fedelta.md#reader-r009-contratti-storici-dei-confini)
-e il [report r009](../../documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md).
+[reference r009](../reference/fidelity-benchmark.md#reader-r009-contratti-storici-dei-confini)
+e il report r009 (archived: `documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md`, tag `pre-docs-2026-10-18`).
 Le sonde CLI usano un writer sintetico dichiarato; le 64 misure derivate
 riusano raw protetti e non eseguono nuovi motori o giudizi umani.
 
@@ -415,8 +415,8 @@ storici v9 non certificano questi confini.
    `HTMLParser` puro riconosce aperture. Non estendere quel risultato a
    fallback Markdown né dichiarare parità universale col parser puro.
 
-La [reference r010](../reference/benchmark-fedelta.md#reader-r010-confini-htmlmarkdown-inline)
-e il [report con dati](../../documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md)
+La [reference r010](../reference/fidelity-benchmark.md#reader-r010-confini-htmlmarkdown-inline)
+e il report con dati (archived: `documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md`, tag `pre-docs-2026-10-18`)
 identificano esempi, oracoli, CLI e limiti. Il writer delle sonde CLI è
 sintetico dichiarato; il ricalcolo dei 64 raw è una nuova misura derivata,
 senza motori né nuova V. TRIVIAL_ZERO non significa misura completa a zero;
@@ -447,8 +447,8 @@ F50–F52. Usare la rettifica r012 successiva per il reader corrente.
    i64raw protetti e verificare la catena originale/previousderived/nuova
    misura senza imporre conteggi. TRIVIAL_ZERO non equivale a fullPASS.
 
-[Reference r011](../reference/benchmark-fedelta.md#reader-r011-ownership-delle-foglie-inline)
-e [report/dati](../../documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md)
+[Reference r011](../reference/fidelity-benchmark.md#reader-r011-ownership-delle-foglie-inline)
+e report/dati (archived: `documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md`, tag `pre-docs-2026-10-18`)
 identificano oracoli e limiti. F36 resta deliberatamente UNSUPPORTED; nessuna
 parità universale HTML/CommonMark. Fallback observations-v1 è distinto dal
 reader effettivo: controllare byte/R/snapshot. L04output distinta da V13/A03,
@@ -484,8 +484,8 @@ Dopo managed3.12.13/S/B/I/R correnti, verificare il reader fisico
    una misura derivata: preservare l'originale conversion_final r001, il
    previous_derived_final e il nuovo risultato; non imporre conteggi di qualità.
 
-[Reference r012](../reference/benchmark-fedelta.md#reader-r012-label-e-raw-nei-container)
-e [report con dati](../../documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md)
+[Reference r012](../reference/fidelity-benchmark.md#reader-r012-label-e-raw-nei-container)
+e report con dati (archived: `documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md`, tag `pre-docs-2026-10-18`)
 identificano casi, decisioni e risultati. Le prove finite non certificano
 Markdown/HTML universale, Pandoc sui formati raw esclusi o fedeltà semantica.
 F36 e quattro osservazioni r010, L04 distinta da V13/A03, L01/L02/L05 e
@@ -528,7 +528,7 @@ non trasferisce PASS alla nuova versione.
    mantenendo cell/location/reference. Controllare anche il limite A8:
    il reader precede il controllo audit dei path Markdown.
 
-La [consegna r013](../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md)
+La consegna r013 (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`)
 contiene la tabella fonte → proprietà → prova e gli output eseguiti. La CLI
 di prova usa writer sintetico dichiarato e gold PROVISIONAL; il rescore64
 non avvia motori o nuove V. Tenere H12FAIL separato dai fallimenti ordinari
@@ -555,14 +555,14 @@ rappresenta la baseline originale. Conservare hash e copie prima dei cambi.
    info fence, stato azzerato nel chiamante e qualsiasi graffa metadata.
    Conservare diff, base e risultati; non mutare il prodotto o il corpus.
 
-Gli [esiti r014](../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md)
+Gli esiti r014 (archived: `documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md`, tag `pre-docs-2026-10-18`)
 distinguono attesi manuali, AST, writer sintetico e controlli sulle prove.
-Per i confini consultare la [reference](../reference/benchmark-fedelta.md#reader-r014-accettazione-e-stato).
+Per i confini consultare la [reference](../reference/fidelity-benchmark.md#reader-r014-accettazione-e-stato).
 Non trasferire PASS da S/B/I o prove riferite a byte diversi.
 <!-- r014: delta effettivi e attribuzione -->
 
 Per confrontare i risultati r014 con r013 consulta anche i
-[delta attribuiti](../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md):
+delta attribuiti (archived: `documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md`, tag `pre-docs-2026-10-18`):
 16 EPUB cambiano failures/details per la corretta lettura degli ID adiacenti,
 senza modifiche ai valori numerici o ai gate. Otto TeX correggono soltanto le
 classi dei div osservati. Non modificare il gold per annullare queste differenze.

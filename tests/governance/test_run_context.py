@@ -1,4 +1,4 @@
-"""Verify preservation of context and detection of stale review inputs, without AI dependencies."""
+"""Verify the detection of stale review inputs by snapshot and verify, without AI dependencies."""
 
 import importlib.util
 import json
@@ -24,18 +24,13 @@ class RunContextTests(unittest.TestCase):
         self.git("init", "-q", "-b", "fixture-base")
         (self.root / ".gitignore").write_text("temp/\n", encoding="utf-8")
         (self.root / "app.py").write_text("value = 1\n", encoding="utf-8")
-        template = Path("documentation/development/templates/run-state.md")
-        (self.root / template).parent.mkdir(parents=True)
-        shutil.copyfile(PROJECT / template, self.root / template)
         self.git("add", ".")
         self.git("-c", "user.name=Context test", "-c", "user.email=test@example.invalid", "commit", "-qm", "baseline")
         self.git("branch", "dev")
-        self.args = SimpleNamespace(
-            run_id="run-a001-fase0-test", phase="0.1", title="Test run",
-            branch="feature/test", base="dev", label="plan-r001", artifact=[],
-        )
-        CONTEXT.initialize(self.root, self.args)
+        self.args = SimpleNamespace(run_id="run-a001-fase0-test", label="plan-r001", artifact=[])
         self.run = self.root / "temp" / self.args.run_id
+        (self.run / "plans").mkdir(parents=True)
+        (self.run / "reviews").mkdir()
 
     def git(self, *args):
         return subprocess.check_output(
@@ -43,17 +38,6 @@ class RunContextTests(unittest.TestCase):
              "-c", "core.hooksPath=" + str(self.root / ".git/test-hooks"), *args],
             stderr=subprocess.PIPE,
         )
-
-    def test_bootstrap_and_reinitialization_preserve_existing_context(self):
-        handover = self.root / "temp/HANDOVER.md"
-        handover.write_text("Important unfinished work\n", encoding="utf-8")
-        CONTEXT.bootstrap(self.root)
-        with self.assertRaises(ValueError):
-            CONTEXT.initialize(self.root, self.args)
-        self.assertEqual(handover.read_text(), "Important unfinished work\n")
-        state = (self.run / "STATE.md").read_text()
-        self.assertNotIn("{{", state)
-        self.assertIn("PREPARATION", state)
 
     def test_snapshot_tracks_plan_tracked_untracked_and_deleted_files(self):
         plan = self.run / "plans/plan-r001.md"
@@ -96,16 +80,16 @@ class RunContextTests(unittest.TestCase):
         except OSError:
             self.skipTest("Symlinks are not available on this host")
         with self.assertRaises(ValueError):
-            CONTEXT.bootstrap(self.root)
+            CONTEXT.run_path(self.root, self.args.run_id, must_exist=False)
+        with self.assertRaises(ValueError):
+            CONTEXT.snapshot(self.root, SimpleNamespace(run_id=self.args.run_id, label="plan-r002", artifact=[]))
         self.assertEqual(list(outside.iterdir()), [])
 
-    def test_init_does_not_change_git_and_requires_ignored_context(self):
-        before = self.git("status", "--porcelain")
-        self.assertEqual(before, b"")
-        self.assertNotEqual(self.git("branch", "--show-current").decode().strip(), self.args.branch)
+    def test_context_requires_ignored_temp(self):
+        self.assertEqual(CONTEXT.context_root(self.root), self.root / "temp")
         (self.root / ".gitignore").write_text("", encoding="utf-8")
         with self.assertRaises(ValueError):
-            CONTEXT.bootstrap(self.root)
+            CONTEXT.context_root(self.root)
 
     def test_snapshot_contains_fingerprints_without_file_contents(self):
         CONTEXT.snapshot(self.root, self.args)

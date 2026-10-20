@@ -1,146 +1,43 @@
-# ADR 0009 — Primo prodotto locale: Marker CPU e interfaccia inerte
+# ADR 0009 — First local product: Marker CPU and inert interface
 
-- Data: 2026-10-17
-- Stato decisione: accettata per il primo incremento sperimentale
-- Stato implementazione: I1 r004 GO, integrato in dev a f8bf44c dalla feature323f172 e push verificato il 2026-10-17; residui bassi tracciati, P14 PENDING
-- Origine: priorità utente del 16 ottobre, piano a004 r001 e arbitrato delle
-  review indipendenti ChatGPT/Claude, con errata locali verificate
-- Sostituisce / sostituito da: nessuno; precisa ADR0002/0003/0004/0008
+- Date: 2026-10-17
+- Decision status: accepted for the first experimental increment
+- Implementation status: I1 implemented (technical GO on round r004 after two independent reviews and an arbitration) and integrated into `dev` at `f8bf44c` from the feature commit `323f172` on 2026-10-17, push verified; not released on `main`. Quality `unverified`; three low residuals CLA-R4-I001…I003 in the [technical debt register](../development/technical-debt.md). First use with the user's feedback (P14) carried out on 2026-10-18 on two PDFs; its findings feed the next increments and do not certify fidelity.
+- Origin: user priority of 16 October, a004 plan r001 and arbitration of the independent ChatGPT/Claude reviews, with verified local errata
+- Supersedes / superseded by: none; refines ADR 0002/0003/0004/0008
 
-## Contesto
+## Context
 
-Serve un percorso completo PDF→Markdown/asset, CLI e browser utilizzabile
-prima del consolidamento del validatore. Gli output a003 osservati mostrano
-utilità per prosa, tabella e figura C06, insieme a perdite matematiche;
-non dimostrano fedeltà generale, OCR scientifico affidabile o tutte le pagine
-dei PDF misti. Il [debito riconosciuto](../development/technical-debt.md)
-rimane aperto e non diventa una dipendenza del primo prodotto.
+A complete PDF→Markdown/assets path, with a usable CLI and browser, is needed before the consolidation of the validator. The observed a003 outputs show usefulness for prose, table and figure of C06, together with mathematical losses; they do not prove general fidelity, reliable scientific OCR or all the pages of mixed PDFs. The [recognized debt](../development/technical-debt.md) remains open and does not become a dependency of the first product.
 
-## Decisione
+## Decision
 
-Per I1 adottare Marker 1.10.2, Surya 0.17.1 e torch 2.7.1+cpu dietro un
-adattatore diretto, in figlio confinato del worker separato. Primo perimetro
-da provare: Linux x86_64, CPU, singolo utente, loopback, nessun invio remoto.
-Pin e modelli conservati richiedono verifica mirata prima dell'uso. Non
-redistribuire automaticamente modelli né promettere altre piattaforme.
+For I1, adopt Marker 1.10.2, Surya 0.17.1 and torch 2.7.1+cpu behind a direct adapter, in a confined child of the separate worker. First scope to prove: Linux x86_64, CPU, single user, loopback, no remote upload. Pins and stored models need a targeted check before use. Do not redistribute models automatically and do not promise other platforms.
 
-FastAPI serve API e UI HTML/CSS/JavaScript senza framework SPA o CDN. Servizi
-applicativi condivisi con CLI; SQLite con claim/lease e recupero esplicito,
-filesystem locale con pubblicazione e riconciliazione. Il browser mostra
-Markdown tramite testo, galleria raster verificata e download; rendering
-scientifico e confronto visuale avanzato arriveranno in incrementi successivi.
+FastAPI serves the API and an HTML/CSS/JavaScript UI without SPA framework or CDN. Application services shared with the CLI; SQLite with claim/lease and explicit recovery, local filesystem with publication and reconciliation. The browser shows Markdown as text, a verified raster gallery and downloads; scientific rendering and advanced visual comparison will come in later increments.
 
-Usare `markdown-it-py` per il controllo operativo dei riferimenti del profilo,
-con versione, configurazione e plugin necessari congelati nell'implementazione.
-La scelta facilita l'integrazione Python senza aggiungere il fork Pandoc.
-Non fornisce il modello osservato, la source-map o le garanzie del futuro
-validatore dell'ADR0008; non viene dichiarata equivalenza di dialetto.
-HTML noto letto con tokenizer esistente, mai eseguito o riserializzato.
+Use `markdown-it-py` for the operational check of the references of the profile, with version, configuration and needed plugins frozen in the implementation. The choice eases the Python integration without adding the Pandoc fork. It does not provide the observed model, the source map or the guarantees of the future validator of ADR 0008; no dialect equivalence is declared. Known HTML is read with the existing tokenizer, never executed or reserialized.
 
-Distinguere esecuzione, stato del bundle e qualità `unverified`. `ready`
-controlla inventario/hash e riferimenti nel profilo. `unchecked` consente
-download ordinario con etichetta e limiti quando tutti i file dichiarati
-sono integri e non vi sono guasti noti; asset mancante noto, manomissione o
-path non sicuro continuano a bloccarlo. Ancore interne non sono file mancanti;
-HTML senza risorse non rende da solo il risultato `unchecked`.
-Questi stati non certificano la completezza degli asset rispetto al PDF.
+Distinguish execution, bundle state and `unverified` quality. `ready` checks inventory/hashes and the references in the profile. `unchecked` allows an ordinary download with label and limits when all the declared files are intact and there are no known faults; a known missing asset, tampering or an unsafe path keep blocking it. Internal anchors are not missing files; HTML without resources does not by itself make the result `unchecked`. These states do not certify the completeness of the assets with respect to the PDF.
 
-Validare le immagini per la galleria in un processo distinto senza importare
-Marker, con limiti espliciti prima del decode: il pin disabilita il tetto
-globale Pillow nel proprio processo. Configurazione, schema e identità dello
-storage sono controllati da API, worker e CLI. I1 non include cancellazione
-dall'archivio: il limite va documentato e la gestione pianificata in seguito.
+Validate the images for the gallery in a separate process that does not import Marker, with explicit limits before decoding: the pin disables Pillow's global limit in its own process. Configuration, schema and storage identity are checked by API, worker and CLI. I1 does not include deletion from the archive: the limit must be documented and its management planned later.
 
-## Alternative considerate
+## Alternatives considered
 
-Docling resta recupero futuro esplicito: i campioni non mostrano un vantaggio
-universale per formule e segni. Il server legacy non soddisfa il nuovo
-contratto di worker/immagini. Pandoc non converte PDF; il trace sperimentale
-non è approvato come dipendenza. React/TypeScript resta valutabile quando
-confronto e revisione ne giustifichino il costo; per I1 la UI testuale basta.
-Il parser avanzato resta un progetto distinto, con gold indipendenti.
+Docling remains an explicit future fallback: the samples do not show a universal advantage for formulas and signs. The legacy server does not satisfy the new worker/image contract. Pandoc does not convert PDF; the experimental trace is not approved as a dependency. React/TypeScript remains an option when comparison and review justify its cost; for I1 the text UI is enough. The advanced parser remains a separate project, with independent gold files.
 
-## Conseguenze e verifica
+## Consequences and verification
 
-Implementare il percorso completo e verificarlo da wheel fuori dal checkout,
-con PDF reale C06, CLI, browser effettivo, ZIP esterno, C07, crash/riavvio,
-errori e sonde operative P01–P14. Aggiungere le forme normali del pin:
-span/ancore, sup/sub, br, tabelle HTML e immagini HTML locali/esterne.
-Le review del piano sono statiche: nessuna prova runtime è già trasferita.
+Implement the complete path and verify it from a wheel outside the checkout, with the real PDF C06, CLI, a real browser, external ZIP, C07, crash/restart, errors and the operational probes P01–P14. Add the normal forms of the pin: span/anchors, sup/sub, br, HTML tables and local/external HTML images. The reviews of the plan are static: no runtime evidence is transferred yet.
 
-Nessuna promessa di matematica preservata, supporto hardware non provato,
-validazione automatica o prodotto già disponibile. Riesaminare il motore
-se il nuovo percorso non conserva l'utilità osservata; nessun cleaning
-distruttivo o fallback cloud per occultare perdite. Due review indipendenti
-del codice precedono il GO della consegna; Git rimane manuale dell'utente.
+No promise of preserved mathematics, of unproven hardware support, of automatic validation or of a product already available (at the time of the decision; I1 has since been delivered on `dev`, still experimental and unreleased). Review the engine if the new path does not keep the observed usefulness; no destructive cleaning or cloud fallback to hide losses. Two independent reviews of the code precede the GO of the delivery; Git remains manual, by the user.
 
-## Collegamenti
+## Delivery history (2026-10-17)
 
-[Roadmap](../roadmap.md), [risultati osservati a003](../benchmarks/a003-engine-comparison-r002.md),
-[ADR0008 vigente](0008-maintained-parser-and-provisional-benchmark.md).
-Piano, errata e arbitrato a004 sono contesto operativo in `temp/`, non bundle
-permanenti. Fonti primarie del pin, lette come testo e identificate nelle
-prove temporanee: `marker/renderers/markdown.py`, `html.py`,
-`schema/blocks/reference.py`, `schema/text/span.py` e `line.py` della 1.10.2.
-Le capacità sono riscontrate nel codice e nei raw conservati; l'esecuzione
-del nuovo adattatore resta da provare.
+The dated progress section is condensed here; the full text is at tag `pre-docs-2026-10-18` (`git show pre-docs-2026-10-18:documentation/decisions/0009-first-usable-product.md`).
 
-## Avanzamento 2026-10-17 — Consegna da revisionare
+I1 went through four delivery rounds on 2026-10-17, each followed by two independent reviews and an arbitration. Rounds r001, r002 and r003 were arbitrated NO_GO with local fixes (quota, temporaries and invalidation on transient errors; positive classification of corruption and durability restore in recovery; a complete result already publishing but not yet renamed), with the architectural choices unchanged; the real C06 conversion on the final monitor was proven in r003. Round r004 obtained the **technical GO** after two GO reviews and the arbitration: six r003 IDs closed and three low residuals accepted into the technical debt register without declaring them solved. The integration was verified on the same day: feature `323f172` merged into `dev` at `f8bf44c` with an identical tree, push confirmed on origin, 731 selected identities unchanged. Quality stays `unverified`; no retroactive GO to the validator and no certification of the assets with respect to the PDF.
 
-I1 ricevuto con nuovo package, CLI/API/UI e worker; prove autoriali di C06/C07,
-browser, ZIP e recupero crash disponibili in temp. La ricezione verifica
-identità della consegna, wheel/installato e ZIP, senza rieseguire inferenze.
-Due review indipendenti del codice ancora da completare; i criteri sopra
-sono ora oggetto di verifica, non attestazioni già approvate. Qualità
-unverified e P14 utente PENDING; debito del validatore invariato.
+## Links
 
-Arbitrato successivo dello stesso giorno: NO_GO r001 per gestione quota,
-temporanei e invalidazione su errori transitori. Fix locali r002 autorizzati;
-scelte architetturali e debito invariati. La verifica della configurazione
-non impone di rendere inapribile l'archivio a ogni cambio di quota/timeout:
-prevedere modifica amministrativa compatibile o migrazione mirata verificata,
-senza bypass di identità/radici/schema o alterazione dei manifest storici.
-
-Consegna r002 ricevuta nello stesso giorno: capacità condivisa, cache ZIP
-singola e configurazione amministrativa realizzate con prove attribuite;
-chiusure dei dieci ID ancora da giudicare nelle due review indipendenti.
-C06/C07 r002 sono replay dichiarati; le inferenze restano attribuite a r001.
-Architettura accettata invariata, nessun GO al codice o chiusura del debito.
-
-Arbitrato r002 successivo: NO_GO su classificazione positiva della corruzione
-e ripristino della durabilità nel recupero. R003 corregge questi confini e
-residui locali, mantenendo le chiusure acquisite. Scelte architetturali
-invariate; C06 reale finale richiesta per il monitor corrente, non per
-certificare il motore. Nessun GO generale o riapertura del debito avanzato.
-
-R003 poi ricevuta nello stesso giorno: barriera durevole comune e confini
-espliciti realizzati con prove nuove, C06 reale intera sul monitor finale e
-browser. Chiusure dei sette ID dichiarate dall'autore, review indipendenti e
-arbitrato ancora pendenti. Scelte architetturali e debito avanzato invariati;
-nessun GO di prodotto o qualità già ottenuto.
-
-Arbitrato r003: un GO e un NO_GO ricevuti, NO_GO locale accolto sul risultato
-completo già publishing ma non ancora rinominato. R004 completa recupero e
-simmetria manifest/reader, con residui di disponibilità dell'archivio.
-Architettura e chiusure non invalidate conservate; C06 reale r003 non deve
-essere ripetuta se le dipendenze ML/monitor restano uguali. Nessun GO al codice.
-
-R004 poi ricevuta nello stesso giorno con prove di recupero prima/dopo rename,
-lease, serializzazione del manifest e lettura passiva. Canonica004 e browser
-con replay C06 dichiarato; la C06 ML r003 resta prova storica attribuita.
-Sei ID dichiarati chiusi dall'autore, review indipendenti e arbitrato pendenti;
-architettura e debito invariati, nessun GO al codice o integrazione.
-
-Arbitrato r004 successivo: **GO tecnico I1 r004004**, sei ID r003 chiusi.
-Tre rilievi bassi accolti e rinviati nel [registro del debito](../development/technical-debt.md),
-senza dichiararli risolti o ampliare il supporto. Scelte invariate;
-[sintesi permanente](../runs/run-a004-fase2-prodotto-utilizzabile/manifest.md)
-e comandi Git manuali predisposti. Implementazione presente e provata nel
-worktree, non ancora integrata. Qualità unverified/P14 PENDING, nessun GO
-retroattivo al validatore o certificazione degli asset rispetto al PDF.
-
-Integrazione poi verificata17ott2026: feature323f172, devf8bf44c con albero
-identico, push confermato interrogando origin. 731 identità selezionate e
-artefatti invariati; nessuna nuova review o inferenza necessaria per il solo
-passaggio Git. Primo uso/P14 pendente; gli aggiornamenti editoriali di
-ricezione non sono ancora committati. Nessun deploy o cambio del debito.
+[Roadmap](../roadmap.md), observed a003 results in [`documentation/benchmarks/README.md`](../benchmarks/README.md), [ADR 0008 in force](0008-maintained-parser-and-provisional-benchmark.md). Plan, errata and arbitration of a004 are operational context in `temp/`, not permanent bundles; the run summary is `documentation/runs/run-a004-fase2-prodotto-utilizzabile/manifest.md` (archived, tag `pre-docs-2026-10-18`). Primary sources of the pin, read as text and identified in the temporary evidence: `marker/renderers/markdown.py`, `html.py`, `schema/blocks/reference.py`, `schema/text/span.py` and `line.py` of 1.10.2. The capabilities are matched in the code and in the stored raw outputs; the execution of the new adapter was still to be proven at the time of the decision (the delivery then ran it on C06 and C07, see the history above).

@@ -2,9 +2,9 @@
 
 [Toolchain, CLI, configurazione e test legacy](toolchain-legacy.md): codice
 legacy. [Configurazione JSON](pipeline-config.md). Gli schemi della nuova
-applicazione sono descritti nella [reference del prodotto locale I1](prodotto-locale.md).
+applicazione sono descritti nella [reference del prodotto locale I1](local-product.md).
 
-[Benchmark locale di conversione](benchmark-fedelta.md): helper di sviluppo a002,
+[Benchmark locale di conversione](fidelity-benchmark.md): helper di sviluppo a002,
 protocollo/stati/CLI e limiti dei giudizi umani.
 
 [Indice documentazione](../README.md).

@@ -36,7 +36,7 @@ AI se sono stati usati soltanto mock. Il codice applicativo non è ancora migrat
 Riferimenti: [progetti uv](https://docs.astral.sh/uv/guides/projects/),
 [Python](https://docs.astral.sh/uv/concepts/python-versions/),
 [Docker](https://docs.astral.sh/uv/guides/integration/docker/),
-[roadmap](../roadmap.md), [ciclo delle run](../development/run-lifecycle.md).
+[roadmap](../roadmap.md), ciclo delle run (archived: `documentation/development/run-lifecycle.md`, tag `pre-docs-2026-10-18`).
 
 ## Aggiornamento operativo del 2026-10-06 — metadati EbookLib per il resolver
 
@@ -66,7 +66,7 @@ Non autorizza build/installazioni runtime o modelli; V7/V8 restano distinte.
 Fonti: [documentazione pinned](https://github.com/astral-sh/uv/blob/0.10.10/docs/concepts/resolution.md#dependency-metadata),
 [schema pinned](https://github.com/astral-sh/uv/blob/0.10.10/uv.schema.json).
 Provenienza dettagliata e ricevute nel package-s010 della run, da archiviare
-in documentation/runs alla chiusura.
+in `documentation/runs` (archived, tag `pre-docs-2026-10-18`) alla chiusura.
 
 ## Errata operativa del 2026-10-06 — eleggibilità sdist nel lock
 
@@ -131,4 +131,4 @@ prima della build, poi stessa canonica nei runtime. È una scelta operativa
 ricevuta entro r013/r014, da valutare nelle due review; attestazioni ancora
 future. Sync del solo runtime non prova il rebuild config-only/flag di V1.
 Nessun PASS completo, installabilità multiABI o GO finale; costi112MiB cumulativi
-e perimetri pesanti distinti invariati. Dettagli nel [changelog](../CHANGELOG.md).
+e perimetri pesanti distinti invariati. Dettagli nel changelog (archived: `documentation/CHANGELOG.md`, tag `pre-docs-2026-10-18`).

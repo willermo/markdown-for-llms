@@ -1,6 +1,6 @@
 # Scegliere backend e scenari della pipeline
 
-Preparare [ambiente e preflight](ambiente-uv.md), generare la
+Preparare [ambiente e preflight](uv-environment.md), generare la
 [configurazione JSON](../reference/pipeline-config.md) nel workspace esterno
 e conservare sorgente/estrazione originale. `RUN_ENV` è il path assoluto della
 venv canonica. Eseguire dapprima `--config-only` per controllare directory e routing.

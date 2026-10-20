@@ -1,279 +1,71 @@
-# ADR0008 — Parser mantenuto e benchmark provvisorio
+# ADR 0008 — Maintained parser and provisional benchmark
 
-- Data: 2026-10-12
-- Stato decisione: **accettata** come direzione e condizione della consegna ridotta
-- Stato implementazione: prodotto ancora da realizzare; priorità approvata al percorso utilizzabile fasi2–8. Trace r005 consegnato, non revisionato; validazione avanzata e debito a002 differiti, nessun GO tecnico retroattivo.
-- Origine: accettazione esplicita dell’utente, run a002, dopo14 revisioni autore
-- Sostituisce: nessun ADR; integra ADR0001 e applica un’eccezione locale aADR0007
+- Date: 2026-10-12
+- Decision status: **accepted** as direction and as condition of the reduced delivery
+- Implementation status: the maintained parser adapter is not implemented. Since the disposition of 2026-10-16 the usable product comes first: the first increment I1 was delivered according to [ADR 0009](0009-first-usable-product.md) and integrated into `dev`, without the advanced validator. Advanced validation, the trace r005 (delivered, not reviewed) and the a002 debt remain open; no retroactive technical GO.
+- Origin: explicit acceptance by the user, run a002, after 14 author revisions
+- Supersedes: no ADR; complements ADR 0001 and applies a local exception to ADR 0007
 
-## Disposizione vigente — prodotto prima della validazione avanzata, 2026-10-16
+## Current disposition — product before advanced validation, 2026-10-16
 
-L'utente approva di procedere verso il convertitore funzionante e le funzioni
-della roadmap, inclusa Web UI, accettandone l'immaturità e l'assenza di
-certificazione automatica completa di contenuti/asset. La risoluzione del
-parser/trace e dei debiti del valutatore viene differita e potrà essere
-distribuita nel tempo dopo che il prodotto sarà utilizzabile. Nessun nuovo
-ciclo automatico di review/fix del trace r005 è richiesto ora.
+The user approves moving towards the working converter and the roadmap features, Web UI included, accepting their immaturity and the absence of a complete automatic certification of contents and assets. The resolution of the parser/trace and of the evaluator debts is deferred and can be spread over time after the product is usable. No new automatic review/fix cycle of the trace r005 is required now.
 
-Questa disposizione **sostituisce i vincoli temporali** di ripresa obbligatoria
-all'uscita fase3 e di chiusura del parser prima di qualsiasi consegna/rilascio
-sperimentale. Le disposizioni originarie sotto restano storia, non il gate
-vigente. Non cancella D-A002-01–05, non promuove i NO_GO precedenti e non
-trasferisce il GO del nucleo r002 ai ruoli o agli adattatori. R005 resta una
-consegna autoriale non revisionata; nessun fork sperimentale è adottato nel prodotto.
+This disposition **replaces the time constraints** of the mandatory resumption at the exit of phase 3 and of closing the parser before any experimental delivery or release. The original dispositions below remain history, not the current gate. It does not cancel D-A002-01–05, does not promote the previous NO_GO results and does not transfer the GO of the r002 core to the roles or to the adapters. R005 remains an author delivery, not reviewed; no experimental fork is adopted in the product.
 
-Si realizza la roadmap **per incrementi utilizzabili**, iniziando da un percorso
-reale PDF→Markdown con asset, conservazione del sorgente/output originale,
-CLI e Web UI sullo stesso servizio. Il primo incremento include le fondazioni
-necessarie, non l'intera architettura futura prima di una conversione visibile.
-Le funzioni successive di formati, revisione, distribuzione ed esportazione
-restano obiettivi autorizzati: dipendenze, hardware e prove ne determinano la
-sequenza. Derivati opzionali restano opzionali; nessun servizio a pagamento,
-invio remoto o deploy pubblico diventa implicitamente autorizzato.
+The roadmap is carried out **by usable increments**, starting from a real PDF→Markdown path with assets, preservation of the source and of the original output, and CLI and Web UI on the same service. The first increment includes the foundations it needs, not the whole future architecture before a visible conversion. The later features (formats, review, distribution and export) remain authorized goals: dependencies, hardware and evidence determine their sequence. Optional derivatives stay optional; no paid service, remote upload or public deploy becomes implicitly authorized.
 
-L'assenza di certificazione semantica non elimina i controlli operativi:
-errori dei motori visibili, file e asset consegnati identificati, riferimenti
-locali mancanti segnalati, scritture confinate, esecuzioni distinte e download
-coerenti. Un job terminato non attesta fedeltà. Qualità non verificata distinta
-da integrità/completezza del bundle; incompletezza tecnica nota non nascosta
-come conversione riuscita. Anteprima di contenuto importato inerte o confinata,
-nessuna esecuzione di HTML/asset non fidati autorizzata dal solo output del motore.
+The absence of semantic certification does not remove the operational checks: visible engine errors, delivered files and assets identified, missing local references reported, confined writes, distinct executions and consistent downloads. A finished job does not attest fidelity. Unverified quality is kept apart from the integrity and completeness of the bundle; a known technical incompleteness is not hidden as a successful conversion. The preview of imported content is inert or confined; the engine output alone never authorizes the execution of untrusted HTML or assets.
 
-Sono ammessi output e confronti manuali con limiti dichiarati, senza nuove
-normalizzazioni distruttive, gold riscritti o etichette COMPLETE/UNSAFE del
-misuratore sperimentale come barriera di prodotto. Il valore si verifica su
-sorgente/Markdown/asset realmente consultabili, non sui conteggi dei test.
-Il debito viene riesaminato quando una funzione richiede attestazioni avanzate,
-o a una verifica di roadmap successiva al prodotto utilizzabile; nessuna
-scadenza artificiale al termine fase3. Una promessa di certificazione/fedeltà
-automatica richiederà ancora le prove pertinenti.
+Manual outputs and comparisons with declared limits are allowed, without new destructive normalizations, rewritten gold files or the COMPLETE/UNSAFE labels of the experimental meter as a product barrier. Value is verified on source, Markdown and assets that can really be consulted, not on test counts. The debt is reviewed when a feature needs advanced attestations, or at a roadmap check after the usable product; no artificial deadline at the end of phase 3. A promise of automatic certification or fidelity will still require the relevant evidence.
 
-Vantaggi attesi: uso concreto, feedback sui documenti e minore dipendenza dal
-verificatore. Costi accettati: verifica manuale, errori del motore non sempre
-rilevati e possibili adattamenti futuri dei contratti. Per limitarli conservare
-raw, asset, versioni/configurazioni e revisioni; separare il validatore opzionale
-dai servizi di conversione. Nuova preparazione prodotto in temp/run-a004-fase2-
-prodotto-utilizzabile; piani/review del codice applicativo restano necessari,
-Git manuale invariato. Stato decisione approvato, prodotto non ancora realizzato.
+Expected benefits: concrete use, feedback on the documents and less dependence on the verifier. Accepted costs: manual verification, engine errors not always detected and possible future adaptations of the contracts. To limit them, keep raw outputs, assets, versions, configurations and revisions; keep the optional validator separate from the conversion services. New product preparation in `temp/run-a004-fase2-prodotto-utilizzabile`; plans and reviews of the application code remain necessary, Git stays manual. Decision status approved, product not yet built (status at the time of the disposition, 2026-10-16; the first increment I1 was then delivered, see ADR 0009).
 
-### Debito riconosciuto e pulizia autorizzata — precisazione utente16ott2026
+### Recognized debt and authorized cleanup — user clarification, 2026-10-16
 
-Il lavoro non conclusivo su reader/comparatore, parser/trace e validazione è
-**debito tecnico riconosciuto da consolidare appena avremo modo, tempo e risorse**.
-La priorità al prodotto rinvia il lavoro e ne rende gestibile la programmazione;
-non è abbandono né risoluzione degli ID. Il [registro trasversale](../development/technical-debt.md)
-conserva stato, responsabilità e criteri di ripresa, insieme al registro a002.
+The inconclusive work on reader/comparator, parser/trace and validation is **recognized technical debt, to be consolidated as soon as we have the means, time and resources**. The priority given to the product postpones the work and makes its scheduling manageable; it is neither abandonment nor resolution of the IDs. The [cross-cutting register](../development/technical-debt.md) keeps status, responsibility and resumption criteria, together with the a002 register.
 
-L'utente autorizza anche la pulizia selettiva dei materiali temp non più necessari.
-Rimossi ambienti/build Haskell ricostruibili dopo verifica delle dipendenze:
-8.777.867.264 byte allocati liberati; sorgenti, patch, report, raw/gold, risultati,
-binari finali e modelli/ambienti dei motori mantenuti. I vecchi snapshot non sono
-una promessa di ambiente ancora presente. Disponibilità nella sintesi a003;
-nessuna modifica dei risultati per ottenere MATCH e nessuna riscrittura Git.
+The user also authorizes the selective cleanup of `temp` material that is no longer needed. Rebuildable Haskell environments and builds were removed after checking the dependencies: 8,777,867,264 allocated bytes freed; sources, patches, reports, raw/gold, results, final binaries and engine models and environments kept. Old snapshots are not a promise that an environment is still present. Availability is described in the a003 summary `documentation/runs/run-a003-fase1-engine-comparison/manifest.md` (archived, tag `pre-docs-2026-10-18`); no change of results to obtain MATCH and no Git rewrite.
 
-## Contesto
+## Context
 
-Il reader del benchmark ha progressivamente ricostruito sintassi Markdown,
-metadata, code e HTML con decisioni non sempre coerenti. Fix locali hanno
-chiuso casi reali ma lasciato classi non convalidate. R014 Claude NO_GO statico,
-review OpenAI incompleta per costo amministrativo: nessun arbitrato tecnico
-finale positivo. L’utente accetta la consegna sperimentale e richiede che il
-problema venga ripreso e risolto, dando priorità a un prodotto valutabile.
+The benchmark reader progressively rebuilt Markdown syntax, metadata, code and HTML with decisions that were not always consistent. Local fixes closed real cases but left classes unvalidated. R014: Claude NO_GO (static), OpenAI review incomplete because of administrative cost: no final positive technical arbitration. The user accepts the experimental delivery and asks for the problem to be taken up again and solved, giving priority to a product that can be evaluated.
 
-## Decisione
+## Decision
 
-Adottare un parser mantenuto per la sintassi del profilo Markdown, con versione,
-estensioni e configurazione riproducibili; adattare l’AST al modello osservato
-invece di continuare a espandere la grammatica propria. Pandoc, già locale
-3.1.3 e disponibile via JSON AST nelle prove a002, è il candidato iniziale
-scelto per la verifica dell’adattatore. Nessuna nuova dipendenza o installazione
-è attuata qui; l’idoneità a coordinate/provenienza e contenuti va dimostrata.
-Se l’AST non offre dati sufficienti, il contratto deve dichiarare UNAVAILABLE
-per quelle misure o valutare un parser mantenuto con source-map adeguata;
-non inventare coordinate né riprodurre l’intera grammatica per colmare il gap.
+Adopt a maintained parser for the syntax of the Markdown profile, with reproducible version, extensions and configuration; adapt the AST to the observed model instead of continuing to expand the project's own grammar. Pandoc, already local at 3.1.3 and available through the JSON AST in the a002 experiments, is the initial candidate chosen for the verification of the adapter. No new dependency or installation is made here; suitability for coordinates/provenance and contents has to be demonstrated. If the AST does not offer enough data, the contract must declare UNAVAILABLE for those measures or evaluate a maintained parser with an adequate source map; do not invent coordinates or reproduce the whole grammar to fill the gap.
 
-Separare parsing sintattico, misure di fedeltà e controlli di confinamento/
-risorse. L’AST del convertitore non è un oracolo indipendente della bontà
-della sua conversione: gold, sorgenti e valutazione umana restano necessari.
-Nessun COMPLETE del reader sperimentale autorizza rendering attivo o accessi.
+Separate syntactic parsing, fidelity measures and confinement/resource checks. The converter's AST is not an independent oracle of the quality of its own conversion: gold files, sources and human evaluation remain necessary. No COMPLETE from the experimental reader authorizes active rendering or access.
 
-Chiudere a002 con **accettazione utente del perimetro ridotto**, senza GO
-tecnico retroattivo. Le doppie review restano per le implementazioni future.
-Riaprire obbligatoriamente il debito dopo la prima applicazione valutabile
-(uscita fase3), risolverlo prima degli automatismi di attestazione e del
-rilascio. Non blocca il confronto esplorativo fase1 svolto con limiti e
-revisione umana; non autorizza saltare le dipendenze della roadmap.
+Close a002 with **user acceptance of the reduced scope**, without a retroactive technical GO. Double reviews remain for future implementations. Reopen the debt obligatorily after the first application that can be evaluated (exit of phase 3), resolve it before attestation automations and before the release (timing replaced by the disposition of 2026-10-16 above). It does not block the exploratory phase 1 comparison carried out with limits and human review; it does not authorize skipping the roadmap dependencies.
 
-## Alternative considerate
+## Alternatives considered
 
-- Continuare fix locali del reader: risultati parziali provati, costo dei giri
-  e assunzioni condivise non accettabili come strategia principale.
-- Eliminare ogni verifica: impedirebbe confronti motivati e diagnosi di perdite.
-- Usare solo AST del motore come gold: confonderebbe sintassi con correttezza.
-- Parser mantenuto più riferimenti indipendenti: direzione accettata; source-map,
-  profilo e prestazioni da convalidare in un intervento distinto.
+- Keep fixing the reader locally: partial results proven, cost of the rounds and shared assumptions not acceptable as the main strategy.
+- Remove every verification: it would prevent reasoned comparisons and the diagnosis of losses.
+- Use only the engine's AST as gold: it would confuse syntax with correctness.
+- Maintained parser plus independent references: accepted direction; source map, profile and performance to be validated in a separate piece of work.
 
-## Conseguenze e verifica
+## Consequences and verification
 
-Conservare raw, asset, riferimenti, revisioni ed errori. Classificare separatamente
-difetti riprodotti, tracce statiche e ipotesi AST. Chiudere il debito solo con
-prove su originali/varianti di liste,div,fence,metadata,formule,HTML e risorse;
-source-map verificata dove dichiarata, nessuna risorsa silenziosamente omessa,
-controlli positivi di code/valori inerti e negativi di HTML reale. Rerun sul
-corpus e sui test invalidati, classificando ogni delta rispetto ai dati storici;
-due nuove review indipendenti e arbitrato sull’adattatore. Nessuna garanzia
-di perfezione su Markdown arbitrario e nessuna sanatoria dei vecchi FAIL.
+Keep raw outputs, assets, references, revisions and errors. Classify separately reproduced defects, static traces and AST hypotheses. Close the debt only with evidence on originals and variants of lists, divs, fences, metadata, formulas, HTML and resources; source map verified where declared, no resource silently omitted, positive checks of inert code and values and negative checks of real HTML. Rerun on the corpus and on the invalidated tests, classifying every delta against the historical data; two new independent reviews and an arbitration on the adapter. No guarantee of perfection on arbitrary Markdown and no amnesty for the old FAIL results.
 
-I budget degli esperimenti devono essere dimensionati al lavoro previsto;
-la qualità non si giudica dal consumo CPU. Evitare lookup ripetuti degli
-inventari: indicizzare una volta per path/hash, distinguere prove nuove da
-ricevute, non rieseguire tutta la storia per ogni sonda. Limiti reali di
-risorse e isolamento restano espliciti, nessuna quota aggiunta qui.
+Experiment budgets must be sized to the expected work; quality is not judged by CPU consumption. Avoid repeated lookups of the inventories: index once by path/hash, distinguish new evidence from receipts, do not rerun the whole history for every probe. Real resource and isolation limits remain explicit, no quota added here.
 
-## Riesame circoscritto in a003 — 2026-10-15
+## History of the debt work (2026-10-15/16)
 
-Dopo sette consegne e due NO_GO r007, l'arbitrato conferma la ricorrenza del
-meccanismo descritto nel contesto: stime sintattiche elevate a prove, ruoli
-dipendenti dall'annotazione e regole di blocco duplicate. I controesempi ricevuti
-si chiudono ma altre interazioni delle stesse classi restano ammesse. Le 23
-proiezioni e i 17 assessment del campione restano corroborati; non attestano
-correttezza generale del qualificatore.
+The dated sections that recorded this work are condensed here; the full text is at tag `pre-docs-2026-10-18` (`git show pre-docs-2026-10-18:documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md`).
 
-Si anticipa una **verifica di fattibilità del metodo del comparatore a003**,
-prima di altro codice integrato. È l'applicazione circoscritta della direzione
-già accettata, non la selezione di un parser o la chiusura del debito a002.
-Occorre provare coordinate sul raw, profilo, ruoli indipendenti dalle annotazioni
-e copertura necessaria, con controprove e positivi indipendenti; poi piano
-modificato, due review e arbitrato. Il prototipo precede build e suite complete.
-Nessun ampliamento automatico alle fasi 2/3 o accettazione ridotta di a003;
-il termine obbligatorio del debito a002 resta invariato.
+- **2026-10-15, a003 review.** After seven deliveries and two NO_GO results on r007, the arbitration confirmed the mechanism described in the context (syntactic estimates promoted to evidence, roles dependent on the annotation, duplicated blocking rules); the 23 projections and 17 assessments of the sample stay corroborated, without attesting the general correctness of the qualifier. A feasibility check of the a003 comparator method was brought forward; Pandoc remained the initial candidate, its source-map capabilities not validated. The user then also brought forward the a002 debt work (D-A002-01–05), with distinct closure criteria; the debt stays open until implementation, new evidence, two independent reviews and an explicit arbitration per ID.
+- **2026-10-15/16, feasibility r002.** The plan declared NOT_VIABLE for a003 and a002 on the three profiles and interfaces actually tried, which is not a general impossibility. The arbitration accepted the circumscribed negative diagnosis; no fork, dialect migration or runtime was chosen.
+- **2026-10-16, provenance experiment and trace prototype.** Errata E01–E06 were accepted, and a local experiment instrumenting the Pandoc 3.1.3 reader was authorized in `temp`, explicitly **not** a permanent fork. The prototype (7 files of local delta, AST unchanged on the 34 core cases and on 381 extended raw outputs) received two NO_GO reviews on the r001 core; after the fixes the r002 core obtained two GO reviews and an arbitration, still without permanent adoption and with an explicit low limit (some phases remain attestations of the producer, not autonomous semantic evidence of the verifier without expected values), and an experimental continuation on the essential roles was authorized.
+- **2026-10-16, r004 and r005.** The r004 completion also introduced two observational changes in the pinned TagSoup; the r004 reviews were arbitrated NO_GO, and the fix r005 was delivered by the author and **not reviewed**.
 
-Il candidato iniziale rimane Pandoc; le sue capacità effettive di source-map
-non sono state convalidate qui. Mancanza di coordinate significa misura
-esplicitamente indisponibile o candidato inadatto, non coordinate inventate
-né un GO ottenuto rendendo indisponibile l'intero confronto. Il metodo e la
-copertura essenziale devono essere valutati prima dell'integrazione.
-[Stato a003](../runs/run-a003-fase1-engine-comparison/manifest.md).
+Outcome: the r002 core GO is circumscribed, the trace r005 is not reviewed, no fork is adopted in the product, and the a002 debt remains open (see the [a002 debt register](../benchmarks/a002-residual-debt.md) and the [technical debt register](../development/technical-debt.md)).
 
-## Ripresa anticipata a002 — disposizione utente 2026-10-15
+## Links
 
-L'utente autorizza ora di anticipare il lavoro anche per il debito a002.
-Il riesame a003 comprende la fattibilità del nucleo condiviso e il piano di
-risoluzione D-A002-01–05: adattatore del comparatore a003 e adattatore del modello
-osservato a002, con prove e criteri di chiusura distinti. La selezione deve
-verificare fin dall'inizio le esigenze decisive di entrambi; struttura, profilo
-e coordinate possono essere condivisi. Il prototipo precede l'integrazione.
-
-Questa disposizione supera il solo perimetro E01 del riesame precedente e
-anticipa il trigger obbligatorio di ripresa a fine fase3. Non occorre attendere
-quel termine. Il debito rimane aperto fino a implementazione, nuove prove,
-due review indipendenti e arbitrato esplicito per ID; nessun GO retroattivo.
-La chiusura storica ridotta a002 rimane valida. OCR, compilazione, hardware e
-altri limiti sperimentali non risolti dalla sintassi restano separati;
-nessun avvio anticipato del prodotto delle fasi2/3.
-[Registro del debito](../benchmarks/a002-residual-debt.md).
-
-## Ricezione della fattibilità r002 — 2026-10-15
-
-Il piano r002 dichiara NOT_VIABLE per a003 e a002 nei tre profili/interfacce
-effettivamente provati. Non è una dimostrazione di impossibilità generale.
-Il percorso proposto di provenienza nel parser Pandoc e le altre alternative
-sono ancora ipotesi da dimostrare; nessun fork o nuovo runtime è stato scelto.
-La supervisione prepara due review del metodo e delle prove per valutare
-diagnosi, requisiti necessari e prossimo esperimento minimo. Implementazione
-dei due adattatori e chiusure del debito restano future.
-
-## Arbitrato della fattibilità r002 — 2026-10-16
-
-Diagnosi negativa circoscritta accolta; il prossimo esperimento richiede errata
-locale e criteri di scarto prima di build. I requisiti di coordinate vanno
-motivati per trasformazione e consumatore: ruoli/valori possono bastare per
-alcune verifiche, altre richiedono intervalli e copertura dei residui. Il
-testimone strutturale è un'alternativa da dimostrare per a003, non una chiusura
-a002. Risorse nelle celle eccedenti omesse dall'AST rendono decisivo il vincolo
-di copertura a002. Nessun fork, migrazione di dialetto o runtime scelto;
-direzione mantenuta e chiusure separate restano valide.
-
-## Esperimento di provenienza interna — 2026-10-16
-
-Verificate e accolte le errata E01–E06: il testimone strutturale e il semplice
-wrapper dell'AST non soddisfano il contratto pieno. I controesempi perdono
-spelling, ID/note o risorse prima dell'interfaccia; non è un'impossibilità
-generale di adottare un parser mantenuto. Non si torna a scanner propri o
-a un altro emettitore dei soli valori.
-
-Si autorizza un esperimento locale di strumentazione del reader Pandoc3.1.3:
-acquisizione/toolchain/build isolati in temp, dati di provenienza registrati
-nei rami originali, equivalenza AST fra base e variante costruite dagli stessi
-input e verifica dei consumi/residui su un piccolo nucleo prima delle campagne.
-L'autore della prova risponde del delta sperimentale; sostenibilità e strategia
-upstream restano da dimostrare. La grammatica originale deve rimanere identica.
-
-**Non è adozione permanente di un fork.** Upstream è mantenuto, il delta locale
-non lo diventa per questo. Su dati persi/backtracking o mutamento semantico il
-metodo va corretto o scartato con prova, senza un secondo parser di recupero.
-Il GO riguarda solo l'esperimento; prodotto/due adattatori non implementati,
-nuove review del codice e arbitrato necessari prima di integrare o chiudere
-gli ID. [Disponibilità e stato](../runs/run-a003-fase1-engine-comparison/manifest.md).
-
-## Ricezione del prototipo trace — 2026-10-16
-
-L'esperimento è stato realizzato:7file di delta locale, AST invariata sui34casi
-del nucleo e381raw estesi, origini/rollback e visita dei residui provati nel
-perimetro dichiarato. Sono prove autoriali ricevute, con due review del nucleo
-da svolgere prima della decisione. Non dimostrano ruoli completi, nuovi stati
-audit, fedeltà o equivalenza universale del reader.
-
-Il codice aggiunge anche una visita osservativa con il parser originale delle
-celle scartate: il suo isolamento rispetto allo stato semantico è parte del
-riesame. La manutenzione del delta rimane locale e la copertura non qualificata
-esplicita. Nessuna adozione permanente, estensione del profilo o integrazione
-dei due adattatori è approvata dalla sola fattibilità positiva.
-
-Le due review successive sono state arbitrate NO_GO sul nucleo r001: trim
-non equivalente al reader originale e due controlli mancanti del verificatore.
-Disposto fix locale con nuovi gate attribuiti, senza cambiare la decisione
-architetturale o adottare il delta permanente. Ruoli futuri e adattatori non
-sono nuovi obblighi del fix. Esiti e seguito nella sintesi della run.
-
-## GO del nucleo e seguito sui ruoli — 2026-10-16
-
-Dopo i fix, due review indipendenti e arbitrato approvano il nucleo r002,
-senza adottare permanentemente il delta locale. Un limite basso è esplicito:
-alcune fasi restano attestazioni del produttore, non prove semantiche autonome
-del verificatore senza attesi. Non richiede un nuovo fix del solo nucleo.
-
-Si autorizza la prosecuzione sperimentale sui ruoli essenziali del campione
-a003 e dei casi a002, mantenendo grammatica/AST e nuovi output in temp.
-Prima code C01 e risorse HTML/blocchi, poi le altre famiglie pertinenti:
-copertura e sufficienza per consumatore precedono gli adattatori integrati.
-Nessun GO su contenuto scientifico, COMPLETE/UNSAFE o chiusura del debito.
-Il nuovo codice richiederà due review e arbitrato; sostenibilità/adozione
-permanente del delta restano da valutare. [Sintesi](../runs/run-a003-fase1-engine-comparison/manifest.md).
-
-## Stato della prova r004 — 2026-10-16
-
-Il completamento sperimentale introduce anche due modifiche osservazionali nella
-TagSoup pinned, previste dal mandato locale. Il grafo cambia per quella dipendenza;
-non si tratta di tutte dipendenze byte-identiche. Origine/licenza/delta ed equivalenza
-finita dei token sono identificati nelle prove in temp. Non è adozione permanente
-né modifica approvata della grammatica. Due review mirate devono giudicare il delta,
-le chiusure HTML/composizione/selezione e la sufficienza per i due consumatori.
-Proposte esterne a003 non adottate; debito a002 ancora aperto.
-
-Le review r004 hanno poi dimostrato che anche un cursore interno può inglobare
-sintassi consumata senza token; l'equivalenza dei valori non prova le estensioni.
-Arbitrato NO_GO e fix r005: osservazione del termine effettivo nella sorgente
-mantenuta, prova indipendente delle estensioni e origine esclusiva dei nodi
-post-composizione. Strumentazione osservativa ammessa anche nei punti degli
-stati se necessaria, senza cambiare scelte/consumo/valori o adottare il delta
-permanente. Nessuna nuova grammatica o integrazione; sufficienza a002 non confermata.
-
-## Collegamenti
-
-- [Fedeltà](0001-document-fidelity.md), [run supervisionate](0007-supervised-development-runs.md).
-- [Chiusura a002](../runs/run-a002-fase1-corpus/manifest.md).
-- [Registro del debito e criteri](../benchmarks/a002-residual-debt.md).
-- [Roadmap](../roadmap.md), [prossimo incremento](../development/next-run-a003-engine-comparison.md).
-- [Pandoc: reader→AST→writer e JSON](https://pandoc.org/filters.html), consultato2026-10-12:
-  documenta capacità dell’interfaccia, non prova equivalenza completa di r014.
+- [Fidelity](0001-document-fidelity.md), [supervised runs](0007-supervised-development-runs.md) (superseded by [ADR 0010](0010-multi-model-agent-governance.md)).
+- a002 closure (archived: `documentation/runs/run-a002-fase1-corpus/manifest.md`, tag `pre-docs-2026-10-18`).
+- [Debt register and criteria](../benchmarks/a002-residual-debt.md).
+- [Roadmap](../roadmap.md), next increment of the time (archived: `documentation/development/next-run-a003-engine-comparison.md`, tag `pre-docs-2026-10-18`); benchmark conclusions in [`documentation/benchmarks/README.md`](../benchmarks/README.md).
+- [Pandoc: reader→AST→writer and JSON](https://pandoc.org/filters.html), consulted 2026-10-12: it documents the capabilities of the interface, it does not prove the complete equivalence of r014.

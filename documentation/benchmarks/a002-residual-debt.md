@@ -3,11 +3,11 @@
 Disponibilità17ott2026: alcune prove e copie storiche sono state rimosse
 dalla pulizia autorizzata; i riferimenti successivi descrivono la consegna
 storica. Corpus/gold e casi decisivi restano; nessuna nuova firma umana
-o chiusura del debito. [Dettagli](../development/cleanup-2026-10-17.md).
+o chiusura del debito. Dettagli (archived: `documentation/development/cleanup-2026-10-17.md`, tag `pre-docs-2026-10-18`).
 
 2026-10-16. **APERTO, risoluzione differita per priorità al prodotto utilizzabile**.
 [ADR0008](../decisions/0008-maintained-parser-and-provisional-benchmark.md),
-[chiusura e prove](../runs/run-a002-fase1-corpus/manifest.md).
+chiusura e prove (archived: `documentation/runs/run-a002-fase1-corpus/manifest.md`, tag `pre-docs-2026-10-18`).
 Decisione accettata distinta dall’implementazione dell’adattatore, che non è iniziata; il nucleo sperimentale è verificato separatamente.
 
 ## Responsabile e ripresa vigente
@@ -50,7 +50,7 @@ Ricezione piano r002, 2026-10-15: NOT_VIABLE preliminare dei profili provati
 anche per a002. Il pianificatore riporta nuove premesse sintattiche e controprove
 del reader sui casi D01–03; sono consegne da verificare nelle due review, non
 chiusure o arbitrati già svolti. Le classificazioni storiche della tabella sotto
-rimangono attribuite alla chiusura r014. [Stato a003](../runs/run-a003-fase1-engine-comparison/manifest.md).
+rimangono attribuite alla chiusura r014. Stato a003 (archived: `documentation/runs/run-a003-fase1-engine-comparison/manifest.md`, tag `pre-docs-2026-10-18`).
 
 Arbitrato del piano, 2026-10-16: diagnosi circoscritta accolta, errata
 richieste. Controprovata su P/C l'omissione dall'AST di HTML/immagini nella

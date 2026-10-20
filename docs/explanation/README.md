@@ -1,7 +1,7 @@
 # Spiegazioni
 
 Contesto per comprendere il funzionamento del prodotto:
-[bundle disponibile e qualità non verificata](prodotto-sperimentale.md).
+[bundle disponibile e qualità non verificata](experimental-product.md).
 
 Argomenti previsti: fedeltà e limiti dell'OCR; ordine di lettura e formule; documento
 strutturato, asset e provenienza; revisioni AI; differenza tra conversione e RAG;

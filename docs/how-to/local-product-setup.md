@@ -5,7 +5,7 @@ comandi `markdown-*` legacy. Target: Linux x86_64, CPython managed 3.12.13, CPU,
 singolo utente e filesystem locale. Il processo API non importa Marker o torch;
 il worker usa lo stesso interprete della venv per i figli isolati.
 
-Segui la [guida uv](ambiente-uv.md) per origine del managed, inventario di ingresso,
+Segui la [guida uv](uv-environment.md) per origine del managed, inventario di ingresso,
 snapshot della run, build sdist→wheel e reinstallazione canonica. Aggiungi gli
 extra `--extra app --extra marker-cpu` al sync; per lo sviluppo aggiungi `--group dev`.
 Non usare insieme `marker-cpu` e `marker-cu126`. Esegui le prove distribuzione con
@@ -42,7 +42,7 @@ Per questa run i dati già acquisiti si trovano localmente in
 La venv prodotto nuova è sotto `temp/run-a004-fase2-prodotto-utilizzabile/work/implementation-r001/venv`.
 Non trasferire questi percorsi personali nel manifest esportato.
 
-Avvia API e worker secondo il [tutorial](../tutorials/primo-pdf-locale.md).
+Avvia API e worker secondo il [tutorial](../tutorials/first-local-pdf.md).
 `/health` risponde alla sola liveness; `/api/v1/readiness` indica worker assente,
 runtime incompleto o isolamento non disponibile. Bubblewrap deve poter creare
 namespace privati: un errore di permessi non abilita un fallback senza isolamento.

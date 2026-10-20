@@ -140,9 +140,10 @@ def test_scanner_allows_only_the_r002_token():
     assert len(home_path_hits(EXC_FILE, data + b"\n'" + _home(b'/user2/x') + b"'\n")) == 1
 
 
-def test_scanner_ignores_word_list_in_a003_report():
-    data = (ROOT / 'documentation/benchmarks/a003-engine-comparison-r003.md').read_bytes()
-    assert home_path_hits('documentation/benchmarks/a003-engine-comparison-r003.md', data) == []
+def test_scanner_ignores_word_list_fragment():
+    # A slash-separated word list such as 'clone/gold/<home>/temp/antenati' is not a home path.
+    data = b'| CLA-I005 | Allowlist; clone/gold/' + ROOTS[0].encode() + b'/temp/antenati scratch rejected. |\n'
+    assert home_path_hits('notes.md', data) == []
 
 
 def test_exception_boundary_and_count():

@@ -117,7 +117,7 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 - Do not restart the parser/trace cycle automatically and do not link the experimental Pandoc fork as an implicit dependency.
 - Do not turn old `NO_GO` results into `GO`, and do not invent retroactive reviews.
 - Keep the operational checks on files, paths, errors and storage.
-- Check resource availability (`documentation/development/cleanup-2026-10-17.md`) before reusing old environments or snapshots.
+- Check resource availability before reusing old environments or snapshots: the cleanup of 2026-10-17 removed part of the historical evidence and environments, and an old hash does not make deleted evidence available.
 
 ### Costs, resources and permissions
 
@@ -135,7 +135,7 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 ### Verification
 
 - Run checks proportionate to the change, keeping unit tests, integration tests and real benchmarks separate. For conversions, verify text, formulas, assets and order, not only the presence of files or metadata (skill `verify-conversion-fidelity`).
-- Use the virtual environment linked to the managed local CPython 3.12, with the package installed in the same interpreter as the child processes. After code changes rebuild sdist and wheel, reinstall the canonical wheel and compare hashes before running with `--no-sync`: `uv sync` alone is not proof. Procedure in `docs/how-to/ambiente-uv.md`.
+- Use the virtual environment linked to the managed local CPython 3.12, with the package installed in the same interpreter as the child processes. After code changes rebuild sdist and wheel, reinstall the canonical wheel and compare hashes before running with `--no-sync`: `uv sync` alone is not proof. Procedure in `docs/how-to/uv-environment.md`.
 - Fast suite, after the installation preflight (tokenizer cache, Pandoc and runner ready):
 
   ```bash
@@ -143,6 +143,7 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
   ```
 
   The two root smoke scripts are excluded. The selected suite is not a full acceptance test, and historical legacy results do not transfer to new code. Do not install or download anything to repair a failed collection.
+- Repository hygiene guard: `tests/unit/test_repository_hygiene.py` (no personal home paths in tracked files, local pointer files untracked) runs in the fast suite; for documentation-only changes run it alone with `"$RUN_DEV_PY" -I -B -m pytest --noconftest -p no:cacheprovider tests/unit/test_repository_hygiene.py -q`.
 - For documentation-only changes: local links, consistency of statuses and `git diff --check`. Report what was verified and what remains unverified.
 
 ### Documentation
@@ -152,7 +153,8 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 - `README.md`: entry point to the product and its guides; run outcomes do not belong there.
 - Significant architecture choices go in an ADR (skill `record-architecture-decision`), keeping the decision status separate from the implementation status. Superseded ADRs are linked, not rewritten.
 - Run plans, prompts, reviews, arbitrations, handovers and raw evidence live in `temp/<run>/`, ignored by git.
-- Language: code, comments, docstrings, commit messages, branch names and all repository documentation in **English**. Exception, until the documentation tranche translates them: the existing documents in `documentation/`, `docs/` and `README.md` are still in Italian; new or rewritten text is in English. Do not rewrite historical commits.
+- Language: code, comments, docstrings, commit messages, branch names and all repository documentation in **English**. Declared exceptions: test fixtures and corpus data under `tests/fixtures/`; code whose behaviour depends on Italian text (for example `scripts/benchmarks/document_response.py`, `scripts/benchmarks/corpus.py`); Italian comments, docstrings and messages still present in existing code, including build and configuration files (`Dockerfile`, `docker-compose.yml`, `MANIFEST.in`, `pyproject.toml`), translated when that code next changes; the product's user-facing messages (API errors, CLI and Web UI labels) until they are translated, quoted verbatim with an English gloss in the documentation; ADR 0007, superseded and kept unchanged; the mandatory gate formulas `AUTORIZZATO A IMPLEMENTARE.` and `Questa NON è autorizzazione a implementare.`. Do not rewrite historical commits. Temporary exception, until the documentation tranche completes: Markdown files in `docs/` and `documentation/` not yet translated, `scripts/benchmarks/PROTOCOL.md`, `tests/product/README.md` and the comments of `.env.example`.
+- Run documents under `temp/` (prompts, plans, review reports, arbitrations, `stato.md`, handovers) are written in **Italian**, the owner's language; quotations from the repository, identifiers, paths and commands stay verbatim.
 
 ## Final report
 

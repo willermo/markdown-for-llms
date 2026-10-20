@@ -49,7 +49,7 @@ controlli locali dichiarati PASS, ma consegna ancora in attesa del freeze s018.
 L'arresto rispettava il mandato49: la dipendenza dal supervisore per ogni cambio
 agli input delle prove contraddiceva la delega per risultato.
 
-Il [protocollo](../development/run-lifecycle.md#mandati-operativi-e-prove-preliminari)
+Il protocollo (archived: `documentation/development/run-lifecycle.md#mandati-operativi-e-prove-preliminari`, tag `pre-docs-2026-10-18`)
 ora delega all'implementatore anche gli snapshot di esecuzione richiesti dai tool.
 Una correzione identifica nuovi input e ripete le prove dipendenti nella stessa
 chat. Il supervisore congela il risultato consegnato per le due review; mantiene
@@ -72,7 +72,7 @@ prescritto timeout900 a un wrapper con limite120, congelando anche l'argv. La
 delega generica delle correzioni era contraddetta dal vincolo specifico; arrestarsi
 era conforme al mandato ricevuto. Il difetto è nell'autorizzazione operativa.
 
-Il [protocollo](../development/run-lifecycle.md#parametri-operativi-e-correzioni-dopo-un-freeze)
+Il protocollo (archived: `documentation/development/run-lifecycle.md#parametri-operativi-e-correzioni-dopo-un-freeze`, tag `pre-docs-2026-10-18`)
 ora distingue input di confronto, input della prova e parametri adattabili.
 Deadline compatibili con tool e budget, output esclusivi e strumenti propri si
 correggono nella stessa chat; la ricevuta registra il comando reale senza mutare
@@ -89,7 +89,7 @@ restano quelli adottati.
 ### Adattamento dal processo esterno, 2026-10-05
 
 L'utente autorizza prendere ciò che è utile dall'handover Claude, adattandolo senza
-stravolgere l'impianto. La [valutazione](../development/process-adaptation-2026-10-05.md)
+stravolgere l'impianto. La valutazione (archived: `documentation/development/process-adaptation-2026-10-05.md`, tag `pre-docs-2026-10-18`)
 registra provenienza, adozioni ed esclusioni. Manteniamo nomi/struttura temp/, skill
 esistente, pianificatore/supervisore separati, due review di piano e codice, snapshot
 comuni del supervisore, S/B/I/E quando richiesti, Git manuale e archivio permanente.
@@ -141,7 +141,7 @@ s007 ufficiale è stata ricevuta con cinque operazioni PASS e venv preservata.
 Il mandato successivo accorpa preparazione baseline e sonde R preliminari, con
 correzioni ordinarie locali, fino a un solo traguardo di consegna. Verificare
 tracciabilità, arresti e rifiuto di prove obsolete oltre a tempi, consumo e passaggi.
-La [procedura dei mandati](../development/run-lifecycle.md#mandati-operativi-e-prove-preliminari)
+La procedura dei mandati (archived: `documentation/development/run-lifecycle.md#mandati-operativi-e-prove-preliminari`, tag `pre-docs-2026-10-18`)
 contiene le regole; l'addendum locale conserva l'arbitrato r003 originale.
 
 Il ciclo aumenta il lavoro di coordinamento ma consente revisioni indipendenti e
@@ -153,7 +153,7 @@ Il bootstrap di questa governance avviene sul feature branch già aperto; non ve
 inventate review retroattive. La prima run del nuovo ciclo sarà la migrazione uv,
 dopo l'integrazione manuale del bootstrap in `dev` e la creazione del suo feature branch.
 
-Procedura: [ciclo delle run](../development/run-lifecycle.md).
+Procedura: ciclo delle run (archived: `documentation/development/run-lifecycle.md`, tag `pre-docs-2026-10-18`).
 
 ### Delega tecnica per obiettivo — 2026-10-06
 
@@ -172,7 +172,7 @@ non si dichiara già misurato un miglioramento dei tempi né GO sul prodotto.
 Mandato48 della run a001: bind del socket sintetico R/D4 negato con EPERM,
 prima di Firejail/S. L'autore ha rispettato la precedente clausola generica
 di arresto; nessuna richiesta al sistema di approvazione era stata effettuata.
-Precisato il [protocollo](../development/run-lifecycle.md#restrizioni-del-sandbox-e-approvazione-degli-strumenti):
+Precisato il protocollo (archived: `documentation/development/run-lifecycle.md#restrizioni-del-sandbox-e-approvazione-degli-strumenti`, tag `pre-docs-2026-10-18`):
 diagnosi e richiesta di escalation per un'azione già autorizzata rientrano nel
 mandato, mantenendo i gate della prova; il rifiuto effettivo o un nuovo confine
 restano arresti. R015 applica la distinzione senza nuovi privilegi persistenti,
@@ -186,7 +186,7 @@ risoluzione futura obbligatoria, [ADR0008](0008-maintained-parser-and-provisiona
 È una variazione esplicita del perimetro a002, nonGOtecnico r014: una review
 NO_GO statica euna incompleta restano tali. Il ciclo ordinario delle nuove
 run e le operazioni Git manuali restano invariati; non estendere questa
-eccezione a future consegne. [Archivio](../runs/run-a002-fase1-corpus/manifest.md).
+eccezione a future consegne. Archivio (archived: `documentation/runs/run-a002-fase1-corpus/manifest.md`, tag `pre-docs-2026-10-18`).
 
 ### Ricorrenza dei difetti e archivio controllato — 2026-10-15
 

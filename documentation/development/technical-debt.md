@@ -28,9 +28,9 @@ senza prove adeguate. Job terminato, integrità del bundle e qualità non verifi
 restano distinti; path/errori/file presenti e conservazione dei dati rimangono
 controlli di prodotto necessari.
 
-La [pulizia selettiva del 17 ottobre](cleanup-2026-10-17.md) rimuove anche
+La pulizia selettiva del 17 ottobre (archived: `documentation/development/cleanup-2026-10-17.md`, tag `pre-docs-2026-10-18`) rimuove anche
 payload e copie operative superati; conserva registro, esiti, casi decisivi
-e sorgenti del prototipo finale. Non tutte le vecchie prove restano disponibili. La [sintesi a003](../runs/run-a003-fase1-engine-comparison/manifest.md)
+e sorgenti del prototipo finale. Non tutte le vecchie prove restano disponibili. La sintesi a003 (archived: `documentation/runs/run-a003-fase1-engine-comparison/manifest.md`, tag `pre-docs-2026-10-18`)
 dichiara disponibilità e limiti: hash storici non rendono presenti prove eliminate.
 Il rinvio non deve diventare una promessa di riproducibilità integrale.
 
@@ -39,7 +39,7 @@ Il rinvio non deve diventare una promessa di riproducibilità integrale.
 Riesame al primo prodotto effettuato il 17 ottobre: il debito avanzato sopra
 resta aperto, non viene ripreso automaticamente. I residui sotto provengono
 dalla review Claude r004 e sono accolti dall'arbitrato GO; non sono risolti.
-[Sintesi della run](../runs/run-a004-fase2-prodotto-utilizzabile/manifest.md).
+Sintesi della run (archived: `documentation/runs/run-a004-fase2-prodotto-utilizzabile/manifest.md`, tag `pre-docs-2026-10-18`).
 
 | ID | Limite e motivazione del rinvio | Criterio di consolidamento |
 | --- | --- | --- |

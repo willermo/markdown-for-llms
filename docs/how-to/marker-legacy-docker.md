@@ -46,7 +46,7 @@ omettere i due input di riuso e scegliere esplicitamente --acquire e quote:
 "$RUN_DEV_PY" -I -B "$RUN_REPO/scripts/diagnostics/run-a001-fase0-uv/prepare_docker_inputs.py" context   --repo "$RUN_REPO" --source "$RUN_SOURCE_MANIFEST" --mode standalone --output "$RUN_IMAGE_CONTEXT"
 ```
 
-`--mode standalone` richiede S standalone generato con la [guida uv](ambiente-uv.md);
+`--mode standalone` richiede S standalone generato con la [guida uv](uv-environment.md);
 per prove di run selezionare official e S dello snapshot corrente. Nessun S/output
 futuro nei propri input. Context verifica S corrente e copia soltanto dieci moduli,
 metadata/lock/constraints/README/licenza, Dockerfile/.dockerignore e diagnostici
@@ -122,4 +122,4 @@ TMPDIR=/data/tmp; FONT_PATH e la mappa Surya sono espliciti. Non riusare volumi
 operativi nelle prove. Nessun prune/down con rimozione globale dei volumi.
 Aggiornamento/deploy richiede un perimetro proprio e nuove prove dipendenti.
 
-[Ambiente](ambiente-uv.md), [reference](../reference/toolchain-legacy.md), [indice](../README.md).
+[Ambiente](uv-environment.md), [reference](../reference/toolchain-legacy.md), [indice](../README.md).

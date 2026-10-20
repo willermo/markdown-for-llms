@@ -1,23 +1,18 @@
-# Registro delle decisioni architetturali
+# Architecture decision register
 
-Stati della decisione: **proposta**, **accettata**, **superata**, **ritirata**.
-Ogni ADR riporta separatamente lo stato dell'implementazione e l'origine della
-decisione. Data iniziale del registro: 2026-10-02.
+Decision statuses: **proposed**, **accepted**, **superseded**, **withdrawn**. Each ADR records the implementation status and the origin of the decision separately. Initial date of the register: 2026-10-02.
 
-| ADR | Decisione | Stato | Implementazione |
+| ADR | Decision | Status | Implementation |
 | --- | --- | --- | --- |
-| [0001](0001-document-fidelity.md) | Documento completo, fedeltà e derivati opzionali | Accettata | Da realizzare nella nuova pipeline |
-| [0002](0002-fastapi-web-ui.md) | Backend FastAPI, worker e Web UI | Accettata | I1 r004 integrato in dev f8bf44c, push verificato; confronto e revisione successivi |
-| [0003](0003-persistence.md) | SQLite e storage su filesystem | Accettata per la prima versione locale | Fondazioni I1 r004 integrate in dev f8bf44c, push verificato; ulteriori funzioni successive |
-| [0004](0004-execution-and-configuration.md) | Locale/remoto, profili hardware, configurazione `.env` | Accettata come indirizzo | I1 Linux CPU r004 integrato in dev f8bf44c, push verificato; altri profili da verificare |
-| [0005](0005-documentation-and-governance.md) | Governance locale e documentazione Diátaxis | Superata in parte da 0010 | Precisazione 2026-10-15 applicata: sintesi permanenti, prove a003 trasferite in temp con hash e mappa |
-| [0006](0006-python-toolchain-uv.md) | Toolchain Python uv prima dei benchmark | Accettata | GO finale implementazione r003 dopo GO/GO; integrata manualmente in dev a `b90c6d4`, albero identico alla feature `8479f97`; archivio verificato e quote temporali NON PASS conservate, push verificato a `80c31da` |
-| [0007](0007-supervised-development-runs.md) | Run supervisionate, doppie review e handover | Superata da 0010 | Protocollo iniziale integrato a66ba822; implementazione continua adottata nel working tree il 2026-10-06: fix e snapshot di esecuzione autonomi, freeze del supervisore alla consegna per le due review; arbitrati e Git manuale conservati |
-| [0008](0008-maintained-parser-and-provisional-benchmark.md) | Parser mantenuto e chiusura a002 con benchmark provvisorio | Accettata per disposizione utente12ott2026 | Priorità prodotto utilizzabile approvata16ott; validazione avanzata differita, trace r005 non revisionato e debito a002 aperto; I1 r004 GO senza certificatore |
-| [0009](0009-first-usable-product.md) | Primo prodotto locale Marker CPU, UI inerte e controllo operativo dei riferimenti | Accettata per I1 sperimentale | I1 r004 GO, integrato in dev f8bf44c, push verificato; tre residui bassi tracciati, P14 PENDING |
-| [0010](0010-multi-model-agent-governance.md) | Multi-model agent governance (one source, N tools) | Accepted | Governance tranche on `chore/governance-kit`, under review; documentation tranche to follow |
+| [0001](0001-document-fidelity.md) | Complete document, fidelity and optional derivatives | Accepted | Partly applied by I1 (source, original extraction and every attempt kept, quality `unverified`); derivatives not implemented |
+| [0002](0002-fastapi-web-ui.md) | FastAPI backend, worker and Web UI | Accepted | I1 integrated in `dev` at `f8bf44c`; comparison and review in later increments |
+| [0003](0003-persistence.md) | SQLite and filesystem storage | Accepted for the first local version | I1 foundations integrated in `dev` at `f8bf44c`; further features later |
+| [0004](0004-execution-and-configuration.md) | Local/remote, hardware profiles, `.env` configuration | Accepted as direction | I1 Linux CPU integrated in `dev` at `f8bf44c`; other profiles to be verified |
+| [0005](0005-documentation-and-governance.md) | Local governance and Diátaxis documentation | Partially superseded by 0010 | The documentation part (Diátaxis, `documentation/` and `docs/`) stays in force; the governance part is replaced by 0010 |
+| [0006](0006-python-toolchain-uv.md) | uv Python toolchain before the benchmarks | Accepted | Final GO of the r003 implementation after two GO reviews, time-quota deviations kept as NON PASS; integrated in `dev` at `b90c6d4` on 2026-10-07, push verified at `80c31da` |
+| [0007](0007-supervised-development-runs.md) | Supervised runs, double reviews and handover | Superseded by 0010 | Kept unchanged as history of the runs a001–a004 |
+| [0008](0008-maintained-parser-and-provisional-benchmark.md) | Maintained parser and a002 closure with provisional benchmark | Accepted by the user's disposition of 2026-10-12 | Parser adapter not implemented; product priority since 2026-10-16; advanced validation deferred, trace r005 not reviewed, a002 debt open |
+| [0009](0009-first-usable-product.md) | First local product: Marker CPU, inert UI and operational reference check | Accepted for the experimental I1 | I1 integrated in `dev` at `f8bf44c` (technical GO r004), not released on `main`; three low residuals tracked, quality `unverified` |
+| [0010](0010-multi-model-agent-governance.md) | Multi-model agent governance (one source, N tools) | Accepted | Governance integrated in `dev` on 2026-10-17; documentation tranche in progress |
 
-Usare [template.md](template.md) per il prossimo numero libero. Collegare alternative,
-conseguenze e prove utili; evitare un ADR per ogni dettaglio di implementazione.
-Una nuova richiesta esplicita può cambiare una decisione: documentare il cambiamento
-senza introdurre un ulteriore passaggio di autorizzazione non necessario.
+Use [template.md](template.md) for the next free number. Link alternatives, consequences and useful evidence; avoid an ADR for every implementation detail. A new explicit request can change a decision: document the change without introducing an unnecessary further authorization step.

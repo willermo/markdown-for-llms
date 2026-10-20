@@ -14,8 +14,8 @@ vincolano il seguito. Le rettifiche storiche sotto valgono nei domini provati.
 Protocollo di sviluppo a002, schema1 per conversioni/metriche; schema2 per
 confronto e risposta V documentale. Misura la pipeline a script disponibile;
 non definisce API, storage o modello documentale della futura applicazione.
-La [reference operativa](../../docs/reference/benchmark-fedelta.md) descrive
-CLI e artefatti. Il [mandato della run](../../documentation/development/next-run-a002-corpus.md)
+La [reference operativa](../../docs/reference/fidelity-benchmark.md) descrive
+CLI e artefatti. Il mandato della run (archived: `documentation/development/next-run-a002-corpus.md`, tag `pre-docs-2026-10-18`)
 identifica il perimetro; i report registrano quali prove sono effettivamente fatte.
 
 ## Identità e processi
@@ -400,7 +400,7 @@ F26 resta invariato: bound del flusso globale distinto da CER/WER strutturali e
 conteggi condizionati, stessi algoritmi/normalizzazioni/denominatori. Il rescore
 r006 crea nuove identità derivate dei 64 raw protetti, zero motori e nuova V0.
 
-[Report e dati r006](../../documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md).
+Report e dati r006 (archived: `documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r007: contesti Markdown e confini dei producer
 
@@ -434,7 +434,7 @@ TRIVIAL_ZERO non è misura completa0. Nuovi derivati64 con conversioni r001/r002
 originali preservate, nuova V0 e zero motori di campagna. Sonde CLI con writer
 sintetico e gold PROVISIONAL: automatic PASS/INDETERMINATE/evaluate5, senza nuova V.
 
-[Report e dati r007](../../documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md).
+Report e dati r007 (archived: `documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r008: avanzamento e domini inline
 
@@ -471,7 +471,7 @@ zero motori/V nuova. Scorer/F26/normalizzazioni/denominatori invariati;
 conteggi condizionati separati dal bound globale, TRIVIAL_ZERO non completo0.
 L04outputUNAVAILABLE distinta da V13; L01/L02/L05/ChromeNONPASS/helper12gap restano.
 
-[Report e dati r008](../../documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md).
+Report e dati r008 (archived: `documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r009: confini del reader e precedenza della guardia
 
@@ -518,7 +518,7 @@ condizionati, bound globale e misure complete restano separati. TRIVIAL_ZERO
 non è fullPASS. V13/A03 riguarda il riferimento; L04output UNAVAILABLE,
 L01/L02 NOT_MEASURED e limiti L05/hardware/costi restano distinti.
 
-[Report e dati r009](../../documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md).
+Report e dati r009 (archived: `documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r010: domini HTML e Markdown nelle foglie inline
 
@@ -574,7 +574,7 @@ conservano raw e V13/A03; conteggi condizionati, bound globale e TRIVIAL_ZERO
 restano distinti. L04 output UNAVAILABLE, L01/L02 NOT_MEASURED, L05, hardware,
 costi e gap storico dei 12 helper restano limiti separati.
 
-[Report e dati r010](../../documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md).
+Report e dati r010 (archived: `documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md`, tag `pre-docs-2026-10-18`).
 
 
 ## Rettifica r011: ownership e metadati inline
@@ -611,7 +611,7 @@ costo finito su commenti senza campagna prestazionale. Il fallback unsafe
 observations-v1 in benchmark.py non è l'ID del reader eseguito; attribuzione
 con byte, gate, R e snapshot. Scorer/normalizzazioni/denominatori invariati.
 
-[Report e dati r011](../../documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md).
+Report e dati r011 (archived: `documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md`, tag `pre-docs-2026-10-18`).
 
 
 ## Rettifica r012: decisioni di atomo e raw nei container
@@ -684,7 +684,7 @@ hardware/cache dichiarati, nessun upper certificato. Deadline della run rimossa;
 quote CPU/disco/RAM/R/rete invariate. L01/L02 NOT_MEASURED, L04outputUNAVAILABLE,
 L05 e ChromeNONPASS/helper12gap/H15/E9/errori storici conservati.
 
-[Report e dati r012](../../documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md).
+Report e dati r012 (archived: `documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r013: fonti di guardia e contesto dei fence
 
@@ -741,7 +741,7 @@ finito senza import prodotto e attesi semantici manuali. Pandoc locale
 sotto R fornisce199 AST, incluse139 decisioni ordinarie e60 raw; le correzioni
 delle premesse sono registrate. Due copie private reintroducono attrs
 fail-fast e fence a ogni riga: entrambe falliscono3/3 discriminanti.
-Il [report r013](../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md)
+Il report r013 (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`)
 lega ogni fonte/callsite a proprietà e risultati, distinguendo autore,
 helper, generatore e oracolo; non sostituisce nuove review indipendenti.
 
@@ -791,10 +791,10 @@ un attributo valido del dialetto pinned e non ottiene opacità metadata.
 
 La baseline r013132 corrisponde a check-baseline-005/cases-005 sui raw/output
 baseline-004; 133/check004 e freeze005 restano conservati nel
-[report storico](../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md).
+report storico (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`).
 HC2 r011 viene rettificato con overlay separato: l'AST mostra RawInline HTML
 dentro graffe invalide, non metadata. Raw, gold e atteso storico restano intatti.
-[Prove, confini e stato r014](../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md).
+Prove, confini e stato r014 (archived: `documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md`, tag `pre-docs-2026-10-18`).
 
 Token metadata adiacenti seguono l'AST pinned: `#chapter1.xhtml#start` sono
 due dichiarazioni ID, ultima `start`. Nei 64 ricalcoli r014 questo corregge

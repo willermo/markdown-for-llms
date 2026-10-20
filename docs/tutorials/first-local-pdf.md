@@ -2,7 +2,7 @@
 
 Per una persona che usa il prodotto sperimentale I1 su Linux x86_64 e CPU.
 Sono necessari package installato con extra `app,marker-cpu`, CPython managed
-3.12.13, Bubblewrap e i checkpoint/font preparati. La [guida di preparazione](../how-to/prodotto-locale.md)
+3.12.13, Bubblewrap e i checkpoint/font preparati. La [guida di preparazione](../how-to/local-product-setup.md)
 spiega questi prerequisiti. Non sono previsti invii remoti, revisione AI o GPU.
 
 Copia [.env.example](../../.env.example) in un file di lavoro e imposta percorsi
@@ -51,5 +51,5 @@ Per usare la CLI sullo stesso archivio:
 `--wait` richiede il worker separato già attivo. Un batch con errori restituisce
 exit nonzero; leggi gli esiti per documento. Non rimuovere manualmente membri
 del DB o dello storage per liberare spazio: I1 non include cancellazione
-selettiva dell’archivio. [Reference](../reference/prodotto-locale.md),
-[limiti](../explanation/prodotto-sperimentale.md).
+selettiva dell’archivio. [Reference](../reference/local-product.md),
+[limiti](../explanation/experimental-product.md).

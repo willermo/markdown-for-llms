@@ -16,7 +16,7 @@ metriche; packet/risposte/verification documentali v2 hanno schema2. Gli helper 
 `scripts/benchmarks/` misurano i percorsi leggeri locali della pipeline a script;
 non sono servizi della nuova applicazione. [Protocollo](../../scripts/benchmarks/PROTOCOL.md)
 per metriche, normalizzazioni, stati, limiti e responsabilità M/V.
-[Guida pratica](../how-to/benchmark-fedelta.md) per eseguire una campagna.
+[Guida pratica](../how-to/fidelity-benchmark.md) per eseguire una campagna.
 
 ## Launcher e comandi
 
@@ -282,7 +282,7 @@ F26 resta invariato: bound del flusso globale distinto da CER/WER strutturali e
 conteggi condizionati, stessi algoritmi/normalizzazioni/denominatori. Il rescore
 r006 crea nuove identità derivate dei 64 raw protetti, zero motori e nuova V0.
 
-[Report e dati r006](../../documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md).
+Report e dati r006 (archived: `documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r007: contesti Markdown e confini dei producer
 
@@ -316,7 +316,7 @@ TRIVIAL_ZERO non è misura completa0. Nuovi derivati64 con conversioni r001/r002
 originali preservate, nuova V0 e zero motori di campagna. Sonde CLI con writer
 sintetico e gold PROVISIONAL: automatic PASS/INDETERMINATE/evaluate5, senza nuova V.
 
-[Report e dati r007](../../documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md).
+Report e dati r007 (archived: `documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md`, tag `pre-docs-2026-10-18`).
 
 ## Rettifica r008: avanzamento e domini inline
 
@@ -353,7 +353,7 @@ zero motori/V nuova. Scorer/F26/normalizzazioni/denominatori invariati;
 conteggi condizionati separati dal bound globale, TRIVIAL_ZERO non completo0.
 L04outputUNAVAILABLE distinta da V13; L01/L02/L05/ChromeNONPASS/helper12gap restano.
 
-[Report e dati r008](../../documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md).
+Report e dati r008 (archived: `documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md`, tag `pre-docs-2026-10-18`).
 
 ## Reader r009: contratti storici dei confini
 
@@ -379,7 +379,7 @@ dei prefissi serve `source_position.char/byte` senza modificare raw o UTF8.
 Le prove finite non certificano un parser universale. Nessun cambiamento a
 scorer, denominatori, F26 o qualificazione V dei riferimenti.
 
-[Report e dati r009](../../documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md).
+Report e dati r009 (archived: `documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md`, tag `pre-docs-2026-10-18`).
 
 ## Reader r010: confini HTML/Markdown inline
 
@@ -407,7 +407,7 @@ opachi e UNSUPPORTED nel profilo finito. Non c'è un secondo feed puro come
 gate. Questo limite non ammette risorse perse con COMPLETE nei fallback
 Markdown. Le prove finite non attestano ogni combinazione HTML/CommonMark.
 
-Il [report r010](../../documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md)
+Il report r010 (archived: `documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md`, tag `pre-docs-2026-10-18`)
 registra matrice, oracoli originali, CLI con exit OS, regressioni e ricalcolo
 storico. Nessun cambiamento a scorer/F26, denominatori o V; conteggi
 condizionati e bound globale non sono intercambiabili. L04 resta UNAVAILABLE
@@ -433,7 +433,7 @@ math unsupported e L04. F36 rimane divergenza deliberata/UNSUPPORTED.
 Limiti backtick, raw fuori profilo e comment timing sono ricevuti non
 bloccanti, senza renderer/ottimizzazione. Fallback observations-v1 distinto
 dall'ID del reader eseguito; usare byte/R/gate per attribuirlo.
-[Report r011](../../documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md)
+Report r011 (archived: `documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md`, tag `pre-docs-2026-10-18`)
 confronta stessi153oracoli, CLI reali, regressioni e64misure senza motori/V.
 Counts condizionati/globalbound/full distinti, TRIVIAL_ZERO non fullPASS;
 L04 distinta da V13/A03, L01/L02/L05 eNONPASSstorici preservati.
@@ -468,7 +468,7 @@ scorer/F26, V13/A03 e denominatori conservati. Formati html5/html-space,
 lunghezza run backtick, costo storico commenti e fallback IDv1 restano limiti
 r010. L04outputUNAVAILABLE distinta, L01/L02NOT_MEASURED, L05/NONPASS storici.
 
-[Report e dati r012](../../documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md)
+Report e dati r012 (archived: `documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md`, tag `pre-docs-2026-10-18`)
 riportano le prove effettive e i recuperi; nessun GO autore o PASS retroattivo
 per le tracce statiche r011.
 
@@ -495,7 +495,7 @@ dell’albero. Gli owner code/math veri e i token opachi mantengono inertness;
 F36 e F44 non cambiano. La prima riga heading di una nota può essere Plain
 secondo Pandoc3.1.3: il contesto non deriva dal solo marker dopo stripping.
 
-[Prove e limiti r013](../../documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md):
+Prove e limiti r013 (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`):
 285 casi principali e16 supplementari LF, 199 AST principali e16 AST attrs,
 due controprove, regressioni, CLI sintetica
 e rescore64. La sola rimozione di640 privati nested non cambia i19 campi
@@ -521,7 +521,7 @@ definisce i confini dell'adapter e della grammatica finita.
 Non sono estesi l'ordine reader/audit A8, il subset raw/F36, le quattro
 osservazioni r010 o la verifica semantica delle formule. L04outputUNAVAILABLE
 resta distinta da V13/A03; L01/L02/L05 e NONPASS storici sono conservati.
-Il [report r014](../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md)
+Il report r014 (archived: `documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md`, tag `pre-docs-2026-10-18`)
 contiene stato delle prove, correzione di HC2 e citazione precisa della
 baseline132/133. Non certifica interoperabilità universale né un GO autore.
 <!-- r014: semantica verificata dei token adiacenti -->
@@ -529,6 +529,6 @@ baseline132/133. Non certifica interoperabilità universale né un GO autore.
 Nel contratto metadata r014 i token possono essere adiacenti:
 `a="x"b="y"` è due coppie e `#chapter1.xhtml#start` è due dichiarazioni ID,
 ultima `start`, secondo l'AST pinned. I target URI rimangono stringhe distinte.
-I [risultati r014](../../documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md)
+I risultati r014 (archived: `documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md`, tag `pre-docs-2026-10-18`)
 distinguono 16 delta EPUB di failures/details da zero delta numerici/gate e
 dagli otto cambi delle sole classi div TeX. Non costituiscono nuova conversione.
