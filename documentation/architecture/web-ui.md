@@ -1,54 +1,35 @@
-# Web UI — Percorso utente e sviluppo progressivo
+# Web UI — User path and progressive development
 
-Stato: requisiti iniziali e proposta di realizzazione. La UI della nuova versione
-non è ancora implementata. Decisione di riferimento: [ADR 0002](../decisions/0002-fastapi-web-ui.md).
+Status: initial requirements and implementation proposal. The first increment I1 provides a minimal inert text UI ([ADR 0009](../decisions/0009-first-usable-product.md)); the rest of this page describes the target experience. Reference decision: [ADR 0002](../decisions/0002-fastapi-web-ui.md).
 
-## Esperienza prevista
+## Expected experience
 
-La Web UI è una parte centrale del prodotto. Deve essere utilizzabile in un browser
-locale e distribuita insieme al backend, evitando l'obbligo di una GUI diversa per
-ogni sistema operativo. Swagger resta disponibile per esplorare le API.
+The Web UI is a central part of the product. It must be usable in a local browser and distributed together with the backend, avoiding the need for a different GUI for each operating system. Swagger remains available to explore the API (target experience; I1 exposes only the local OpenAPI JSON, without Swagger or CDN).
 
-| Vista | Azioni e informazioni |
+| View | Actions and information |
 | --- | --- |
-| Nuova conversione | Caricare file o bundle, scegliere profilo e lingue, vedere se dati saranno elaborati localmente o da un provider remoto |
-| Coda e attività | Vedere fase corrente, errori, annullamento e ripetizione; indicare avanzamento indeterminato se il motore non fornisce una percentuale attendibile |
-| Archivio | Cercare documenti e conversioni, confrontare versioni, riaprire risultati e scaricare bundle |
-| Revisione | Sorgente e risultato affiancati, problemi per blocco, proposta OCR con prima/dopo e motivazione, accettazione o rifiuto |
-| Risultato | Anteprima di formule, immagini e tabelle; testo Markdown; download del documento e degli asset |
+| New conversion | Upload files or bundles, choose profile and languages, see whether data will be processed locally or by a remote provider |
+| Queue and activity | See the current phase, errors, cancellation and repetition; show indeterminate progress if the engine does not provide a reliable percentage |
+| Archive | Search documents and conversions, compare versions, reopen results and download bundles |
+| Review | Source and result side by side, problems per block, OCR proposal with before/after and reason, acceptance or rejection |
+| Result | Preview of formulas, images and tables; Markdown text; download of the document and of the assets |
 
-Per i PDF il pannello sorgente mostra pagina e regione associata al blocco quando
-disponibili. Per formati nativi senza coordinate, usare sezioni e identificatori
-logici; la UI non deve inventare una posizione nella pagina. Per documenti lunghi
-caricare pagine e anteprime progressivamente.
+For PDF documents the source panel shows the page and the region associated with the block when available. For native formats without coordinates, use sections and logical identifiers; the UI must not invent a position in the page. For long documents load pages and previews progressively.
 
-## Stati comprensibili
+## Understandable states
 
-Distinguere stato di esecuzione, disponibilità degli artefatti e stato di revisione.
-Un job terminato può produrre un risultato da controllare. Un errore di conversione,
-un asset mancante e una correzione suggerita sono condizioni differenti.
+Distinguish execution state, availability of the artifacts and review state. A finished job can produce a result to be checked. A conversion error, a missing asset and a suggested correction are different conditions.
 
-Le correzioni accettate creano una revisione e conservano l'estrazione originale.
-Il download rende chiaro quale revisione viene esportata. Non usare un'etichetta
-«verificato» basata esclusivamente sulla confidenza dichiarata dall'LLM.
+Accepted corrections create a revision and keep the original extraction. The download makes clear which revision is exported. Do not use a "verified" label based only on the confidence declared by the LLM.
 
-## Scelta frontend
+## Frontend choice
 
-React con TypeScript è una proposta da confrontare con un frontend più semplice
-servito dal backend. Il confronto deve includere visualizzatore PDF, collegamento
-pagina/blocco, rendering della matematica, revisione di differenze, accessibilità e
-manutenzione. La scelta avverrà prima della fase 3 con un ADR dedicato, senza
-introdurre oggi dipendenze frontend o una libreria di componenti per inerzia.
+React with TypeScript is a proposal to compare with a simpler frontend served by the backend. The comparison must include PDF viewer, page/block link, rendering of mathematics, review of differences, accessibility and maintenance. For I1 the choice was made in [ADR 0009](../decisions/0009-first-usable-product.md): HTML, CSS and JavaScript without SPA framework or CDN; React with TypeScript remains an option to evaluate when comparison and review justify its cost, without introducing frontend dependencies or a component library out of inertia.
 
-## Incrementi e verifica
+## Increments and verification
 
-1. **Fase 3:** upload, coda, archivio e download realmente collegati al backend;
-   anteprima di un formato semplice, persistenza anche dopo riavvio.
-2. **Fase 4:** visualizzazione delle sorgenti scientifiche e problemi di conversione.
-3. **Fase 5:** confronto per blocco, correzioni OCR/AI e revisioni tracciate.
+1. **Phase 3:** upload, queue, archive and download really connected to the backend; preview of a simple format, persistence also after a restart.
+2. **Phase 4:** display of the scientific sources and of the conversion problems.
+3. **Phase 5:** comparison per block, OCR/AI corrections and tracked revisions.
 
-Verificare il percorso anche con job falliti, refresh del browser, documenti lunghi,
-formule e asset mancanti. Prevedere uso da tastiera e messaggi leggibili; mantenere
-credenziali sul backend e sanificare i contenuti renderizzati. L'accesso dalla rete
-e la gestione multiutente dipendono dal perimetro ancora da definire, mentre la
-prima distribuzione proposta è locale.
+Verify the path also with failed jobs, browser refresh, long documents, formulas and missing assets. Provide keyboard use and readable messages; keep credentials on the backend and sanitize the rendered contents. Network access and multi-user management depend on the scope still to be defined, while the first proposed distribution is local.

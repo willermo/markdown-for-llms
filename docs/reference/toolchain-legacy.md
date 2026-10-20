@@ -1,89 +1,51 @@
-# Reference della toolchain e pipeline legacy
+# Reference of the legacy toolchain and pipeline
 
-Pipeline legacy: installazione managed e verifiche S/B/I/E, suite separate e
-contratto Docker offline. Linux x86_64 è il target dei diagnostici documentati,
-non una restrizione del lock universale. Gli esiti delle run sono nei registri di sviluppo.
-La nuova applicazione Web, DB e worker non sono disponibili.
+Legacy pipeline: managed installation and S/B/I/E checks, separate suites and offline Docker contract. Linux x86_64 is the target of the documented diagnostics, not a restriction of the universal lock. The outcomes of the runs are in the development records (the development log is archived at tag `pre-docs-2026-10-18`). The new application (Web UI, DB and worker) is available on `dev` as the experimental first increment I1: see the [local product reference](local-product.md).
 
-| Selezione | Contenuto diretto | Limite |
+| Selection | Direct content | Limit |
 | --- | --- | --- |
-| base | requests, tiktoken, tqdm, python-dotenv | Nessun server, ML o dev |
-| gruppo dev | pytest/cov/mock, black, flake8, mypy, httpx | Selezione esplicita |
-| marker-server | FastAPI, uvicorn, python-multipart | Sufficiente per mock API, senza ML |
-| marker-cpu | marker-pdf full 1.10.2, Surya 0.17.1, torch 2.7.1, bs4 | Indice torch CPU esplicito; candidato |
-| marker-cu126 | stessi candidati, indice torch cu126 | Incompatibile con CPU nello stesso sync; GPU non verificata |
+| base | requests, tiktoken, tqdm, python-dotenv | No server, ML or dev |
+| dev group | pytest/cov/mock, black, flake8, mypy, httpx | Explicit selection |
+| marker-server | FastAPI, uvicorn, python-multipart | Enough for the mock API, without ML |
+| marker-cpu | marker-pdf full 1.10.2, Surya 0.17.1, torch 2.7.1, bs4 | Explicit CPU torch index; candidate (the profile of I1 according to ADR 0009) |
+| marker-cu126 | same candidates, torch index cu126 | Incompatible with CPU in the same sync; GPU not verified |
 
-uv 0.10.10, managed CPython 3.12.13 locale e Setuptools 84.0.0 sono pin della run,
-non una promessa di aggiornamenti automatici. `pyproject.toml` dichiara dipendenze,
-`uv.lock` le risolve ed è presente nel worktree della run. I vincoli backend sono
-separati dai pin runtime; Marker è solo wheel (`no-build-package`). Un sdist
-transitivo con backend non identificato/vincolato blocca la preparazione.
+uv 0.10.10, local managed CPython 3.12.13 and Setuptools 84.0.0 are pins of the run, not a promise of automatic updates. `pyproject.toml` declares the dependencies, `uv.lock` resolves them and is present in the worktree of the run. The backend constraints are separate from the runtime pins; Marker is wheel only (`no-build-package`). A transitive sdist with an unidentified or unconstrained backend blocks the preparation.
 
-Dieci moduli distribuiti: `config`, `logging_config`, `exceptions`,
-`unified_converter`, `master_workflow`, `clean_markdown`, `validate_markdown`,
-`chunk_markdown`, `batch_monitor`, `marker_api_server`. Il server richiede l'extra
-API; nel base è soltanto letto/hashato. La wheel non contiene test, diagnostici,
-fixture, dati, configurazioni operative o helper delle run.
+Ten distributed modules: `config`, `logging_config`, `exceptions`, `unified_converter`, `master_workflow`, `clean_markdown`, `validate_markdown`, `chunk_markdown`, `batch_monitor`, `marker_api_server`. The server requires the API extra; in the base it is only read and hashed. The wheel does not contain tests, diagnostics, fixtures, data, operational configurations or run helpers.
 
-| Console script | Target | Opzioni |
+| Console script | Target | Options |
 | --- | --- | --- |
 | markdown-pipeline | master_workflow:main | --llm/--target-llm, --chunk-size, --overlap, --force, --step, --config-only, --dry-run |
 | markdown-config | config:main | --create-default, --validate, --show |
-| markdown-clean | clean_markdown:main | Nessun parser/help: usa il JSON nel CWD |
-| markdown-validate | validate_markdown:main | Nessun parser/help: usa il JSON nel CWD |
+| markdown-clean | clean_markdown:main | No parser/help: uses the JSON in the CWD |
+| markdown-validate | validate_markdown:main | No parser/help: uses the JSON in the CWD |
 | markdown-chunk | chunk_markdown:main | --input-dir, --output-dir, --target-llm, --chunk-size, --overlap |
 
-Verificare gli help effettivi prima dell'uso. `--step` ammette conversion,
-cleaning, validation, chunking. `--chunking-strategy` non esiste.
-`--config-only` crea JSON ed esce prima dell'orchestratore e dei prerequisiti.
-Clean/validate non rispondono a `--help`: l'invocazione avvia l'elaborazione.
-`config --show` mostra il JSON e non applica gli override della pipeline.
+Check the actual help before use. `--step` admits conversion, cleaning, validation, chunking. `--chunking-strategy` does not exist. `--config-only` creates the JSON and exits before the orchestrator and the prerequisites. Clean/validate do not answer `--help`: the invocation starts the processing. `config --show` shows the JSON and does not apply the overrides of the pipeline.
 
-La pipeline cattura il CWD come workspace al momento dell'istanza. JSON,
-percorsi relativi, validation_report e log restano lì; i percorsi assoluti restano
-assoluti. Per chiamarla da Python, passare un `ConfigManager` a
-`UnifiedDocumentConverter`, non `config.conversion_settings`.
+The pipeline captures the CWD as workspace at the moment of the instance. JSON, relative paths, validation_report and logs stay there; absolute paths stay absolute. To call it from Python, pass a `ConfigManager` to `UnifiedDocumentConverter`, not `config.conversion_settings`.
 
-La pipeline e il converter standalone caricano solo `.env` del workspace,
-senza risalire negli antenati o cercare nel site-packages, con `override=False`.
-Nell'orchestratore: JSON → CLI → override applicativi; shell prevalente su `.env`.
-Il converter standalone mantiene i propri override legacy. `.env.example`
-elenca variabili effettive e valori innocui; non abilita da sola il cloud.
-`MARKER_DOCUMENT_FORMATS` vuota non cancella una lista JSON già configurata.
+The pipeline and the standalone converter load only the `.env` of the workspace, without going up into the ancestors or searching in site-packages, with `override=False`. In the orchestrator: JSON → CLI → application overrides; the shell prevails over `.env`. The standalone converter keeps its own legacy overrides. `.env.example` documents only the `MDF_` settings of the new converter, not the legacy variables of the table below; it does not enable the cloud by itself. An empty `MARKER_DOCUMENT_FORMATS` does not clear a JSON list already configured.
 
-| Variabili | Uso legacy |
+| Variables | Legacy use |
 | --- | --- |
-| CHUNK_SIZE, OVERLAP_SIZE, TARGET_LLM | Override dei parametri di chunking |
+| CHUNK_SIZE, OVERLAP_SIZE, TARGET_LLM | Override of the chunking parameters |
 | MAX_WORKERS, LOG_LEVEL | Pipeline |
-| CONVERSION_TIMEOUT, CONNECT_TIMEOUT | Timeout conversione/connect; timeout 0 attende senza limite |
-| MARKER_LOCAL_BASE_URL/ENDPOINT | Endpoint locale HTTP |
-| MARKER_CLOUD_BASE_URL/ENDPOINT, MARKER_BASE_URL | Cloud; BASE_URL è alias legacy del cloud |
-| MARKER_API_KEY | Segreto letto dal client cloud; nome selezionabile nel JSON |
-| MARKER_DOCUMENT_FORMATS | Lista esplicita di estensioni non PDF per Marker |
-| MARKER_USE_LLM, FORCE_OCR, PAGINATE, STRIP_EXISTING_OCR, DISABLE_IMAGE_EXTRACTION (prefisso MARKER_) | Opzioni client; booleani 1/true/yes/on |
-| MAX_POLLS, POLL_INTERVAL | Polling cloud; 0 polls senza limite |
-| TIKTOKEN_CACHE_DIR | Cache tokenizer pronta, identificata prima delle prove |
+| CONVERSION_TIMEOUT, CONNECT_TIMEOUT | Conversion and connect timeout; timeout 0 waits without limit |
+| MARKER_LOCAL_BASE_URL/ENDPOINT | Local HTTP endpoint |
+| MARKER_CLOUD_BASE_URL/ENDPOINT, MARKER_BASE_URL | Cloud; BASE_URL is a legacy alias of the cloud |
+| MARKER_API_KEY | Secret read by the cloud client; name selectable in the JSON |
+| MARKER_DOCUMENT_FORMATS | Explicit list of extensions other than PDF for Marker |
+| MARKER_USE_LLM, FORCE_OCR, PAGINATE, STRIP_EXISTING_OCR, DISABLE_IMAGE_EXTRACTION (prefix MARKER_) | Client options; booleans 1/true/yes/on |
+| MAX_POLLS, POLL_INTERVAL | Cloud polling; 0 polls without limit |
+| TIKTOKEN_CACHE_DIR | Tokenizer cache ready, identified before the checks |
 
-Le variabili UV_* e RUN_* sono toolchain/prove, non configurazione applicativa.
-Non includere segreti negli snapshot o nei log delle sonde. Le opzioni del wrapper
-Marker sono riportate nei metadata, senza applicazione al converter; immagini
-vuote e health di liveness rimangono limiti. `local_marker` e server host non sono
-verificati dopo la migrazione. La nuova politica locale/remota resta un progetto.
+The UV_* and RUN_* variables are toolchain and evidence settings, not application configuration. Do not include secrets in the snapshots or in the logs of the probes. The options of the Marker wrapper are reported in the metadata, without being applied to the converter; empty images and liveness health remain limits. `local_marker` and the host server are not verified after the migration. The new local and remote policy remains a project.
 
-La convalida ufficiale richiede uno snapshot di esecuzione identificato,
-R PASS nel runner e
-catena S/B/I verificata prima della collection, con cache tokenizer e Pandoc
-pronti. Non basta `uv --offline` per confinare requests/figli. `run_offline.py`
-usa unshare primario, oppure Firejail noprofile/net none con blacklist D4;
-stessa netns per padre/figli, socketpair locale positivo e daemon/IP negati.
-La sonda preliminare della run non è un PASS ufficiale. Il wrapper non prepara
-pacchetti, non crea freeze e non è una sandbox generale per codice ostile.
+The official validation requires an identified execution snapshot, R PASS in the runner and the S/B/I chain verified before the collection, with tokenizer cache and Pandoc ready. `uv --offline` is not enough to confine requests and children. `run_offline.py` uses primary unshare, or Firejail noprofile/net none with blacklist D4; same netns for parent and children, positive local socketpair and daemon/IP denied. The preliminary probe of the run is not an official PASS. The wrapper does not prepare packages, does not create a freeze and is not a general sandbox for hostile code.
 
-Ogni comando sotto è **da eseguire dopo preparazione e preflight**. `RUN_DEV_PY`
-è la venv dev installata; `RUN_API_PY` contiene anche marker-server. Impostare
-RUN_SOURCE_MANIFEST e RUN_INSTALLATION_RECEIPT ai file S/I correnti, verificati
-nello stesso interprete. Per packaging: RUN_WHEEL_PY/RUN_WHEEL_RECEIPT,
-RUN_BASELINE/RUN_BASELINE_WORKSPACES. Nessun prerequisito mancante diventa skip.
+Every command below is **to be run after preparation and preflight**. `RUN_DEV_PY` is the installed dev venv; `RUN_API_PY` also contains marker-server. Set RUN_SOURCE_MANIFEST and RUN_INSTALLATION_RECEIPT to the current S/I files, verified in the same interpreter. For packaging: RUN_WHEEL_PY/RUN_WHEEL_RECEIPT, RUN_BASELINE/RUN_BASELINE_WORKSPACES. No missing prerequisite becomes a skip.
 
 ```bash
 "$RUN_DEV_PY" -I -B -m pytest tests/ --ignore=tests/api --ignore=tests/packaging --ignore=tests/docker -q
@@ -97,43 +59,16 @@ RUN_BASELINE/RUN_BASELINE_WORKSPACES. Nessun prerequisito mancante diventa skip.
 "$RUN_API_PY" -I -B -m pytest . --collect-only -q
 ```
 
-La collection globale usa l'ambiente API, importa gli harness senza ML e non
-costruisce immagini. API/package/Docker restano strati obbligatori distinti;
-la suite veloce selezionata non è un collaudo completo. I due smoke radice sono
-manuali ed esclusi: non sono verifiche sicure di inferenza. I risultati storici
-67 pass e V0 62 pass/5 fail non si trasferiscono al prodotto nuovo.
+The global collection uses the API environment, imports the harnesses without ML and does not build images. API/package/Docker remain distinct mandatory layers; the selected fast suite is not a complete acceptance test. The two root smoke scripts are manual and excluded: they are not safe inference checks. The historical results 67 pass and V0 62 pass/5 fail do not transfer to the new product.
 
-Per Docker, fuori dal runner che maschera il daemon, RUN_IMAGE è ID locale,
-RUN_IMAGE_MANIFEST è image-source.json prodotto dal tool di contesto,
-RUN_IMAGE_INPUTS è la receipt del tool supply, RUN_BACKEND_WHEEL è la wheel84
-hash-pinned, RUN_IMAGE_CONTEXT_RECEIPT è la receipt del producer di contesto,
-RUN_TEST_OUTPUT è una directory
-nuova. C-docker richiede immagine CPU V7 già preparata: pull never/network none,
-Python venv -I -B su stdin, senza mount o startup ordinario. Il test invoca
-run_docker_contract.py versionato: cap-drop ALL/no-new-privileges, healthcheck
-disabilitato, memoria/pids finiti, export filesystem del container fermo prima
-di Python, full I e nove sottocasi. Preflight host corrente S/I, con modalità
-official o standalone esplicita; nessun riferimento a snapshot storico fisso.
-Per C-docker impostare `RUN_TEST_MODE=official|standalone` nell'ambiente:
-il solo flag pytest `--test-mode` non seleziona il driver Docker; scelte
-discordanti sono rifiutate.
+For Docker, outside the runner that masks the daemon, RUN_IMAGE is a local ID, RUN_IMAGE_MANIFEST is the image-source.json produced by the context tool, RUN_IMAGE_INPUTS is the receipt of the supply tool, RUN_BACKEND_WHEEL is the hash-pinned wheel 84, RUN_IMAGE_CONTEXT_RECEIPT is the receipt of the context producer, RUN_TEST_OUTPUT is a new directory. C-docker requires a CPU V7 image already prepared: pull never/network none, venv Python -I -B on stdin, without mount or ordinary startup. The test invokes the versioned run_docker_contract.py: cap-drop ALL/no-new-privileges, healthcheck disabled, finite memory and pids, export of the filesystem of the stopped container before Python, full I and nine subcases. Current host preflight S/I, with explicit official or standalone mode; no reference to a fixed historical snapshot. For C-docker set `RUN_TEST_MODE=official|standalone` in the environment: the pytest flag `--test-mode` alone does not select the Docker driver; discordant choices are rejected.
 
 ```bash
 "$RUN_DEV_PY" -I -B -m pytest tests/docker/test_marker_contract.py -q
 ```
 
-Negativi D2/D3, probe di cache, R, F1–F6, S/B/I/E e receipt con hash/argv/CWD/env
-sono requisiti della run. La suite non costruisce o installa per riparare un
-mismatch. Una modifica invalida le prove dipendenti secondo la catena descritta nella guida uv.
-The current governance is [`AGENTS.md`](../../AGENTS.md) with [ADR 0010](../../documentation/decisions/0010-multi-model-agent-governance.md);
-the run cycle (archived: `documentation/development/run-lifecycle.md`, tag `pre-docs-2026-10-18`) is historical.
-Per un clone senza temp, i dettagli della catena sono nella
-[guida uv](../how-to/uv-environment.md).
+Negatives D2/D3, cache probe, R, F1–F6, S/B/I/E and receipts with hash/argv/CWD/env are requirements of the run. The suite does not build or install to repair a mismatch. A change invalidates the dependent evidence according to the chain described in the uv guide. The current governance is [`AGENTS.md`](../../AGENTS.md) with [ADR 0010](../../documentation/decisions/0010-multi-model-agent-governance.md); the run cycle (archived: `documentation/development/run-lifecycle.md`, tag `pre-docs-2026-10-18`) is historical. For a clone without temp, the details of the chain are in the [uv guide](../how-to/uv-environment.md).
 
-## Strumenti di sviluppo
+## Development tools
 
-Il gruppo `dev` del pyproject include pytest e gli strumenti Black, Flake8 e
-Mypy. Preparare il profilo locked e reinstallare la canonica prima del preflight.
-Eseguire un formatter o un controllo statico è una scelta esplicita: questi
-strumenti non sostituiscono le suite selezionate né provano la fedeltà della
-conversione. La suite non installa dipendenze per riparare la collection.
+The `dev` group of the pyproject includes pytest and the tools Black, Flake8 and Mypy. Prepare the locked profile and reinstall the canonical wheel before the preflight. Running a formatter or a static check is an explicit choice: these tools do not replace the selected suites or prove the fidelity of the conversion. The suite does not install dependencies to repair the collection.

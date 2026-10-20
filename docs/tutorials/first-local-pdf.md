@@ -1,46 +1,25 @@
-# Convertire il primo PDF locale
+# Convert your first local PDF
 
-Per una persona che usa il prodotto sperimentale I1 su Linux x86_64 e CPU.
-Sono necessari package installato con extra `app,marker-cpu`, CPython managed
-3.12.13, Bubblewrap e i checkpoint/font preparati. La [guida di preparazione](../how-to/local-product-setup.md)
-spiega questi prerequisiti. Non sono previsti invii remoti, revisione AI o GPU.
+For a person who uses the experimental product I1 on Linux x86_64 and CPU. You need the package installed with the extras `app,marker-cpu`, managed CPython 3.12.13, Bubblewrap and the prepared checkpoints/fonts. The [setup guide](../how-to/local-product-setup.md) explains these prerequisites. No remote uploads, AI review or GPU are provided.
 
-Copia [.env.example](../../.env.example) in un file di lavoro e imposta percorsi
-assoluti `MDF_DATA_ROOT` e `MDF_MODEL_ROOT`. Scegli una directory dati nuova,
-privata e su filesystem locale. Non usare una directory di output della pipeline
-legacy. Se la porta 8765 è occupata, scegli un’altra `MDF_PORT` prima di creare
-lo storage. API, worker e CLI devono leggere lo stesso file e ambiente.
+Copy [.env.example](../../.env.example) to a working file and set absolute paths for `MDF_DATA_ROOT` and `MDF_MODEL_ROOT`. Choose a new data directory, private and on a local filesystem. Do not use an output directory of the legacy pipeline. If port 8765 is taken, choose another `MDF_PORT` before creating the storage. API, worker and CLI must read the same file and environment.
 
-In due terminali, usando il Python della venv installata:
+In two terminals, using the Python of the installed venv:
 
 ```bash
 "$RUN_APP_PY" -I -B -m markdown_for_llms.cli --env-file /percorso/prodotto.env serve
 "$RUN_APP_PY" -I -B -m markdown_for_llms.cli --env-file /percorso/prodotto.env worker
 ```
 
-Apri `http://127.0.0.1:8765` (o la porta configurata). Attendi «Worker locale
-pronto», scegli un PDF e premi **Converti**. La coda mostra fase e identificativo;
-non mostra percentuali stimate. Ricaricare la pagina conserva la selezione.
-L’archivio rimane disponibile anche quando il worker non è avviato.
+Open `http://127.0.0.1:8765` (or the configured port). Wait for «Worker locale pronto» (local worker ready), choose a PDF and press **Converti** (Convert). The queue shows phase and identifier; it does not show estimated percentages. Reloading the page keeps the selection. The archive stays available even when the worker is not running.
 
-Quando la conversione termina, leggi il **Markdown originale**. Il pannello è
-testuale: HTML, collegamenti e LaTeX non vengono eseguiti. Per testi lunghi usa
-«Leggi porzione successiva»; il contatore indica quando hai consultato tutto.
-La galleria mostra solo PNG/JPEG che hanno superato la verifica raster separata.
-Scarica **sorgente** e **Markdown e asset (ZIP)**. Lo ZIP contiene `source/document.pdf`,
-`result/document.md`, le immagini nelle posizioni relative originali e `manifest.json`.
+When the conversion finishes, read the **Markdown originale** (original Markdown). The panel is text only: HTML, links and LaTeX are not executed. For long texts use «Leggi porzione successiva» (read next portion); the counter shows when you have read everything. The gallery shows only PNG/JPEG images that passed the separate raster check. Download with **Scarica sorgente** (download source) and **Scarica Markdown e asset (ZIP)** (download Markdown and assets). The ZIP contains `source/document.pdf`, `result/document.md`, the images in their original relative positions and `manifest.json`.
 
-Controlla il risultato rispetto al PDF, soprattutto formule, numeri, ordine,
-tabelle e figure. «Terminata» e «bundle disponibile» non significano fedeltà
-verificata. Un risultato `unchecked` resta scaricabile quando i file sono integri,
-con motivi e ambito visibili; un asset noto mancante o alterato blocca lo ZIP.
+Check the result against the PDF, especially formulas, numbers, order, tables and figures. «Terminata» (finished) and «bundle disponibile» (bundle available) do not mean verified fidelity. An `unchecked` result stays downloadable when the files are intact, with reasons and scope visible; a known missing or altered asset blocks the ZIP.
 
-**Annulla** ferma il lavoro in coda o il processo attivo. **Ripeti** crea una nuova
-esecuzione con altro identificativo, mantenendo sorgente e tentativi precedenti.
-Dopo un arresto del worker, riavvialo: riconcilia le pubblicazioni e marca le
-conversioni rimaste senza proprietario come interrotte. La ripetizione è esplicita.
+**Annulla** (Cancel) stops the queued work or the active process. **Ripeti** (Retry) creates a new execution with another identifier, keeping the source and the previous attempts. After a stop of the worker, restart it: it reconciles the publications and marks the conversions left without an owner as interrupted. Repetition is explicit.
 
-Per usare la CLI sullo stesso archivio:
+To use the CLI on the same archive:
 
 ```bash
 "$RUN_APP_PY" -I -B -m markdown_for_llms.cli --env-file /percorso/prodotto.env convert esempio.pdf --wait
@@ -48,8 +27,4 @@ Per usare la CLI sullo stesso archivio:
 "$RUN_APP_PY" -I -B -m markdown_for_llms.cli --env-file /percorso/prodotto.env download ID --output risultato.zip
 ```
 
-`--wait` richiede il worker separato già attivo. Un batch con errori restituisce
-exit nonzero; leggi gli esiti per documento. Non rimuovere manualmente membri
-del DB o dello storage per liberare spazio: I1 non include cancellazione
-selettiva dell’archivio. [Reference](../reference/local-product.md),
-[limiti](../explanation/experimental-product.md).
+`--wait` requires the separate worker to be already running. A batch with errors returns a nonzero exit; read the outcomes per document. Do not remove members of the DB or of the storage by hand to free space: I1 does not include selective deletion from the archive. [Reference](../reference/local-product.md), [limits](../explanation/experimental-product.md).

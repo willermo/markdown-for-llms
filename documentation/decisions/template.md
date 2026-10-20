@@ -1,27 +1,27 @@
-# ADR NNNN — Titolo della decisione
+# ADR NNNN — Decision title
 
-- Data: YYYY-MM-DD
-- Stato decisione: proposta
-- Stato implementazione: non iniziata
-- Origine: richiesta, discussione o evidenza che motiva l'ADR
-- Sostituisce / sostituito da: nessuno
+- Date: YYYY-MM-DD
+- Decision status: proposed
+- Implementation status: not started
+- Origin: request, discussion or evidence that motivates the ADR
+- Supersedes / superseded by: none
 
-## Contesto
+## Context
 
-Problema concreto, vincoli e requisiti interessati.
+Concrete problem, constraints and affected requirements.
 
-## Decisione
+## Decision
 
-Scelta proposta o accettata, indicando il suo perimetro.
+Proposed or accepted choice, stating its scope.
 
-## Alternative considerate
+## Alternatives considered
 
-Alternative realistiche e motivi della scelta; separare ipotesi ed evidenze.
+Realistic alternatives and reasons for the choice; keep hypotheses and evidence apart.
 
-## Conseguenze e verifica
+## Consequences and verification
 
-Benefici, costi, limiti, criteri verificabili e condizioni per riesaminare la scelta.
+Benefits, costs, limits, verifiable criteria and conditions for re-examining the choice.
 
-## Collegamenti
+## Links
 
-Fase della roadmap, prove, documentazione e riferimenti pertinenti.
+Roadmap phase, evidence, documentation and relevant references.

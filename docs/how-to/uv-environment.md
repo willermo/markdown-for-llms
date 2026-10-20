@@ -1,20 +1,10 @@
-# Preparare e aggiornare l'ambiente uv legacy
+# Prepare and update the legacy uv environment
 
-Per utenti e sviluppatori Linux. Usare managed locale e `uv.lock`, installazione
-canonica e preflight corrente. Build, contratto Docker offline e inferenza
-sono verifiche distinte; gli esiti delle run restano nei registri di sviluppo.
-Questi comandi richiedono preparazione
-e preflight; l'acquisizione di ML non è implicita.
+For Linux users and developers. Use the local managed interpreter and `uv.lock`, canonical installation and current preflight. Build, offline Docker contract and inference are distinct checks; the outcomes of the runs stay in the development records (the development log is archived at tag `pre-docs-2026-10-18`). These commands require preparation and preflight; the acquisition of ML is not implicit.
 
-Servono uv **0.10.10** identificato, Pandoc host e spazio per managed/cache/venv.
-La patch CPython **3.12.13** e Setuptools **84.0.0** sono i pin della run. Le altre
-minor Python non sono nel supporto dichiarato. Il pin locale può cambiare la
-selezione dello shim pyenv; non installa Python in pyenv. Nessuna modifica globale
-è necessaria. Il collaudo Windows resta futuro (path `Scripts` e `--no-registry`
-per l'acquisizione Windows, non una protezione Linux).
+You need an identified uv **0.10.10**, host Pandoc and space for managed/cache/venv. The CPython patch **3.12.13** and Setuptools **84.0.0** are the pins of the run. The other Python minor versions are not in the declared support. The local pin can change the selection of the pyenv shim; it does not install Python in pyenv. No global change is needed. Windows testing remains future (path `Scripts` and `--no-registry` for the Windows acquisition, not a Linux protection).
 
-In una subshell del clone, impostare i path assoluti. L'acquisizione Python è
-esplicita, con sorgente/hash/build e consumo registrati prima dell'uso nella run.
+In a subshell of the clone, set the absolute paths. The Python acquisition is explicit, with source/hash/build and consumption recorded before use in the run.
 
 ```bash
 (
@@ -25,52 +15,27 @@ esplicita, con sorgente/hash/build e consumo registrati prima dell'uso nella run
 )
 ```
 
-Dopo la preparazione esplicita, nella subshell di lavoro definire gli stessi
-path, `UV_PYTHON_DOWNLOADS=never` e `UV_PROJECT_ENVIRONMENT` alla venv desiderata.
-Acquisire il path reale `RUN_MANAGED_PY` dal catalogo locale, sotto `.venv-python`;
-prima di importare il prodotto verificarlo con stdlib. Nessun Python globale è
-accettato per il solo numero di versione.
+After the explicit preparation, in the working subshell define the same paths, `UV_PYTHON_DOWNLOADS=never` and `UV_PROJECT_ENVIRONMENT` to the desired venv. Get the real path `RUN_MANAGED_PY` from the local catalogue, under `.venv-python`; before importing the product verify it with the stdlib. No global Python is accepted for its version number alone.
 
 ```bash
 "$RUN_MANAGED_PY" -I -B "$RUN_REPO/scripts/diagnostics/run-a001-fase0-uv/check_python_origin.py" --expected-managed "$RUN_REPO/.venv-python"
 uv lock --check --python 3.12.13 --managed-python --no-python-downloads
 ```
 
-La guardia persistente `python-downloads = "manual"` impedisce download Python
-impliciti; non impone la directory e non protegge da override deliberati.
-La shell senza variabili uv può trovare un managed esterno: quel percorso viene
-rifiutato dal preflight. `uv run --no-sync` usa un ambiente già preparato.
-`--project` seleziona il progetto mantenendo il CWD dei dati; `--directory` cambia
-CWD. Non usare `uv lock --locked`: il controllo locale è `uv lock --check`.
+The persistent guard `python-downloads = "manual"` prevents implicit Python downloads; it does not impose the directory and does not protect from deliberate overrides. A shell without the uv variables can find an external managed interpreter: that path is rejected by the preflight. `uv run --no-sync` uses an environment already prepared. `--project` selects the project keeping the CWD of the data; `--directory` changes the CWD. Do not use `uv lock --locked`: the local check is `uv lock --check`.
 
-Per ogni modifica, anche a un solo `.py` senza cambio di versione, preparare una
-nuova directory di prove, ricostruire e confrontare i sorgenti. La configurazione
-persistente `reinstall-package` e il flag forzano il rebuild del progetto locale;
-non aggiornano ambienti inattivi. Il flusso normale senza run usa
-`.cache/uv-fidelity/`, esclusa da Git, e S con scope `standalone`.
+For every change, even to a single `.py` without a version change, prepare a new evidence directory, rebuild and compare the sources. The persistent configuration `reinstall-package` and the flag force the rebuild of the local project; they do not update inactive environments. The normal flow without a run uses `.cache/uv-fidelity/`, excluded from Git, and S with scope `standalone`.
 
-Prima di S, compilare `package-inputs.json`: schema 1, scope `package-inputs`,
-`files` con path assoluti/bytes/sha256 degli artefatti realmente acquisiti;
-`backend` con name `setuptools`, version `84.0.0`, `artifacts` (path della wheel
-Setuptools), `config_settings: {}` e `environment: {}`. L'inventario include il
-lock e l'interprete/stdlib e i pacchetti di ingresso pertinenti. Il diagnostico
-rifiuta backend/input ignoti. Non inventare digest per file ancora da acquisire.
+Before S, compile `package-inputs.json`: schema 1, scope `package-inputs`, `files` with absolute paths/bytes/sha256 of the artifacts actually acquired; `backend` with name `setuptools`, version `84.0.0`, `artifacts` (path of the Setuptools wheel), `config_settings: {}` and `environment: {}`. The inventory includes the lock, the interpreter/stdlib and the relevant input packages. The diagnostic rejects unknown backends and inputs. Do not invent digests for files still to be acquired.
 
-`RUN_PROOF` è una directory nuova sotto `.cache/uv-fidelity/` e `RUN_ENV` la venv
-assoluta. Nella run sostituire `--standalone` con `--snapshot` e il percorso
-dello snapshot di esecuzione creato dall'implementatore secondo il protocollo;
-lo snapshot comune delle review resta del supervisore. S standalone non è
-prova ufficiale. Dopo S gli input build,
-compreso README, restano stabili fino all'esito.
+`RUN_PROOF` is a new directory under `.cache/uv-fidelity/` and `RUN_ENV` the absolute venv. In the run replace `--standalone` with `--snapshot` and the path of the execution snapshot created by the implementer according to the protocol; the common snapshot of the reviews stays with the supervisor (procedure of the run lifecycle retired by [ADR 0010](../../documentation/decisions/0010-multi-model-agent-governance.md): snapshots are no longer required, and `scripts/run_context.py` stays available as an optional tool). S standalone is not official evidence. After S the build inputs, README included, stay stable until the outcome.
 
 ```bash
 "$RUN_MANAGED_PY" -I -B "$RUN_REPO/scripts/diagnostics/run-a001-fase0-uv/make_source_manifest.py" --repo "$RUN_REPO" --standalone --input-inventory "$RUN_PROOF/package-inputs.json" --output "$RUN_PROOF/S.json"
 uv build --python 3.12.13 --managed-python --no-python-downloads --build-constraints "$RUN_REPO/build-constraints.txt" --out-dir "$RUN_PROOF/dist"
 ```
 
-`uv build` produce sdist e wheel dalla sdist. Identificare i due singoli artefatti
-come `RUN_SDIST` e `RUN_WHEEL`; non scegliere una vecchia wheel da `dist`.
-Controllare archivi prima dell'installazione, nell'interprete managed già provato.
+`uv build` produces the sdist and the wheel from the sdist. Identify the two single artifacts as `RUN_SDIST` and `RUN_WHEEL`; do not pick an old wheel from `dist`. Check the archives before the installation, in the managed interpreter already proven.
 
 ```bash
 "$RUN_MANAGED_PY" -I -B "$RUN_REPO/scripts/diagnostics/run-a001-fase0-uv/verify_distribution.py" --repo "$RUN_REPO" --source-manifest "$RUN_PROOF/S.json" --sdist "$RUN_SDIST" --wheel "$RUN_WHEEL" --profile base --expected-managed "$RUN_REPO/.venv-python" --archives-only --receipt "$RUN_PROOF/B-check.json"
@@ -80,27 +45,11 @@ uv pip install --python "$RUN_ENV/bin/python" --no-deps --no-build --reinstall-p
 "$RUN_ENV/bin/python" -I -B "$RUN_REPO/scripts/diagnostics/run-a001-fase0-uv/check_preflight.py" --repo "$RUN_REPO" --source "$RUN_PROOF/S.json" --receipt "$RUN_PROOF/I.json" --standalone
 ```
 
-Il gate confronta dieci moduli, input build, archivi, RECORD e installazione;
-un mismatch ferma l'avvio. Dopo modifiche generare nuovi S/B/I e ripetere le
-prove dipendenti; conservare esiti precedenti senza attribuirli al codice nuovo.
-Gli extra RECORD creati da uv, incluso `uv_cache.json`, sono controllati con
-hash/dimensioni e percorsi confinati. Per una wheel locale uv può non registrare
-un hash in `direct_url.json`: I verifica l'URI, il digest di B e tutti i bytes
-della wheel installata, senza dichiarare presente un hash omesso dall'installer.
-In questa run il probe di cache modifica soltanto `exceptions.py` in una copia,
-verifica il negativo prima del sync e il positivo prima della reinstallazione
-canonica, poi ripristina la copia. Non pulire cache globali per farlo passare.
+The gate compares ten modules, build inputs, archives, RECORD and installation; a mismatch stops the start. After changes generate new S/B/I and repeat the dependent checks; keep the previous outcomes without attributing them to the new code. The RECORD extras created by uv, including `uv_cache.json`, are checked with hash/size and confined paths. For a local wheel uv may not record a hash in `direct_url.json`: I verifies the URI, the digest of B and all the bytes of the installed wheel, without declaring present a hash omitted by the installer. In this run the cache probe modifies only `exceptions.py` in a copy, verifies the negative before the sync and the positive before the canonical reinstallation, then restores the copy. Do not clean global caches to make it pass.
 
-Per dev aggiungere `--group dev` al sync; per API mock aggiungere anche
-`--extra marker-server`, in una venv distinta. Ogni ambiente riceve per ultimo la
-stessa wheel canonica e il suo preflight (profile `api` per API). Gli extra
-`marker-cpu` e `marker-cu126` sono incompatibili e hanno preparazione pesante
-separata. Il lock universale può richiedere metadata degli extra anche se il
-client non installa ML: contabilizzare rete/cache. Ogni uv pip che può costruire
-usa `--build-constraints`; installare una wheel canonica usa `--no-build`.
+For dev add `--group dev` to the sync; for the mock API also add `--extra marker-server`, in a distinct venv. Every environment receives last the same canonical wheel and its preflight (profile `api` for the API). The extras `marker-cpu` and `marker-cu126` are incompatible and have a separate heavy preparation. The universal lock can require metadata of the extras even if the client does not install ML: account for network/cache. Every uv pip that can build uses `--build-constraints`; installing a canonical wheel uses `--no-build`.
 
-Per la prova esterna preparare una venv nuova con runtime esportato dal lock
-hash-locked, fuori dal clone. La suite non deve prepararla da sola:
+For the external check prepare a new venv with the runtime exported from the hash-locked lock, outside the clone. The suite must not prepare it by itself:
 
 ```bash
 uv export --locked --no-default-groups --no-emit-project --format requirements.txt --output-file "$RUN_PROOF/runtime.txt"
@@ -108,46 +57,16 @@ uv venv --python 3.12.13 --managed-python --no-python-downloads "$RUN_ENV"
 uv pip sync --python "$RUN_ENV/bin/python" --build-constraints "$RUN_REPO/build-constraints.txt" --require-hashes "$RUN_PROOF/runtime.txt"
 ```
 
-Poi installare la wheel canonica e verificarla come sopra. In IDE selezionare
-`.venv/bin/python` assoluto; un esempio locale è in
-[settings.uv.example.json](../../.vscode/settings.uv.example.json). Copiarlo solo
-nelle proprie impostazioni workspace e completare l'installazione verificata;
-nessuna impostazione globale cambia. I figli delle fasi usano lo stesso
-`sys.executable`, con `-I -B -m`, e il workspace dei dati.
+Then install the canonical wheel and verify it as above. In the IDE select the absolute `.venv/bin/python`; a local example is in [settings.uv.example.json](../../.vscode/settings.uv.example.json). Copy it only into your own workspace settings and complete the verified installation; no global setting changes. The children of the phases use the same `sys.executable`, with `-I -B -m`, and the data workspace.
 
-## Test locali espliciti senza run
+## Explicit local tests without a run
 
-In un clone normale senza `temp/`, selezionare **standalone** deliberatamente.
-L'assenza di temp non cambia automaticamente la modalità. Prima di S, creare
-un inventario con `make_input_inventory.py --repo "$RUN_REPO" --managed
-"$RUN_REPO/.venv-python" --backend-wheel "$RUN_BACKEND_WHEEL" --uv "$RUN_UV"
---tokenizer-cache "$TIKTOKEN_CACHE_DIR" --output "$RUN_PROOF/package-inputs.json"`,
-usando il managed verificato con `-I -B`. I path dei tool sono sotto
-`scripts/diagnostics/run-a001-fase0-uv/`; il nome storico non impone una run.
-`RUN_PROOF` è una directory nuova ignorata, per esempio `.cache/uv-fidelity/`.
+In a normal clone without `temp/`, select **standalone** deliberately. The absence of temp does not change the mode automatically. Before S, create an inventory with `make_input_inventory.py --repo "$RUN_REPO" --managed "$RUN_REPO/.venv-python" --backend-wheel "$RUN_BACKEND_WHEEL" --uv "$RUN_UV" --tokenizer-cache "$TIKTOKEN_CACHE_DIR" --output "$RUN_PROOF/package-inputs.json"`, using the verified managed interpreter with `-I -B`. The paths of the tools are under `scripts/diagnostics/run-a001-fase0-uv/`; the historical name does not impose a run. `RUN_PROOF` is a new ignored directory, for example `.cache/uv-fidelity/`.
 
-Generare S con `make_source_manifest.py --standalone --repo "$RUN_REPO"
---input-inventory "$RUN_PROOF/package-inputs.json" --uv "$RUN_UV" --output
-"$RUN_PROOF/S.json"`. Ricostruire sdist/wheel, fare audit, installare la canonica
-e creare I con `verify_distribution.py` e gli stessi repo/S/archivi:
-I deriva lo scope da S, senza un flag `--standalone` del verificatore.
-Il Git locale del clone è registrato anche se non esiste una branch dev;
-una copia sintetica inizializzata senza commit registra HEAD/dev null.
+Generate S with `make_source_manifest.py --standalone --repo "$RUN_REPO" --input-inventory "$RUN_PROOF/package-inputs.json" --uv "$RUN_UV" --output "$RUN_PROOF/S.json"`. Rebuild sdist/wheel, audit them, install the canonical wheel and create I with `verify_distribution.py` and the same repo/S/archives: I derives the scope from S, without a `--standalone` flag of the verifier. The local Git of the clone is recorded even if no dev branch exists; a synthetic copy initialized without commits records HEAD/dev null.
 
-Per i test, `RUN_TEST_MODE=standalone` oppure `--test-mode standalone` sceglie il
-gate locale; valori invalidi o scelte discordanti sono errori. `run_tests.py`
-accetta la stessa selezione e richiede una receipt R corrente, con preflight
-prima di pytest, cache/Pandoc pronti e guardie rete prima della collection.
-La selezione veloce è quella della reference. I risultati S/I/E rimangono
-**standalone**, senza diventare prove ufficiali. Il default **official** esige
-S run-stage e snapshot verificato del run_id valido dichiarato.
-S o I stantii/mismatched fermano la prova prima degli import applicativi:
-ricostruire e verificare esplicitamente, senza sync nascosto nella collection.
+For the tests, `RUN_TEST_MODE=standalone` or `--test-mode standalone` selects the local gate; invalid values or discordant choices are errors. `run_tests.py` accepts the same selection and requires a current R receipt, with preflight before pytest, cache/Pandoc ready and network guards before the collection. The fast selection is the one of the reference. The S/I/E results stay **standalone**, without becoming official evidence. The default **official** requires a run-stage S and a verified snapshot of the declared valid run_id. Stale/mismatched S or I stop the check before the application imports: rebuild and verify explicitly, without a sync hidden in the collection.
 
-Per **C-docker** selezionare invece `RUN_TEST_MODE=official|standalone`
-nell'ambiente: il solo flag pytest `--test-mode` non seleziona la modalità
-del driver Docker. Scelte discordanti restano errori. Prerequisiti e procedura
-sono nella [guida Docker CPU](marker-legacy-docker.md).
+For **C-docker** instead select `RUN_TEST_MODE=official|standalone` in the environment: the pytest flag `--test-mode` alone does not select the mode of the Docker driver. Discordant choices remain errors. Prerequisites and procedure are in the [Docker CPU guide](marker-legacy-docker.md).
 
-[Reference e test](../reference/toolchain-legacy.md),
-[Docker](marker-legacy-docker.md), [indice](../README.md).
+[Reference and tests](../reference/toolchain-legacy.md), [Docker](marker-legacy-docker.md), [index](../README.md).

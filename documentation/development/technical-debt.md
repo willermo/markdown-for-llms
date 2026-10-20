@@ -1,60 +1,30 @@
-# Debito tecnico riconosciuto — validazione differita e residui di prodotto
+# Recognized technical debt — deferred validation and product residuals
 
-Aggiornato17ott2026. **APERTO, riconosciuto, da consolidare appena tempo e
-risorse lo consentiranno dopo un prodotto utilizzabile.** Disposizione esplicita
-utente: il rinvio permette di sviluppare e usare il convertitore e Web UI con
-limiti dichiarati; non chiude i difetti o converte vecchi NO_GO in GO.
-[Decisione vigente ADR0008](../decisions/0008-maintained-parser-and-provisional-benchmark.md).
+Updated 2026-10-17; status of P14 realigned on 2026-10-20. **OPEN, recognized, to be consolidated as soon as time and resources allow after a usable product.** Explicit disposition of the user: the deferral allows developing and using the converter and the Web UI with declared limits; it does not close the defects or turn old NO_GO into GO. [ADR 0008 in force](../decisions/0008-maintained-parser-and-provisional-benchmark.md).
 
-| Area | Stato e conseguenza | Consolidamento richiesto |
+| Area | Status and consequence | Consolidation required |
 | --- | --- | --- |
-| A002: D-A002-01–05 | Aperti; reader/valutatore sperimentale, nessuna nuova certificazione COMPLETE/UNSAFE | Criteri e chiusura per ID nel [registro a002](../benchmarks/a002-residual-debt.md), implementazione/prove e review pertinenti |
-| A003: comparatore/proiezioni | R007 NO_GO; misure del campione parzialmente corroborate, qualificatore generale non convalidato | Rendere affidabili le misure dichiarate, con sorgenti/gold indipendenti e perimetro esplicito; niente uso come certificazione universale |
-| Parser/trace e adattatori | R005 consegnato/non revisionato, nucleo r002 GO circoscritto; nessun adattatore di prodotto completo | Riesaminare soluzione e costo quando ripreso, ricostruire ambienti eliminati ove necessario, nuove prove/review sui byte effettivi |
-| Fedeltà di contenuti/asset | Nessuna certificazione automatica completa; errori dei motori possono sfuggire ai controlli operativi | Verifiche di contenuto e copertura delle proprietà effettivamente promesse; valutazione umana e regressioni pertinenti |
+| A002: D-A002-01–05 | Open; experimental reader/evaluator, no new COMPLETE/UNSAFE certification | Criteria and closure per ID in the [a002 register](../benchmarks/a002-residual-debt.md), relevant implementation/evidence and reviews |
+| A003: comparator/projections | R007 NO_GO; measures of the sample partly corroborated, general qualifier not validated | Make the declared measures reliable, with independent sources/gold and explicit scope; no use as universal certification |
+| Parser/trace and adapters | R005 delivered, not reviewed, core r002 GO in a circumscribed scope; no complete product adapter | Re-examine solution and cost when resumed, rebuild deleted environments where needed, new evidence and reviews on the actual bytes |
+| Fidelity of contents/assets | No complete automatic certification; engine errors can escape the operational checks | Content checks and coverage of the properties actually promised; human evaluation and relevant regressions |
 
-Le fasi2/3 hanno ora il primo incremento applicativo I1 r004 **GO dopo due
-review e arbitrato**, integrato in dev a `f8bf44c`, push verificato17ott2026.
-Non sono completate in tutta la roadmap. I tentativi non conclusivi storici
-riguardano comparatore, reader e validazione della fase1; il loro rinvio
-non è stato usato per ignorare i blocchi operativi di I1.
+Phases 2/3 now have the first application increment I1 r004 **GO after two reviews and an arbitration**, integrated into dev at `f8bf44c`, push verified on 2026-10-17. They are not completed for the whole roadmap. The historical inconclusive attempts concern comparator, reader and validation of phase 1; their deferral has not been used to ignore the operational blocks of I1.
 
-Responsabile: supervisore del progetto per programmazione e revisione del debito,
-autori/reviewer per l'esecuzione. Riesaminare il registro al primo prodotto
-utilizzabile e quando una funzione richiede una proprietà non ancora provata.
-L'utente consente di dilazionare il lavoro; ciò non equivale a cancellazione o
-abbandono. Nessun automatismo può attestare una proprietà dipendente dal debito
-senza prove adeguate. Job terminato, integrità del bundle e qualità non verificata
-restano distinti; path/errori/file presenti e conservazione dei dati rimangono
-controlli di prodotto necessari.
+Owner: the project supervisor for planning and reviewing the debt, authors/reviewers for the execution. Re-examine the register at the first usable product and when a feature requires a property not yet proven. The user allows the work to be spread over time; this is not equivalent to deletion or abandonment. No automatism can attest a property that depends on the debt without adequate evidence. Finished job, bundle integrity and unverified quality remain distinct; paths, errors, files present and data retention remain necessary product checks.
 
-La pulizia selettiva del 17 ottobre (archived: `documentation/development/cleanup-2026-10-17.md`, tag `pre-docs-2026-10-18`) rimuove anche
-payload e copie operative superati; conserva registro, esiti, casi decisivi
-e sorgenti del prototipo finale. Non tutte le vecchie prove restano disponibili. La sintesi a003 (archived: `documentation/runs/run-a003-fase1-engine-comparison/manifest.md`, tag `pre-docs-2026-10-18`)
-dichiara disponibilità e limiti: hash storici non rendono presenti prove eliminate.
-Il rinvio non deve diventare una promessa di riproducibilità integrale.
+The selective cleanup of 17 October (archived: `documentation/development/cleanup-2026-10-17.md`, tag `pre-docs-2026-10-18`) also removes superseded payloads and operational copies; it keeps register, outcomes, decisive cases and sources of the final prototype. Not all the old evidence remains available. The a003 summary (archived: `documentation/runs/run-a003-fase1-engine-comparison/manifest.md`, tag `pre-docs-2026-10-18`) declares availability and limits: historical hashes do not make deleted evidence present. The deferral must not become a promise of full reproducibility.
 
-## Residui operativi I1 r004 — bassi, aperti e non bloccanti
+## I1 r004 operational residuals — low, open and not blocking
 
-Riesame al primo prodotto effettuato il 17 ottobre: il debito avanzato sopra
-resta aperto, non viene ripreso automaticamente. I residui sotto provengono
-dalla review Claude r004 e sono accolti dall'arbitrato GO; non sono risolti.
-Sintesi della run (archived: `documentation/runs/run-a004-fase2-prodotto-utilizzabile/manifest.md`, tag `pre-docs-2026-10-18`).
+Review at the first product carried out on 17 October: the advanced debt above remains open and is not resumed automatically. The residuals below come from the Claude r004 review and are accepted by the GO arbitration; they are not resolved. Run summary (archived: `documentation/runs/run-a004-fase2-prodotto-utilizzabile/manifest.md`, tag `pre-docs-2026-10-18`).
 
-| ID | Limite e motivazione del rinvio | Criterio di consolidamento |
+| ID | Limit and reason for the deferral | Consolidation criterion |
 | --- | --- | --- |
-| CLA-R4-I001 | Il test UTF-8 guasto usa inventari incoerenti e passa dal rifiuto del manifest; non copre più il ramo previsto. Una sonda con fixture coerente conferma il comportamento corretto del prodotto | Aggiornare entrambi gli inventari e asserire causa UTF-8 e invalid persistito nel DB |
-| CLA-R4-I002 | La diagnosi GET prende brevemente worker.lock in esclusiva: l'avvio concorrente può uscire con Errno11 anche senza altro worker. Errore visibile, nessun dato modificato; ripetere l'avvio funziona. Frequenza dello stress non è stima affidabile per l'uso reale | Diagnostica senza contesa di proprietà o retry iniziale limitato e messaggio distinto; test concorrente senza rifiuti spuri |
-| CLA-R4-I003 | Una voce non sicura estranea alla pubblicazione può far attribuire a questa un errore d'integrità e perdere recuperabilità dello stesso ID. Byte conservati. Riprodotto con symlink non attribuito o in downloads; il normale flusso provato riconcilia prima lo scratch del job successivo e non produce quel caso. Non si promette recupero da alterazioni arbitrarie dell'archivio | Errori reserve/capacity su voce estranea differiscono publishing con motivo; rimossa la voce, stesso ID completed. Unsafe nel risultato selezionato resta bloccante |
+| CLA-R4-I001 | The broken UTF-8 test uses inconsistent inventories and goes through the rejection of the manifest; it no longer covers the intended branch. A probe with a consistent fixture confirms the correct behaviour of the product | Update both inventories and assert the UTF-8 cause and the invalid state persisted in the DB |
+| CLA-R4-I002 | The GET diagnosis briefly takes worker.lock exclusively: a concurrent start can exit with Errno 11 even without another worker. Visible error, no data modified; repeating the start works. The frequency under stress is not a reliable estimate for real use | Diagnostics without ownership contention or a limited initial retry and a distinct message; concurrent test without spurious rejections |
+| CLA-R4-I003 | An unsafe entry unrelated to the publication can make an integrity error be attributed to it and lose the recoverability of the same ID. Bytes kept. Reproduced with an unattributed symlink or in downloads; the normal flow tested reconciles the scratch of the next job first and does not produce that case. No recovery is promised from arbitrary alterations of the archive | The reserve/capacity errors on an unrelated entry defer publishing with a reason; once the entry is removed, the same ID is completed. Unsafe in the selected result stays blocking |
 
-Responsabile del riesame: supervisore; implementatore e due reviewer per fix
-e verifica pertinenti. Riprendere al prossimo intervento sulle aree coinvolte
-e prima di ampliare distribuzione/gestione dell'archivio. Se I003 appare nel
-normale uso, priorità al fix di disponibilità. Non modificare manualmente
-DB/storage o aggiungervi file per recuperare risultati o liberare quota.
+Owner of the review: the supervisor; implementer and two reviewers for the relevant fixes and verification. Resume at the next intervention on the areas involved and before widening the distribution or the management of the archive. If I003 appears in normal use, priority to the availability fix. Do not modify DB/storage by hand or add files to it to recover results or free quota.
 
-Osservazioni di usabilità conservate: diagnosis visibile solo in JSON/CLI,
-messaggio generico per limite manifest e sonda worker che attesta soltanto
-presenza del proprietario, non il recupero del singolo run. Non diventano
-nuovi gate né dichiarazioni di correttezza. Nessun ulteriore ciclo automatico
-di fix; P14 utente resta PENDING e qualità unverified.
+Usability observations kept: diagnosis visible only in JSON/CLI, generic message for the manifest limit and a worker probe that only attests the presence of the owner, not the recovery of the single run. They do not become new gates or statements of correctness. No further automatic fix cycle; P14, the first use with the user's feedback, was carried out on 2026-10-18 on two PDFs ([ADR 0009](../decisions/0009-first-usable-product.md)): its findings feed the next increments and do not certify fidelity, and quality stays unverified.

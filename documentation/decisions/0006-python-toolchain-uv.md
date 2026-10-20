@@ -1,134 +1,56 @@
-# ADR 0006 — Gestione del progetto Python con uv
+# ADR 0006 — Python project management with uv
 
-- Data: 2026-10-02
-- Stato decisione: accettata
-- Stato implementazione: GO piano e implementazione r003 dopo doppie review; integrata manualmente in dev a `b90c6d4` il 2026-10-07, albero identico alla feature `8479f97`; archivio verificato, deviazioni temporali NON PASS conservate, push verificato a `80c31da`
-- Origine: approvazione esplicita dell'utente dopo la valutazione del setup Python
+- Date: 2026-10-02
+- Decision status: accepted
+- Implementation status: GO of plan and implementation r003 after double reviews; integrated manually into dev at `b90c6d4` on 2026-10-07, tree identical to the feature `8479f97`; archive verified, time deviations NON PASS kept, push verified at `80c31da`
+- Origin: explicit approval of the user after the evaluation of the Python setup
 
-## Decisione
+## Decision
 
-Adottare `uv` per ambienti, dipendenze e comandi Python, con `pyproject.toml`,
-`uv.lock` versionato, `.python-version` e ambiente `.venv` locale ricreabile.
-Separare runtime, sviluppo ed extra dei motori. Correggere il packaging legacy e
-gli entry point durante una migrazione circoscritta, prima dei benchmark.
+Adopt `uv` for Python environments, dependencies and commands, with `pyproject.toml`, a versioned `uv.lock`, `.python-version` and a recreatable local `.venv` environment. Separate runtime, development and engine extras. Fix the legacy packaging and the entry points during a circumscribed migration, before the benchmarks.
 
-Gestire progressivamente anche l'interprete con uv, senza rimuovere pyenv dalla
-macchina o modificarne gli altri progetti. Fissare una versione compatibile con il
-codice e verificarla; la versione definitiva per i motori dipende dai benchmark.
-La configurazione applicativa rimane in `.env`.
+Manage the interpreter with uv too, progressively, without removing pyenv from the machine or changing its other projects. Pin a version compatible with the code and verify it; the final version for the engines depends on the benchmarks. The application configuration stays in `.env`.
 
-Allineare Docker al lockfile e a versioni riproducibili, distinguendo librerie Python,
-dipendenze native e pesi dei modelli. Configurare le varianti CPU/GPU esplicitamente;
-valutare ambienti separati se i motori hanno requisiti incompatibili. Evitare di
-trasformare l'adozione di uv in una riscrittura anticipata della pipeline.
+Align Docker with the lockfile and with reproducible versions, distinguishing Python libraries, native dependencies and model weights. Configure the CPU/GPU variants explicitly; evaluate separate environments if the engines have incompatible requirements. Avoid turning the adoption of uv into an early rewrite of the pipeline.
 
-## Contesto e verifica
+## Context and verification
 
-La ricognizione ha rilevato Python 3.12.3 da pyenv nella shell disponibile, nessuna
-versione fissata nel repository o ambiente locale, dipendenze senza lock, strumenti
-di sviluppo installati come runtime, packaging incompleto, commenti inline passati
-a `install_requires` e Marker installato da `master` nel Dockerfile.
+The survey found Python 3.12.3 from pyenv in the available shell, no version pinned in the repository and no local environment, dependencies without a lock, development tools installed as runtime, incomplete packaging, inline comments passed to `install_requires` and Marker installed from `master` in the Dockerfile.
 
-Verificare installazione pulita, import/entry point fuori dalla directory del codice,
-suite legacy selezionata e comandi documentati. Non dichiarare verificato un motore
-AI se sono stati usati soltanto mock. Il codice applicativo non è ancora migrato.
+Verify clean installation, import/entry point outside the code directory, the selected legacy suite and the documented commands. Do not declare an AI engine verified if only mocks were used. The application code is not migrated yet (at the time of the decision).
 
-Riferimenti: [progetti uv](https://docs.astral.sh/uv/guides/projects/),
-[Python](https://docs.astral.sh/uv/concepts/python-versions/),
-[Docker](https://docs.astral.sh/uv/guides/integration/docker/),
-[roadmap](../roadmap.md), ciclo delle run (archived: `documentation/development/run-lifecycle.md`, tag `pre-docs-2026-10-18`).
+References: [uv projects](https://docs.astral.sh/uv/guides/projects/), [Python](https://docs.astral.sh/uv/concepts/python-versions/), [Docker](https://docs.astral.sh/uv/guides/integration/docker/), [roadmap](../roadmap.md), run cycle (archived: `documentation/development/run-lifecycle.md`, tag `pre-docs-2026-10-18`).
 
-## Aggiornamento operativo del 2026-10-06 — metadati EbookLib per il resolver
+## Operational update of 2026-10-06 — EbookLib metadata for the resolver
 
-Adottato, nel perimetro della migrazione autorizzata, il meccanismo ufficiale
-`[[tool.uv.dependency-metadata]]` di uv0.10.10 per **ebooklib==0.18**:
-`requires-dist = ["lxml", "six"]`. I campi provengono dal setup auditato e da
-due wheel native offline con METADATA identici; Requires-Python ed extra assenti.
-La dichiarazione resta circoscritta alla versione osservata e conserva fonte PyPI,
-hash sdist, pin, indici e grafo universale. Evita di eseguire il backend durante
-il lock mantenendo `--no-build`. Non è un override dei requisiti per aggirare
-un conflitto né una cache o un lock compilato a mano.
+Adopted, within the scope of the authorized migration, the official mechanism `[[tool.uv.dependency-metadata]]` of uv 0.10.10 for **ebooklib==0.18**: `requires-dist = ["lxml", "six"]`. The fields come from the audited setup and from two native offline wheels with identical METADATA; Requires-Python and extras absent. The declaration stays limited to the observed version and keeps PyPI source, sdist hash, pin, indexes and universal graph. It avoids running the backend during the lock while keeping `--no-build`. It is not an override of the requirements to work around a conflict, nor a cache or a hand-compiled lock.
 
-Alternativa valutata: prime registry con backend in rete e cache da riusare;
-esclusa perché aggiunge un'eccezione d'isolamento e non garantisce il riuso.
-Le build esistenti differiscono nei timestamp ZIP: riproducibilità byte FAIL,
-contenuti identici. Attestazione bootstrap pre-build incompleta dichiarata;
-nessun PASS completo trasferito al prodotto. Non serve ripetere le build per
-utilizzare metadati coerenti con la fonte statica, con questi limiti espliciti.
+Alternative evaluated: priming the registry with a networked backend and a cache to reuse; excluded because it adds an isolation exception and does not guarantee the reuse. The existing builds differ in the ZIP timestamps: byte reproducibility FAIL, identical contents. Incomplete pre-build bootstrap attestation declared; no complete PASS transferred to the product. Repeating the builds is not needed to use metadata consistent with the static source, with these explicit limits.
 
-**Stato implementazione:** dichiarazione congelata nella sola nuova copia della
-run; root pyproject immutato e lock ancora da eseguire. Dopo ricezione del lock,
-la promozione degli input nel prodotto richiederà nuova identità/snapshot e
-confronto dei metadati installati con quelli dichiarati. Una variazione di fonte,
-versione o requisiti invalida questa dichiarazione e le prove pertinenti.
-Non autorizza build/installazioni runtime o modelli; V7/V8 restano distinte.
+**Implementation status:** declaration frozen only in the new copy of the run; root pyproject unchanged and lock still to be run. After the lock is received, promoting the inputs into the product will require a new identity and snapshot and a comparison of the installed metadata with the declared ones. A change of source, version or requirements invalidates this declaration and the relevant evidence. It does not authorize runtime builds and installations or models; V7/V8 remain distinct.
 
-Fonti: [documentazione pinned](https://github.com/astral-sh/uv/blob/0.10.10/docs/concepts/resolution.md#dependency-metadata),
-[schema pinned](https://github.com/astral-sh/uv/blob/0.10.10/uv.schema.json).
-Provenienza dettagliata e ricevute nel package-s010 della run, da archiviare
-in `documentation/runs` (archived, tag `pre-docs-2026-10-18`) alla chiusura.
+Sources: [pinned documentation](https://github.com/astral-sh/uv/blob/0.10.10/docs/concepts/resolution.md#dependency-metadata), [pinned schema](https://github.com/astral-sh/uv/blob/0.10.10/uv.schema.json). Detailed provenance and receipts in the package-s010 of the run, to be archived in `documentation/runs` (archived, tag `pre-docs-2026-10-18`) at closure.
 
-## Errata operativa del 2026-10-06 — eleggibilità sdist nel lock
+## Operational errata of 2026-10-06 — sdist eligibility in the lock
 
-Il tentativo s010 è FAIL: uv0.10.10 filtra le sdist con no-build prima di consumare
-dependency-metadata. La precedente scelta dei metadati resta valida/proveniente,
-ma il claim che bastasse con quel flag era incompleto. Non si corregge costruendo
-un'altra wheel nella cache: il ramo di selezione non la consulta.
+The attempt s010 is FAIL: uv 0.10.10 filters the sdists with no-build before consuming dependency-metadata. The previous choice of the metadata remains valid and sourced, but the claim that it was enough with that flag was incomplete. It is not fixed by building another wheel in the cache: the selection branch does not consult it.
 
-Adottata nella sola copia una ripresa **offline** R/D4: nessun filtro globale
-no-build sul lock/check, divieto build per ogni altro nome degli index-cache
-ricevuti, metadati osservati solo ebooklib0.18. Lista nomi chiusa e source/build
-cache vuota sono gate verificati pre ogni avvio; zero rete/backend/installazioni.
-Non è un'allowlist nativa generale e non autorizza esecuzioni online del comando.
-P1 ammette sdist identificate/backend vincolati; la policy globale era aggiunta
-operativa, ora corretta esplicitamente senza cambiare pin/grafo/fonti/prodotto.
-I comandi di installazione wheel conservano i loro no-build e costi futuri distinti.
+Adopted, only in the copy, an **offline** R/D4 resumption: no global no-build filter on lock/check, build ban for every other name of the received index caches, observed metadata only for ebooklib 0.18. A closed name list and an empty source/build cache are gates verified before every start; zero network, backend or installations. It is not a general native allowlist and it does not authorize online executions of the command. P1 admits identified sdists and constrained backends; the global policy was an operational addition, now corrected explicitly without changing pin, graph, sources or product. The wheel installation commands keep their no-build and their distinct future costs.
 
-**Stato:** mandato41 pronto/input congelati; lock ancora da ottenere, nessuna
-convalida anticipata. Cache incompleta/nuovo nome/altro source richiede disposizione
-concreta; nessun estensione automatica. ByteFAIL/lacuna bootstrap s009 conservati.
-Fonte: [selezione uv0.10.10](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-resolver/src/version_map.rs#L521),
-[consumo metadata](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-distribution/src/distribution_database.rs#L543).
+**Status:** mandate 41 ready, inputs frozen; lock still to be obtained, no early validation. An incomplete cache, a new name or another source requires a concrete disposition; no automatic extension. Byte FAIL and bootstrap gap of s009 kept. Source: [uv 0.10.10 selection](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-resolver/src/version_map.rs#L521), [metadata consumption](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-distribution/src/distribution_database.rs#L543).
 
-## Recupero metadata del 2026-10-06 — mandato43
+## Metadata recovery of 2026-10-06 — mandate 43
 
-Il lock del mandato42 ha consumato i metadata EbookLib dichiarati, ma è FAIL
-per dati di narwhals/scikit-learn e altri index assenti dalla cache universale.
-R/D4 PASS resta legato a quella chiamata; non dimostra riuscita del lock.
+The lock of mandate 42 consumed the declared EbookLib metadata, but it is FAIL because of the data of narwhals/scikit-learn and other indexes missing from the universal cache. R/D4 PASS stays tied to that call; it does not prove that the lock succeeds.
 
-Adottato priming diagnostico nativo uv pip compile con risoluzione transitive,
-no-build/only-binary e configurazione separata, seguito nella stessa chat da
-lock/check originali offline. --no-deps non acquisisce i metadata delle wheel:
-il resolver pinned richiede metadata solo in modalità transitive e interrompe
-la visita delle dipendenze in modalità direct. La chiusura diagnostica e i suoi
-pin non sono il grafo o i pin del prodotto. I nomi acquisiti nei limiti ricevuti
-sono sigillati e tutti vietati alla build nel successivo lock salvo l'eccezione
-EbookLib già osservata. Nessuna cache forgiata o ulteriore metadata dichiarata.
+Adopted a native diagnostic priming with uv pip compile in transitive resolution, no-build/only-binary and a separate configuration, followed in the same chat by the original offline lock/check. --no-deps does not acquire the metadata of the wheels: the pinned resolver requests metadata only in transitive mode and stops visiting the dependencies in direct mode. The diagnostic closure and its pins are not the graph or the pins of the product. The names acquired within the received limits are sealed and all banned from building in the following lock, except the EbookLib exception already observed. No forged cache and no further declared metadata.
 
-La precedente policy di nomi statici/offline resta storica per il suo stage.
-R011 riceve acquisizione pubblica delimitata e nomi dipendenti senza un passaggio
-di supervisione per ogni miss; il lock prodotto resta offline/R/D4. Eventuale
-fallback nativo alla wheel per leggere metadata conta come acquisizione nei caps,
-mai installazione o prova ABI. Nessun peso/font/modello o nuovo backend.
+The previous policy of static and offline names remains historical for its stage. R011 receives a delimited public acquisition and dependent names without a supervision step for every miss; the product lock stays offline/R/D4. A possible native fallback to the wheel to read metadata counts as an acquisition within the caps, never as an installation or an ABI proof. No weights, fonts, models or new backend.
 
-Fonti pinned: [richiesta metadata transitive](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-resolver/src/resolver/mod.rs#L1669),
-[modalità direct](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-resolver/src/resolver/mod.rs#L1808),
-[fallback wheel](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-distribution/src/distribution_database.rs#L520).
-Copie e hash delle fonti già ricevute nella run; acquisizione e lock riuscito
-ancora da osservare. Stato e limiti non equivalgono al GO finale della migrazione.
+Pinned sources: [transitive metadata request](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-resolver/src/resolver/mod.rs#L1669), [direct mode](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-resolver/src/resolver/mod.rs#L1808), [wheel fallback](https://github.com/astral-sh/uv/blob/0.10.10/crates/uv-distribution/src/distribution_database.rs#L520). Copies and hashes of the sources already received in the run; acquisition and successful lock still to be observed. Status and limits are not equivalent to the final GO of the migration.
 
-## Ricezione prodotto del 2026-10-06 — mandato46
+## Product receipt of 2026-10-06 — mandate 46
 
-I precedenti stati della copia restano storici. Lock universale e check offline
-del mandato45 ricevuti PASS; mandato46 ha promosso nel root gli stessi byte
-del lock e la sola tabella metadata EbookLib. La ricezione47 riconferma hash,
-delta TOML, nove wheel runtime base e inventory reale per product-s016.
-La dichiarazione dei metadata è ora nel prodotto, senza modifica del grafo.
+The previous states of the copy remain historical. Universal lock and offline check of mandate 45 received PASS; mandate 46 promoted into the root the same bytes of the lock and only the EbookLib metadata table. Receipt 47 reconfirms hashes, TOML delta, nine base runtime wheels and the real inventory for product-s016. The metadata declaration is now in the product, without changes to the graph.
 
-S/B/I/E base sono pronti alla ripresa dopo freeze supervisore: build nativa uv
-offline con backend84 esistente/no-build-isolation, startup e import/get_requires
-prima della build, poi stessa canonica nei runtime. È una scelta operativa
-ricevuta entro r013/r014, da valutare nelle due review; attestazioni ancora
-future. Sync del solo runtime non prova il rebuild config-only/flag di V1.
-Nessun PASS completo, installabilità multiABI o GO finale; costi112MiB cumulativi
-e perimetri pesanti distinti invariati. Dettagli nel changelog (archived: `documentation/CHANGELOG.md`, tag `pre-docs-2026-10-18`).
+S/B/I/E base are ready for the resumption after the supervisor freeze: native uv offline build with the existing backend 84 and no-build-isolation, startup and import/get_requires before the build, then the same canonical build in the runtimes. It is an operational choice received within r013/r014, to be evaluated in the two reviews; attestations still future. A sync of the runtime alone does not prove the config-only/flag rebuild of V1. No complete PASS, multi-ABI installability or final GO; cumulative costs of 112 MiB and distinct heavy scopes unchanged. Details in the changelog (archived: `documentation/CHANGELOG.md`, tag `pre-docs-2026-10-18`).

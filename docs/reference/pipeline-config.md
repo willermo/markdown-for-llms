@@ -1,14 +1,8 @@
-# Configurazione JSON della pipeline legacy
+# JSON configuration of the legacy pipeline
 
-`pipeline_config.json` appartiene al workspace di dati corrente, insieme a `.env`.
-Generarlo con `"$RUN_ENV/bin/python" -I -B -m config --create-default`, dopo il
-preflight della distribuzione installata. `--config-only` mostra la configurazione
-senza iniziare conversioni. Il codice di riferimento è [config.py](../../config.py).
+`pipeline_config.json` belongs to the current data workspace, together with `.env`. Generate it with `"$RUN_ENV/bin/python" -I -B -m config --create-default`, after the preflight of the installed distribution. `--config-only` shows the configuration without starting conversions. The reference code is [config.py](../../config.py).
 
-Le chiavi realmente lette sono `directories`, `llm_presets`,
-`validation_thresholds`, `cleaning_settings`, **`chunking_settings`**,
-`conversion_settings` e `pipeline_settings`. `chunking` non è un alias JSON.
-Esempio valido, da adattare soltanto nel workspace:
+The keys actually read are `directories`, `llm_presets`, `validation_thresholds`, `cleaning_settings`, **`chunking_settings`**, `conversion_settings` and `pipeline_settings`. `chunking` is not a JSON alias. Valid example, to adapt only in the workspace:
 
 ```json
 {
@@ -51,24 +45,17 @@ Esempio valido, da adattare soltanto nel workspace:
 }
 ```
 
-| Sezione | Effetto e limiti del codice attuale |
+| Section | Effect and limits of the current code |
 | --- | --- |
-| directories | Percorsi relativi al workspace; `source_ebooks` è un nome storico, usare `source_documents`. Il report validation è nella radice, lo stato pipeline in logs. |
-| validation_thresholds | Soglie di validazione e selezione dei documenti; non certificano fedeltà o conservazione degli asset. |
-| cleaning_settings | Opzioni legacy. Le trasformazioni globali possono perdere contenuti; conservare estrazione originale e confrontare i risultati. |
-| llm_presets / chunking_settings | Preset di dimensioni per tokenizer/chunk, non selezione di un provider di inferenza. `semantic`, `fixed_size`, `sliding_window` sono valori JSON; la CLI non ha `--chunking-strategy`. L'overlap semantico può essere nullo. |
-| conversion_settings | Routing, endpoint, timeout, retry e polling. Il wrapper locale può riportare opzioni senza applicarle e restituire immagini vuote. Non implica disponibilità di un motore o fedeltà multi-formato. |
-| pipeline_settings | Parallelismo e log. `skip_existing` può riusare output precedenti: conservare identità e non dedurre successo dalla presenza di un file. |
+| directories | Paths relative to the workspace; `source_ebooks` is a historical name, use `source_documents`. The validation report is in the root, the pipeline state in logs. |
+| validation_thresholds | Validation thresholds and selection of the documents; they do not certify fidelity or the preservation of the assets. |
+| cleaning_settings | Legacy options. The global transformations can lose content; keep the original extraction and compare the results. |
+| llm_presets / chunking_settings | Size presets for tokenizer/chunk, not the selection of an inference provider. `semantic`, `fixed_size`, `sliding_window` are JSON values; the CLI has no `--chunking-strategy`. The semantic overlap can be zero. |
+| conversion_settings | Routing, endpoint, timeout, retry and polling. The local wrapper can report options without applying them and return empty images. It does not imply the availability of an engine or multi-format fidelity. |
+| pipeline_settings | Parallelism and logs. `skip_existing` can reuse previous outputs: keep the identities and do not infer success from the presence of a file. |
 
-Il loader legacy non ha validazione tipizzata completa: JSON non leggibile può
-produrre un warning e usare i default. Controllare l'output di `--config-only`.
-La shell prevale su `.env`; `.env` prevale sui campi che hanno un override
-esplicito. [Reference delle variabili](toolchain-legacy.md) e
-[template](../../.env.example). Non mettere chiavi nei report o negli snapshot.
+The legacy loader has no complete typed validation: unreadable JSON can produce a warning and use the defaults. Check the output of `--config-only`. The shell prevails over `.env`; `.env` prevails over the fields that have an explicit override. [Reference of the variables](toolchain-legacy.md); the [template](../../.env.example) now documents only the `MDF_` settings of the new converter, not these variables. Do not put keys in reports or snapshots.
 
-Chunk e metadati YAML includono chunk_id/source_file/indice/total_chunks e misure
-di contenuto. `validation_report.json` descrive summary e risultati per filename;
-i report di chunking dipendono dalla modalità. Gli esempi storici di voto A/B o
-di un report universale non sostituiscono lo schema realmente prodotto.
+Chunks and YAML metadata include chunk_id/source_file/index/total_chunks and content measures. `validation_report.json` describes summary and results per filename; the chunking reports depend on the mode. The historical examples of an A/B vote or of a universal report do not replace the schema actually produced.
 
-[Backend e scenari](../how-to/pipeline-backends.md), [indice](README.md).
+[Backends and scenarios](../how-to/pipeline-backends.md), [index](README.md).

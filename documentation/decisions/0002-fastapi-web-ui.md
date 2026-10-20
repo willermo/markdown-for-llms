@@ -1,43 +1,26 @@
-# ADR 0002 — FastAPI, worker separato e Web UI
+# ADR 0002 — FastAPI, separate worker and Web UI
 
-- Data: 2026-10-02
-- Stato decisione: accettata
-- Stato implementazione: I1 r004 GO, integrato in dev a f8bf44c e push verificato il 2026-10-17; UI statica secondo ADR0009, funzioni avanzate successive
-- Origine: preferenza esplicita FastAPI e richiesta GUI/Web UI dell'utente
+- Date: 2026-10-02
+- Decision status: accepted
+- Implementation status: I1 r004 GO, integrated into dev at f8bf44c and push verified on 2026-10-17; static UI according to ADR 0009, advanced features later
+- Origin: explicit preference for FastAPI and the user's request for a GUI/Web UI
 
-## Contesto e decisione
+## Context and decision
 
-Adottare FastAPI per le API della nuova applicazione. I servizi applicativi devono
-essere richiamabili anche dalla CLI. Eseguire OCR e conversioni lunghe in un worker
-separato dal processo che risponde alle richieste HTTP, con stato persistente dei job.
-Tecnologia della coda e schema preciso dei job restano da progettare.
+Adopt FastAPI for the API of the new application. The application services must also be callable from the CLI. Run OCR and long conversions in a worker separate from the process that answers the HTTP requests, with persistent job state. Queue technology and the precise job schema remain to be designed (at the time of the decision; for I1, ADR 0009 adopts a SQLite queue with claim/lease, see the refinement below).
 
-Fornire una Web UI utilizzabile nel browser su Linux, macOS e Windows: caricamento,
-avanzamento, archivio, anteprima Markdown e asset, confronto col sorgente, revisione
-delle proposte OCR e download. Introdurre il percorso minimo nella prima versione
-che integra API, worker e storage; completare la revisione nelle fasi successive.
+Provide a Web UI usable in the browser on Linux, macOS and Windows: upload, progress, archive, preview of Markdown and assets, comparison with the source, review of the OCR proposals and download. Introduce the minimal path in the first version that integrates API, worker and storage; complete the review in the later phases.
 
-FastAPI genera documentazione delle API con OpenAPI e Swagger UI; queste capacità
-supportano gli sviluppatori. L'interfaccia per convertire e revisionare documenti
-richiede un frontend dedicato. [Fonte FastAPI](https://fastapi.tiangolo.com/features/).
+FastAPI generates API documentation with OpenAPI and Swagger UI; these capabilities support developers. The interface to convert and review documents requires a dedicated frontend. [FastAPI source](https://fastapi.tiangolo.com/features/).
 
-## Alternative e conseguenze
+## Alternatives and consequences
 
-Una GUI desktop imporrebbe distribuzioni e aggiornamenti aggiuntivi. Una Web UI
-servita insieme all'applicazione risponde al requisito locale e multipiattaforma.
-React con TypeScript è un candidato, non una dipendenza già approvata o installata.
-La scelta sarà motivata da anteprima, confronto, manutenzione e costo di sviluppo.
+A desktop GUI would impose additional distributions and updates. A Web UI served together with the application meets the local and cross-platform requirement. React with TypeScript is a candidate, not a dependency already approved or installed. The choice will be justified by preview, comparison, maintenance and development cost (for I1, ADR 0009 chose HTML, CSS and JavaScript without a framework; React with TypeScript remains an option when comparison and review justify its cost).
 
-La velocità delle API non determina quella dell'OCR: misurare separatamente risposta
-HTTP, attesa in coda e inferenza. Le librerie AI restano dietro adattatori, senza
-legare la logica di conversione al framework HTTP.
+The speed of the API does not determine that of OCR: measure HTTP response, queue wait and inference separately. The AI libraries stay behind adapters, without tying the conversion logic to the HTTP framework.
 
-Dettagli: [progetto Web UI](../architecture/web-ui.md), [roadmap](../roadmap.md).
+Details: [Web UI design](../architecture/web-ui.md), [roadmap](../roadmap.md).
 
-## Precisazione 2026-10-17 — Primo incremento
+## Refinement of 2026-10-17 — First increment
 
-[ADR0009](0009-first-usable-product.md) adotta HTML/CSS/JavaScript serviti da
-FastAPI, con testo inerte e galleria raster, e coda SQLite/worker separato.
-CLI sugli stessi servizi. Primo incremento realizzato e GO r004 dopo due
-review indipendenti; integrato in dev a f8bf44c, push verificato. Confronto e revisione
-avanzati restano successivi; perimetro iniziale provato Linux CPU/loopback.
+[ADR 0009](0009-first-usable-product.md) adopts HTML/CSS/JavaScript served by FastAPI, with inert text and a raster gallery, and a SQLite queue with a separate worker. CLI on the same services. First increment delivered and GO r004 after two independent reviews; integrated into dev at f8bf44c, push verified. Advanced comparison and review remain later; initial scope proven on Linux CPU/loopback.

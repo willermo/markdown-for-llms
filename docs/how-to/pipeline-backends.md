@@ -1,39 +1,18 @@
-# Scegliere backend e scenari della pipeline
+# Choose backends and scenarios of the pipeline
 
-Preparare [ambiente e preflight](uv-environment.md), generare la
-[configurazione JSON](../reference/pipeline-config.md) nel workspace esterno
-e conservare sorgente/estrazione originale. `RUN_ENV` è il path assoluto della
-venv canonica. Eseguire dapprima `--config-only` per controllare directory e routing.
+Prepare [environment and preflight](uv-environment.md), generate the [JSON configuration](../reference/pipeline-config.md) in the external workspace and keep the source and the original extraction. `RUN_ENV` is the absolute path of the canonical venv. Run `--config-only` first to check directories and routing.
 
-## Backend e formati
+## Backends and formats
 
-PDF usa `pdf_converter`: `local_marker` richiede un server deliberatamente
-preparato e avviato; `cloud_marker` usa l'endpoint configurato e la chiave
-indicata da `marker_cloud_api_key_env`. Il cloud carica documenti al servizio:
-selezionarlo esplicitamente soltanto per dati ammessi. Nessuna acquisizione ML
-o attivazione server fa parte del percorso client/Pandoc.
+PDF uses `pdf_converter`: `local_marker` requires a server deliberately prepared and started; `cloud_marker` uses the configured endpoint and the key named by `marker_cloud_api_key_env`. The cloud uploads documents to the service: select it explicitly only for admitted data. No ML acquisition or server activation is part of the client/Pandoc path.
 
-Non-PDF usa Pandoc per epub/mobi/azw/azw3/html/htm/docx/rtf. Supporto dichiarato
-non garantisce la conversione di ogni variante. `marker_document_formats`,
-vuoto per default, abilita opt-in il routing Marker anche per formati diversi
-da PDF, inclusi formati che il server deve supportare realmente. La lista non
-installa né collauda quel motore. Un backend non riconosciuto o un errore Marker
-su un non-PDF può produrre fallback **Pandoc**, senza caricamento cloud implicito;
-controllare converter_used e messaggi. Fonti operative:
-[unified_converter.py](../../unified_converter.py), [config.py](../../config.py).
+Non-PDF uses Pandoc for epub/mobi/azw/azw3/html/htm/docx/rtf. Declared support does not guarantee the conversion of every variant. `marker_document_formats`, empty by default, enables an opt-in Marker routing also for formats other than PDF, including formats that the server must really support. The list does not install or test that engine. An unrecognized backend or a Marker error on a non-PDF can produce a **Pandoc** fallback, without implicit cloud upload; check converter_used and the messages. Operational sources: [unified_converter.py](../../unified_converter.py), [config.py](../../config.py).
 
-Il cloud invia il file, riceve un check_url e fa polling. `max_polls=300` e
-`poll_interval=2` sono default finiti; `MAX_POLLS<=0` rende il polling illimitato.
-`CONVERSION_TIMEOUT=0` rende illimitata l'attesa di risposta, distinta da
-`CONNECT_TIMEOUT`. Preferire valori finiti ed espliciti; aumentare timeout non
-ripara un documento errato o un server senza memoria. Opzioni ML/OCR/imaging
-non provano che il wrapper locale le applichi. `/health` misura liveness.
+The cloud sends the file, receives a check_url and polls. `max_polls=300` and `poll_interval=2` are finite defaults; `MAX_POLLS<=0` makes the polling unlimited. `CONVERSION_TIMEOUT=0` makes the wait for the response unlimited, distinct from `CONNECT_TIMEOUT`. Prefer finite and explicit values; increasing timeouts does not fix a wrong document or a server without memory. ML/OCR/imaging options do not prove that the local wrapper applies them. `/health` measures liveness.
 
-## Documenti e fasi
+## Documents and phases
 
-Creare `source_pdfs` e `source_documents` nel workspace, inserire file ammessi
-e usare conversione completa o passi distinti. Il comando diretto del convertitore
-richiede source-dir/output-dir e produce i propri risultati e report:
+Create `source_pdfs` and `source_documents` in the workspace, put admitted files there and use the full conversion or separate steps. The direct command of the converter requires source-dir/output-dir and produces its own results and reports:
 
 ```bash
 "$RUN_ENV/bin/python" -I -B -m master_workflow --config-only
@@ -46,22 +25,10 @@ richiede source-dir/output-dir e produce i propri risultati e report:
 "$RUN_ENV/bin/python" -I -B -m batch_monitor --check-queue
 ```
 
-La pipeline può scartare documenti in validazione; il monitor non certifica
-fedeltà. Confrontare formule, numeri, codice, ordine, report completi e asset.
-HTML/Pandoc può perdere anchor; cleaning può rimuovere contenuto e asset non
-vengono sempre copiati. Un exit0 non annulla queste perdite.
+The pipeline can discard documents in validation; the monitor does not certify fidelity. Compare formulas, numbers, code, order, complete reports and assets. HTML/Pandoc can lose anchors; cleaning can remove content and assets are not always copied. An exit 0 does not cancel these losses.
 
-Per ricerca e lettura usare il Markdown completo con asset. Per retrieval o
-limiti di contesto produrre chunk come derivato, controllandone sequenza e
-overlap. Nessuno script prepare_training_data/create_embeddings/RAG è fornito:
-integrazioni esterne richiedono un progetto e un trattamento dati separati.
-Non copiare ciecamente soltanto validated_markdown quando la validazione ha
-escluso sorgenti. Le forme console e i moduli isolati sono descritte nella
-[reference CLI](../reference/toolchain-legacy.md).
+For research and reading use the complete Markdown with assets. For retrieval or context limits produce chunks as a derivative, checking their sequence and overlap. No prepare_training_data/create_embeddings/RAG script is provided: external integrations require a separate project and data handling. Do not blindly copy only validated_markdown when the validation has excluded sources. The console forms and the isolated modules are described in the [CLI reference](../reference/toolchain-legacy.md).
 
-Per API locale, pesi/font, inferenza CPU/GPU e deploy seguire i
-[limiti e preparazione Docker](marker-legacy-docker.md): build e contratto
-offline non provano conversioni reali Marker. Non eseguire servizi per un test
-veloce né usare un dummy PDF come collaudo di contenuto.
+For the local API, weights/fonts, CPU/GPU inference and deploy follow the [Docker limits and preparation](marker-legacy-docker.md): build and offline contract do not prove real Marker conversions. Do not run services for a fast test or use a dummy PDF as a content test.
 
-[Indice](README.md).
+[Index](README.md).

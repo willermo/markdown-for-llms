@@ -1,148 +1,51 @@
-# Reference del prodotto locale I1
+# Reference of the local product I1
 
-Configurazione amministrativa: [.env.example](../../.env.example). Precedenza:
-default → file selezionato con `--env-file` → ambiente → `--data-root` e
-`--model-root`. Il file non viene cercato implicitamente. Prefisso `MDF_`,
-nomi sconosciuti e valori non validi rifiutati, nessuna configurazione JSON
-aggiuntiva per l’utente. Le identità dello storage, dello schema e della
-configurazione sono verificate da CLI, API e worker. Lo schema iniziale è1;
-schemi futuri sono rifiutati. Non sono previste migrazioni distruttive.
+Administrative configuration: [.env.example](../../.env.example). Precedence: defaults → file selected with `--env-file` → environment → `--data-root` and `--model-root`. The file is never looked up implicitly. `MDF_` prefix, unknown names and invalid values rejected, no additional JSON configuration for the user. The identities of storage, schema and configuration are verified by CLI, API and worker. The initial schema is 1; future schemas are rejected. No destructive migrations are planned.
 
-| Variabili MDF | Default | Significato |
+| MDF variables | Default | Meaning |
 | --- | --- | --- |
-| `DATA_ROOT`, `MODEL_ROOT` | `./mdf-data`, `./mdf-models` | Directory distinte, senza symlink |
-| `HOST`, `PORT` | `127.0.0.1`,8765 | Solo loopback IPv4; Host localhost o127.0.0.1 sulla porta scelta |
-| `BIND_PROFILE`, `REVIEW_PROVIDER` | `marker-cpu-v1`, `disabled` | Unico profilo ammesso, nessuna revisione AI |
-| `TIMEOUT_SECONDS` |450| Termine del figlio, errore visibile; non una SLA |
-| `MEMORY_MIB`, `THREADS`, `PROCESS_LIMIT` |16384,4,512| RLIMIT_AS per processo, RSS del gruppo campionata; affinità CPU e limiti processi |
-| `UPLOAD_MIB`, `MAX_PAGES` |50,50| Rifiuto esplicito; nessun taglio `page_range` |
-| `OUTPUT_MIB`, `LOG_MIB` |512,10| File size limit più guardia totale scratch; log limitato |
-| `STORAGE_MIB`, `RESERVE_MIB` |20480,1024| Quota archivio e spazio libero; nessuna cancellazione automatica |
-| `MAX_PIXELS`, `MAX_DIMENSION` |25000000,16000| Limiti prima del decode PNG/JPEG; altri formati esclusi dalla galleria |
-| `POLL_SECONDS`, `LEASE_SECONDS`, `GRACE_SECONDS` |1,15,5| Poll worker, lease, grazia prima dell’arresto forzato |
+| `DATA_ROOT`, `MODEL_ROOT` | `./mdf-data`, `./mdf-models` | Distinct directories, without symlinks |
+| `HOST`, `PORT` | `127.0.0.1`, 8765 | IPv4 loopback only; Host localhost or 127.0.0.1 on the chosen port |
+| `BIND_PROFILE`, `REVIEW_PROVIDER` | `marker-cpu-v1`, `disabled` | Only admitted profile, no AI review |
+| `TIMEOUT_SECONDS` | 450 | Deadline of the child, visible error; not an SLA |
+| `MEMORY_MIB`, `THREADS`, `PROCESS_LIMIT` | 16384, 4, 512 | RLIMIT_AS per process, sampled RSS of the group; CPU affinity and process limits |
+| `UPLOAD_MIB`, `MAX_PAGES` | 50, 50 | Explicit rejection; no `page_range` cut |
+| `OUTPUT_MIB`, `LOG_MIB` | 512, 10 | File size limit plus total scratch guard; limited log |
+| `STORAGE_MIB`, `RESERVE_MIB` | 20480, 1024 | Archive quota and free space; no automatic deletion |
+| `MAX_PIXELS`, `MAX_DIMENSION` | 25000000, 16000 | Limits before PNG/JPEG decoding; other formats excluded from the gallery |
+| `POLL_SECONDS`, `LEASE_SECONDS`, `GRACE_SECONDS` | 1, 15, 5 | Worker poll, lease, grace before the forced stop |
 
-Tutti gli interi sono positivi e finiti. Il lease deve essere almeno tre volte
-il polling. Le opzioni di conversione sono passate al pin e registrate separando
-richieste, traduzione nativa e valori effettivi. `force_ocr` e `strip_existing_ocr`
-sono booleani; gli altri parametri del profilo sono fissi. Il mapping
-`disable_image_extraction=false` usa il campo nativo `extract_images=true`.
-Batch layout/recognition/detection/table/OCR-error1, pdftext worker1, CPU,
-DPI96/192, interop1, `use_llm=false`, `paginate_output=true`.
+All integers are positive and finite. The lease must be at least three times the polling. The conversion options are passed to the pin and recorded separating requests, native translation and effective values. `force_ocr` and `strip_existing_ocr` are booleans; the other parameters of the profile are fixed. The mapping `disable_image_extraction=false` uses the native field `extract_images=true`. Batch layout/recognition/detection/table/OCR-error 1, pdftext worker 1, CPU, DPI 96/192, interop 1, `use_llm=false`, `paginate_output=true`.
 
-| Comando `mdf` | Funzione |
+| `mdf` command | Function |
 | --- | --- |
-| `serve` | API/UI loopback; nessuna inferenza nel processo |
-| `worker [--once]` | Worker separato; una sola proprietà ML per storage |
-| `convert FILE... [--wait] [--force-ocr]` | Submit separati; attesa opzionale del worker; batch nonzero per errori |
-| `configure --expected-config HASH [--storage-mib N] [--timeout-seconds N]` | Cambio amministrativo con vecchia configurazione verificata e archivio fermo |
-| `jobs`, `show ID` | Stato, identità, problemi, configurazione e manifest |
-| `retry ID` | Nuova esecuzione collegata a quella terminata |
-| `cancel ID` | Annulla coda o richiede arresto dei processi attivi |
-| `download ID --output PATH [--overwrite]` | ZIP dopo verifica identità; sovrascrittura solo esplicita |
+| `serve` | Loopback API/UI; no inference in the process |
+| `worker [--once]` | Separate worker; a single ML ownership per storage |
+| `convert FILE... [--wait] [--force-ocr]` | Separate submissions; optional wait for the worker; nonzero batch for errors |
+| `configure --expected-config HASH [--storage-mib N] [--timeout-seconds N]` | Administrative change with the old configuration verified and the archive stopped |
+| `jobs`, `show ID` | State, identity, problems, configuration and manifest |
+| `retry ID` | New execution linked to the finished one |
+| `cancel ID` | Cancels the queued job or requests the stop of the active processes |
+| `download ID --output PATH [--overwrite]` | ZIP after identity check; overwriting only when explicit |
 
-Ogni comando accetta prima del sottocomando `--env-file`, `--data-root`,
-`--model-root`. Equivalente: `python -I -B -m markdown_for_llms.cli`.
-Gli esiti CLI sono JSON; gli assi `state`, `bundle`, `quality` e il messaggio
-restano distinti. `unchecked` scaricabile è un avviso; `incomplete`/`invalid`
-non sono successi del batch.
+Every command accepts `--env-file`, `--data-root`, `--model-root` before the subcommand. Equivalent: `python -I -B -m markdown_for_llms.cli`. The CLI outcomes are JSON; the axes `state`, `bundle`, `quality` and the message stay distinct. A downloadable `unchecked` is a warning; `incomplete`/`invalid` are not successes of the batch.
 
-API sotto `/api/v1`: `GET session`, `GET readiness`, `GET runs`, `GET runs/ID`,
-`POST runs`, `POST runs/ID/retry`, `POST runs/ID/cancel`, `GET runs/ID/text?offset=N`,
-`GET runs/ID/artifacts/ARTIFACT_ID`, `GET runs/ID/source`, `GET runs/ID/bundle`.
-Upload: body PDF binario, header `X-Filename` codificato percent-encoding e
-`Idempotency-Key` opzionale. Mutazioni: Origin esatto e `X-MDF-CSRF` dalla sessione.
-CORS chiusa; OpenAPI JSON locale, nessuna Swagger/CDN. Gli asset sono indirizzati
-per ID, mai per path della richiesta. Il testo è paginato a256KiB con offset byte
-allineato UTF-8; `complete` segnala la lettura integrale. Offset negativi, oltre
-fine o su byte di continuazione restituiscono HTTP400, senza invalidare il
-bundle; l’offset di fine documento restituisce una porzione vuota completa.
-`next_offset` è sempre riutilizzabile. UTF-8 realmente corrotto resta un
-errore d’integrità e blocca lo ZIP.
+API under `/api/v1`: `GET session`, `GET readiness`, `GET runs`, `GET runs/ID`, `POST runs`, `POST runs/ID/retry`, `POST runs/ID/cancel`, `GET runs/ID/text?offset=N`, `GET runs/ID/artifacts/ARTIFACT_ID`, `GET runs/ID/source`, `GET runs/ID/bundle`. Upload: binary PDF body, header `X-Filename` with percent-encoding and optional `Idempotency-Key`. Mutations: exact Origin and `X-MDF-CSRF` from the session. CORS closed; local OpenAPI JSON, no Swagger/CDN. Assets are addressed by ID, never by the path of the request. The text is paginated at 256 KiB with a byte offset aligned to UTF-8; `complete` signals that everything has been read. Negative offsets, offsets beyond the end or on continuation bytes return HTTP 400, without invalidating the bundle; the offset of the end of the document returns a complete empty portion. `next_offset` is always reusable. Really corrupted UTF-8 stays an integrity error and blocks the ZIP.
 
-Il manifest schema1 include documento/run/tentativo, source hash, inventario
-con ID/hash/byte, profilo/tempi, controllo riferimenti e limiti. Esclude segreti
-ambientali e path host. Il JSON del modello nativo e i log limitati restano
-nelle directory diagnostiche dei tentativi; non sono inseriti automaticamente
-nel download ordinario. Il raw non viene normalizzato o ripulito.
+The manifest schema 1 includes document/run/attempt, source hash, inventory with ID/hash/bytes, profile/timings, reference check and limits. It excludes environment secrets and host paths. The JSON of the native model and the limited logs stay in the diagnostic directories of the attempts; they are not included automatically in the ordinary download. The raw output is not normalized or cleaned.
 
-La directory dati deve appartenere all’utente corrente e non essere scrivibile
-da gruppo o altri utenti. Le radici dati e modelli non possono coincidere né
-contenersi. L’isolamento protegge dai documenti importati e dai figli di
-conversione; non protegge da un altro processo ostile con lo stesso account che
-modifichi direttamente database, runtime o directory amministrative.
+The data directory must belong to the current user and must not be writable by the group or by other users. The data and model roots cannot coincide or contain each other. The isolation protects from the imported documents and from the conversion children; it does not protect from another hostile process with the same account that modifies database, runtime or administrative directories directly.
 
+The shared capacity includes sources, attempts, logs, metadata, SQLite, ZIP and staging. Every writer reserves the space before growing: upload up to the limit plus 64 KiB, worker `2 × OUTPUT_MIB + LOG_MIB + 1` MiB, publication with an additional margin for the DB. 256 KiB remain for the administrative check. The bytes already present in the reservation are not counted a second time. The free reserve of the volume is added to the commitments still to be written. Inference does not hold the admission lock or a DB transaction. Scratch size and RSS remain sampled checks; before publishing, quota and commitments are checked again. During the ticks only the own budget and the physical reserve are checked; the global scan happens at admission and at publication, outside inference. Engine/raster/manifest metadata have a limit of 1 MiB and a maximum depth of 128 containers, inventory 4096 entries. The limit includes the actual UTF-8 bytes and the final newline. The complete manifest is validated before `publishing`: the envelope adds depth to the engine metadata. New manifests in file, DB and ZIP share the same UTF-8 serialization; the historical ones are not rewritten. NaN, Infinity and exponents that produce non-finite numbers are rejected. An exceeded limit produces a visible error.
 
-La capacità condivisa comprende sorgenti, tentativi, log, metadata, SQLite,
-ZIP e staging. Ogni writer prenota lo spazio prima della crescita: upload fino
-al limite più64KiB, worker `2 × OUTPUT_MIB + LOG_MIB + 1`MiB, pubblicazione
-con margine aggiuntivo per il DB.256KiB restano per il controllo amministrativo.
-I byte già presenti nella prenotazione non sono sommati una seconda volta.
-La riserva libera del volume si aggiunge agli impegni ancora da scrivere.
-L’inferenza non detiene il lock di ammissione o una transazione DB.
-La dimensione scratch e RSS restano controlli campionati; prima di pubblicare
-si ricontrollano quota e impegni. Durante i tick si controllano solo il budget
-proprio e la riserva fisica; la scansione globale avviene all’ammissione e
-alla pubblicazione, fuori dall’inferenza. Metadata motore/raster/manifest
-hanno limite1MiB e profondità massima128contenitori, inventario4096voci.
-Il limite comprende i byte UTF-8 effettivi e il newline finale. Il manifest
-completo è validato prima di `publishing`: l’envelope aggiunge profondità ai
-metadata del motore. Nuovi manifest in file, DB e ZIP condividono la stessa
-serializzazione UTF-8; quelli storici non vengono riscritti.
-NaN, Infinity ed esponenti che producono numeri non finiti sono rifiutati. Un limite superato produce un errore visibile.
+The HTTP upload writes directly into the attributed staging, without a second copy. Rejections, interrupted streams and conflicts are collected; the accepted sources stay kept. A replay with a key already registered compares signature, size, hash and options by reading the stream without writing a copy of it, also when there is no space for a new upload.
 
-L’upload HTTP scrive direttamente nello staging attribuito, senza seconda copia.
-Rifiuti, stream interrotti e conflitti vengono raccolti; le fonti accettate
-restano conservate. Un replay con chiave già registrata confronta firma,
-dimensione, hash e opzioni leggendo lo stream senza scriverne una copia,
-anche quando non c’è spazio per un nuovo upload.
+The ZIP is a single immutable cache per attempt, with digest and CRC check at every delivery; all the originals and the manifest are verified also when the cache exists. It uses ZIP_STORED: the space needed is the sum of the members, of the manifest and of the headers, with a 64 KiB margin. Concurrent creations of the same ZIP are serialized; repeated downloads and disconnections reuse the file. The `.part` files belong to a reservation and are removed on error or in the recovery after a crash. No collection based only on the suffix; live writers are protected by flock. The cache counts in the quota, without a new copy at every click.
 
-Lo ZIP è una cache immutabile unica per tentativo, con digest e controllo CRC
-ad ogni consegna; tutti gli originali e il manifest vengono verificati anche
-quando la cache esiste. Usa ZIP_STORED: lo spazio necessario è la somma dei membri,
-del manifest e degli header, con margine64KiB. Le creazioni concorrenti dello
-stesso ZIP sono serializzate; download ripetuti e disconnessioni riusano il file.
-I `.part` appartengono a una prenotazione e vengono rimossi su errore o recupero
-post crash. Nessuna raccolta basata soltanto sul suffisso; i writer vivi sono
-protetti da flock. La cache conta nella quota, senza nuova copia ad ogni click.
+A missing, non-regular, unsafe or altered file invalidates the bundle. `EMFILE`, `EIO`, `ENOMEM` and transient permissions make the reading unavailable: HTTP 503 with `retryable=true`, without permanent invalidation. After the recovery the same result is retried. SQLite errors are explicit; the worker limits the recovery attempts and, with a DB that cannot be written, ends declaring the reconciliation needed at restart, without inventing a persisted state.
 
-Un file assente, non regolare, non sicuro o alterato invalida il bundle.
-`EMFILE`, `EIO`, `ENOMEM` e permessi transitori rendono la lettura indisponibile:
-HTTP503 con `retryable=true`, senza invalidazione permanente. Dopo il recupero
-si ritenta lo stesso risultato. Gli errori SQLite sono espliciti; il worker
-limita i tentativi di recupero e, con DB non scrivibile, termina dichiarando
-la riconciliazione necessaria al riavvio, senza inventare uno stato persistito.
+A capacity, reading or synchronization error during the recovery leaves `publishing` recoverable: detail and list expose `error` and `recovery`. The reading shows the last recorded reason, when available, without global scan or admission lock. If the quota prevents recording the diagnosis, a generic reason of deferred publication appears when the worker does not hold its lock; no diagnostic write beyond the quota. If it cannot record the diagnosis, the worker ends releasing the ownership: the deferred state stays observable without a capacity check on reading. An active publication without errors does not propose a restart automatically. The restart of the worker attempts a finite reconciliation of the same ID, without new inference. Before `completed` it repeats the fsync of the files and tree and of the parents `attempts`/`results`, also when the rename has already been done. Readable hashes do not attest durability by themselves. A persistent fault does not enable the download. The complete result can still be in `attempts` after an error before the rename, or already in `results`: both locations are recoverable. Both present or both absent, an inconsistent manifest or altered files produce an explicit integrity error, keeping the remaining bytes. An incomplete scratch in `running` instead stays `interrupted` with a distinct retry. Before the capacity check the recovery collects the identified children of the dead worker and releases their commitments; the live owners stay protected.
 
+Symlink/hardlink/FIFO/socket entries in the scratch block the attempt. After the failure and the collection of the children, the count of the attributed partial results in the DB includes the unsafe entries without following or opening them (at least 4 KiB per special entry); other submit/ZIP/retry operations can proceed within the quota. Unattributed paths, sources, published results, DB and runtime stay strictly checked. No automatic removal of the partial result.
 
-Un errore di capacità, lettura o sincronizzazione durante il recupero lascia
-`publishing` recuperabile: dettaglio e lista espongono `error` e `recovery`.
-La lettura mostra l’ultimo motivo registrato, quando disponibile, senza
-scansione globale né lock di ammissione. Se la quota impedisce di registrare
-la diagnosi, compare un motivo generico di pubblicazione differita quando
-il worker non detiene il suo lock; nessuna scrittura diagnostica oltre quota.
-Se non può registrare la diagnosi, il worker termina liberando la proprietà:
-lo stato differito resta osservabile senza un controllo di capacità in lettura.
-La pubblicazione attiva senza errori non propone automaticamente un riavvio.
-Il riavvio del worker tenta una
-riconciliazione finita dello stesso ID, senza nuova inferenza. Prima di
-`completed` ripete fsync dei file/albero e dei parent `attempts`/`results`,
-anche quando il rename risulta già eseguito. Hash leggibili non attestano
-da soli la durabilità. Un guasto persistente non abilita il download.
-Il risultato completo può trovarsi ancora in `attempts` dopo un errore prima
-del rename, oppure già in `results`: entrambe le posizioni sono recuperabili.
-Entrambe presenti/assenti, manifest incongruente o file alterati producono
-un errore d’integrità esplicito, conservando i byte rimasti. Uno scratch
-incompleto in `running` resta invece `interrupted` con retry distinto.
-Prima del controllo di capacità il recupero raccoglie i figli identificati
-del worker morto e rilascia i relativi impegni; i proprietari vivi restano protetti.
-
-Voci symlink/hardlink/FIFO/socket nello scratch bloccano il tentativo. Dopo
-il fallimento e la raccolta dei figli, il conteggio dei parziali attribuiti
-nel DB include le voci non sicure senza seguirle o aprirle (minimo4KiB per
-voce speciale); altri submit/ZIP/retry possono proseguire entro quota.
-Percorsi non attribuiti, sorgenti, risultati pubblicati, DB e runtime restano
-strettamente controllati. Nessuna rimozione automatica del parziale.
-
-Una cache ZIP corrotta o priva della ricevuta rimane indisponibile; I1 non
-include un comando di ricostruzione/rimozione. Le guardie sono campionate:
-la crescita WAL e il consumo di altri programmi non sono una quota kernel.
-Il controllo finale impedisce `completed` quando la capacità risulta superata.
+A corrupted ZIP cache or one without its receipt stays unavailable; I1 does not include a rebuild or removal command. The guards are sampled: the WAL growth and the consumption of other programs are not a kernel quota. The final check prevents `completed` when the capacity is exceeded.

@@ -1,33 +1,20 @@
-# ADR 0003 — SQLite e storage su filesystem
+# ADR 0003 — SQLite and filesystem storage
 
-- Data: 2026-10-02
-- Stato decisione: accettata per la prima versione locale
-- Stato implementazione: fondazioni I1 r004 GO, integrate in dev a f8bf44c e push verificato il 2026-10-17; revisioni, backup/ripristino e ulteriori funzioni restano da realizzare/provare
-- Origine: preferenza SQLite dell'utente e impostazione generale accettata
+- Date: 2026-10-02
+- Decision status: accepted for the first local version
+- Implementation status: I1 foundations r004 GO, integrated into dev at f8bf44c and push verified on 2026-10-17; revisions, backup and restore and further features remain to be built and proven
+- Origin: the user's SQLite preference and accepted general approach
 
-## Contesto e decisione
+## Context and decision
 
-Usare SQLite per documenti, esecuzioni, stati dei job, configurazioni effettive prive
-di segreti, problemi rilevati, revisioni e riferimenti agli artefatti. Conservare file
-sorgente, immagini, risultati e cache su filesystem, separando lo storage durevole
-dalle cache eliminabili. I nomi di file forniti dall'utente non sono identificatori.
+Use SQLite for documents, executions, job states, effective configurations without secrets, detected problems, revisions and references to the artifacts. Keep source files, images, results and caches on the filesystem, separating durable storage from disposable caches. The file names supplied by the user are not identifiers.
 
-Identificare i sorgenti tramite hash e assegnare identità distinte alle esecuzioni.
-La riusabilità di un risultato dipende anche da configurazione e versioni di motori,
-modelli e pipeline. Una nuova esecuzione non sovrascrive la precedente.
+Identify the sources by hash and assign distinct identities to the executions. Whether a result can be reused also depends on the configuration and on the versions of engines, models and pipeline. A new execution does not overwrite the previous one.
 
-Pubblicare un risultato soltanto dopo scrittura e controlli degli artefatti. Progettare
-esplicitamente recupero da crash e riconciliazione tra DB e filesystem: non esiste
-una transazione unica implicita che li comprenda entrambi. Prevedere migrazioni,
-backup coerenti e verifica di ripristino.
+Publish a result only after the artifacts have been written and checked. Design explicitly the crash recovery and the reconciliation between DB and filesystem: there is no single implicit transaction covering both. Plan migrations, consistent backups and restore verification.
 
-## Alternative e conseguenze
+## Alternatives and consequences
 
-SQLite riduce i servizi da amministrare nella distribuzione su singolo host. Usare
-transazioni brevi e misurare contesa tra API e worker. PostgreSQL diventa una scelta
-da riesaminare per più host o concorrenza di scrittura elevata; non è un requisito
-della prima versione. DB e storage locali devono risiedere su volumi persistenti.
+SQLite reduces the services to administer in a single-host distribution. Use short transactions and measure the contention between API and worker. PostgreSQL becomes a choice to re-examine for several hosts or high write concurrency; it is not a requirement of the first version. Local DB and storage must reside on persistent volumes.
 
-La [documentazione SQLite](https://sqlite.org/whentouse.html) chiarisce i limiti
-di concorrenza e l'opportunità di un database client/server in altri scenari.
-Collegamento operativo: [roadmap](../roadmap.md).
+The [SQLite documentation](https://sqlite.org/whentouse.html) clarifies the concurrency limits and when a client/server database fits other scenarios. Operational link: [roadmap](../roadmap.md).

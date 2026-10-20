@@ -1,12 +1,11 @@
-# Guide pratiche
+# How-to guides
 
-- [Preparare e aggiornare ambiente uv legacy](uv-environment.md).
-- [Preparare il prodotto locale sperimentale](local-product-setup.md).
-- [Eseguire il benchmark locale di conversione](fidelity-benchmark.md).
-- [Preparare e verificare Marker in Docker](marker-legacy-docker.md).
-- [Scegliere backend e scenari della pipeline](pipeline-backends.md).
+- [Prepare and update the legacy uv environment](uv-environment.md).
+- [Prepare the experimental local product](local-product-setup.md).
+- [Run the local conversion benchmark](fidelity-benchmark.md).
+- [Prepare and verify Marker in Docker](marker-legacy-docker.md).
+- [Choose backends and scenarios of the pipeline](pipeline-backends.md).
 
-Procedure della pipeline legacy, con prerequisiti e limiti espliciti.
-La guida del prodotto locale è separata dalle procedure legacy.
+Procedures of the legacy pipeline, with explicit prerequisites and limits. The guide of the local product is separate from the legacy procedures.
 
-[Indice documentazione](../README.md).
+[Documentation index](../README.md).

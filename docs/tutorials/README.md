@@ -1,9 +1,7 @@
-# Tutorial
+# Tutorials
 
-Percorsi guidati per imparare eseguendo attività con un risultato verificabile.
-È disponibile il [primo PDF locale](first-local-pdf.md), nel browser o nella CLI.
+Guided paths to learn by carrying out tasks with a verifiable result. The [first local PDF](first-local-pdf.md) is available, in the browser or in the CLI.
 
-Percorsi successivi: prima revisione OCR; ambiente di sviluppo e prima modifica verificata. Ogni tutorial
-indicherà versione, prerequisiti, campione utilizzabile e risultato atteso.
+Later paths: first OCR review; development environment and first verified change. Each tutorial will state version, prerequisites, usable sample and expected result.
 
-[Indice documentazione](../README.md).
+[Documentation index](../README.md).

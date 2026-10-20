@@ -1,99 +1,35 @@
-# Preparare il prodotto locale
+# Prepare the local product
 
-Questa guida riguarda il package sperimentale `markdown_for_llms`, distinto dai
-comandi `markdown-*` legacy. Target: Linux x86_64, CPython managed 3.12.13, CPU,
-singolo utente e filesystem locale. Il processo API non importa Marker o torch;
-il worker usa lo stesso interprete della venv per i figli isolati.
+This guide covers the experimental package `markdown_for_llms`, distinct from the legacy `markdown-*` commands. Target: Linux x86_64, managed CPython 3.12.13, CPU, single user and local filesystem. The API process does not import Marker or torch; the worker uses the same interpreter of the venv for the isolated children.
 
-Segui la [guida uv](uv-environment.md) per origine del managed, inventario di ingresso,
-snapshot della run, build sdist→wheel e reinstallazione canonica. Aggiungi gli
-extra `--extra app --extra marker-cpu` al sync; per lo sviluppo aggiungi `--group dev`.
-Non usare insieme `marker-cpu` e `marker-cu126`. Esegui le prove distribuzione con
-profilo `cpu` quando la venv contiene ML; il profilo `api` rifiuta tali dipendenze.
-I diagnostici identificano i dieci moduli legacy e i file del nuovo package,
-compresi statici, migrazione e inventario modelli. Il solo sync non sostituisce S/B/I.
+Follow the [uv guide](uv-environment.md) for the origin of the managed interpreter, input inventory, run snapshot, sdist→wheel build and canonical reinstallation. Add the extras `--extra app --extra marker-cpu` to the sync; for development add `--group dev`. Do not use `marker-cpu` and `marker-cu126` together. Run the distribution checks with the `cpu` profile when the venv contains ML; the `api` profile rejects those dependencies. The diagnostics identify the ten legacy modules and the files of the new package, including static files, migration and model inventory. The sync alone does not replace S/B/I.
 
-Usa `uv export --locked --no-default-groups --extra app --extra marker-cpu
---no-emit-project` per preparare i requisiti della venv esterna. Le installazioni
-con hash richiedono gli archivi identificati dal lock. EbookLib0.18 è distribuito
-come sdist: una wheel locale costruita da tale sdist richiede identità e provenienza
-proprie, non eredita il digest dell’archivio sorgente. Non modificare le venv
-storiche di benchmark per installare il prodotto.
+Use `uv export --locked --no-default-groups --extra app --extra marker-cpu --no-emit-project` to prepare the requirements of the external venv. Installations with hashes require the archives identified by the lock. EbookLib 0.18 is distributed as an sdist: a local wheel built from that sdist requires its own identity and provenance, it does not inherit the digest of the source archive. Do not modify the historical benchmark venvs to install the product.
 
-Prepara esplicitamente Bubblewrap del sistema (`bwrap`) e i dati del profilo
-Marker1.10.2/Surya0.17.1. L’inventario
-[models.json](../../markdown_for_llms/models.json) identifica i byte osservati dei
-cinque checkpoint e due font del profilo: recognition/layout2025_09_23,
-detection2025_05_07, table/OCR-error2025_02_18, GoNotoCurrent e GoNotoCJK.
-Puoi riusare una copia locale già acquisita con provenienza verificata; imposta
-`MDF_MODEL_ROOT` alla sua radice. Il worker verifica i cinquanta file prima
-dell’inferenza. Non scarica né ripara modelli durante la conversione.
+Prepare explicitly the system Bubblewrap (`bwrap`) and the data of the Marker 1.10.2 and Surya 0.17.1 profile. The inventory [models.json](../../markdown_for_llms/models.json) identifies the observed bytes of the five checkpoints and two fonts of the profile: recognition/layout2025_09_23, detection2025_05_07, table/OCR-error2025_02_18, GoNotoCurrent and GoNotoCJK. You can reuse a local copy already acquired with verified provenance; set `MDF_MODEL_ROOT` to its root. The worker verifies the fifty files before inference. It does not download or repair models during the conversion.
 
-L’acquisizione dei pesi è una preparazione separata, da fonti ufficiali del
-[pin Marker](https://github.com/datalab-to/marker/tree/v1.10.2) e
-[Surya](https://github.com/datalab-to/surya/tree/v0.17.1). Il package non include
-pesi. Le condizioni del codice e dei pesi sono distinte; l’uso qui collaudato
-è locale sperimentale, senza redistribuzione dei modelli. L’inventario registra
-hash osservati, non firme o checksum indipendenti pubblicati dal fornitore.
+Acquiring the weights is a separate preparation, from the official sources of the [Marker pin](https://github.com/datalab-to/marker/tree/v1.10.2) and of [Surya](https://github.com/datalab-to/surya/tree/v0.17.1). The package does not include weights. The conditions of the code and of the weights are distinct; the use tested here is local and experimental, without redistribution of the models. The inventory records observed hashes, not signatures or independent checksums published by the vendor.
 
-Per questa run i dati già acquisiti si trovano localmente in
-`temp/run-a003-fase1-engine-comparison/work/implementation-r001/marker-models-r001`.
-È un percorso di lavoro ignorato da Git, non una risorsa garantita da un clone.
-La venv prodotto nuova è sotto `temp/run-a004-fase2-prodotto-utilizzabile/work/implementation-r001/venv`.
-Non trasferire questi percorsi personali nel manifest esportato.
+For this run the data already acquired are stored locally in `temp/run-a003-fase1-engine-comparison/work/implementation-r001/marker-models-r001`. It is a working path ignored by Git, not a resource guaranteed by a clone. The new product venv is under `temp/run-a004-fase2-prodotto-utilizzabile/work/implementation-r001/venv`. Do not carry these personal paths into the exported manifest.
 
-Avvia API e worker secondo il [tutorial](../tutorials/first-local-pdf.md).
-`/health` risponde alla sola liveness; `/api/v1/readiness` indica worker assente,
-runtime incompleto o isolamento non disponibile. Bubblewrap deve poter creare
-namespace privati: un errore di permessi non abilita un fallback senza isolamento.
-Nell’ambiente di sviluppo usa l’escalation prevista dagli strumenti, mantenendo
-la barriera; non modificare sysctl, setuid o profili persistenti per il collaudo.
+Start API and worker as in the [tutorial](../tutorials/first-local-pdf.md). `/health` answers liveness only; `/api/v1/readiness` reports a missing worker, an incomplete runtime or unavailable isolation. Bubblewrap must be able to create private namespaces: a permission error does not enable a fallback without isolation. In the development environment use the escalation provided by the tools, keeping the barrier; do not modify sysctl, setuid or persistent profiles for the test.
 
-La quota archivio predefinita è20GiB con1GiB libero di riserva, oltre alla venv e
-ai circa3,48GB di checkpoint/font. Il profilo del figlio ha16GiB di memoria
-virtuale massima per processo e una guardia RSS aggregata campionata; lascia
-RAM per sistema/API/browser. Il timeout450s è configurabile e non garantisce
-la conversione di50pagine.
+The default archive quota is 20 GiB with 1 GiB of free reserve, besides the venv and the about 3.48 GB of checkpoints and fonts. The profile of the child has 16 GiB of maximum virtual memory per process and a sampled aggregate RSS guard; leave RAM for system/API/browser. The 450 s timeout is configurable and does not guarantee the conversion of 50 pages.
 
-Per cambiare quota o timeout di un archivio esistente:
+To change the quota or the timeout of an existing archive:
 
-1. Arresta API, worker e CLI che usano l’archivio. Uno stop del worker conserva
-   il tentativo come `interrupted`; l’annullamento richiesto dall’utente è `cancelled`.
-2. Con il vecchio file ambiente, leggi il campo `config` di `identity.json`.
-   Il comando verifica anche radici, identità DB e schema; non modificare il JSON.
-3. Esegui, sostituendo il digest con quello letto:
+1. Stop API, worker and CLI that use the archive. A stop of the worker keeps the attempt as `interrupted`; the cancellation requested by the user is `cancelled`.
+2. With the old environment file, read the `config` field of `identity.json`. The command also verifies roots, DB identity and schema; do not modify the JSON.
+3. Run, replacing the digest with the one you read:
 
    ```bash
    mdf --env-file /percorso/prodotto.env configure --expected-config DIGEST --storage-mib 30720 --timeout-seconds 600
    ```
 
-4. Aggiorna `MDF_STORAGE_MIB` e `MDF_TIMEOUT_SECONDS` nello stesso file ambiente
-   e riavvia tutti i processi. La configurazione precedente viene rifiutata.
-   Manifest e configurazioni dei risultati storici restano invariati.
+4. Update `MDF_STORAGE_MIB` and `MDF_TIMEOUT_SECONDS` in the same environment file and restart all the processes. The previous configuration is rejected. Manifests and configurations of the historical results stay unchanged.
 
-Il lock esclusivo rifiuta l’aggiornamento se un servizio è ancora aperto.
-Dopo un crash del worker, riavvialo con la vecchia configurazione per riconciliare
-figli e prenotazioni prima del cambio. Un’identità precedente errata o una quota
-inferiore allo spazio occupato/impegnato blocca l’operazione. Non serve cancellare
-l’archivio; la cancellazione generale resta fuori I1.
+The exclusive lock rejects the update if a service is still open. After a crash of the worker, restart it with the old configuration to reconcile children and reservations before the change. A wrong previous identity or a quota lower than the space occupied or committed blocks the operation. There is no need to delete the archive; general deletion stays outside I1.
 
+If a result stays `publishing`, check `mdf show ID` or the detail in the browser. A quota/space rejection or an I/O/fsync fault keeps the complete result even if the rename has not happened and indicates the recovery of the same ID. A normal publication in progress needs no intervention; reading does not recompute the capacity of the archive at every update. If the recovery is deferred, restore the access or the free space of the volume without removing members of the archive; if a larger application quota is needed, use `configure` with all the services stopped. For this condition, the records of the dead worker may first require a start with the old configuration, which reconciles and releases them. Then restart the worker with the current configuration: it repeats checks and synchronizations before completing the publication. Check that the same ID becomes `completed` and that the ZIP is available. Do not use `retry` to recover `publishing`: that command creates a new conversion for a terminal execution.
 
-Se un risultato resta `publishing`, consulta `mdf show ID` o il dettaglio
-nel browser. Un rifiuto di quota/spazio o un guasto I/O/fsync conserva il
-risultato completo anche se il rename non è avvenuto e indica il recupero
-dello stesso ID. Una pubblicazione normale in corso non richiede intervento;
-la lettura non ricalcola la capacità dell’archivio a ogni aggiornamento.
-Se il recupero è differito, ripristina l’accesso o lo
-spazio libero del volume senza rimuovere membri dell’archivio; se serve quota
-applicativa maggiore usa `configure` con tutti i servizi fermi. Per questa
-condizione, i record del worker morto possono richiedere prima un avvio con
-la vecchia configurazione, che li riconcilia e rilascia. Poi riavvia il worker
-con la configurazione corrente: ripete verifiche e sincronizzazioni prima di
-completare la pubblicazione. Controlla che lo stesso ID diventi `completed`
-e che lo ZIP sia disponibile. Non usare `retry` per recuperare `publishing`:
-quel comando crea una nuova conversione per un’esecuzione terminale.
-
-Un tentativo fallito per voce non sicura conserva fonte e parziale; gli altri
-risultati e nuovi invii restano utilizzabili entro quota. Puoi creare un nuovo
-tentativo con `mdf retry ID`; se il motore riproduce la voce non sicura fallirà
-ancora esplicitamente. I1 non offre eliminazione o riparazione dei parziali.
+An attempt that failed because of an unsafe entry keeps source and partial result; the other results and new submissions stay usable within the quota. You can create a new attempt with `mdf retry ID`; if the engine reproduces the unsafe entry it will fail again, explicitly. I1 offers no deletion or repair of partial results.

@@ -1,55 +1,17 @@
-# Che cosa significa «bundle disponibile»
+# What «bundle disponibile» (bundle available) means
 
-Il prodotto sperimentale separa tre domande. `state` descrive l’esecuzione
-tecnica. `bundle` descrive file e riferimenti controllabili. `quality` rimane
-sempre `unverified`: il motore può omettere o alterare contenuti senza segnalarlo.
+The experimental product separates three questions. `state` describes the technical execution. `bundle` describes the files and references that can be checked. `quality` always stays `unverified`: the engine can omit or alter content without reporting it.
 
-`ready` significa che inventario e digest sono coerenti e i riferimenti del
-profilo non hanno guasti noti. `unchecked` segnala forme fuori profilo; permette
-lo ZIP solo quando tutti i file dichiarati sono integri. Un riferimento locale
-riconosciuto e mancante produce `incomplete`; un file alterato o un path non
-sicuro produce `invalid`. Questi guasti prevalgono sul fuori profilo.
+`ready` means that inventory and digests are consistent and the references of the profile have no known faults. `unchecked` reports out-of-profile forms; it allows the ZIP only when all the declared files are intact. A recognized local reference that is missing produces `incomplete`; an altered file or an unsafe path produces `invalid`. These faults prevail over the out-of-profile forms.
 
-Il controllo usa markdown-it-py4.0.0, CommonMark con tabelle e dollarmath di
-mdit-py-plugins0.5.0. Code e math non sono risorse. I link vuoti si riferiscono al documento corrente; `./img.png` verifica il
-file locale senza riscrivere il raw, anche con `./` iniziale ripetuto.
-Destinazioni locali non-file come `.`, `./` e `docs/` sono `unchecked`, con
-motivo esplicito; non sono considerate path ostili. Le ancore `#frammento` non
-richiedono file; l’esistenza dell’ancora non è attestata. `html.parser` distingue
-HTML inerte da `a[href]` e `img[src]`. Srcset, CSS/style, poster, data e altri
-contesti non supportati restano `unchecked`, con numero totale non determinabile.
-Le destinazioni esterne vengono classificate e mai scaricate. Questo lettore
-operativo non sostituisce il validatore e il debito a002/a003 differito.
+The check uses markdown-it-py 4.0.0, CommonMark with tables and dollarmath from mdit-py-plugins 0.5.0. Code and math are not resources. Empty links refer to the current document; `./img.png` checks the local file without rewriting the raw output, also with a repeated leading `./`. Local non-file destinations such as `.`, `./` and `docs/` are `unchecked`, with an explicit reason; they are not considered hostile paths. The `#frammento` anchors do not require files; the existence of the anchor is not attested. `html.parser` distinguishes inert HTML from `a[href]` and `img[src]`. Srcset, CSS/style, poster, data and other unsupported contexts stay `unchecked`, with a total number that cannot be determined. External destinations are classified and never downloaded. This operational reader does not replace the validator and the deferred a002/a003 debt.
 
-Nel C06 sintetico di due pagine la prima prova reale conserva prosa, numeri
-`0012`, `−7`, `123,45`, `51,08`, `92,06`, tabella/cella vuota e figura con assi
-e legenda. La formula `E = mc^2` rimane leggibile; frazione, somma e matrice
-perdono struttura, mentre l’aligned viene separato. La nota rimane testo.
-Queste osservazioni non certificano altri PDF né l’OCR scientifico.
+In the synthetic two-page C06, the first real test keeps prose, the numbers `0012`, `−7`, `123,45`, `51,08`, `92,06`, the table with an empty cell and the figure with axes and legend. The formula `E = mc^2` stays readable; fraction, sum and matrix lose their structure, while the aligned block is split. The note stays text. These observations do not certify other PDF files or scientific OCR.
 
-La prova preliminare C06 ha richiesto circa89s, di cui10,3s osservati per avvio/
-caricamento e77,2s per conversione/serializzazione, con circa7,85GiB di RSS
-aggregata campionata. Non sono upper bound o velocità per pagina. Il limite
-450s può interrompere PDF ammessi più lunghi; le due pagine sintetiche non
-rappresentano l’intero carico reale.
+The preliminary C06 test took about 89 s, of which 10.3 s observed for startup and loading and 77.2 s for conversion/serialization, with about 7.85 GiB of sampled aggregate RSS. They are not upper bounds or speeds per page. The 450 s limit can interrupt longer admitted PDF files; the two synthetic pages do not represent the whole real load.
 
-Il browser mostra testo inerte tramite `textContent`, conserva i link come
-caratteri e usa soltanto immagini locali verificate. Il validatore raster gira
-in un figlio separato perché Marker disabilita il limite globale dei pixel
-Pillow nel proprio processo. Un’immagine rifiutata dalla galleria resta
-conservata nel bundle se l’integrità tecnica lo consente.
+The browser shows inert text through `textContent`, keeps the links as characters and uses only verified local images. The raster validator runs in a separate child because Marker disables the global pixel limit of Pillow in its own process. An image rejected by the gallery stays in the bundle if the technical integrity allows it.
 
-SQLite registra la coda; il worker detiene un lock di proprietà e usa token,
-lease e identità del processo. La pubblicazione attraversa uno stato esplicito
-`publishing`: il rename filesystem non è una transazione SQLite. Il riavvio
-riconcilia i risultati completi ancora nei tentativi o già rinominati,
-ripetendo la barriera di sincronizzazione
-e distingue i parziali interrotti. Un rifiuto di capacità o un errore I/O
-lascia la pubblicazione recuperabile sullo stesso ID. Non esiste
-retry automatico. Nuovi tentativi non sovrascrivono originali o risultati.
+SQLite records the queue; the worker holds an ownership lock and uses token, lease and process identity. Publication goes through an explicit `publishing` state: the filesystem rename is not a SQLite transaction. The restart reconciles the complete results still in the attempts or already renamed, repeating the synchronization barrier, and distinguishes the interrupted partial ones. A capacity rejection or an I/O error leaves the publication recoverable on the same ID. There is no automatic retry. New attempts do not overwrite originals or results.
 
-I1 non include cancellazione dell’archivio, altri formati, rendering Markdown/
-formule, confronto PDF interattivo, correzioni manuali/AI, cloud, multiutente,
-GPU o distribuzione pubblica. Le funzioni successive rimangono nella roadmap,
-separate da questo percorso. [ADR0009](../../documentation/decisions/0009-first-usable-product.md),
-[debito riconosciuto](../../documentation/development/technical-debt.md).
+I1 does not include deletion from the archive, other formats, rendering of Markdown and formulas, interactive PDF comparison, manual or AI corrections, cloud, multi-user use, GPU or public distribution. The later features remain in the roadmap, separate from this path. [ADR 0009](../../documentation/decisions/0009-first-usable-product.md), [recognized debt](../../documentation/development/technical-debt.md).

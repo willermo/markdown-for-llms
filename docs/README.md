@@ -1,22 +1,16 @@
-# Documentazione per utenti e sviluppatori
+# Documentation for users and developers
 
-Il [tutorial PDF locale](tutorials/first-local-pdf.md) introduce il prodotto
-sperimentale CLI/Web UI; [reference](reference/local-product.md) e
-[limiti](explanation/experimental-product.md) ne delimitano le capacità.
-Le altre guide uv/Marker e la reference legacy restano distinte. Il [README](../README.md) è l'ingresso.
+The [local PDF tutorial](tutorials/first-local-pdf.md) introduces the experimental CLI/Web UI product; the [reference](reference/local-product.md) and the [limits](explanation/experimental-product.md) delimit its capabilities. The other uv/Marker guides and the legacy reference stay separate. The [README](../README.md) is the entry point.
 
-La struttura segue [Diátaxis](https://diataxis.fr/):
+The structure follows [Diátaxis](https://diataxis.fr/):
 
-| Sezione | Bisogno del lettore | Pubblico |
+| Section | Reader's need | Audience |
 | --- | --- | --- |
-| [Tutorial](tutorials/README.md) | Imparare attraverso un percorso guidato | Utenti e sviluppatori |
-| [Guide pratiche](how-to/README.md) | Completare un compito specifico | Utenti, amministratori e sviluppatori |
-| [Reference](reference/README.md) | Consultare dettagli precisi del prodotto | Utenti e sviluppatori |
-| [Spiegazioni](explanation/README.md) | Comprendere concetti e scelte del sistema | Utenti e sviluppatori |
+| [Tutorials](tutorials/README.md) | Learn through a guided path | Users and developers |
+| [How-to guides](how-to/README.md) | Complete a specific task | Users, administrators and developers |
+| [Reference](reference/README.md) | Look up precise details of the product | Users and developers |
+| [Explanation](explanation/README.md) | Understand concepts and choices of the system | Users and developers |
 
-Gli helper di sviluppo a002 hanno una [guida benchmark](how-to/fidelity-benchmark.md)
-e una [reference](reference/fidelity-benchmark.md); non sono servizi applicativi.
+The a002 development helpers have a [benchmark guide](how-to/fidelity-benchmark.md) and a [reference](reference/fidelity-benchmark.md); they are not application services.
 
-Le proposte, le decisioni e la roadmap sono in
-[`documentation/`](../documentation/README.md). Questa separazione evita che una
-proposta venga scambiata per una funzione disponibile.
+Proposals, decisions and the roadmap are in [`documentation/`](../documentation/README.md). This separation prevents a proposal from being mistaken for an available feature.
