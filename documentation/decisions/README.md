@@ -13,6 +13,6 @@ Decision statuses: **proposed**, **accepted**, **superseded**, **withdrawn**. Ea
 | [0007](0007-supervised-development-runs.md) | Supervised runs, double reviews and handover | Superseded by 0010 | Kept unchanged as history of the runs a001–a004 |
 | [0008](0008-maintained-parser-and-provisional-benchmark.md) | Maintained parser and a002 closure with provisional benchmark | Accepted by the user's disposition of 2026-10-12 | Parser adapter not implemented; product priority since 2026-10-16; advanced validation deferred, trace r005 not reviewed, a002 debt open |
 | [0009](0009-first-usable-product.md) | First local product: Marker CPU, inert UI and operational reference check | Accepted for the experimental I1 | I1 integrated in `dev` at `f8bf44c` (technical GO r004), not released on `main`; three low residuals tracked, quality `unverified` |
-| [0010](0010-multi-model-agent-governance.md) | Multi-model agent governance (one source, N tools) | Accepted | Governance integrated in `dev` on 2026-10-17; documentation tranche in progress |
+| [0010](0010-multi-model-agent-governance.md) | Multi-model agent governance (one source, N tools) | Accepted | Governance integrated in `dev` on 2026-10-17; documentation tranche closed |
 
 Use [template.md](template.md) for the next free number. Link alternatives, consequences and useful evidence; avoid an ADR for every implementation detail. A new explicit request can change a decision: document the change without introducing an unnecessary further authorization step.

@@ -1,804 +1,250 @@
-# Protocollo conversion-fidelity-v1
+# conversion-fidelity-v1 protocol
 
-## Stato operativo2026-10-12 — accettazione sperimentale
+## Operational status 2026-10-12 — experimental acceptance
 
-A002 è chiusa per disposizione utente sul perimetro ridotto. Le garanzie
-generali del reader/guardia restano provvisorie nelle classi non convalidate;
-COMPLETE/UNSAFE non attestano universalmente qualità o sicurezza. Nessun
-GO tecnico r014 retroattivo: ClaudeNO_GO statico eGPTreviewincompleta conservati.
-Codice/prove non modificati; [debito permanente](../../documentation/benchmarks/a002-residual-debt.md)
-e [ADR0008](../../documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md)
-vincolano il seguito. Le rettifiche storiche sotto valgono nei domini provati.
+A002 is closed by the user's disposition on the reduced scope. The general guarantees of the reader/guard remain provisional in the classes not validated; COMPLETE/UNSAFE do not universally attest quality or safety. No retroactive technical GO for r014: Claude's static NO_GO and the incomplete GPT review are kept. Code/evidence not modified; the [permanent debt](../../documentation/benchmarks/a002-residual-debt.md) and [ADR 0008](../../documentation/decisions/0008-maintained-parser-and-provisional-benchmark.md) bind what follows. The historical corrections below hold in the domains proven.
 
+Development protocol of a002, schema1 for conversions/metrics; schema2 for the comparison and the documentary V response. It measures the available script pipeline; it does not define the API, storage or document model of the future application. The [operational reference](../../docs/reference/fidelity-benchmark.md) describes CLI and artifacts. The run mandate (archived: `documentation/development/next-run-a002-corpus.md`, tag `pre-docs-2026-10-18`) identifies the scope; the reports record which tests were actually performed.
 
-Protocollo di sviluppo a002, schema1 per conversioni/metriche; schema2 per
-confronto e risposta V documentale. Misura la pipeline a script disponibile;
-non definisce API, storage o modello documentale della futura applicazione.
-La [reference operativa](../../docs/reference/fidelity-benchmark.md) descrive
-CLI e artefatti. Il mandato della run (archived: `documentation/development/next-run-a002-corpus.md`, tag `pre-docs-2026-10-18`)
-identifica il perimetro; i report registrano quali prove sono effettivamente fatte.
+## Identities and processes
 
-## Identità e processi
+An experiment contains distinct document_id and attempt_id, an exclusive directory, source SHA256, gold SHA256, absolute tool/hash/version, canonical config SHA256, protocol, reader and installed wheel. `started.json` precedes the engine. `run.json`, `audit.json`, raw and errors are kept; `final.json` is created atomically only after observe/score and the hash audit. A file name does not identify a piece of evidence. Reruns and fault injection use new directories.
 
-Un experiment contiene document_id e attempt_id distinti, directory esclusiva,
-source SHA256, gold SHA256, tool assoluto/hash/versione, config canonica SHA256,
-protocollo, reader e wheel installata. `started.json` precede il motore.
-`run.json`, `audit.json`, raw ed errori sono conservati; `final.json` è creato
-atomicamente solo dopo observe/score e audit degli hash. Un nome di file non
-identifica una prova. Rerun e fault injection usano directory nuove.
+Run receives a source descriptor without gold/blocks. Observe reads only bytes of the bundle: raw UTF-8, byte/char/line intervals, blocks, cells, segments/formulas, anchor and URI targets, unknown. Score is another process and receives the manual gold. Changing the gold cannot change the observations: verified digest. Assets are compared only in the scorer, by original SHA or lossless RGBA pixels; no output is corrected using the gold.
 
-Run riceve un descrittore source senza gold/blocks. Observe legge solo bytes del
-bundle: raw UTF-8, intervalli byte/char/line, blocchi, celle, segmenti/formule,
-anchor e URI, unknown. Score è un altro processo e riceve il gold manuale.
-Cambiare il gold non può cambiare observations: digest verificato. Gli asset
-sono confrontati soltanto nello scorer, per SHA originale o pixel RGBA senza
-perdite; nessun output viene corretto usando il gold.
+## Writer and reader
 
-## Writer e reader
+`pandoc-md-bench-v1` uses the complete Markdown inventory of Pandoc 3.1.3: 22 extensions enabled in `profile.py`, all the others disabled, every flag in lexicographic order. The inventory file, the resolved bitset and the helpers are hashed. Smart, auto identifiers, grid/simple/multiline tables are off. Ordered options: docx/epub/rtf/latex reader, complete writer, wrap none, atx headings, empty data-dir, resource-path source, extract-media relative to media. The Markdown reader of an independent control can disable smart/ID to isolate the writer behaviour; it does not change the readers of the campaign.
 
-`pandoc-md-bench-v1` usa l'inventario completo Markdown di Pandoc 3.1.3:
-22 estensioni enabled in `profile.py`, tutte le altre disabled, ogni flag in
-ordine lessicografico. Il file d'inventario, il bitset risolto e gli helper
-sono hashati. Smart, auto identifiers, grid/simple/multiline tables sono off.
-Opzioni ordinate: reader docx/epub/rtf/latex, writer completo, wrap none,
-headings atx, data-dir vuota, resource-path source, extract-media relativo media.
-Il reader Markdown di un controllo indipendente può disabilitare smart/ID
-per isolare il comportamento writer; non cambia i reader della campagna.
+Finite reader: paragraph/heading, emphasis, simple list item, simple blockquote, link/image, span/attrs/div with ordered context, fence/code before math, pipe table with empty cells and escaped pipes, adjacent caption, notes and continuations, passive HTML, raw TeX label/ref/eqref, raw html/latex. Complex quotes, spanning HTML tables, MathML, raw macros and other formats are unknown with content, not empty strings. An empty anchor has its own raw node and is bound to the next leaf without generating its name. Raw/offset are not a correct serialization created from the gold. Limits: file 32MiB, depth16, formula4096char, matrix 256 cells.
 
-Reader finito: paragraph/heading, enfasi, list item semplice, blockquote semplice,
-link/image, span/attrs/div con contesto ordinato, fence/code prima di math,
-pipe table con celle vuote/pipe escapata, caption adiacente, note e continuazioni,
-HTML passivo, raw TeX label/ref/eqref, raw html/latex. Quote complesse, spanning
-HTML tables, MathML, macro raw e altri formati sono unknown con contenuto,
-non stringhe vuote. Anchor vuoto ha nodo raw proprio ed è legato alla successiva
-foglia senza generarne il nome. Raw/offset non sono una serializzazione corretta
-creata dal gold. Limiti: file 32MiB, depth16, formula4096char, matrice256celle.
+`math-structure-v1` keeps Seq/Arg, lexical Symbol/Number, Operator, Scripts, Fraction, Sum, literal Text, Aligned and Matrix with rows/cells and delimiters. Equivalences: single TeX/braced argument, sub/sup order, tokenized spacing and Unicode/ASCII minus **math only**, bmatrix or matrix enclosed in square brackets. Groups are not deleted; spacing does not merge numbers; Text not normalized. No CAS, float, inferred semantics/algebra or expanded macro. Unsupported keeps raw/interval and an unavailable structure.
 
-`math-structure-v1` conserva Seq/Arg, Symbol/Number lessicale, Operator,
-Scripts, Fraction, Sum, Text letterale, Aligned e Matrix con righe/celle e
-delimitatori. Equivalenze: singolo argomento TeX/braced, ordine sub/sup,
-spacing tokenizzato e meno Unicode/ASCII **solo math**, bmatrix o matrix
-racchiusa in quadre. Gruppi non vengono cancellati; spacing non unisce numeri;
-Text non normalizzato. Nessun CAS, float, semantica/algebra inferita o macro
-espansa. Unsupported conserva raw/intervallo e struttura unavailable.
+## Metrics and denominators
 
-## Metriche e denominatori
+The gold comes from manual sources/AST, never from the engine output. One-to-one alignment: type, minimum similarity .75, visible landmarks, margin .15; monotone DP and separate free matching for pairwise order. Duplicates, missing/unexpected, ambiguity without landmarks and page loss are explicit. The order denominator n(n−1)/2 includes the unresolved pairs.
 
-Gold nasce da sorgenti/AST manuali, mai dall'output del motore. Allineamento
-one-to-one: tipo, similarità minima .75, landmark visibili, margine .15;
-monotone DP e matching libero separato per ordine a coppie. Doppioni,
-missing/unexpected, ambiguità senza landmark e perdita pagina sono espliciti.
-Denominatore ordine n(n−1)/2 comprende le coppie non risolte.
+Text: Levenshtein CER/WER; CRLF/LF and soft wrap→space in prose only; separate raw edit. Code, numbers and cells stay exact. No NFKC/casefold/float. Numbers: lexical occurrence in text/cell coordinates; zeros/exponents and signs kept. Formulas: localized AST diff, a different raw is diagnostic outside the prose CER. Cells: coordinates and shape, a present empty cell distinct from an absent one. Figures: referenced image, expected content verified and caption; references: exact URI/fragment, notes with a bijective mapping. Zero-loss thresholds on this synthetic corpus; they are not universal OCR thresholds. Missing/unknown keep the denominator. Comparisons above 4 million Levenshtein cells unavailable.
 
-Testo: CER/WER Levenshtein; CRLF/LF e soft wrap→spazio solo prosa; raw edit
-separato. Code, numeri e celle rimangono esatti. Nessun NFKC/casefold/float.
-Numeri: occorrenza lessicale in coordinate di testo/cella; zeri/esponenti e
-segni mantenuti. Formule: diff AST localizzato, raw diverso diagnostico fuori
-CER prosa. Celle: coordinate e shape, vuoto presente distinto da assente.
-Figure: immagine referenziata, contenuto atteso verificato e caption; riferimenti:
-URI/fragment esatti, note con mapping bijettivo. Soglie zero-loss su questo
-corpus sintetico; non sono soglie universali OCR. Missing/unknown mantengono
-il denominatore. Confronti sopra 4 milioni di celle Levenshtein unavailable.
+## States and exits
 
-## Stati ed exit
-
-| Dimensione | Valori |
+| Dimension | Values |
 | --- | --- |
 | conversion | SUCCESS, ERROR, TIMEOUT, EMPTY, INVALID_INPUT, INTERRUPTED |
 | bundle | COMPLETE, INCOMPLETE, UNAVAILABLE |
 | quality | PASS, FAIL, INDETERMINATE |
 | conversion_batch | COMPLETE, PARTIAL, FAILED, INTERRUPTED |
-| execution_complete | tutti i record attesi validi, distinto da fedeltà |
+| execution_complete | all expected records valid, distinct from fidelity |
 | gold | PROVISIONAL/PENDING, VERIFIED, REJECTED, AMBIGUOUS, STALE |
 
-Run exit0 success+bundle completo;2 errore/timeout/empty/unsafe/incompleto;
-4 contratto/preflight/input invalido/internal error;130 interruzione.
-Score exit0 tutti required passano;3 perdita critica;5 unavailable/indeterminate;
-4 errore interno/contratto. Evaluate precedenza4→130(interruzione)→2→3→5→0.
-FAIL critico precede indeterminate, con entrambi i dettagli conservati.
-Summarize exit0 indica che ha letto/controllato record, non qualityPASS.
-
-Harness congela otto percorsi × quattro tentativi e attesi **prima** del workload;
-R expected-exit0 sempre. Un rerun dipendente esplicito seleziona un sottoinsieme
-del registry mantenendo quattro tentativi per percorso e nuove identità;
-non è una nuova campagna completa di otto percorsi. Evaluate2/3/5 legittimi sono dati del motore e possono
-produrre harness0 con batchPARTIAL/qualityFAIL. Input/hash/schema/record/internal
-inatteso→harness4, assert/pytestFAIL→1, deadline/monitor→2, interrupt→130.
-H01–H08 sono controlli espliciti con stub; H09–H16 iniettano difetti e richiedono
-R NON PASS. Il runner non deve trasformare un errore arbitrario in harness0.
-Nessuno stub soddisfa il requisito A10 di conversione Pandoc con figura reale.
-
-## Sicurezza e risorse
-
-Registry solo TXT literal, Pandoc diretto e PandocConverter installato;
-nessun PDF/OCR/provider remoto implicito. Argv assoluti, shell=False, ambiente
-chiuso. Input ZIP/XML/HTML/CSS/SVG/passive validati prima del tool; niente DTD,
-entity, active HTML, risorse remote, path encoded/assoluti/../, symlink/hardlink,
-special files. ZIP256membri,16MiBcompressed/64MiBexpanded/ratio100. Auditor
-lstat inerte prima di aprire asset, O_NOFOLLOW e controlli inode/mutazione.
-TeX non compilato: due include letterali allowlisted, cicli/duplicati negati,
-256KiB expanded, package/class/commands finiti. Non si eliminano wrapper nel
-codice/LaTeX/URI tramite regex globali. La protezione non è una garanzia
-universale filesystem del tool: R attesta rete/socket/namespace del target.
-
-Deadline iniziali: motore60s, harness400s per gruppo, R600s (cap900). Stream
-1MiB, file32MiB, sampled RSS stop6GiB; nessun hard cap aggregato RAM attestato.
-Monotonic elapsed separa conversion/audit/scoring/end-to-end. Linux wait4 CPU
-user/system del processo dedicato, RSS individuale/reaped max diverso da
-sampled tree peak10ms. Shared pages possono duplicarsi; PID brevi/peak tra
-campioni possono sfuggire. Kill/wait/reap copre gruppo, figli setsid e orfani
-propri; SIGINT è rendicontato dopo raccolta. OS cache uncontrolled; primo
-processo/workspace nuovo non viene chiamato cold OS. Nessun download/budget
-remoto o privilegi persistenti per le prove.
-
-## Verifica del riferimento e limiti umani
-
-M è indipendente da generator/reader/scorer/Pandoc: locatori canonici,
-OOXML/MathML/RTF/TeX, PDF Poppler+MuPDF e pixel raster. Confronta didascalie
-reali separatamente dalle celle, target figure/note/link, AST annotato contro
-fonte TeX e campi manuali PDF contro locatori poi verificati sul PDF effettivo.
-Raster visibile non certifica code point NFC/NFD. Agent_visual non è V.
-
-Il confronto v2 è un documento completo per coppia, originale a sinistra e
-Markdown di riferimento a destra; deriva esclusivamente dal gold manuale.
-Un checker indipendente legge i veri HTML/.md, matematica/celle/note/asset,
-ordine e unità sorgenti/pagine. La presentazione MathML non prova la fedeltà del
-canonico o del motore. TeX non compilato; limiti dei renderer originali restano
-attribuiti, anche quando i PNG sono copiati in una composizione R PASS.
-
-Vgold e Vcontrolli richiedono risposta reale sul packet passivo immutabile:
-un giudizio naturale per documento, massimo tredici. Receipt schema2 con byte
-ricevuti/hash, autore e ricezione reali attribuiti dal chiamante con limiti,
-packet/coppia SHA, revisione, ambito visibile completo e differenze. Nessun
-TSV o timestamp per proprietà; nessuna espansione in firme atomiche. Il digest
-della coppia include sorgenti/include/render/asset/HTML/.md/mappa/CSS, esclude
-la sola revisione amministrativa globale. Importatore legacy schema1 rimane
-per record storici. Il nuovo import è riclassificato dai byte originali.
-Una dichiarazione completa «Tutti i documenti corrispondono» resta un'unica
-dichiarazione originale riferita agli ID del packet; le decisioni documentali
-ne dichiarano la proiezione. Nessuna riga originale per documento è inventata;
-vaghezza, eccezioni e sottoinsiemi non producono accettazione collettiva.
-
-VERIFIED richiede M required PASS, vista completa PASS e V documentale esplicita
-ACCEPTED sugli stessi hash. Assenza/vaghezza PENDING, dubbi AMBIGUOUS,
-differenze REJECTED, hash/ambito diversi STALE. I giudizi sono indipendenti per
-documento; risposte parziali successive conservano gli altri già ricevuti.
-A03 richiede tutti tredici documenti VERIFIED. Accordo sulla durata non è
-firma; i260min del vecchio workflow sono storici e non tempo umano svolto.
-Formula output typography/semantics sono giudizi separati non assegnati:
-L04 UNAVAILABLE anche con AST esatto. PDF/OCR L01 e compilazione TeX L02
-NOT_MEASURED. Nessuna garanzia GPU/altri OS.
-
-## Correzioni r002 e versioni del reader/scorer
-
-`observations-v2-typed-inline` conserva contenuti inline tipizzati e offset
-sorgente in celle pipe/HTML e caption, oltre a raw/coordinate. Immagini, link,
-formule e unknown entrano nell'audit/scoring una sola volta; testo uguale non
-basta a ignorare un'immagine o una formula aggiunta. Target e titolo sono
-separati: titoli doppi/singoli/parentetici e destinazioni bilanciate/escape
-rientrano nel profilo finito. Sintassi risorsa non supportata rende il bundle
-INCOMPLETE; raw inline `{=latex}` resta unsupported localizzato, code vero resta
-code. MathML con unica annotation TeX è osservabile; altri MathML restano unknown.
-
-`metrics-v2-local-typed` usa le equivalenze AST finite anche nell'allineamento
-formula, conservando raw e matching one-to-one. Le parole delle inserzioni
-unmatched entrano nel numeratore WER sul denominatore atteso invariato; formule
-raw equivalenti non diventano prosa. CER/WER completi sono UNAVAILABLE quando
-l'attribuzione è ambigua/unresolved, con conteggi condizionati al matching strutturale, distinti dai limiti
-inferiori garantiti introdotti in r004. `exact-visible-unique-v1` attribuisce unknown soltanto quando contiene
-il testo visibile intero di uno specifico blocco (almeno8 caratteri), unico su
-entrambi i lati; non copre tabelle/figure/formule, altre omissioni o pagine.
-Unknown estranei non annullano missing/page loss FAIL.
-
-Gold/spec rev5 dichiarano `header_rows` e policy indipendente dal motore.
-DOCX/RTF/TeX del corpus sono headerless, EPUB ha th semantico; PDF/raster usano
-policy manuale esplicita, senza attribuire proprietà encoded al formato.
-`header-regions-v2` separa corpo e header. Soltanto per sorgente dichiarato
-headerless, la prima riga pipe realmente vuota, senza contenuti inline,
-è placeholder sintattico: tutte le righe del corpo mantengono coordinate e
-numeri. Header reale anche vuoto, promozione indebita e cella assente restano
-controlli distinti. Non si elimina genericamente la prima riga.
-
-Sicurezza: HTML/XHTML ha attributi finiti, srcset e attributi risorsa ignoti
-sono rifiutati; CSS ha proprietà/valori finiti, escape/commenti e funzioni non
-ammesse sono rifiutati. Ogni SVG, anche XML con radice SVG, è validato con tag/
-attributi passivi; membri ZIP ignoti sono rifiutati. I negativi vengono fermati
-prima di estrazione/motore: nessun tool deve essere usato per dimostrare il danno.
-Pandoc token legacy viene risolto nel PATH effettivo chiuso `/usr/bin`, con
-which/realpath/hash/versione prima e dopo, coerenti con il percorso diretto.
-Segmenti vuoti, relativi, cwd, user-bin o binari anteposti falliscono preflight.
-
-Ogni monitor usa un supervisore stdlib proprio nello stesso interprete,
-namespace e ambiente: raccoglie soltanto la sua discendenza, compresi setsid,
-orfani e writer dopo exit del leader, fino alla deadline complessiva. Il writer
-entro cap/deadline può finire normalmente. Identità PID tramite pidfd e
-controlli finali dopo reap/chiusura stream precedono la receipt. Config/receipt
-supervisore sono conservati; CPU wait4 del supervisore include la discendenza.
-Restano i limiti sampled RSS/CPU lowerbound/cache OS già dichiarati.
-
-La qualificazione derivata schema3 conserva V reale precedente, vecchi packet/
-pair/gold e risposta originale, delta metadati, nuovo M sul sorgente e checker
-indipendente dei contenuti visibili vecchi/nuovi. `derive_verification` produce
-`derived_reference_content_qualification`, non una nuova risposta V:
-`new_human_confirmation=false`. Header tecnico viene qualificato da M. Si
-richiede conferma mirata solo se un contenuto visibile cambia sostanzialmente o
-l'invarianza non è dimostrabile. L04 output resta UNAVAILABLE.
-
-Campagne nuove usano attempt_id prefissati da experiment_id e possono congelare
-`--verification` prima del workload. Conservare byte degli helper/config/test,
-inventari prima/dopo e raw/errori. Nuova observe/audit/score dei raw storici ha
-identità propria e engine_runs0; non riscrive metriche storiche. La mancanza di
-byte helper storici resta un limite storico, non sanato dal nuovo scorer.
-
-I puntatori src/href/full-path nei contenitori XML ZIP sono verificati prima
-del tool indipendentemente dal suffisso casefold; xml:base è fuori subset.
-HTML travestito XML attraversa lo stesso validator HTML passivo.
-
-## Correzioni r003 del trasporto HTML e dominio testuale
-
-`observations-v3-html-transport` trasporta tutte le foglie tipizzate attraverso
-HTML inline nel profilo finito r004, anche span/a annidati: formule, unknown con raw,
-segmenti prosa/math/code, risorse, anchor e offset. Il medesimo produttore
-HTML copre celle/caption e paragrafi. Figure HTML finite hanno una immagine e
-una figcaption; altre strutture passive conservano foglie/risorse e unknown.
-Ogni src/href del subset viene validato e osservato anche in fallback; markup
-non bilanciato o sintassi risorsa non rappresentabile rende INCOMPLETE. Nessun
-browser, fetch o target evasivo viene aperto. Alt non sostituisce la caption.
-
-`metrics-v3-text-domain` mantiene alignment e denominatori r002. La regola
-`text-domain-unknown-v1` rende CER/WER completi UNAVAILABLE/None anche per
-unknown testuali osservati unmatched, con ragione, observation ID, block ID
-quando attribuito, offset e scope. Il dominio comprende i blocchi testuali
-interi e il codice letterale; celle/caption di tabelle/figure e formule hanno
-metriche locali distinte. Unknown esclusivamente math non invalida prosa
-misurabile. Raw unknown non viene contato come parole: i segmenti noti di una
-inserzione unmatched rimangono conteggi strutturali condizionati, con parole note non ridotte a
-sola punteggiatura. Per confronto aligned incerto non si inventano edit; i
-numeratori sono conteggi condizionati al matching strutturale, con denominatori
-attesi completi; la precedente attribuzione di bound è rettificata in r004.
-Unknown estraneo non cambia l'attribuzione `exact-visible-unique-v1`, né
-copre omissioni, pagine mancanti o FAIL già dimostrati.
-
-`WER_decomposition` (`wer-structural-components-v1`) registra per tentativo
-edit nei blocchi aligned, omissioni attese e inserzioni unmatched, tipi,
-ID, testo, offset, denominatori e conteggi noti. Le candidate caption/titolo
-sono prove diagnostiche di identità testuale esatta al gold, senza mutare
-alignment o numeratori. Caption divenuta paragrafo è inserzione nel dominio
-dichiarato; titolo declassato produce omissione attesa più inserzione. Gli
-stessi fenomeni possono fallire anche gate caption/blocchi/numeri: non sommare
-i gate come perdite indipendenti. Nuove misure di raw r002 hanno identità
-derivata r003 e engine_runs0, non sono nuove conversioni. V e gold rev5 restano
-immutati, L04 resta UNAVAILABLE.
-
-Attributi HTML duplicati sono fuori profilo: nessuna conversione in dict può
-eliminare il primo src/href; fallback esplicito INCOMPLETE anche se l'ultimo
-target esiste. Casefold, tag annidati e markup malformato hanno la stessa
-regola lungo producer/transport/audit.
-
-## Correzioni r004: copertura dei profili HTML e bound garantiti
-
-`observations-v4-html-coverage` distingue `html-inline-v1`, `html-table-v1`
-e `html-figure-v1`. Il profilo inline ammette span/a/img/math/code/br/em/strong/
-sup/sub e i figli MathML finiti dentro math. Una struttura di blocco in un
-contesto inline conserva l'intero sottoalbero testuale, le formule, gli unknown,
-le risorse e il raw localizzato, ma aggiunge unsupported esplicito. Non usa la
-proiezione text di table/figure. Il medesimo vincolo vale dentro celle, caption,
-paragrafi e wrapper inline, senza reinterpretare il codice Markdown letterale.
-
-La tabella ammette caption unica diretta, righe dirette oppure dentro thead/tbody,
-celle td/th dirette nella riga, e whitespace strutturale. Ogni altro ramo è
-consumato interamente una volta in `residual_contents`, con raw, posizione e
-foglie tipizzate; tutte le risorse/formule/unknown delle celle, di tutte le
-caption e dei residui raggiungono i consumatori. Caption duplicate sono fuori
-profilo: non si sceglie l'ultima. Una figura ammette una img primaria diretta,
-una figcaption diretta e whitespace; le foglie della caption sono inline e i
-rami ulteriori sono residui espliciti. Unknown/profilo non rappresentabile non
-ottiene PASS; aggiunte note nei residui danno FAIL, formule aggiunte supportate
-falliscono il confronto e asset mancanti danno INCOMPLETE/exit2. Il validator
-URI precede ogni apertura: nessun nuovo bypass URI storico è attribuito.
-Il carattere `<` seguito da spazio/cifra resta testo; veri inizi di markup,
-commenti/dichiarazioni e malformed mantengono i controlli di risorsa.
-
-`metrics-v4-conditional-and-bounds` confronta la caption anche quando l'atteso
-è assente/vuoto: `absent-empty-text-equivalent-v1` considera assenza e stringa
-vuota equivalenti soltanto nel dominio testo della caption. Componenti tipizzate
-(ref/formule/unknown) rimangono confrontate separatamente; una caption aggiunta
-non vuota è FAIL3, senza spostare le celle/caption nel CER/WER della prosa.
-
-Tre misure sono distinte:
-
-- CER/WER completi: somma dei confronti sotto il matching strutturale registrato,
-  con omissioni/inserzioni e denominatori attesi invariati; UNAVAILABLE/None se
-  esiste testo non misurabile. Non sono distanze globali prive di struttura.
-- `conditional_text_counts` e `WER_decomposition` v2: conteggi condizionati a
-  free_pairs/attribuzione locale. `known_word_edits` è un alias compatibile del
-  conteggio condizionato, con `guaranteed_bound=false`; le entry registrano ID,
-  offset, testo e somme. Omissione e inserzione possono descrivere lo stesso
-  contenuto quando il matching non accetta un nodo unknown. Non sommarle come
-  edit certi del testo visibile o chiamarle lower-bound.
-- `text_lower_bound`, `global-text-completion-bound-v1`: dominio dei blocchi
-  testuali interi, codice incluso; esclude table/figure/formula/anchor e omette
-  proiezioni testuali vuote. Char stream con LF fra blocchi, token stream con
-  concatenazione dei token split per blocco; denominatori pieni del dominio
-  originale (separatori LF non aggiunti al denominatore). Corrispondenze di edit
-  globali libere, indipendenti dall'allineamento strutturale. Con foglie tutte
-  misurabili si calcola la distanza globale minima esatta. Con qualunque testo
-  non misurabile, o limite di calcolo globale, il bound è zero, TRIVIAL_ZERO.
-
-Garanzia: ogni completamento ammesso degli unknown può emettere qualunque
-stringa, anche zero testo, e modificare i confini dei token. Ogni distanza di
-edit è nonnegativa, quindi zero non supera la distanza di alcun completamento,
-anche con più unknown, cambi di posizione o corrispondenza. Nel caso misurabile
-il flusso è fisso e Levenshtein è il minimo su tutte le corrispondenze di edit.
-La garanzia riguarda questo dominio esplicito, non l'algebra delle formule o
-l'HTML universale. Non si deduce la garanzia dal successo di sole due sonde.
-Il bound conservativo può essere zero mentre il FAIL strutturale è certo:
-missing/page loss/ordine/numeri/celle/asset e attribuzione locale F08 non cambiano.
-Le inserzioni note restano discriminanti nei conteggi strutturali (C1 3/30,
-Known words aggiunta 3/2); il loro valore non è attribuito come bound globale
-quando una parte del flusso è non misurabile. Un bound zero non è CER/WER completo0.
-
-
-## Correzioni r005: diagnosi HTML e domini testuali
-
-Reader `observations-v5-html-diagnostics`: le diagnosi strutturali del parser
-sono conservate indipendentemente dalla proiezione dei wrapper. Un contenitore
-non chiuso o una chiusura incoerente conserva raw, offset e tipo della diagnosi:
-audit INCOMPLETE, run/evaluate exit2. I wrapper bilanciati mantengono i contenuti
-proiettati una sola volta. Gli heading HTML h1–h6 hanno coordinate HTML; soltanto
-gli heading Markdown marcati `atx_heading` ricevono il mapping del prefisso ATX.
-Heading HTML e code HTML sono host di `html-inline-v1`: strutture di blocco
-annidate sono unsupported locali, conservando foglie note, formule e risorse.
-Il codice Markdown letterale rimane inerte.
-
-`html-tokens-v1` conserva commenti, dichiarazioni e processing instruction come
-token fuori profilo, con raw e intervallo sorgente, all'inizio, in mezzo e in
-coda. Non producono prosa o referenze dai caratteri racchiusi; un'immagine citata
-in un commento non è una risorsa attiva. La diagnosi raggiunge audit/scorer e
-impedisce COMPLETE/PASS. Le celle, caption e i residui conservano la posizione
-locale del token. Letterali `<`, entità e HTML pulito mantengono il trattamento
-precedente. Il profilo è finito, senza fetch o esecuzione dai dati.
-
-**Dominio di `text_lower_bound`:** il campo limita esclusivamente la distanza
-di edit del flusso globale dichiarato. NON è un limite inferiore di CER/WER
-completi o di `conditional_text_counts`, che dipendono dal matching strutturale;
-può superarli per ordine e separatori. Per esempio, due paragrafi invertiti
-possono avere CER strutturale0 e distanza globale positiva; un'omissione può
-aggiungere al flusso un separatore LF, escluso dal denominatore atteso.
-`EXACT_GLOBAL_DISTANCE` è una misura esatta nel dominio globale misurabile;
-`TRIVIAL_ZERO` è soltanto la garanzia conservativa nonnegativa sui completamenti
-ammessi, non una misura completa0 né evidenza di fedeltà. Nessun cambiamento ad
-alignment, normalizzazione, denominatori o calcolo della distanza r004.
-
-## Rettifica r006: confini lessicali e contenuti inerti
-
-Il reader corrente è `observations-v6-html-lexical-boundaries`. La descrizione
-r005 di F25 era incompleta: CDATA con `>` interno e commenti attraverso blank/
-marcatori Markdown potevano lasciare parte del corpo ai produttori successivi.
-Gli stati INCOMPLETE già rilevati non rendevano corretti conteggi e risorse.
-Il caso `</>` poteva invece risultare COMPLETE/PASS automatico senza diagnosi.
-Le prove storiche restano conservate nel report r005; consultare i nuovi dati r006.
-
-Ogni token del ramo finito conserva il costrutto chiuso completo oppure fino a
-EOF. CDATA termina a `]]>`; commenti seguono `-->`, `--!>` e i rami abrupt del
-tokenizer managed locale, compresa la sua precedenza effettiva fra chiusure.
-Comment/declaration/unknown_decl/PI restano unsupported in `html-tokens-v1`:
-audit INCOMPLETE, run/evaluate2. Il corpo di commenti e CDATA è inerte: zero
-prosa/formule/reference/asset e nessuna apertura del target dal corpo. Un testo
-presente soltanto nel commento non soddisfa il gold visibile né nasconde missing.
-
-I confini dei produttori Markdown rispettano i token aperti, anche in celle,
-caption, heading, liste, quote, note, wrapper e raw HTML fence. Raw, offset
-Unicode/byte, righe fisiche e diagnostiche raggiungono audit/scorer una volta.
-Le foglie con codice, formule, link e raw LaTeX conservano i propri delimitatori;
-trim EOF, attributi, enfasi e label non possono troncare token inerti. Code inline
-e fence Markdown letterali restano inerti. Il riepilogo senza foglie usa una reason
-neutra e conserva le reason specifiche delle occorrenze. Nessun fetch o comando
-dai dati; il subset non promette HTML universale.
-
-F26 resta invariato: bound del flusso globale distinto da CER/WER strutturali e
-conteggi condizionati, stessi algoritmi/normalizzazioni/denominatori. Il rescore
-r006 crea nuove identità derivate dei 64 raw protetti, zero motori e nuova V0.
-
-Report e dati r006 (archived: `documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md`, tag `pre-docs-2026-10-18`).
-
-## Rettifica r007: contesti Markdown e confini dei producer
-
-Il reader corrente è `observations-v7-shared-markdown-contexts`. La chiusura
-lessicale locale r006 non garantiva tutti i confini globali: lookahead di code,
-math e tag poteva attraversare producer distinti o riprendere dentro fence;
-autolink installava falso contesto HTML; metadata e comandi raw TeX consumati
-inline potevano invece aprire token nello scanner. Sono F31–F33, con prima/dopo
-reali nel nuovo report r007; report/dati r006 e FAIL/E9 restano immutati.
-
-Il dominio è quello del producer effettivo prima del merge: paragrafo fino a
-blank/marker di blocco, heading/cella/caption/label nel proprio valore, liste/
-quote/note con le continuazioni realmente ammesse. Scanner e consumer condividono
-atomi finiti code/math/autolink/link/span/metadata/command e pipe fuori dagli atomi.
-Autolink non installa uno stack HTML; metadata sono opachi soltanto nell'host
-sintattico riconosciuto; raw TeX unsupported resta locale, con ref/anchor separati.
-
-Gli intervalli dei token inerti realmente riconosciuti sul sorgente arrivano ai
-consumer anche attraverso merge, prefix stripping, celle/caption e label, inclusa
-la label EOF senza destinazione. Un token chiuso intero o fino a EOF estende
-l'unità Markdown; non estende il lookahead dei precedenti atomi nei suoi byte.
-I consumer rimappano offset senza normalizzazione globale. Commenti/CDATA hanno
-zero prosa/formule/reference/asset e aperture dal corpo, non soddisfano il gold
-visibile. Comment/declaration/unknown_decl/PI restano unsupported html-tokens-v1,
-audit INCOMPLETE e run/evaluate2. Codice letterale e metadata sicuri positivi
-restano discriminanti; HTML vero/risorse attive/URI unsafe conservano le guardie.
-
-È un subset finito, non HTML universale. F26/algoritmi/normalizzazioni/denominatori
-immutati: bound globale distinto dai CER/WER strutturali e conteggi condizionati;
-TRIVIAL_ZERO non è misura completa0. Nuovi derivati64 con conversioni r001/r002
-originali preservate, nuova V0 e zero motori di campagna. Sonde CLI con writer
-sintetico e gold PROVISIONAL: automatic PASS/INDETERMINATE/evaluate5, senza nuova V.
-
-Report e dati r007 (archived: `documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md`, tag `pre-docs-2026-10-18`).
-
-## Rettifica r008: avanzamento e domini inline
-
-Il reader r008 è `observations-v8-progress-and-inline-domains`; la sezione
-r007 sopra documenta il giro storico e va letta con questa rettifica. R007
-non chiudeva il dominio del raw LaTeX né tutte le interazioni nello stesso
-blocco o le label code su soft-line. Le review r007 erano statiche: prima/dopo
-r008 sono nuove prove autore, non runtime attribuito retroattivamente ai reviewer.
-
-Raw fence LaTeX: l'intero corpo fino alla vera chiusura fisica/EOF è il dominio,
-anche dopo blank/marker; token inerti attraversano false chiusure nel proprio
-corpo. Ogni transizione dello scanner avanza strettamente. EOF conserva la
-fence unknown e i token interni, senza rendere supportata tutta la TeX.
-
-Delimitatori incompleti code/math/tag non saltano veri commenti/CDATA nello
-stesso dominio. I consumer ricevono il token intero, corpo senza prosa/math/ref/
-asset/aperture e missing/page2 indipendenti. Opening tag incompleto prima del
-token resta diagnosticato `incomplete-start`; i tag riconosciuti sono validati
-con lo stesso PassiveHTML prima di qualsiasi proiezione. Attributi quotati,
-code/math chiusi, valuta/literal< e risorse attive restano discriminanti.
-
-Gli intervalli code accettati dal walk label sono condivisi con lo scanner,
-anche sui soft-line dei producer quote/list/note. Destinazione/titolo restano
-separati; non si prende una chiusura da un blocco estraneo. Trim e prefix
-stripping usano il ledger sorgente: niente riparsing di una riga parziale che
-comincia dentro un literal. Raw/char/byte/testo/reference e blocchi esterni
-sono verificati con Unicode, positivi e veri token EOF fuori dal codice.
-
-Subset finito html-tokens-v1 unsupported, audit INCOMPLETE/run/evaluate2;
-R PASS è isolamento/custodia, non qualità. CLI con writer sintetico e gold
-PROVISIONAL: automatic PASS/qualità INDETERMINATE/evaluate5, senza nuovaV.
-Riscoring64 con nuovi ID r008 e conversioni r001/r002 originali preservate:
-zero motori/V nuova. Scorer/F26/normalizzazioni/denominatori invariati;
-conteggi condizionati separati dal bound globale, TRIVIAL_ZERO non completo0.
-L04outputUNAVAILABLE distinta da V13; L01/L02/L05/ChromeNONPASS/helper12gap restano.
-
-Report e dati r008 (archived: `documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md`, tag `pre-docs-2026-10-18`).
-
-## Rettifica r009: confini del reader e precedenza della guardia
-
-Contratto storico del reader `observations-v9-reader-boundaries`; le review r009
-hanno individuato F43/F44, rettificati nella sezione r010 successiva. Le review r008 hanno confutato
-la validazione di tutte le aperture dopo errore dell'albero e la conservazione
-generale delle label dopo stripping: r008 rimane storia, senza PASS trasferiti.
-
-`html_tag_boundary` usa i matcher tag/attributi del tokenizer managed locale
-CPython3.12.13. Un apice interno a un valore bare è contenuto: il primo `>`
-chiude il tag. `<` e token-looking bytes nei valori quoted/bare sono letterali.
-La sola estensione finita F36 separa un prefisso da un token inerte in posizione
-di nome tag/attributo, prima della fine del tag; non inventa attributi dal corpo.
-Scanner, `FiniteHTML`, guardia e albero usano questa stessa decisione.
-
-`HTMLGuard` visita le aperture reali sull'intero frammento HTML, senza albero,
-prima della proiezione. Conserva la prima violazione PassiveHTML in ordine
-sorgente e prosegue la visita. Duplicati, depth16 e limite20000nodi della
-proiezione non interrompono la guardia. Un unsafe reale ha precedenza sulle
-diagnosi unsupported strutturali o lessicali: audit `UNSAFE_REFERENCE` con
-detail, FAIL score3 e run/evaluate2. Corpi comment/CDATA e valori letterali
-non sono aperture; nessun fetch, esecuzione o apertura di path evasivi.
-Un documento sicuro con token fuori profilo può conservare immagini/testo
-reali e asset verificati, pur rimanendo INCOMPLETE/UNSUPPORTED/exit2.
-
-Il producer passa `producer_limit` a `inline`: il consumer e le ricorsioni
-label/span/enfasi non ricostruiscono il dominio dai marker dopo stripping.
-`read_parts` costruisce durante il merge la mappa carattere logico→carattere
-sorgente; `node` la consuma per `source_position.char/byte`, con UTF8 originale.
-È una mappa interna, senza normalizzazione o ricerca di testo. Le barriere
-dei token sorgente continuano a fermare i letterali incompleti. Anche la
-classificazione della quote usa i code segment già riconosciuti: marker
-letterali dentro code non generano quote complesse. Chiusure in un producer
-successivo non vengono prese; blocchi esterni e raw rimangono distinti.
-
-La matrice r009 copre interazioni finite con attesi sintetici indipendenti:
-errore/ordine/safety/trasporto, valori quoted/bare, token chiuso/EOF,
-link/image, uno/due backtick, quote/list/note e continuazioni tab, Unicode e
-marker nei letterali. Il confronto con tokenizer fissato riguarda piccoli
-input ammessi; non certifica HTML/Markdown universale. Gold PROVISIONAL:
-automatic PASS mantiene qualità INDETERMINATE/score5, nessuna nuova V.
-Scorer/F26, domini/normalizzazioni/denominatori sono invariati; conteggi
-condizionati, bound globale e misure complete restano separati. TRIVIAL_ZERO
-non è fullPASS. V13/A03 riguarda il riferimento; L04output UNAVAILABLE,
-L01/L02 NOT_MEASURED e limiti L05/hardware/costi restano distinti.
-
-Report e dati r009 (archived: `documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md`, tag `pre-docs-2026-10-18`).
-
-## Rettifica r010: domini HTML e Markdown nelle foglie inline
-
-Contratto storico `observations-v10-inline-html-domains`: le review r010 hanno
-individuato F46–F48, rettificati nella sezione r011. Le review r009
-hanno confutato due parti del contratto precedente: un fallback Markdown
-poteva perdere un'apertura HTML riconosciuta dallo scanner (F43), e il feed
-HTML della coda poteva validare tag letterali in code successivo (F44).
-Le prove v9 restano riferite ai loro byte; r010 usa nuovi S/B/I e ricevute R.
-
-Nel dominio finito già deciso dal producer, `markdown_lexemes` fornisce anche
-le aperture HTML e gli estremi dei subtree. La guardia inline visita tali
-aperture prima di costruire un albero o restituire unknown, usando
-`PassiveHTML` e la stessa decisione `html_tag_boundary`/F36. Conserva la
-prima violazione in ordine sorgente e continua la visita. Code e math chiusi,
-destinazioni/metadata, comandi e token opachi mantengono i propri intervalli;
-un opener senza chiusura accettata non rende inerte il tag seguente. Non si
-riclassificano i marker rimossi dai prefissi quote/list/note. La mappa r009
-verso char/UTF8 originali resta la fonte delle coordinate.
-
-Prima della proiezione, `HTMLTree` riceve soltanto l'apertura e il subtree
-chiuso appartenenti alla foglia HTML. Un `<span>` bilanciato non possiede il
-code Markdown che lo segue. Questa stessa proprietà delimita il lookahead
-dell'enfasi. Un HTML owner ancora aperto conserva invece il dominio HTML
-finito; il reader non promette l'intera semantica di un renderer CommonMark.
-Nei producer HTML blocco/raw la guardia sull'intero frammento resta distinta.
-
-| Condizione nel dominio inline | Audit e contenuto | Exit |
+Run: exit 0 success + complete bundle; 2 error/timeout/empty/unsafe/incomplete; 4 contract/preflight/invalid input/internal error; 130 interruption. Score: exit 0 all required pass; 3 critical loss; 5 unavailable/indeterminate; 4 internal error/contract. Evaluate precedence 4→130 (interruption)→2→3→5→0. A critical FAIL precedes indeterminate, with both details kept. Summarize exit 0 means that it read/checked records, not quality PASS.
+
+The harness freezes eight paths × four attempts and the expected values **before** the workload; R expected-exit0 always. An explicit dependent rerun selects a subset of the registry, keeping four attempts per path and new identities; it is not a new complete campaign of eight paths. Legitimate Evaluate 2/3/5 are engine data and can produce harness 0 with batch PARTIAL and quality FAIL. Unexpected input/hash/schema/record/internal→harness 4, assert/pytest FAIL→1, deadline/monitor→2, interrupt→130. H01–H08 are explicit controls with stubs; H09–H16 inject defects and require R NON PASS. The runner must not turn an arbitrary error into harness 0. No stub satisfies requirement A10 of a Pandoc conversion with a real figure.
+
+## Security and resources
+
+Registry: only TXT literal, direct Pandoc and the installed PandocConverter; no implicit remote PDF/OCR/provider. Absolute argv, shell=False, closed environment. ZIP/XML/HTML/CSS/SVG/passive inputs validated before the tool; no DTD, entities, active HTML, remote resources, encoded, absolute or ../ paths, symlink/hardlink, special files. ZIP 256 members, 16MiB compressed, 64MiB expanded, ratio 100. Inert lstat auditor before opening assets, O_NOFOLLOW and inode/mutation checks. TeX not compiled: two allowlisted literal includes, cycles/duplicates denied, 256KiB expanded, finite package/class/commands. Wrappers in code/LaTeX/URI are not removed through global regexes. The protection is not a universal filesystem guarantee of the tool: R attests network/socket/namespace of the target.
+
+Initial deadlines: engine 60s, harness 400s per group, R 600s (cap 900). Stream 1MiB, file 32MiB, sampled RSS stop 6GiB; no attested aggregate RAM hard cap. Monotonic elapsed time separates conversion/audit/scoring/end-to-end. Linux wait4 CPU user/system of the dedicated process, individual/reaped max RSS distinct from the sampled tree peak 10ms. Shared pages can be duplicated; short-lived PID and peaks between samples can escape. Kill/wait/reap covers the group, setsid children and its own orphans; SIGINT is accounted for after collection. OS cache uncontrolled; a first process or new workspace is not called cold OS. No remote download/budget or persistent privileges for the tests.
+
+## Verification of the reference and human limits
+
+M is independent of generator/reader/scorer/Pandoc: canonical locators, OOXML/MathML/RTF/TeX, PDF Poppler+MuPDF and raster pixels. It compares real captions separately from the cells, figure/note/link targets, the annotated AST against the TeX source and manual PDF fields against locators then verified on the actual PDF. A visible raster does not certify NFC/NFD code points. Agent_visual is not V.
+
+The v2 comparison is one complete document per pair, original on the left and reference Markdown on the right; it derives exclusively from the manual gold. An independent checker reads the real HTML/.md, math/cells/notes/assets, order and source/page units. The MathML presentation does not prove the fidelity of the canonical form or of the engine. TeX not compiled; limits of the original renderers stay attributed, even when the PNG files are copied into an R PASS composition.
+
+V gold and V controls require a real response on the immutable passive packet: one natural judgement per document, at most thirteen. Receipt schema2 with received bytes/hash, real author and reception attributed by the caller with limits, packet/pair SHA, revision, complete visible scope and differences. No TSV or per-property timestamps; no expansion into atomic signatures. The digest of the pair includes sources/includes/render/assets/HTML/.md/map/CSS and excludes only the global administrative revision. The legacy schema1 importer remains for historical records. The new import is reclassified from the original bytes. A complete statement «Tutti i documenti corrispondono» ("All the documents match") remains a single original statement referring to the ID values of the packet; the documentary decisions declare its projection. No original line per document is invented; vagueness, exceptions and subsets do not produce a collective acceptance.
+
+VERIFIED requires M required PASS, complete view PASS and an explicit documentary V ACCEPTED on the same hashes. Absence/vagueness PENDING, doubts AMBIGUOUS, differences REJECTED, different hash/scope STALE. The judgements are independent per document; later partial responses keep the others already received. A03 requires all thirteen documents VERIFIED. An agreement on the duration is not a signature; the 260 min of the old workflow are historical and not human time spent. Formula output typography/semantics are separate judgements, not assigned: L04 UNAVAILABLE even with an exact AST. PDF/OCR L01 and TeX compilation L02 NOT_MEASURED. No guarantee for GPU/other OS.
+
+## Corrections r002 and reader/scorer versions
+
+`observations-v2-typed-inline` keeps typed inline contents and source offsets in pipe/HTML cells and captions, as well as raw/coordinates. Images, links, formulas and unknown enter the audit/scoring only once; equal text is not enough to ignore an added image or formula. Target and title are separate: double/single/parenthesized titles and balanced/escaped destinations fall within the finite profile. An unsupported resource syntax makes the bundle INCOMPLETE; raw inline `{=latex}` stays a localized unsupported, real code stays code. MathML with a single TeX annotation is observable; other MathML stays unknown.
+
+`metrics-v2-local-typed` uses the finite AST equivalences in the formula alignment too, keeping raw and one-to-one matching. The words of unmatched insertions enter the WER numerator over the unchanged expected denominator; equivalent raw formulas do not become prose. Complete CER/WER are UNAVAILABLE when the attribution is ambiguous/unresolved, with counts conditional on the structural matching, distinct from the guaranteed lower bounds introduced in r004. `exact-visible-unique-v1` attributes unknown only when it contains the whole visible text of one specific block (at least 8 characters), unique on both sides; it does not cover tables/figures/formulas, other omissions or pages. Extraneous unknown do not cancel a missing/page loss FAIL.
+
+Gold/spec rev5 declare `header_rows` and an engine-independent policy. The DOCX/RTF/TeX of the corpus are headerless, EPUB has a semantic th; PDF/raster use an explicit manual policy, without attributing encoded properties to the format. `header-regions-v2` separates body and header. Only for a source declared headerless, the first pipe row that is really empty, without inline contents, is a syntactic placeholder: all the body rows keep coordinates and numbers. A real header, even empty, an undue promotion and an absent cell remain distinct checks. The first row is not removed generically.
+
+Security: HTML/XHTML has finite attributes, srcset and unknown resource attributes are rejected; CSS has finite properties/values, escapes/comments and non-admitted functions are rejected. Every SVG, also XML with an SVG root, is validated with passive tags and attributes; unknown ZIP members are rejected. The negatives are stopped before extraction/engine: no tool must be used to demonstrate the damage. The legacy Pandoc token is resolved in the closed effective PATH `/usr/bin`, with which/realpath/hash/version before and after, consistent with the direct path. Empty or relative segments, cwd, user-bin or prepended binaries fail the preflight.
+
+Every monitor uses its own stdlib supervisor in the same interpreter, namespace and environment: it collects only its own descendants, including setsid, orphans and writers after the exit of the leader, until the overall deadline. A writer within cap/deadline can finish normally. PID identity through pidfd and final checks after reap and stream closing precede the receipt. Config/receipt of the supervisor are kept; the CPU wait4 of the supervisor includes the descendants. The limits sampled RSS/CPU lowerbound/cache OS already declared remain.
+
+The derived schema3 qualification keeps the previous real V, the old packets, pair/gold and original response, the metadata delta, a new M on the source and an independent checker of the old/new visible contents. `derive_verification` produces `derived_reference_content_qualification`, not a new V response: `new_human_confirmation=false`. The technical header is qualified by M. A targeted confirmation is required only if a visible content changes substantially or the invariance cannot be proven. L04 output stays UNAVAILABLE.
+
+New campaigns use attempt_id prefixed by experiment_id and can freeze `--verification` before the workload. Keep the bytes of the helpers/config/tests, before/after inventories and raw/errors. A new observe/audit/score of the historical raw has its own identity and engine_runs0; it does not rewrite historical metrics. The lack of historical helper bytes remains a historical limit, not remedied by the new scorer.
+
+The src/href/full-path pointers in XML ZIP containers are verified before the tool regardless of the casefold suffix; xml:base is outside the subset. HTML disguised as XML goes through the same passive HTML validator.
+
+## Corrections r003 of the HTML transport and text domain
+
+`observations-v3-html-transport` carries all typed leaves through inline HTML in the finite r004 profile, nested span/a included: formulas, unknown with raw, prose/math/code segments, resources, anchors and offsets. The same HTML producer covers cells/captions and paragraphs. Finite HTML figures have one image and one figcaption; other passive structures keep leaves/resources and unknown. Every src/href of the subset is validated and observed in the fallback too; unbalanced markup or a resource syntax that cannot be represented makes it INCOMPLETE. No browser, fetch or evasive target is opened. Alt does not replace the caption.
+
+`metrics-v3-text-domain` keeps the r002 alignment and denominators. The rule `text-domain-unknown-v1` makes complete CER/WER UNAVAILABLE/None also for textual unknown observed unmatched, with reason, observation ID, block ID when attributed, offset and scope. The domain includes the whole text blocks and literal code; cells/captions of tables/figures and formulas have distinct local metrics. An unknown that is exclusively math does not invalidate measurable prose. Raw unknown is not counted as words: the known segments of an unmatched insertion remain conditional structural counts, with known words not reduced to punctuation only. For an uncertain aligned comparison no edits are invented; the numerators are counts conditional on the structural matching, with complete expected denominators; the previous attribution of a bound is corrected in r004. An extraneous unknown does not change the `exact-visible-unique-v1` attribution, nor does it cover omissions, missing pages or FAIL results already proven.
+
+`WER_decomposition` (`wer-structural-components-v1`) records per attempt the edits in aligned blocks, expected omissions and unmatched insertions, types, ID, text, offset, denominators and known counts. The caption/title candidates are diagnostic evidence of exact textual identity with the gold, without changing alignment or numerators. A caption turned into a paragraph is an insertion in the declared domain; a demoted title produces an expected omission plus an insertion. The same phenomena can also fail the caption/blocks/numbers gates: do not add up the gates as independent losses. New measurements of the r002 raw have a derived r003 identity and engine_runs0; they are not new conversions. V and gold rev5 remain unchanged, L04 stays UNAVAILABLE.
+
+Duplicate HTML attributes are outside the profile: no conversion to a dict can drop the first src/href; explicit INCOMPLETE fallback even if the last target exists. Casefold, nested tags and malformed markup follow the same rule along producer/transport/audit.
+
+## Corrections r004: coverage of the HTML profiles and guaranteed bounds
+
+`observations-v4-html-coverage` distinguishes `html-inline-v1`, `html-table-v1` and `html-figure-v1`. The inline profile admits span/a/img/math/code/br/em/strong/sup/sub and the finite MathML children inside math. A block structure in an inline context keeps the whole text subtree, the formulas, the unknown, the resources and the localized raw, but adds an explicit unsupported. It does not use the text projection of table/figure. The same constraint holds inside cells, captions, paragraphs and inline wrappers, without reinterpreting literal Markdown code.
+
+The table admits a single direct caption, rows that are direct or inside thead/tbody, td/th cells direct in the row, and structural whitespace. Every other branch is consumed entirely once in `residual_contents`, with raw, position and typed leaves; all the resources/formulas/unknown of the cells, of all the captions and of the residues reach the consumers. Duplicate captions are outside the profile: the last one is not chosen. A figure admits one direct primary img, one direct figcaption and whitespace; the caption leaves are inline and further branches are explicit residues. An unknown or non-representable profile does not obtain PASS; known additions in the residues give FAIL, added supported formulas fail the comparison and missing assets give INCOMPLETE with exit 2. The URI validator precedes every opening: no new historical URI bypass is attributed. The character `<` followed by a space/digit stays text; real markup starts, comments/declarations and malformed markup keep the resource checks.
+
+`metrics-v4-conditional-and-bounds` compares the caption also when the expected one is absent/empty: `absent-empty-text-equivalent-v1` considers absence and the empty string equivalent only in the text domain of the caption. Typed components (ref/formulas/unknown) stay compared separately; an added non-empty caption is FAIL 3, without moving the cells/captions into the prose CER/WER.
+
+Three measures are distinct:
+
+- Complete CER/WER: sum of the comparisons under the recorded structural matching, with omissions/insertions and unchanged expected denominators; UNAVAILABLE/None if there is non-measurable text. They are not structure-free global distances.
+- `conditional_text_counts` and `WER_decomposition` v2: counts conditional on free_pairs and local attribution. `known_word_edits` is a compatible alias of the conditional count, with `guaranteed_bound=false`; the entries record ID, offset, text and sums. Omission and insertion can describe the same content when the matching does not accept an unknown node. Do not add them up as certain edits of the visible text or call them lower-bound.
+- `text_lower_bound`, `global-text-completion-bound-v1`: domain of the whole text blocks, code included; it excludes table/figure/formula/anchor and omits empty text projections. Char stream with LF between blocks, token stream with concatenation of the tokens split per block; full denominators of the original domain (LF separators not added to the denominator). Free global edit correspondences, independent of the structural alignment. With all the leaves measurable the exact minimal global distance is computed. With any non-measurable text, or a limit of the global computation, the bound is zero, TRIVIAL_ZERO.
+
+Guarantee: every admitted completion of the unknown can emit any string, even zero text, and modify the token boundaries. Every edit distance is nonnegative, so zero does not exceed the distance of any completion, even with several unknown, changes of position or correspondence. In the measurable case the stream is fixed and Levenshtein is the minimum over all the edit correspondences. The guarantee concerns this explicit domain, not the algebra of formulas or universal HTML. The guarantee is not inferred from the success of only two probes. The conservative bound can be zero while the structural FAIL is certain: missing/page loss, order, numbers, cells, assets and the local attribution F08 do not change. Known insertions remain discriminating in the structural counts (C1 3/30, Known words added 3/2); their value is not attributed as a global bound when part of the stream is non-measurable. A zero bound is not a complete CER/WER of 0.
+
+## Corrections r005: HTML diagnostics and text domains
+
+Reader `observations-v5-html-diagnostics`: the structural diagnostics of the parser are kept independently of the projection of the wrappers. An unclosed container or an inconsistent closing keeps raw, offset and type of the diagnostic: audit INCOMPLETE, run/evaluate exit 2. Balanced wrappers keep the projected contents only once. HTML headings h1–h6 have HTML coordinates; only the Markdown headings marked `atx_heading` receive the mapping of the ATX prefix. HTML headings and HTML code are hosts of `html-inline-v1`: nested block structures are local unsupported, keeping known leaves, formulas and resources. Literal Markdown code stays inert.
+
+`html-tokens-v1` keeps comments, declarations and processing instructions as out-of-profile tokens, with raw and source interval, at the start, in the middle and at the end. They produce no prose or references from the enclosed characters; an image cited in a comment is not an active resource. The diagnostic reaches audit/scorer and prevents COMPLETE/PASS. The cells, captions and residues keep the local position of the token. Literal `<`, entities and clean HTML keep the previous treatment. The profile is finite, without fetch or execution from the data.
+
+**Domain of `text_lower_bound`:** the field bounds exclusively the edit distance of the declared global stream. It is NOT a lower bound of complete CER/WER or of `conditional_text_counts`, which depend on the structural matching; it can exceed them because of order and separators. For example, two swapped paragraphs can have a structural CER of 0 and a positive global distance; an omission can add an LF separator to the stream, excluded from the expected denominator. `EXACT_GLOBAL_DISTANCE` is an exact measure in the measurable global domain; `TRIVIAL_ZERO` is only the conservative nonnegative guarantee over the admitted completions, not a complete measure of 0 nor evidence of fidelity. No change to the r004 alignment, normalization, denominators or distance computation.
+
+## Correction r006: lexical boundaries and inert contents
+
+The current reader is `observations-v6-html-lexical-boundaries`. The r005 description of F25 was incomplete: CDATA with an inner `>` and comments across blank lines or Markdown markers could leave part of the body to the following producers. The INCOMPLETE states already detected did not make counts and resources correct. The case `</>` could instead result in an automatic COMPLETE/PASS without a diagnostic. The historical evidence stays in the r005 report; consult the new r006 data.
+
+Every token of the finite branch keeps the complete closed construct or runs to EOF. CDATA ends at `]]>`; comments follow `-->`, `--!>` and the abrupt branches of the local managed tokenizer, including its actual precedence among closings. Comment/declaration/unknown_decl/PI stay unsupported in `html-tokens-v1`: audit INCOMPLETE, run/evaluate 2. The body of comments and CDATA is inert: zero prose/formulas/references/assets and no opening of the target from the body. A text present only in the comment does not satisfy the visible gold nor hide missing.
+
+The boundaries of the Markdown producers respect open tokens, also in cells, captions, headings, lists, quotes, notes, wrappers and raw HTML fences. Raw, Unicode/byte offsets, physical lines and diagnostics reach audit/scorer once. Leaves with code, formulas, links and raw LaTeX keep their own delimiters; EOF trim, attributes, emphasis and labels cannot truncate inert tokens. Inline code and literal Markdown fences stay inert. The summary without leaves uses a neutral reason and keeps the specific reasons of the occurrences. No fetch or command from the data; the subset does not promise universal HTML.
+
+F26 stays unchanged: global stream bound distinct from structural CER/WER and conditional counts, same algorithms/normalizations/denominators. The r006 rescore creates new derived identities of the 64 protected raw, zero engines and 0 new V.
+
+Report and data of r006 (archived: `documentation/benchmarks/2026-10-09-a002-r006-confini-lessicali-html.md`, tag `pre-docs-2026-10-18`).
+
+## Correction r007: Markdown contexts and producer boundaries
+
+The current reader is `observations-v7-shared-markdown-contexts`. The local lexical closing of r006 did not guarantee all the global boundaries: the lookahead of code, math and tags could cross distinct producers or resume inside fences; autolinks installed a false HTML context; metadata and raw TeX commands consumed inline could instead open tokens in the scanner. These are F31–F33, with real before/after in the new r007 report; the r006 report/data and FAIL/E9 stay unchanged.
+
+The domain is that of the actual producer before the merge: a paragraph up to a blank/marker of a block, heading/cell/caption/label in its own value, lists, quotes and notes with the continuations really admitted. Scanner and consumer share finite code/math/autolink/link/span/metadata/command atoms and pipes outside the atoms. Autolinks do not install an HTML stack; metadata are opaque only in the recognized syntactic host; unsupported raw TeX stays local, with separate ref/anchor.
+
+The intervals of the inert tokens really recognized on the source reach the consumers also through merge, prefix stripping, cells/captions and labels, including the EOF label without destination. A token closed whole or running to EOF extends the Markdown unit; it does not extend the lookahead of the preceding atoms into its bytes. The consumers remap offsets without global normalization. Comments/CDATA have zero prose/formulas/references/assets and openings from the body, and do not satisfy the visible gold. Comment/declaration/unknown_decl/PI stay unsupported html-tokens-v1, audit INCOMPLETE and run/evaluate 2. Literal code and safe positive metadata remain discriminating; real HTML, active resources and unsafe URI keep the guards.
+
+It is a finite subset, not universal HTML. F26/algorithms/normalizations/denominators unchanged: global bound distinct from structural CER/WER and conditional counts; TRIVIAL_ZERO is not a complete measure of 0. New derived measures of 64 with the original r001/r002 conversions preserved, 0 new V and zero campaign engines. CLI probes with a synthetic writer and PROVISIONAL gold: automatic PASS/INDETERMINATE/evaluate 5, without a new V.
+
+Report and data of r007 (archived: `documentation/benchmarks/2026-10-10-a002-r007-contesti-markdown.md`, tag `pre-docs-2026-10-18`).
+
+## Correction r008: progress and inline domains
+
+The r008 reader is `observations-v8-progress-and-inline-domains`; the r007 section above documents the historical round and must be read with this correction. R007 did not close the domain of raw LaTeX nor all the interactions in the same block or the code labels on soft lines. The r007 reviews were static: the r008 before/after are new author evidence, not runtime attributed retroactively to the reviewers.
+
+Raw LaTeX fence: the whole body up to the real physical closing or EOF is the domain, also after a blank/marker; inert tokens cross false closings in their own body. Every transition of the scanner advances strictly. EOF keeps the unknown fence and the inner tokens, without making the whole of TeX supported.
+
+Incomplete code/math/tag delimiters do not skip real comments/CDATA in the same domain. The consumers receive the whole token, a body without prose, math, ref, assets or openings, and independent missing/page2. An incomplete opening tag before the token stays diagnosed `incomplete-start`; the recognized tags are validated with the same PassiveHTML before any projection. Quoted attributes, closed code/math, currency/literal< and active resources remain discriminating.
+
+The code intervals accepted by the label walk are shared with the scanner, also on the soft lines of the quote/list/note producers. Destination/title stay separate; a closing is not taken from an extraneous block. Trim and prefix stripping use the source ledger: no reparsing of a partial line that starts inside a literal. Raw/char/byte/text/reference and outer blocks are verified with Unicode, positives and real EOF tokens outside the code.
+
+Finite subset html-tokens-v1 unsupported, audit INCOMPLETE/run/evaluate 2; R PASS is isolation/custody, not quality. CLI with a synthetic writer and PROVISIONAL gold: automatic PASS, quality INDETERMINATE/evaluate 5, without a new V. Rescoring of 64 with new r008 ID values and the original r001/r002 conversions preserved: zero engines and no new V. Scorer/F26/normalizations/denominators unchanged; conditional counts separate from the global bound, TRIVIAL_ZERO not complete 0. L04 output UNAVAILABLE distinct from V13; L01/L02/L05, Chrome NON PASS and the 12-helper gap remain.
+
+Report and data of r008 (archived: `documentation/benchmarks/2026-10-10-a002-r008-avanzamento-scanner-e-domini-inline.md`, tag `pre-docs-2026-10-18`).
+
+## Correction r009: reader boundaries and guard precedence
+
+Historical contract of the reader `observations-v9-reader-boundaries`; the r009 reviews found F43/F44, corrected in the following r010 section. The r008 reviews refuted the validation of all the openings after a tree error and the general preservation of labels after stripping: r008 remains history, with no transferred PASS.
+
+`html_tag_boundary` uses the tag/attribute matchers of the local managed tokenizer of CPython 3.12.13. An apostrophe inside a bare value is content: the first `>` closes the tag. `<` and token-looking bytes in quoted/bare values are literal. The only finite extension F36 separates a prefix from an inert token in a tag/attribute name position, before the end of the tag; it does not invent attributes from the body. Scanner, `FiniteHTML`, guard and tree use this same decision.
+
+`HTMLGuard` visits the real openings over the whole HTML fragment, without a tree, before the projection. It keeps the first PassiveHTML violation in source order and continues the visit. Duplicates, depth16 and the 20000-node limit of the projection do not interrupt the guard. A real unsafe takes precedence over structural or lexical unsupported diagnostics: audit `UNSAFE_REFERENCE` with detail, FAIL score 3 and run/evaluate 2. The comment/CDATA bodies and literal values are not openings; no fetch, execution or opening of evasive paths. A safe document with out-of-profile tokens can keep real images/text and verified assets, while remaining INCOMPLETE/UNSUPPORTED with exit 2.
+
+The producer passes `producer_limit` to `inline`: the consumer and the label/span/emphasis recursions do not rebuild the domain from the markers after stripping. `read_parts` builds during the merge the logical character→source character map; `node` consumes it for `source_position.char/byte`, with the original UTF8. It is an internal map, without normalization or text search. The barriers of the source tokens keep stopping the incomplete literals. The classification of quotes also uses the code segments already recognized: literal markers inside code do not generate complex quotes. Closings in a following producer are not taken; outer blocks and raw remain distinct.
+
+The r009 matrix covers finite interactions with independent synthetic expected values: error/order/safety/transport, quoted/bare values, closed/EOF token, link/image, one or two backticks, quote/list/note and tab continuations, Unicode and markers in literals. The comparison with a pinned tokenizer concerns small admitted inputs; it does not certify universal HTML/Markdown. PROVISIONAL gold: automatic PASS keeps quality INDETERMINATE/score 5, no new V. Scorer/F26, domains/normalizations/denominators are unchanged; conditional counts, global bound and complete measures remain separate. TRIVIAL_ZERO is not full PASS. V13/A03 concerns the reference; L04 output UNAVAILABLE, L01/L02 NOT_MEASURED and the L05/hardware/cost limits remain distinct.
+
+Report and data of r009 (archived: `documentation/benchmarks/2026-10-10-a002-r009-confini-reader.md`, tag `pre-docs-2026-10-18`).
+
+## Correction r010: HTML and Markdown domains in inline leaves
+
+Historical contract `observations-v10-inline-html-domains`: the r010 reviews found F46–F48, corrected in the r011 section. The r009 reviews refuted two parts of the previous contract: a Markdown fallback could lose an HTML opening recognized by the scanner (F43), and the HTML feed of the tail could validate literal tags in following code (F44). The v9 evidence stays bound to its own bytes; r010 uses new S/B/I and R receipts.
+
+In the finite domain already decided by the producer, `markdown_lexemes` also provides the HTML openings and the ends of the subtrees. The inline guard visits those openings before building a tree or returning unknown, using `PassiveHTML` and the same `html_tag_boundary`/F36 decision. It keeps the first violation in source order and continues the visit. Closed code and math, destinations/metadata, commands and opaque tokens keep their own intervals; an opener without an accepted closing does not make the following tag inert. The markers removed from the quote/list/note prefixes are not reclassified. The r009 map to the original char/UTF8 remains the source of the coordinates.
+
+Before the projection, `HTMLTree` receives only the opening and the closed subtree that belong to the HTML leaf. A balanced `<span>` does not own the Markdown code that follows it. This same property bounds the lookahead of emphasis. An HTML owner still open instead keeps the finite HTML domain; the reader does not promise the whole semantics of a CommonMark renderer. In the block/raw HTML producers the guard over the whole fragment stays distinct.
+
+| Condition in the inline domain | Audit and content | Exit |
 | --- | --- | --- |
-| Code/math incompleto o link malformato seguito da apertura HTML unsafe riconosciuta | `INCOMPLETE/UNSAFE_REFERENCE`, detail della prima violazione; nessuna apertura del path evasivo | run/evaluate2, score3/FAIL |
-| Stesso fallback con immagine HTML sicura non rappresentata | `INCOMPLETE/UNSUPPORTED_RESOURCE_SYNTAX`; resource_syntax esplicita, senza COMPLETE con risorsa persa | run/evaluate2, score3/FAIL |
-| HTML bilanciato prima/dopo code chiuso contenente img/script/onclick letterali | Testo literal e blocchi esterni conservati, nessuna reference/asset inventata | Nei gold PROVISIONAL automatic PASS, qualità INDETERMINATE, run0/score/evaluate5 |
-| Errore strutturale HTML e code chiuso esterno | Unsupported rimane esplicito; il literal non genera unsafe | run/evaluate2, score3/FAIL |
-| Token comment/CDATA chiuso o EOF | Corpo opaco intero, raw e char/UTF8 originali; heading esterno soltanto dopo chiusura | INCOMPLETE/UNSUPPORTED, score3 |
+| Incomplete code/math or malformed link followed by a recognized unsafe HTML opening | `INCOMPLETE/UNSAFE_REFERENCE`, detail of the first violation; no opening of the evasive path | run/evaluate2, score3/FAIL |
+| Same fallback with a safe HTML image not represented | `INCOMPLETE/UNSUPPORTED_RESOURCE_SYNTAX`; explicit resource_syntax, without COMPLETE with a lost resource | run/evaluate2, score3/FAIL |
+| Balanced HTML before/after closed code containing literal img/script/onclick | Literal text and outer blocks kept, no invented reference/asset | In PROVISIONAL gold automatic PASS, quality INDETERMINATE, run0/score/evaluate5 |
+| HTML structural error and outer closed code | Unsupported stays explicit; the literal does not generate unsafe | run/evaluate2, score3/FAIL |
+| Closed or EOF comment/CDATA token | Whole opaque body, original raw and char/UTF8; outer heading only after the closing | INCOMPLETE/UNSUPPORTED, score3 |
 
-F36 è una **divergenza deliberata** dal tokenizer CPython puro. Negli esempi
-B1–B4 (`<div <!-- -- ><img ...>`, `<img <!-- src=...> -->`, variante raw con
-script, `<alpha <!--` multilinea), il parser puro può riconoscere aperture e
-attributi; il profilo finito separa il prefisso e conserva il successivo token
-come opaco. Questi casi restano UNSUPPORTED, senza leggere risorse dal corpo.
-Non attestano parità completa col tokenizer puro né validazione di ogni sua
-apertura. Il limite accettato non si trasferisce ai fallback Markdown F43.
+F36 is a **deliberate divergence** from the pure CPython tokenizer. In the examples B1–B4 (`<div <!-- -- ><img ...>`, `<img <!-- src=...> -->`, raw variant with script, multiline `<alpha <!--`), the pure parser can recognize openings and attributes; the finite profile separates the prefix and keeps the following token as opaque. These cases stay UNSUPPORTED, without reading resources from the body. They do not attest complete parity with the pure tokenizer nor validation of every one of its openings. The accepted limit does not carry over to the F43 Markdown fallbacks.
 
-La matrice r010 ha oracoli manuali finiti: uno/due backtick, math chiuso/aperto,
-link malformato anche con code interno, ordine HTML/code, safe/traversal/script/
-event, HTML bilanciato/duplicati/depth17, token chiuso/EOF, sei producer e
-Unicode. I 21 discriminanti originali sono legati agli stessi byte/oracoli;
-le aspettative sono identiche prima/dopo. I controlli math con gold volutamente
-senza formula sono negativi di scoring, non positivi di qualità. Le prove
-non certificano grammatica universale, fedeltà di renderer o migrazione intera.
-Scorer/F26, normalizzazioni e denominatori non cambiano. Le 64 misure derivate
-conservano raw e V13/A03; conteggi condizionati, bound globale e TRIVIAL_ZERO
-restano distinti. L04 output UNAVAILABLE, L01/L02 NOT_MEASURED, L05, hardware,
-costi e gap storico dei 12 helper restano limiti separati.
+The r010 matrix has finite manual oracles: one or two backticks, closed/open math, malformed link also with inner code, HTML/code order, safe/traversal/script/event, balanced HTML/duplicates/depth17, closed/EOF token, six producers and Unicode. The 21 original discriminating cases are bound to the same bytes/oracles; the expectations are identical before/after. The math controls with a gold deliberately without a formula are scoring negatives, not quality positives. The evidence does not certify a universal grammar, renderer fidelity or a whole migration. Scorer/F26, normalizations and denominators do not change. The 64 derived measures keep raw and V13/A03; conditional counts, global bound and TRIVIAL_ZERO remain distinct. L04 output UNAVAILABLE, L01/L02 NOT_MEASURED, L05, hardware, costs and the historical gap of the 12 helpers remain separate limits.
 
-Report e dati r010 (archived: `documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md`, tag `pre-docs-2026-10-18`).
+Report and data of r010 (archived: `documentation/benchmarks/2026-10-10-a002-r010-confini-html-markdown.md`, tag `pre-docs-2026-10-18`).
 
+## Correction r011: ownership and inline metadata
 
-## Rettifica r011: ownership e metadati inline
+Historical contract `observations-v11-inline-ownership`: the r011 reviews found F50–F52, corrected in the r012 section. The producer owns the block, the inline domain and the explicit map to the source. The recognition of heading metadata is limited to the source block: `# … {…}` in a list/quote/note/cell/caption leaf or in the text of a heading is content. The real heading keeps its own attributes, distinct from those of the inner text.
 
-Contratto storico `observations-v11-inline-ownership`: le review r011 hanno
-individuato F50–F52, rettificati nella sezione r012. Il producer possiede il
-blocco, il dominio inline e la mappa esplicita al sorgente. Il riconoscimento
-metadata heading è limitato al blocco sorgente: `# … {…}` in una foglia
-list/quote/note/cella/caption o nel testo di un heading è contenuto. Il vero
-heading mantiene i propri attributi, distinti da quelli del testo interno.
+The label is accepted by the finite walk received. The LF inside closed code belongs to that atom and does not cut the math lookahead; a free LF stays outside the label profile. An LF inside an opaque token keeps the limit: comment/CDATA do not lend closings to the preceding literal. The source token is a barrier in the recursion and keeps raw/char/UTF8. A lexically closed math keeps the whole opaque body even when the structure is unsupported.
 
-La label è accettata dal walk finito ricevuto. La LF dentro code chiuso
-appartiene a quell'atomo e non taglia il lookahead math; LF libera resta
-fuori dal profilo della label. LF dentro token opaco mantiene il limite:
-comment/CDATA non prestano chiusure al literal precedente. Il token sorgente
-è barriera nella ricorsione e conserva raw/char/UTF8. Una math lessicalmente
-chiusa conserva tutto il corpo opaco anche quando la struttura è unsupported.
+The code ledger of the label holds only outside the open HTML owner: inner backticks are HTML text, the inner openings are real. Guard before the projection, first unsafe in source order and all the following visits, also with duplicates/depth errors. At the closing of the owner the outer code stays inert. The fallback of a block already projected/validated inline does not reread the raw as HTML. An unclosed code/math opener does not hide openings; a safe non-representable resource is at least INCOMPLETE/UNSUPPORTED.
 
-Il ledger code della label vale soltanto fuori dall'owner HTML aperto:
-backtick interni sono testo HTML, le aperture interne sono reali. Guard prima
-di proiezione, prima unsafe in ordine sorgente e tutte le visite successive,
-anche con duplicati/depth error. Alla chiusura dell'owner il code esterno
-rimane inerte. Il fallback di un blocco già proiettato/validato inline non
-rilegge il raw come HTML. Un opener code/math non chiuso non nasconde
-aperture; risorsa sicura non rappresentabile è almeno INCOMPLETE/UNSUPPORTED.
+153 finite manual oracles and controls 303 for r010 and 308 for r009; the math gold includes independent raw, the unsupported math subset/L04 keep INDETERMINATE/score 5. The negative reviewer golds and the r010 evidence are history, not transferred PASS. F36 B1–B4 deliberately UNSUPPORTED, no second mandatory pure feed. Inherited limits: backtick lengths different from full CommonMark; raw formats html5/html-space outside the exact profile, active Pandoc not confirmed; finite cost on comments without a performance campaign. The unsafe fallback observations-v1 in benchmark.py is not the ID of the executed reader; attribution with bytes, gate, R and snapshot. Scorer/normalizations/denominators unchanged.
 
-153 oracoli manuali finiti e controlli303r010/308r009; gold math include raw
-indipendente, subset math unsupported/L04 mantengono INDETERMINATE/score5.
-I gold reviewer negativi e le prove r010 sono storia, non PASS trasferiti.
-F36 B1–B4 deliberatamente UNSUPPORTED, nessun secondo feed puro obbligatorio.
-Limiti ereditati: lunghezze backtick diverse da CommonMark completo; formati
-raw html5/html-space fuori profilo esatto, Pandoc attivo non confermato;
-costo finito su commenti senza campagna prestazionale. Il fallback unsafe
-observations-v1 in benchmark.py non è l'ID del reader eseguito; attribuzione
-con byte, gate, R e snapshot. Scorer/normalizzazioni/denominatori invariati.
+Report and data of r011 (archived: `documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md`, tag `pre-docs-2026-10-18`).
 
-Report e dati r011 (archived: `documentation/benchmarks/2026-10-10-a002-r011-ownership-inline.md`, tag `pre-docs-2026-10-18`).
+## Correction r012: atom decisions and raw in containers
 
+Historical section: the r012 review disproved the completeness of the guard for attrs and the fence ownership described here. For these points and for the private coverage the [r013 correction](#correction-r013-guard-sources-and-fence-context) applies.
 
-## Rettifica r012: decisioni di atomo e raw nei container
+Reader `observations-v12-shared-atoms`, mandate F50–F53. `literal_atom` records type, body, interval, closing and metadata; `InlineDecision` materializes a single decision in the domain of the producer, with the source-map. Guard and consumer use that ledger. The label/span/emphasis recursions cut and shift the same descriptors; they do not rediscover closings after stripping. `inline_delimiter` consumes the ledger, `pipe_cuts` keeps its own delimiter contract using the shared primitive.
 
-Sezione storica: la review r012 ha smentito la completezza della guardia
-per attrs e la proprietà dei fence descritta qui. Per questi punti e per
-la coverage privata vale la [rettifica r013](#rettifica-r013-fonti-di-guardia-e-contesto-dei-fence).
+The label walk keeps the grammar received: LF admitted in closed code, an opaque token or backslash+LF. Metadata after code do not admit new free LF. The LF owned by code/escape do not cut the math; the LF of the tokens stay barriers and do not lend delimiters. The barriers are recorded once and looked up by index, removing the previous nested loop LF × code. This does not certify a linear complexity of the whole reader: lookup of the other tokens, slicing and HTML parsing remain distinct costs.
 
-Reader `observations-v12-shared-atoms`, mandato F50–F53. `literal_atom`
-registra tipo, corpo, intervallo, chiusura e metadata; `InlineDecision`
-materializza una sola decisione nel dominio del producer, con source-map.
-Guardia e consumer usano quel ledger. Le ricorsioni label/span/enfasi
-ritagliano e traslano gli stessi descrittori; non riscoprono chiusure dopo
-stripping. `inline_delimiter` consuma il ledger, `pipe_cuts` conserva il
-proprio contratto di delimitatori usando la primitiva condivisa.
+A code of the label keeps its metadata: the exact inline raw format `{=html}` generates an event for the HTML body; ordinary code and raw LaTeX do not become HTML. An open HTML owner prevails over the Markdown decisions; extraneous closings do not return that domain, recognized closings do.
 
-Il walk della label conserva la grammatica ricevuta: LF ammessa in code
-chiuso, token opaco o backslash+LF. Metadata dopo code non ammette nuove
-LF libere. LF possedute da code/escape non tagliano la math; le LF dei token
-restano barriere e non prestano delimitatori. Le barriere sono registrate
-una volta e consultate per indice, eliminando il precedente loop annidato
-LF × code. Questo non certifica complessità lineare dell'intero reader:
-lookup degli altri token, slicing e parsing HTML restano costi distinti.
+Quote/list/note build domain and map before the guard. The walk recognizes the fences of that domain, including finite nested quote prefixes. An ordinary fence owns the literal body. The exact fence `{=html}` instead owns HTML: the body receives a complete guard separate from the tree. The raw block of the container is not projected as a complete structure: it keeps raw/position and a diagnostic `container raw block not projected` with `resource_syntax`, hence INCOMPLETE/UNSUPPORTED also for the safe asset. The target is not followed as a reference; the ordinary inventory can still hash the files already present in the bundle. An unclosed fence keeps a structural diagnostic; it does not certify a silent COMPLETE.
 
-Un code della label conserva i metadata: il formato raw inline esatto
-`{=html}` genera un evento per il corpo HTML; code ordinario e raw LaTeX
-non diventano HTML. Owner HTML aperto prevale sulle decisioni Markdown;
-chiusure estranee non restituiscono quel dominio, chiusure riconosciute sì.
+The private coverage records domain/range/hash received from the guard; `node` consumes this evidence and the source-map. The mere presence of `segments` does not exempt the fallback. The non-projected raw residue stays an explicit unknown; unknown does not certify coverage. The fallback without a guarded domain keeps the planned validation. No second indiscriminate HTML feed on the Markdown tail, preserving F44 and the inertness of closed code/math.
 
-Quote/list/note costruiscono dominio e mappa prima della guardia. Il walk
-riconosce i fence di quel dominio, inclusi prefissi quote annidati finiti.
-Fence ordinario possiede il corpo letterale. Il fence esatto `{=html}`
-possiede invece HTML: il corpo riceve guardia completa separata dall'albero.
-Il raw block del container non viene proiettato come struttura completa:
-conserva raw/posizione e una diagnosi `container raw block not projected`
-con `resource_syntax`, dunque INCOMPLETE/UNSUPPORTED anche per l'asset sicuro.
-Il target non viene seguito come reference; l’inventario ordinario può
-comunque hashare i file già presenti nel bundle. Fence non chiuso conserva una diagnosi
-strutturale; non certifica COMPLETE silenzioso.
+The observation session keeps the first Unsafe and continues guarding the following domains in source order. A domain already unsafe is not projected: the events have already been visited, without counting them again in the tree. A projection error does not truncate the guards. At the end `observe` raises the first diagnostic; audit stays UNSAFE with detail, run/evaluate 2. The `observations-v1` fallback of the benchmark stays distinct from the physical reader.
 
-La copertura privata registra dominio/range/hash ricevuti dalla guardia;
-`node` consuma questa prova e la source-map. La sola presenza di `segments`
-non esenta il fallback. Il residuo raw non proiettato rimane unknown esplicito;
-unknown non certifica copertura. Il fallback senza dominio guardato conserva
-la validazione prevista. Nessun secondo feed HTML indiscriminato sulla coda
-Markdown, preservando F44 e l'inertness di code/math chiusi.
+The r012 evidence uses frozen manual expected values and a separate finite generator (seed 12012, motivated selection, explicit limits), besides the regressions. Closed formulas: raw/link/text/blocks/char/UTF8 preserved, run0/evaluate5, quality INDETERMINATE; no semantic PASS of the math subset or L04. Unsafe raw container: run/evaluate2/detail; safe and not projected: 2/2 UNSUPPORTED. The counts and the actual inputs are in the report, without transferring static r011 evidence or measurements on previous versions.
 
-La sessione di osservazione conserva la prima Unsafe e continua la guardia
-dei domini successivi in ordine sorgente. Il dominio già unsafe non viene
-proiettato: gli eventi sono già stati visitati, senza ricontarli nell'albero.
-Un errore di proiezione non tronca le guardie. Alla fine `observe` solleva
-la prima diagnosi; audit resta UNSAFE con detail, run/evaluate2. Il fallback
-`observations-v1` del benchmark resta distinto dal reader fisico.
+F36 B1–B4 remains deliberately UNSUPPORTED, no pure tokenizer feed. Preserved: F40/F41, heading metadata F46, scorer/F26, denominators and V13/A03. The four r010 observations remain: inherited backtick run; formats html5/html-space outside the subset and active Pandoc not confirmed; historical comment timings v10/v9; ID fallback v1. Finite LF micro-tests measure only the recorded inputs; O001 was a static estimate, not an observed timeout. CPU lower/RSS sampled, hardware/cache declared, no certified upper. Run deadline removed; CPU/disk/RAM/R/network quotas unchanged. L01/L02 NOT_MEASURED, L04 output UNAVAILABLE, L05, Chrome NON PASS, the 12-helper gap, H15, E9 and historical errors kept.
 
-Le prove r012 usano attesi manuali congelati e un generatore finito separato
-(seed12012, selezione motivata, limiti espliciti), oltre alle regressioni.
-Formule chiuse: raw/link/testo/blocchi/char/UTF8 preservati, run0/evaluate5,
-qualità INDETERMINATE; nessun PASS semantico del subset math o L04.
-Raw container unsafe: run/evaluate2/detail; sicuro non proiettato:2/2
-UNSUPPORTED. I conteggi e gli input effettivi sono nel report, senza
-trasferire prove statiche r011 o misure su precedenti versioni.
+Report and data of r012 (archived: `documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md`, tag `pre-docs-2026-10-18`).
 
-F36B1–B4 rimane deliberatamente UNSUPPORTED, nessun feed tokenizer puro.
-Preservati F40/F41, metadata heading F46, scorer/F26, denominatori e V13/A03.
-Restano le quattro osservazioni r010: run backtick ereditato; formati
-html5/html-space fuori subset e Pandoc attivo non confermato; tempi storici
-commenti v10/v9; IDfallbackv1. Microprove LF finite misurano soltanto gli input
-registrati; O001 era stima statica, non timeout osservato. CPU lower/RSS sampled,
-hardware/cache dichiarati, nessun upper certificato. Deadline della run rimossa;
-quote CPU/disco/RAM/R/rete invariate. L01/L02 NOT_MEASURED, L04outputUNAVAILABLE,
-L05 e ChromeNONPASS/helper12gap/H15/E9/errori storici conservati.
+## Correction r013: guard sources and fence context
 
-Report e dati r012 (archived: `documentation/benchmarks/2026-10-11-a002-r012-atomi-e-container.md`, tag `pre-docs-2026-10-18`).
+Historical r013 contract, corrected by the r014 contracts below; the r013 reviews refuted metadata acceptance, fence info and state between producers. Reader `observations-v13-ordered-guards-fences`, F54–F57. The Unsafe sources of the reader flow into events with a source position: real HTML openings and active Markdown block/inline attributes. Active attributes are excluded from the projectable values. The collector deduplicates by type/position/snippet and drains the events in source order, continuing after every violation; the first error of the reader determines the detail. Handled errors of the tree do not truncate the following domains. The tree does not revalidate openings already recorded. The projection can be built, but an unsafe result is not published. `finally` resets the session. The standalone validators keep the immediate behaviour.
 
-## Rettifica r013: fonti di guardia e contesto dei fence
+In metadata on several lines `attrs` separates LF/CRLF outside quoted values; `InlineDecision.attributes` carries the map of every character, including the removed quote/list/note prefixes. The positions of the active tokens are physical, not logical offsets added to the mere start of the group. Sixteen additional LF cases, frozen and confirmed as Span/Link by Pandoc, verify first cause, char/UTF8 position and visit of the tail. The complete tests were repeated after this fix, found in the final check.
 
-Contratto storico r013, rettificato dai contratti r014 sotto; le review r013
-hanno confutato accettazione metadata, info fence e stato tra producer.
-Reader `observations-v13-ordered-guards-fences`, F54–F57. Le fonti
-Unsafe del reader confluiscono in eventi con posizione sorgente: aperture
-HTML reali e attributi Markdown attivi di blocco/inline. Gli attributi
-attivi sono esclusi dai valori proiettabili. Il collector deduplica per
-tipo/posizione/snippet e drena gli eventi in ordine sorgente, proseguendo
-dopo ogni violazione; il primo errore del reader determina il detail.
-Gli errori gestiti dell’albero non troncano i domini successivi. L’albero
-non rivalida aperture già registrate. La proiezione può essere costruita,
-ma un risultato unsafe non viene pubblicato. `finally` azzera la sessione.
-I validatori standalone mantengono il comportamento immediato.
+This precedence concerns the reader. The check of Markdown paths happens in the audit after observe: A8/CLA-O002 remains a non-blocking limit, without a promise of a first global unsafe resource across reader+audit.
 
-Nei metadata su più righe `attrs` separa LF/CRLF fuori dai valori quotati;
-`InlineDecision.attributes` trasporta la mappa di ogni carattere, compresi
-i prefissi rimossi di quote/list/note. Le posizioni dei token attivi sono
-fisiche, non offset logici sommati al solo inizio del gruppo. Sedici casi
-LF aggiuntivi, congelati e confermati come Span/Link da Pandoc, verificano
-prima causa, posizione char/UTF8 e visita della coda. Le prove complete
-sono state ripetute dopo questo fix trovato nel controllo finale.
+The `fence_decision` condition is reused by root, scanner, container, boundary and consumer. It considers the preceding paragraph, separation, marker, metadata and closing: a tilde does not interrupt a paragraph; a closed backtick can interrupt it; an ordinary EOF does not confer code ownership. The real literal owner stays inert. Pandoc 3.1.3 can read the initial backtick of a list as inline Code and the first heading of a note as Plain: these cases keep the paragraph state relevant to the following fence.
 
-Questa precedenza riguarda il reader. Il controllo dei path Markdown
-avviene nell’audit dopo observe: A8/CLA-O002 resta limite non bloccante,
-senza una promessa di prima risorsa unsafe globale reader+audit.
+Exact raw HTML/LaTeX keeps the pre-existing contracts, also at EOF; it is not implicitly made uniform with the whole of Pandoc. In particular the list/backtick raw of the profile can differ from the inline Code of the AST, and root LaTeX keeps the HTML guard received. A tilde marker after text does not hide the real HTML body. A safe asset is preserved, or stays an INCOMPLETE/UNSUPPORTED residue with raw, position and resource_syntax; never COMPLETE without the resource. A non-projectable container raw stays unsupported. LF label, opaque tokens, deliberate F36 and F44 remain unchanged.
 
-La condizione `fence_decision` è riusata da radice, scanner, container,
-boundary e consumer. Considera paragrafo precedente, separazione, marker,
-metadata e chiusura: tilde non interrompe un paragrafo; backtick chiuso può
-interromperlo; EOF ordinario non conferisce ownership code. Il vero owner
-letterale resta inerte. Pandoc3.1.3 può leggere il backtick iniziale di una
-lista come Code inline e la prima heading di una nota come Plain: questi
-casi mantengono lo stato di paragrafo pertinente al fence successivo.
+`_guard_coverage` is consumed internally by node/located/source-map and removed recursively only at the end of observe. The removal of the 640 nested copies in the 64 rescores is a JSON difference separate from the 19 metric/gate fields, results unchanged. Previous bytes and outcomes remain history. No new public schema, module or universal parser.
 
-Raw esatto HTML/LaTeX mantiene i contratti preesistenti, anche a EOF; non
-viene uniformato implicitamente a tutta Pandoc. In particolare il raw
-list/backtick del profilo può differire dal Code inline dell’AST e LaTeX
-radice conserva la guardia HTML ricevuta. Un marker tilde dopo testo non
-nasconde il corpo HTML reale. Un asset sicuro è preservato, oppure resta
-un residuo INCOMPLETE/UNSUPPORTED con raw, posizione e resource_syntax;
-mai COMPLETE senza la risorsa. Raw container non proiettabile resta
-unsupported. LF label, token opachi, F36 deliberato e F44 restano invariati.
+The 285 matrix uses frozen raw and expected values, at most 186B, seed 13013, a finite generator without product import and manual semantic expected values. Local Pandoc under R provides 199 AST, including 139 ordinary decisions and 60 raw; the corrections of the premises are recorded. Two private copies reintroduce fail-fast attrs and a fence at every line: both fail 3/3 discriminating cases. The r013 report (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`) binds every source/callsite to properties and results, distinguishing author, helper, generator and oracle; it does not replace new independent reviews.
 
-`_guard_coverage` è consumata internamente da node/located/source-map e
-rimossa ricorsivamente solo al termine di observe. La rimozione delle
-640 copie nested nei 64 rescore è una differenza JSON separata dai 19
-campi metrici/gate, risultati invariati. Byte ed esiti precedenti restano
-storia. Nessun nuovo schema pubblico, modulo o parser universale.
+The runtime evidence identifies managed 3.12.13, reinstalled S/B/I, ten hashes, actual helpers, technical snapshots and R before the imports. Declared synthetic CLI, PROVISIONAL gold, rescore of 64 without engines or new V; H12 FAIL stays deliberate. L04 output UNAVAILABLE is distinct from V13/A03; L01/L02/L05 and all the NON PASS and r010 limits received remain. CPU lower/RSS sampled, no certified upper, no deadline or new quota. The work awaits review and arbitration; it declares neither GO nor integration.
 
-La matrice285 usa raw e attesi congelati, massimo186B, seed13013, generatore
-finito senza import prodotto e attesi semantici manuali. Pandoc locale
-sotto R fornisce199 AST, incluse139 decisioni ordinarie e60 raw; le correzioni
-delle premesse sono registrate. Due copie private reintroducono attrs
-fail-fast e fence a ogni riga: entrambe falliscono3/3 discriminanti.
-Il report r013 (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`)
-lega ogni fonte/callsite a proprietà e risultati, distinguendo autore,
-helper, generatore e oracolo; non sostituisce nuove review indipendenti.
+## Correction r014: syntactic acceptance and URI rejections
 
-Le prove runtime identificano managed3.12.13, S/B/I reinstallata, dieci hash,
-helper effettivi, snapshot tecnici e R prima degli import. CLI sintetica
-dichiarata, gold PROVISIONAL, rescore64 senza motori/nuove V; H12FAIL rimane
-deliberato. L04outputUNAVAILABLE è distinta da V13/A03; L01/L02/L05 e tutti
-i NONPASS e limiti r010 ricevuti restano. CPU lower/RSS sampled, nessun
-upper certificato, nessuna deadline o nuova quota. Il lavoro attende review
-e arbitrato; non dichiara GO né integrazione.
+`observations-v14-syntax-contracts` keeps the URI adapter separate from the reader. The predictable ValueError of `urlsplit` (bracket, IP literal and NFKC netloc) become Unsafe in the adapter only. Username/password are simple string properties in the pinned Python; `port` is not used. No universal RFC validation of URI is declared. Fragments, relative and external URI already admitted stay strings, never fetched; the whitelist is not widened. The drain continues on the contractual Unsafe, keeps the first cause and resets the session. Errors unrelated to parsing are not caught globally.
 
+Metadata become opaque only after the full acceptance of the grammar: id, class, key=value (bare or quoted), `-` unnumbered and an empty group. The tokens keep interval and position; soft LF/CRLF are separators, not a blank between paragraphs. Quoted values can contain braces and literal HTML; an admitted bare value can also contain `<…>`. There is no second HTML feed of the values. An invalid tail or group stays in the inline domain, with a guard of the real tags and preservation of the resources or an explicit residue. Raw `=format` is distinct from the attributes and is accepted only on code/fence.
 
-## Rettifica r014: accettazione sintattica e rifiuti URI
+The info of an ordinary opener must be empty, a single language or a whole accepted group. `~~~foo bar` does not own the body; the same text with backticks can still form inline Code. Closing, marker and paragraph state are part of the decision. The root producer consumes the physical ledger of the scanner; heading/quote/list/note/div do not interrupt a paragraph through the marker alone. The admitted containers carry host and source-map. The lazy continuation of quote/note and the figure followed by a tilde keep the open state; the lazy list K2c stays a valid code control.
 
-`observations-v14-syntax-contracts` conserva l'adapter URI separato dal reader.
-I ValueError prevedibili di `urlsplit` (bracket, IP literal e netloc NFKC)
-diventano Unsafe nel solo adapter. Username/password sono semplici proprietà
-stringa nel Python pinned; `port` non è utilizzata. Non si dichiara una
-validazione universale RFC delle URI. Frammenti, relativi e URI esterne già
-ammesse restano stringhe, mai fetched; la whitelist non viene ampliata.
-Il drain continua sulle Unsafe contrattuali, conserva la prima causa e
-azzera la sessione. Errori estranei al parsing non sono catturati globalmente.
+The limits of exact raw HTML/LaTeX, EOF overlay, F36 B1–B4, F44, A8 and four r010 observations stay those received. The public schema does not change. The coverage cleanup removes the internal record `domain=producer`, keeping any user values with the same name; `_guard_coverage=x`, however, is not a valid attribute of the pinned dialect and does not obtain metadata opacity.
 
-I metadata diventano opachi solo dopo accettazione integrale della grammatica:
-id, class, key=value (bare o quoted), `-` unnumbered e gruppo vuoto. I token
-conservano intervallo e posizione; LF/CRLF soft sono separatori, non un blank
-fra paragrafi. I valori quotati possono contenere graffe e HTML letterale;
-anche un valore bare ammesso può contenere `<…>`. Non si effettua un secondo
-feed HTML dei valori. Una coda o un gruppo invalido resta nel dominio inline,
-con guardia dei tag reali e conservazione delle risorse o residuo esplicito.
-Raw `=format` è distinto dagli attributi ed è accettato solo sui code/fence.
+The r013 baseline 132 corresponds to check-baseline-005/cases-005 on the raw/output baseline-004; 133/check004 and freeze005 stay kept in the historical report (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`). HC2 r011 is corrected with a separate overlay: the AST shows RawInline HTML inside invalid braces, not metadata. Raw, gold and historical expected value stay intact. Evidence, boundaries and status of r014 (archived: `documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md`, tag `pre-docs-2026-10-18`).
 
-La info dell'opener ordinario deve essere vuota, una lingua singola o un
-intero gruppo accettato. `~~~foo bar` non possiede il corpo; lo stesso testo
-con backtick può ancora formare Code inline. Chiusura, marker e stato di
-paragrafo sono parte della decisione. Il producer radice consuma il ledger
-fisico dello scanner; heading/quote/list/note/div non interrompono un
-paragrafo per il solo marker. I container ammessi trasportano host e source-map.
-La continuazione lazy di quote/note e la figura seguita da tilde conservano
-lo stato aperto; la lista lazy K2c resta un controllo code valido.
-
-I limiti raw esatto HTML/LaTeX, EOF overlay, F36B1–B4, F44, A8 e quattro
-osservazioni r010 restano quelli ricevuti. Lo schema pubblico non cambia.
-La pulizia della coverage rimuove il record interno `domain=producer`,
-conservando eventuali valori utente omonimi; `_guard_coverage=x` non è però
-un attributo valido del dialetto pinned e non ottiene opacità metadata.
-
-La baseline r013132 corrisponde a check-baseline-005/cases-005 sui raw/output
-baseline-004; 133/check004 e freeze005 restano conservati nel
-report storico (archived: `documentation/benchmarks/2026-10-11-a002-r013-guardia-e-fence.md`, tag `pre-docs-2026-10-18`).
-HC2 r011 viene rettificato con overlay separato: l'AST mostra RawInline HTML
-dentro graffe invalide, non metadata. Raw, gold e atteso storico restano intatti.
-Prove, confini e stato r014 (archived: `documentation/benchmarks/2026-10-11-a002-r014-contratti-sintassi.md`, tag `pre-docs-2026-10-18`).
-
-Token metadata adiacenti seguono l'AST pinned: `#chapter1.xhtml#start` sono
-due dichiarazioni ID, ultima `start`. Nei 64 ricalcoli r014 questo corregge
-16 EPUB (failures/details, nessun delta numerico/gate); otto div TeX cambiano
-da token unknown a classe valida. Non si normalizzano i target dei link per
-compensare la nuova interpretazione. Delta, premesse rettificate e provenienza
-sono enumerati nei dati del report r014; i conteggi4PASS/28FAIL sono osservati.
+Adjacent metadata tokens follow the pinned AST: `#chapter1.xhtml#start` are two ID declarations, the last being `start`. In the 64 r014 recomputations this corrects 16 EPUB (failures/details, no numeric/gate delta); eight TeX divs change from an unknown token to a valid class. Link targets are not normalized to compensate for the new interpretation. Deltas, corrected premises and provenance are enumerated in the data of the r014 report; the counts 4 PASS and 28 FAIL are observed.

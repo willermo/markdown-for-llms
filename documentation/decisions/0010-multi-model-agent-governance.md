@@ -2,7 +2,7 @@
 
 - Date: 2026-10-17
 - Decision status: accepted
-- Implementation status: governance integrated in `dev` on 2026-10-17; documentation tranche in progress (development history archived, release changelog, ADR 0008 and ADR 0009, roadmap and indexes realigned; translation of the remaining documents to follow)
+- Implementation status: governance integrated in `dev` on 2026-10-17; documentation tranche closed (development history archived, release changelog, ADR 0008 and ADR 0009, roadmap and indexes realigned, remaining documents translated into English; exceptions declared in `AGENTS.md`)
 - Origin: explicit decision of the owner to adopt a common development protocol for all his projects, with several models and editors
 - Supersedes: [ADR 0007](0007-supervised-development-runs.md); the agent governance part of [ADR 0005](0005-documentation-and-governance.md)
 
@@ -23,7 +23,7 @@ Each tool reads different files: Claude Code reads `CLAUDE.md` and `.claude/`; C
 5. **What is retired.** The skill `manage-implementation-run`, the six procedures in `.agents/workflows/` and the run lifecycle as the procedure for new runs. Snapshots, fingerprints and `scripts/run_context.py` are no longer required; the script stays available as an optional tool.
 6. **What is kept.** The product principles, the priority decision of 2026-10-16 and the accepted debt (ADR 0008), the cost and permission rules, the author's mandate by result, the independence of reviews and the verification rules, moved into `AGENTS.md`; the skills `record-architecture-decision`, `verify-conversion-fidelity` (now also covering engine benchmarks) and `write-diataxis-docs`, translated; a new skill `prepare-release` replaces the release procedure. Narrower operational instructions of the old cycle are not carried over one by one but replaced by the general rules of `AGENTS.md`: authorized public sources and verified redirects, operational parameters and evidence of failed calls, placement of fixtures and reusable tests. The documentation tranche settled the two open items: benchmark conclusions and the capability matrix live in `documentation/benchmarks/README.md`, product open questions in the knowledge base.
 7. **Branches.** `main` for releases and `dev` for integration; feature branches from `dev`. No `staging` branch until a remote environment exists.
-8. **Language.** All repository documentation in English. Existing Italian documents are translated in a separate documentation tranche, which also reorganizes `documentation/` (public product documentation stays, development history is archived) and introduces a release changelog.
+8. **Language.** All repository documentation in English; the documentation tranche translated the existing Italian documents, reorganized `documentation/` (development history archived at tag `pre-docs-2026-10-18`) and introduced the release changelog. Remaining exceptions are declared in `AGENTS.md`.
 
 ## Alternatives considered
 
@@ -35,7 +35,7 @@ Each tool reads different files: Claude Code reads `CLAUDE.md` and `.claude/`; C
 
 - Every model sees the same rules; reviews are comparable across rounds because reviewers stay the same for a whole run.
 - The governance is verified with static checks (no placeholders, `trigger` frontmatter on every rule, a Claude wrapper for every skill, no `GEMINI.md` or `.agents/workflows/`, files under 24,000 bytes, no personal paths in governance files) and, for each new model, with an entry test: a planning-only run that must read the right files, stop at the gate and refuse to implement without the formula.
-- Historical runs a001–a004 keep their records; their evidence availability is described in the cleanup report.
+- Historical runs a001–a004 keep their records; their evidence availability is described in the cleanup report `documentation/development/cleanup-2026-10-17.md` (archived, tag `pre-docs-2026-10-18`).
 - Reconsider this decision if a tool changes what it loads, or if the owner changes the common protocol.
 
 ## Links
