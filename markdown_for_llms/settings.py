@@ -10,13 +10,25 @@ class ConfigurationError(ValueError):
     """An invalid configuration; messages never contain supplied values."""
 
 
+# Operational time limits change neither quotas, paths nor stored data: they are
+# recorded per run in the manifest and stay out of the storage identity (ADR 0011).
+TIME_LIMITS = frozenset({"timeout_seconds", "stall_seconds"})
+# Fields hashed by identity schema 1 (before ADR 0011), frozen for the automatic upgrade.
+LEGACY_FIELDS = ("data_root", "model_root", "host", "port", "timeout_seconds", "memory_mib",
+                 "upload_mib", "max_pages", "output_mib", "log_mib", "storage_mib", "reserve_mib",
+                 "max_pixels", "max_dimension", "threads", "poll_seconds", "lease_seconds",
+                 "grace_seconds", "process_limit", "bind_profile", "review_provider")
+LEGACY_TIMEOUT_SECONDS = 450
+
+
 @dataclass(frozen=True)
 class Settings:
     data_root: str = "./mdf-data"
     model_root: str = "./mdf-models"
     host: str = "127.0.0.1"
     port: int = 8765
-    timeout_seconds: int = 450
+    timeout_seconds: int = 0          # total deadline of a conversion; 0 = none (ADR 0011)
+    stall_seconds: int = 900          # stop a conversion without engine progress for this long
     memory_mib: int = 16384
     upload_mib: int = 50
     max_pages: int = 50
@@ -37,8 +49,11 @@ class Settings:
     def __post_init__(self):
         for field in fields(self):
             value = getattr(self, field.name)
-            if field.type is int and (type(value) is not int or not 1 <= value <= 2**31 - 1):
+            low = 0 if field.name == "timeout_seconds" else 1
+            if field.type is int and (type(value) is not int or not low <= value <= 2**31 - 1):
                 raise ConfigurationError("Invalid positive integer: " + field.name)
+        if self.stall_seconds < 60:
+            raise ConfigurationError("Stall limit below 60 seconds: stall_seconds")
         if self.host != "127.0.0.1" or self.port > 65535:
             raise ConfigurationError("Only IPv4 loopback and valid ports are supported")
         if self.bind_profile != "marker-cpu-v1" or self.review_provider != "disabled":
@@ -88,7 +103,20 @@ class Settings:
         return {k: v for k, v in asdict(self).items() if k not in {"data_root", "model_root"}}
 
     def identity(self):
-        return hashlib.sha256(json.dumps(asdict(self), sort_keys=True).encode()).hexdigest()
+        """Storage identity schema 2: every setting except the operational time limits."""
+        value = {k: v for k, v in asdict(self).items() if k not in TIME_LIMITS}
+        value["identity_schema"] = 2
+        return digest(value)
+
+    def legacy_identity(self):
+        """Storage identity schema 1, with the timeout an unset variable used to mean."""
+        value = {name: getattr(self, name) for name in LEGACY_FIELDS}
+        value["timeout_seconds"] = self.timeout_seconds or LEGACY_TIMEOUT_SECONDS
+        return digest(value)
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
 def options(overrides=None):

@@ -11,6 +11,7 @@ import time
 import uuid
 
 from .files import identify, make_directory, open_file, read_json, rename, sync_directory, write_json, sync_tree, corruption, relative, IntegrityError, MetadataError, decode_json, publication_barrier, directory, FileSafetyError, json_bytes
+from .progress import finishing
 from .references import inspect
 from .runtime import check_runtime
 from .sandbox import execute, process_identity
@@ -155,13 +156,17 @@ class Worker:
             conn.execute("UPDATE runs SET state='running',token=?,lease=?,updated=? WHERE id=? AND state='queued'", (self.token, time.time() + self.settings.lease_seconds, time.time(), row["id"]))
         return self.storage.get(row["id"])
 
-    def tick(self, row, child):
+    def tick(self, row, child, progress=None):
+        """Renew the lease in the same update that records the child and, when given,
+        the progress snapshot; without one the last snapshot is kept."""
         self.heartbeat()
         with self.storage.connect() as conn:
             current = conn.execute("SELECT token,cancel FROM runs WHERE id=?", (row["id"],)).fetchone()
             if current["token"] != self.token:
                 return True
-            conn.execute("UPDATE runs SET lease=?,child=?,updated=? WHERE id=? AND token=?", (time.time() + self.settings.lease_seconds, json.dumps(child, allow_nan=False) if child else None, time.time(), row["id"], self.token))
+            conn.execute("UPDATE runs SET lease=?,child=?,updated=?,progress=COALESCE(?,progress) WHERE id=? AND token=?",
+                         (time.time() + self.settings.lease_seconds, json.dumps(child, allow_nan=False) if child else None, time.time(),
+                          json.dumps(progress, allow_nan=False) if progress else None, row["id"], self.token))
         if self.stop:
             return 'interrupted'
         if self.lease:
@@ -220,9 +225,17 @@ class Worker:
         write_json(scratch, 'request.json', {'options': json.loads(row['options']),
                    'max_pages': self.settings.max_pages, 'threads': self.settings.threads})
         receipt = execute(self.settings, scratch, self.storage.root / row['source_path'],
-                          tick=lambda child: self.tick(row, child))
+                          tick=lambda child, progress: self.tick(row, child, progress),
+                          deadline=self.settings.timeout_seconds or None, stall=self.settings.stall_seconds)
+        if receipt['reason'] == 'stalled':
+            raise StorageError('No conversion progress for %d s (MDF_STALL_SECONDS); attempt stopped, '
+                               'source kept, retry available' % self.settings.stall_seconds)
+        if receipt['reason'] == 'timeout':
+            raise StorageError('Conversion exceeded %d s (MDF_TIMEOUT_SECONDS); attempt stopped, '
+                               'source kept, retry available' % self.settings.timeout_seconds)
         if receipt['reason'] or receipt['exit'] != 0:
             raise StorageError(receipt['reason'] or 'Engine process failed; bounded diagnostic log retained')
+        self.tick(row, None, finishing(receipt.get('progress')))
         self.publish(row, scratch, runtime, receipt)
 
     def publish(self, row, scratch, runtime, receipt):
@@ -272,9 +285,9 @@ class Worker:
         if candidates:
             write_json(scratch, 'raster-request.json', dict(artifacts=candidates,
                        max_pixels=self.settings.max_pixels, max_dimension=self.settings.max_dimension))
-            raster = execute(replace(self.settings, memory_mib=512, timeout_seconds=60), scratch,
+            raster = execute(replace(self.settings, memory_mib=512), scratch,
                              module='markdown_for_llms.engines.raster', label='raster',
-                             tick=lambda child: self.tick(row, child))
+                             tick=lambda child, progress: self.tick(row, child, progress), deadline=60)
             if raster['exit'] == 0 and not raster['reason']:
                 results = validate_raster(read_json(scratch, 'raster-result.json'), candidates, self.settings)
                 for item in artifacts:
@@ -347,8 +360,8 @@ class Worker:
             make_directory(self.storage.root, 'staging/' + probe.name)
             with self.storage.reservation('worker', (2 * self.settings.output_mib + 1) * 1048576,
                                           self.token, ('staging/' + probe.name,)):
-                receipt = execute(replace(self.settings, memory_mib=256, timeout_seconds=10), probe,
-                                  module='markdown_for_llms.engines.probe')
+                receipt = execute(replace(self.settings, memory_mib=256), probe,
+                                  module='markdown_for_llms.engines.probe', deadline=10)
             if receipt['exit'] or receipt['reason']:
                 self.heartbeat('Isolamento non disponibile; nessun fallback')
                 raise StorageError('Isolation readiness failed; diagnostic retained')

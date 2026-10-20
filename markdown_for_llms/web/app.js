@@ -10,11 +10,29 @@ const states = {queued:'In coda',running:'Conversione in corso',publishing:'Pubb
 function status(job) {
   return job.message;
 }
+function progressText(progress) {
+  return progress.label + (progress.live && progress.idle_seconds !== null ? ' · last progress ' + Math.round(progress.idle_seconds) + ' s ago' : '');
+}
+function showProgress(box, job) {
+  if (!job.progress) return;
+  const wrap = node('div', undefined, 'progress'); wrap.id = 'run-progress';
+  const bar = node('progress'); bar.max = 100; bar.value = job.progress.estimate_percent;
+  bar.setAttribute('aria-label', 'Estimated conversion progress');
+  wrap.append(bar, node('p', progressText(job.progress))); box.append(wrap);
+}
+function updateProgress(job) {
+  // Updated in place: the detail is not redrawn, so focus (for example on Annulla) is kept.
+  const wrap = $('run-progress');
+  if (!wrap || !job.progress) return;
+  wrap.querySelector('progress').value = job.progress.estimate_percent;
+  wrap.querySelector('p').textContent = progressText(job.progress);
+}
 function action(label, fn) { const b = node('button', label); b.type = 'button'; b.onclick = async () => { b.disabled = true; try { await fn(); await refresh(true); } catch (e) { $('upload-status').textContent = e.message; } finally { b.disabled = false; } }; return b; }
 function download(parent, label, url) { const a = node('a',label,'download'); a.href = url; a.download = ''; parent.append(a); }
 async function show(job) {
   const box = $('detail'); box.replaceChildren(node('h2',job.name));
   box.append(node('p',status(job),'status'),node('p','Esecuzione ' + job.id));
+  showProgress(box, job);
   if (job.error) box.append(node('p',job.error,'error'));
   if (job.recovery) box.append(node('p','Ripristina capacità e accesso al disco, poi riavvia il worker: recupera questa esecuzione senza riconvertire.','warning'));
   if (job.state === 'interrupted') box.append(node('p','Sorgente conservata — ripetizione disponibile'));
@@ -49,11 +67,13 @@ async function refresh(force=false) {
     $('readiness').textContent = ready.ready ? 'Worker locale pronto' : ready.worker;
     const list = $('jobs'); list.replaceChildren();
     for (const job of jobs) {
-      const button = node('button',job.name + '\n' + status(job),'job'); button.type = 'button';
+      const estimate = job.progress && job.progress.live ? ' — ≈' + Math.floor(job.progress.estimate_percent) + '% (estimate)' : '';
+      const button = node('button',job.name + '\n' + status(job) + estimate,'job'); button.type = 'button';
       button.onclick = () => { selected = job.id; location.hash = selected; lastDetail = ''; refresh(true); }; list.append(button);
     }
     const job = jobs.find(j => j.id === selected); const signature = job && JSON.stringify([job.id,job.state,job.bundle,job.error,job.recovery,job.diagnosis]);
     if (job && (force || signature !== lastDetail)) { await show(job); lastDetail = signature; }
+    else if (job) updateProgress(job);
   } catch(e) { $('upload-status').textContent = e.message; } finally { busy = false; }
 }
 $('upload').onsubmit = async event => {

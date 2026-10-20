@@ -13,6 +13,7 @@ SCOPE = {"parser": "markdown-it-py 4.0.0", "preset": "commonmark + table",
          "math": {"allow_labels": True, "allow_space": True, "allow_digits": True,
                   "allow_blank_lines": True, "double_inline": True},
          "html": "html.parser; a[href], img[src]; inert non-resource tags",
+         "links": "A missing local link destination without a file extension (dot and 1-10 ASCII letters or digits) is an unchecked warning, not an asset",
          "limits": "No semantic fidelity, PDF asset completeness, anchor existence or general HTML validation"}
 LINKS = {'markdown:link', 'html:a[href]'}
 # A last path segment with an extension names a file; engine assets always have one.

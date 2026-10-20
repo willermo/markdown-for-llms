@@ -282,8 +282,8 @@ with s.upload('x.pdf') as u:
         for cleanup in list(self._cleanups):
             if getattr(cleanup[0], '__name__', '') == 'close': cleanup[0]()
         with self.assertRaises(StorageError): Storage.configure(self.settings, 'wrong', storage_mib=20)
-        result = Storage.configure(self.settings, self.settings.identity(), storage_mib=20, timeout_seconds=600)
-        new = replace(self.settings, storage_mib=20, timeout_seconds=600)
+        result = Storage.configure(self.settings, self.settings.identity(), storage_mib=20)
+        new = replace(self.settings, storage_mib=20)
         self.assertEqual(result['config'], new.identity())
         with self.assertRaises(StorageError): Service(self.settings)
         s = Service(new)

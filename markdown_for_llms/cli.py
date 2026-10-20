@@ -17,6 +17,28 @@ def emit(value):
     print(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False))
 
 
+class ProgressLine:
+    """Estimated progress of `convert --wait` on stderr, only on a terminal; stdout stays JSON."""
+    def __init__(self, stream):
+        self.stream, self.width = stream, 0
+        self.enabled = stream.isatty()
+
+    def show(self, job):
+        if not self.enabled or not job.get('progress'):
+            return
+        filled = min(20, int(job['progress']['estimate_percent'] / 5))
+        text = '[' + '#' * filled + '-' * (20 - filled) + '] ' + job['progress']['label']
+        self.stream.write('\r' + text + ' ' * max(0, self.width - len(text)))
+        self.stream.flush()
+        self.width = len(text)
+
+    def end(self):
+        if self.enabled and self.width:
+            self.stream.write('\n')
+            self.stream.flush()
+            self.width = 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="mdf")
     parser.add_argument("--env-file")
@@ -29,7 +51,7 @@ def main(argv=None):
     admin = sub.add_parser('configure')
     admin.add_argument('--expected-config', required=True)
     admin.add_argument('--storage-mib', type=int)
-    admin.add_argument('--timeout-seconds', type=int)
+    sub.add_parser('downgrade-storage').add_argument('--expected-config', required=True)
     convert = sub.add_parser("convert")
     convert.add_argument("files", nargs="+")
     convert.add_argument("--wait", action="store_true")
@@ -58,8 +80,11 @@ def main(argv=None):
         if args.command == 'configure':
             from .storage import Storage
             emit(Storage.configure(settings, args.expected_config, **{
-                k: v for k, v in {'storage_mib': args.storage_mib,
-                                  'timeout_seconds': args.timeout_seconds}.items() if v is not None}))
+                k: v for k, v in {'storage_mib': args.storage_mib}.items() if v is not None}))
+            return 0
+        if args.command == 'downgrade-storage':
+            from .storage import Storage
+            emit(Storage.downgrade(settings, args.expected_config))
             return 0
         service = Service(settings)
         if args.command == "jobs":
@@ -83,9 +108,14 @@ def main(argv=None):
                     with Path(name).open("rb") as stream:
                         job = service.submit(stream, Path(name).name, {"force_ocr": args.force_ocr})
                     if args.wait:
-                        while job["state"] not in TERMINAL:
-                            time.sleep(settings.poll_seconds)
-                            job = service.get(job["id"])
+                        line = ProgressLine(sys.stderr)
+                        try:
+                            while job["state"] not in TERMINAL:
+                                line.show(job)
+                                time.sleep(settings.poll_seconds)
+                                job = service.get(job["id"])
+                        finally:
+                            line.end()
                     emit(job)
                     failed |= job["state"] in {"failed", "interrupted", "cancelled"} or job["bundle"] in {"incomplete", "invalid"}
                 except (ValueError, OSError, sqlite3.OperationalError) as exc:

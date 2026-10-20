@@ -4,12 +4,14 @@ from pathlib import Path
 import hashlib
 import fcntl
 import json
+import math
 import os
 import time
 import uuid
 import zipfile
 
 from .files import digest, identify, open_file, read_json, relative, rename, sync_directory, corruption, make_directory, write_json, IntegrityError, MetadataError, decode_json, FileSafetyError, json_bytes
+from .progress import STAGES
 from .settings import options
 from .storage import Storage, StorageError, CapacityError
 
@@ -102,6 +104,7 @@ class Service:
         result['message'] = states[row['state']] + ' — ' + bundles[result['bundle']] + ' — qualità non verificata'
         if row['state'] == 'interrupted':
             result['message'] += ' — sorgente conservata; ripetizione disponibile'
+        result['progress'] = progress_view(row['state'], row.get('progress'), self.settings.stall_seconds)
         return result
 
     def list(self):
@@ -217,6 +220,51 @@ class Service:
                 write_json(self.storage.root, receipt_name, value)
                 rename(self.storage.root, name, final_name)
             return self.storage.root / final_name
+
+
+SNAPSHOT_KEYS = {'stage', 'estimate_percent', 'phase', 'current', 'total', 'updated', 'last_advance'}
+
+
+def progress_view(state, stored, stall_seconds, now=None):
+    """Estimated engine progress of a run: separate from its state, never an error.
+    None while queued, once completed, or when no valid snapshot was recorded."""
+    if state in ('queued', 'completed'):
+        return None
+    live = state in ('running', 'publishing')
+    if stored is None:
+        if not live:
+            return None
+        value = dict(stage='starting', estimate_percent=0.0, phase=None, current=None, total=None,
+                     updated=None, last_advance=None)
+    else:
+        try:
+            value = json.loads(stored)
+        except (TypeError, ValueError):
+            return None
+    if (not isinstance(value, dict) or not SNAPSHOT_KEYS <= value.keys()
+            or not isinstance(value['stage'], str) or value['stage'] not in STAGES
+            or type(value['estimate_percent']) not in (int, float)
+            or not 0 <= value['estimate_percent'] <= 100
+            or not (value['phase'] is None or isinstance(value['phase'], str) and len(value['phase']) <= 64)
+            or any(not (value[k] is None or type(value[k]) is int and value[k] >= 0) for k in ('current', 'total'))
+            or any(not (value[k] is None or type(value[k]) in (int, float) and math.isfinite(value[k]))
+                   for k in ('updated', 'last_advance'))):
+        return None
+    if value['stage'] == 'finishing':
+        activity = ('Finishing: image checks and publication', 'Stopped while finishing')
+    elif value['phase'] is None:
+        activity = ('Starting engine', 'Stopped before the first engine progress')
+    else:
+        counted = value['phase'] if value['current'] is None or value['total'] is None else (
+            '%s %d/%d' % (value['phase'], value['current'], value['total']))
+        activity = (counted, 'Stopped during ' + counted)
+    idle = None
+    if live and value['last_advance'] is not None:
+        idle = max(0.0, round((time.time() if now is None else now) - value['last_advance'], 1))
+    return dict(estimate_percent=value['estimate_percent'], estimated=True, stage=value['stage'],
+                phase=value['phase'], current=value['current'], total=value['total'],
+                last_advance=value['last_advance'], idle_seconds=idle, stall_seconds=stall_seconds,
+                live=live, label='%s (≈%d%%, estimate)' % (activity[0 if live else 1], value['estimate_percent']))
 
 
 class ReadUnavailable(StorageError):

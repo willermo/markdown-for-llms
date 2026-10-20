@@ -9,7 +9,8 @@ import sys
 from .files import directory, identify
 
 
-PINS = {"marker-pdf": "1.10.2", "surya-ocr": "0.17.1", "torch": "2.7.1+cpu"}
+# tqdm is pinned because the stall guard reads its bar format (ADR 0011).
+PINS = {"marker-pdf": "1.10.2", "surya-ocr": "0.17.1", "torch": "2.7.1+cpu", "tqdm": "4.70.1"}
 
 
 def model_inventory(root, verify=True):

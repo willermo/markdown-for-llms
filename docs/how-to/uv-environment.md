@@ -1,6 +1,6 @@
-# Prepare and update the legacy uv environment
+# Prepare and update the uv environment
 
-For Linux users and developers. Use the local managed interpreter and `uv.lock`, canonical installation and current preflight. Build, offline Docker contract and inference are distinct checks; the outcomes of the runs stay in the development records (the development log is archived at tag `pre-docs-2026-10-18`). These commands require preparation and preflight; the acquisition of ML is not implicit.
+For Linux users and developers. The procedure serves both the legacy pipeline and the new product `markdown_for_llms`, whose [setup guide](local-product-setup.md) relies on it to build and reinstall the canonical wheel. Use the local managed interpreter and `uv.lock`, canonical installation and current preflight. Build, offline Docker contract and inference are distinct checks; the outcomes of the runs stay in the development records (the development log is archived at tag `pre-docs-2026-10-18`). These commands require preparation and preflight; the acquisition of ML is not implicit.
 
 You need an identified uv **0.10.10**, host Pandoc and space for managed/cache/venv. The CPython patch **3.12.13** and Setuptools **84.0.0** are the pins of the run. The other Python minor versions are not in the declared support. The local pin can change the selection of the pyenv shim; it does not install Python in pyenv. No global change is needed. Windows testing remains future (path `Scripts` and `--no-registry` for the Windows acquisition, not a Linux protection).
 

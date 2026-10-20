@@ -1,4 +1,4 @@
-"""Bubblewrap child execution, finite limits, cancellation and bounded logs."""
+"""Bubblewrap child execution, finite limits, stall guard, cancellation and bounded logs."""
 from pathlib import Path
 import json
 import os
@@ -9,6 +9,7 @@ import sys
 import time
 
 from .files import directory, write_json
+from .progress import Progress
 
 
 def command(settings, scratch, source=None, module="markdown_for_llms.engines.marker", args=(), label="process"):
@@ -79,12 +80,22 @@ def scratch_size(path):
     return sum(sizes(Path(path)).values())
 
 
-def execute(settings, scratch, source=None, module="markdown_for_llms.engines.marker", args=(), tick=None, label="process"):
+def execute(settings, scratch, source=None, module="markdown_for_llms.engines.marker", args=(), tick=None,
+            label="process", deadline=None, stall=None):
+    """Run one sandboxed child. `deadline` (seconds) bounds the total time and, through
+    RLIMIT_CPU, the CPU time; `stall` stops a child whose engine progress has not
+    advanced for that long. The conversion passes a stall and an optional deadline;
+    raster and probe pass a short deadline only. `tick(child, progress)` receives the
+    progress snapshot, or None without a stall guard."""
     scratch = Path(scratch)
-    write_json(scratch, label + "-limits.json", dict(memory_mib=settings.memory_mib, output_mib=settings.output_mib,
-               timeout_seconds=settings.timeout_seconds, threads=settings.threads, process_limit=settings.process_limit))
+    limits = dict(memory_mib=settings.memory_mib, output_mib=settings.output_mib,
+                  threads=settings.threads, process_limit=settings.process_limit)
+    if deadline:
+        limits["cpu_seconds"] = deadline * settings.threads
+    write_json(scratch, label + "-limits.json", limits)
     argv = command(settings, scratch, source, module, args, label)
     started = time.monotonic()
+    tracker = Progress() if stall else None
     selector = selectors.DefaultSelector()
     count, peak, peak_processes, reason = 0, 0, 0, None
     with (scratch / (label + ".log")).open("xb") as log:
@@ -93,7 +104,7 @@ def execute(settings, scratch, source=None, module="markdown_for_llms.engines.ma
         identity = process_identity(proc.pid)
         try:
             selector.register(proc.stdout, selectors.EVENT_READ)
-            if tick and (tick_reason := tick(identity)):
+            if tick and (tick_reason := tick(identity, tracker and tracker.snapshot())):
                 reason = tick_reason if isinstance(tick_reason, str) else "cancelled"
             while proc.poll() is None or selector.get_map():
                 for key, _ in selector.select(0.1):
@@ -101,6 +112,8 @@ def execute(settings, scratch, source=None, module="markdown_for_llms.engines.ma
                     if not chunk:
                         selector.unregister(key.fileobj)
                         continue
+                    if tracker:
+                        tracker.feed(chunk)
                     remaining = settings.log_mib * 1048576 - count
                     log.write(chunk[:max(0, remaining)])
                     count += len(chunk)
@@ -112,11 +125,14 @@ def execute(settings, scratch, source=None, module="markdown_for_llms.engines.ma
                     reason = "sampled_memory_limit"
                 if processes > settings.process_limit:
                     reason = "process_limit"
-                if time.monotonic() - started > settings.timeout_seconds:
+                now = time.monotonic()
+                if deadline and now - started > deadline:
                     reason = "timeout"
+                if tracker and tracker.idle(now) > stall:
+                    reason = "stalled"
                 if scratch_size(scratch) > settings.output_mib * 1048576:
                     reason = "output_limit"
-                if tick and (tick_reason := tick(identity)):
+                if tick and (tick_reason := tick(identity, tracker and tracker.snapshot())):
                     reason = tick_reason if isinstance(tick_reason, str) else "cancelled"
                 if reason and proc.poll() is None:
                     os.killpg(proc.pid, signal.SIGTERM)
@@ -135,6 +151,9 @@ def execute(settings, scratch, source=None, module="markdown_for_llms.engines.ma
                    peak_sampled_rss=peak, peak_sampled_processes=peak_processes,
                    log_bytes_observed=count, process=identity,
                    memory_mechanism="per-process RLIMIT_AS plus sampled aggregate RSS termination",
-                   network="bubblewrap unshare-all; no host sockets", children_reaped=True)
+                   network="bubblewrap unshare-all; no host sockets", children_reaped=True,
+                   deadline_seconds=deadline, stall_seconds=stall)
+    if tracker:
+        receipt.update(tracker.receipt())
     write_json(scratch, label + ".json", receipt)
     return receipt
