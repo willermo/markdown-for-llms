@@ -17,6 +17,7 @@ All notable changes for users of this project are documented here. The format fo
 - Python 3.12 is required (`>=3.12,<3.13`); the minimum was `>=3.9`.
 - Packaging moved to `pyproject.toml` with `uv.lock`; the legacy console scripts keep their names (`markdown-pipeline`, `markdown-config`, `markdown-clean`, `markdown-validate`, `markdown-chunk`). See the [uv environment guide](docs/how-to/uv-environment.md).
 - `.env.example` now documents only the `MDF_` settings of the new converter. The legacy pipeline still reads its own environment variables (`CHUNK_SIZE`, `OVERLAP_SIZE`, `TARGET_LLM`, `MAX_WORKERS`, `LOG_LEVEL`, `CONVERSION_TIMEOUT`, `CONNECT_TIMEOUT`, `MARKER_*`, `MAX_POLLS`, `POLL_INTERVAL`), listed in the [legacy toolchain reference](docs/reference/toolchain-legacy.md).
+- A missing local link destination whose last path segment has no file extension (for example a citation misparsed as a link, `k[[y, z, v]](y,z)`) now produces an `unchecked` warning instead of an `incomplete` bundle, so the ZIP stays downloadable. Missing images and missing link targets with a file extension still produce `incomplete`. See [what «bundle disponibile» means](docs/explanation/experimental-product.md).
 - The legacy Docker files build with uv; they cover the legacy pipeline only, not the new converter.
 - README rewritten as the entry point to the experimental converter and to the legacy pipeline.
 

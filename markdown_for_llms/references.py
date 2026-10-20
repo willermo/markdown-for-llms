@@ -1,5 +1,6 @@
 """Operational references in the pinned Markdown/HTML profile; never render."""
 from html.parser import HTMLParser
+import re
 from urllib.parse import unquote, urlsplit
 
 from markdown_it import MarkdownIt
@@ -13,6 +14,9 @@ SCOPE = {"parser": "markdown-it-py 4.0.0", "preset": "commonmark + table",
                   "allow_blank_lines": True, "double_inline": True},
          "html": "html.parser; a[href], img[src]; inert non-resource tags",
          "limits": "No semantic fidelity, PDF asset completeness, anchor existence or general HTML validation"}
+LINKS = {'markdown:link', 'html:a[href]'}
+# A last path segment with an extension names a file; engine assets always have one.
+FILE_NAME = re.compile(r'\.[A-Za-z0-9]{1,10}$')
 
 
 def inspect(raw, inventory):
@@ -32,7 +36,7 @@ def inspect(raw, inventory):
             if len(uri.scheme) == 1 or '\\' in decoded or any(ord(c) < 32 for c in decoded):
                 raise FileSafetyError('Unsafe resource path')
             if not decoded or decoded.startswith("#"):
-                if not decoded and context not in {'markdown:link', 'html:a[href]'}:
+                if not decoded and context not in LINKS:
                     unknown('Empty resource destination')
                 kind = 'same-document' if not decoded else 'internal-anchor' 
             elif decoded.startswith('//'):
@@ -56,8 +60,16 @@ def inspect(raw, inventory):
                 if nonfile:
                     unknown('Local non-file reference outside the file profile')
                     kind = 'local-nonfile'
+                elif path in present:
+                    kind = "local"
+                elif context in LINKS and not FILE_NAME.search(path.rsplit('/', 1)[-1]):
+                    # A link to a name that is not a file name (for example a
+                    # citation misparsed as a link) is a warning, never an asset.
+                    kind = 'local-unresolved'
+                    problems.append({'code': 'unchecked', 'path': uri.path,
+                                     'reason': 'Local link destination is not a file name; not checked as an asset'})
                 else:
-                    kind = "local" if path in present else "local-missing"
+                    kind = "local-missing"
                 if kind == "local-missing":
                     problems.append({"code": "incomplete", "reason": "Missing local reference", "path": uri.path})
             refs.append({"kind": kind, "destination": value, "context": context})

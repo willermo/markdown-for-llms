@@ -270,6 +270,62 @@ class ProductTests(unittest.TestCase):
             with self.subTest(raw=raw):
                 self.assertEqual(inspect(raw, inventory)['bundle'], expected)
 
+    def test_link_destination_not_a_file_name(self):
+        warning = 'Local link destination is not a file name; not checked as an asset'
+        cases = [('k[[y, z, v]](y,z)', 'unchecked', [('unchecked', 'y,z')]),
+                 ('[x](docs/notes)', 'unchecked', [('unchecked', 'docs/notes')]),
+                 ('<a href="docs/notes">x</a>', 'unchecked', [('unchecked', 'docs/notes')]),
+                 ('[x](./docs/notes#part)', 'unchecked', [('unchecked', './docs/notes')]),
+                 ('![x](missing.jpeg)', 'incomplete', [('incomplete', 'missing.jpeg')]),
+                 ('[x](missing.jpeg)', 'incomplete', [('incomplete', 'missing.jpeg')]),
+                 ('<img src="x">', 'incomplete', [('incomplete', 'x')]),
+                 ('![x](docs/notes) [x](docs/notes)', 'incomplete',
+                  [('incomplete', 'docs/notes'), ('unchecked', 'docs/notes')])]
+        for raw, expected, issues in cases:
+            with self.subTest(raw=raw):
+                result = inspect(raw, [])
+                self.assertEqual(result['bundle'], expected)
+                self.assertEqual([(i['code'], i['path']) for i in result['issues']], issues)
+                for issue in result['issues']:
+                    if issue['code'] == 'unchecked':
+                        self.assertEqual(issue['reason'], warning)
+        self.assertEqual([r['kind'] for r in inspect('k[[y, z, v]](y,z)', [])['references']], ['local-unresolved'])
+        job = self.completed('k[[y, z, v]](y,z)')
+        self.assertEqual((job['state'], job['bundle'], job['download_available']), ('completed', 'unchecked', True))
+        with zipfile.ZipFile(self.service.bundle(job['id'])) as archive:
+            self.assertEqual(json.loads(archive.read('manifest.json'))['bundle'], 'unchecked')
+            self.assertEqual(archive.read('result/document.md'), b'k[[y, z, v]](y,z)')
+
+    def test_tracked_fixture_markdown_outcomes_unchanged(self):
+        # Outcomes of the code before the link rule (17de44f), with an empty inventory
+        # and with the tracked files next to each document as inventory.
+        root = Path(__file__).resolve().parents[2]
+        missing = lambda path: [{'code': 'incomplete', 'reason': 'Missing local reference', 'path': path}]
+        baseline = {'tests/fixtures/conversion-corpus/README.md': ('ready', []),
+                    'tests/fixtures/conversion-corpus/controls/K01-full/document.md': ('incomplete', missing('assets/figure-it.png')),
+                    'tests/fixtures/conversion-corpus/controls/K02-three-sections/document.md': ('ready', []),
+                    'tests/fixtures/conversion-corpus/controls/K03-repeated/document.md': ('ready', []),
+                    'tests/fixtures/run-a001-fase0-uv/f1-stable.md': ('ready', []),
+                    'tests/fixtures/run-a001-fase0-uv/f2-sensitive.md': ('incomplete', missing('assets/f5.png')),
+                    'tests/fixtures/run-a001-fase0-uv/f3-cleaned-sensitive.md': ('incomplete', missing('assets/f5.png')),
+                    'tests/fixtures/run-a001-fase0-uv/f3-cleaned-stable.md': ('ready', []),
+                    'tests/fixtures/run-a001-fase0-uv/f5-asset.md': ('incomplete', missing('assets/f5.png')),
+                    'tests/fixtures/run-a001-fase0-uv/f6-multichunk.md': ('ready', [])}
+        listed = lambda *spec: subprocess.run(['git', '-C', str(root), 'ls-files', '-z', *spec], check=True,
+                                              capture_output=True).stdout.decode().split('\0')[:-1]
+        self.assertEqual(sorted(listed('tests/fixtures/*.md')), sorted(baseline))
+        tracked = listed('tests/fixtures')
+        for name, (bundle, issues) in baseline.items():
+            with self.subTest(fixture=name):
+                raw = (root / name).read_text(encoding='utf-8')
+                result = inspect(raw, [])
+                self.assertEqual((result['bundle'], result['issues']), (bundle, issues))
+                folder = Path(name).parent
+                inventory = [str(Path(t).relative_to(folder)) for t in tracked
+                             if Path(t).is_relative_to(folder) and t != name]
+                result = inspect(raw, inventory)
+                self.assertEqual((result['bundle'], result['issues']), ('ready', []))
+
     def test_full_utf8_pagination_and_manifest_integrity(self):
         raw = ('αè正文\n' * 50000) + 'END-SENTINEL'
         job = self.completed(raw)
