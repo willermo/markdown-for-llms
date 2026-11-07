@@ -59,6 +59,8 @@ Every command below is **to be run after preparation and preflight**. `RUN_DEV_P
 "$RUN_API_PY" -I -B -m pytest . --collect-only -q
 ```
 
+The full check of the project, with the installation chain, the fast suite and `tests/api` in the development venv, is `scripts/full-check.sh`: see [Run the full check](../how-to/uv-environment.md#run-the-full-check).
+
 The global collection uses the API environment, imports the harnesses without ML and does not build images. API/package/Docker remain distinct mandatory layers; the selected fast suite is not a complete acceptance test. The two root smoke scripts are manual and excluded: they are not safe inference checks. The historical results 67 pass and V0 62 pass/5 fail do not transfer to the new product.
 
 For Docker, outside the runner that masks the daemon, RUN_IMAGE is a local ID, RUN_IMAGE_MANIFEST is the image-source.json produced by the context tool, RUN_IMAGE_INPUTS is the receipt of the supply tool, RUN_BACKEND_WHEEL is the hash-pinned wheel 84, RUN_IMAGE_CONTEXT_RECEIPT is the receipt of the context producer, RUN_TEST_OUTPUT is a new directory. C-docker requires a CPU V7 image already prepared: pull never/network none, venv Python -I -B on stdin, without mount or ordinary startup. The test invokes the versioned run_docker_contract.py: cap-drop ALL/no-new-privileges, healthcheck disabled, finite memory and pids, export of the filesystem of the stopped container before Python, full I and nine subcases. Current host preflight S/I, with explicit official or standalone mode; no reference to a fixed historical snapshot. For C-docker set `RUN_TEST_MODE=official|standalone` in the environment: the pytest flag `--test-mode` alone does not select the Docker driver; discordant choices are rejected.

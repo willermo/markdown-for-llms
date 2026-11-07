@@ -26,7 +26,7 @@ class Settings:
     data_root: str = "./mdf-data"
     model_root: str = "./mdf-models"
     host: str = "127.0.0.1"
-    port: int = 8765
+    port: int = 23460
     timeout_seconds: int = 0          # total deadline of a conversion; 0 = none (ADR 0011)
     stall_seconds: int = 900          # stop a conversion without engine progress for this long
     memory_mib: int = 16384

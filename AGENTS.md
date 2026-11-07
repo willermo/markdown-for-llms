@@ -65,6 +65,9 @@ git switch -c <feature|fix|chore>/<short-name>
 
 - The tested target is a single user on Linux x86_64, CPU only, loopback access (`127.0.0.1`). Public, LAN or multi-user use, GPU profiles, Windows and macOS are not supported until verified.
 - The new product (`markdown_for_llms/`) runs locally as two processes (API and worker). The Docker and Compose files in the repository belong to the legacy pipeline and do not prove that the new product can be distributed: Docker distribution of the new product is a roadmap increment.
+- Host ports: this project's block is `23460-23479`, the same on every host of Davide's infrastructure, assigned by the infrastructure port registry (see the development protocol, shared infrastructure resources). Today it applies only to the laptop, because the project has no remote environment; the API binds to `127.0.0.1` because the code accepts no other host. Every host port in compose files, `.env.example` and nginx configuration comes from `.env`, lies within the block and binds to `127.0.0.1` unless a reason is stated here; a compose fallback, if any, is a port of the block. A new or changed port outside the block, or missing from the list below, is a review finding.
+  - `23460`: API and Web UI of `mdf` (`MDF_PORT`, default in `markdown_for_llms/settings.py` and `.env.example`), laptop only, `127.0.0.1`.
+  - `8000`: Marker server of the legacy pipeline, literal in `docker-compose.yml` and `docker-compose-build.yml`, `127.0.0.1`; historical and outside the block, not moved until the future of the legacy pipeline is decided.
 - No public deploy, no weakening of the sandbox isolation, no persistent privilege as a side effect of a run. Deploys and operations on remote machines need an explicit operational scope from Davide.
 
 ## Protected files
@@ -136,7 +139,7 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 
 - Run checks proportionate to the change, keeping unit tests, integration tests and real benchmarks separate. For conversions, verify text, formulas, assets and order, not only the presence of files or metadata (skill `verify-conversion-fidelity`).
 - Use the virtual environment linked to the managed local CPython 3.12, with the package installed in the same interpreter as the child processes. After code changes rebuild sdist and wheel, reinstall the canonical wheel and compare hashes before running with `--no-sync`: `uv sync` alone is not proof. Procedure in `docs/how-to/uv-environment.md`.
-- Fast suite, after the installation preflight (tokenizer cache, Pandoc and runner ready):
+- Fast suite, the check of the development cycle, after the installation preflight (tokenizer cache, Pandoc and runner ready):
 
   ```bash
   "$RUN_DEV_PY" -I -B -m pytest tests/ --ignore=tests/api --ignore=tests/packaging --ignore=tests/docker -q
@@ -144,6 +147,18 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 
   The two root smoke scripts are excluded. The selected suite is not a full acceptance test, and historical legacy results do not transfer to new code. Do not install or download anything to repair a failed collection.
 - Repository hygiene guard: `tests/unit/test_repository_hygiene.py` (no personal home paths in tracked files, local pointer files untracked) runs in the fast suite; for documentation-only changes run it alone with `"$RUN_DEV_PY" -I -B -m pytest --noconftest -p no:cacheprovider tests/unit/test_repository_hygiene.py -q`.
+- Full check: `scripts/full-check.sh`. It runs the installation preflight (T, O, P, S, B, reinstallation of the canonical wheel in the development venv with a RECORD check, I, F), then the fast suite, then `tests/api`. `tests/packaging` and `tests/docker` stay out: they are contracts of the legacy pipeline whose prerequisites (wheel venv, a001 baseline, image receipts) were removed on 2026-10-17, and without them they fail instead of skipping; a future decision of Davide will rebuild them or retire the legacy pipeline. No lint. It stops on a dirty tree, writes its evidence under `.cache/full-check/` (ignored by git) and exits nonzero when a step or a suite fails. Paths come from the `FULL_CHECK_*` variables described in `docs/how-to/uv-environment.md` ("Run the full check").
+- The full check runs on the commit handed to the diff review and again before the merge, with a clean tree; a selected run never stands for it in a report. The author saves its output and reports the file's path and SHA256:
+
+  ```bash
+  mkdir -p temp/<run>/checks
+  f=temp/<run>/checks/full-check-$(git rev-parse --short HEAD).txt
+  { git rev-parse HEAD; git status --short; scripts/full-check.sh; echo "exit $?"; } > "$f" 2>&1
+  sha256sum "$f"
+  ```
+
+  One reviewer per review round, named by the supervision, reruns it on the same commit and reports the result next to the author's; the other reads the saved output, runs only the tests their findings need and never calls green a check they did not run. A different hash, a tracked file in `git status --short`, or a missing or incomplete output reopens the gate; a fix round repeats this on the new commit.
+- One full check at a time: the reinstallation replaces the package in the shared development venv, so two full checks never run side by side, even from different worktrees (author and reviewer in sequence), and the script refuses to start while another one holds the venv. Stop API and worker processes that use the same venv before running it.
 - For documentation-only changes: local links, consistency of statuses and `git diff --check`. Report what was verified and what remains unverified.
 
 ### Documentation

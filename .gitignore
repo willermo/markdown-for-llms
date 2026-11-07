@@ -117,3 +117,6 @@ docker-data/
 # Local, untracked pointers to the private knowledge base (public repository)
 CLAUDE.local.md
 .agents/rules/90-local.md
+
+# Local paths of this machine for scripts/full-check.sh
+.full-check.env

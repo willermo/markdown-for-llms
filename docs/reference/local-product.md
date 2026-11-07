@@ -5,7 +5,7 @@ Administrative configuration: [.env.example](../../.env.example). Precedence: de
 | MDF variables | Default | Meaning |
 | --- | --- | --- |
 | `DATA_ROOT`, `MODEL_ROOT` | `./mdf-data`, `./mdf-models` | Distinct directories, without symlinks |
-| `HOST`, `PORT` | `127.0.0.1`, 8765 | IPv4 loopback only; Host localhost or 127.0.0.1 on the chosen port |
+| `HOST`, `PORT` | `127.0.0.1`, 23460 | IPv4 loopback only; Host localhost or 127.0.0.1 on the chosen port. The port is part of the storage identity: an archive created with an earlier default needs that port, see [Prepare the local product](../how-to/local-product-setup.md#upgrade-an-archive-of-the-previous-version) |
 | `BIND_PROFILE`, `REVIEW_PROVIDER` | `marker-cpu-v1`, `disabled` | Only admitted profile, no AI review |
 | `TIMEOUT_SECONDS` | 0 | Optional total deadline of a conversion; 0 = none. A positive value stops the attempt with a visible error and also sets `RLIMIT_CPU` to deadline × threads; without it there is no CPU time limit |
 | `STALL_SECONDS` | 900 (minimum 60) | Stops a conversion whose engine progress has not advanced for this long; an initial default from one document on one laptop, not a guarantee |

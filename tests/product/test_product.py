@@ -79,7 +79,7 @@ class ProductTests(unittest.TestCase):
                 job = self.service.get(job['id'])
                 self.assertEqual(job['bundle'], fixture['expected']['bundle'])
                 app = create_app(self.settings)
-                client = TestClient(app, base_url='http://127.0.0.1:8765')
+                client = TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}')
                 self.assertEqual(client.get('/api/v1/runs/' + job['id']).json()['bundle'], job['bundle'])
                 result = subprocess.run([sys.executable, '-I', '-B', '-m', 'markdown_for_llms.cli', '--data-root', self.settings.data_root, '--model-root', self.settings.model_root, 'show', job['id']], capture_output=True, text=True, cwd=self.temp.name)
                 self.assertEqual(result.returncode, 0, result.stderr)
@@ -131,6 +131,7 @@ class ProductTests(unittest.TestCase):
         env.write_text('MDF_PORT=8766\nMDF_TIMEOUT_SECONDS=20\n')
         settings = Settings.load(env, {'port': 8768}, {'MDF_PORT': '8767'})
         self.assertEqual(settings.port, 8768)
+        self.assertEqual(Settings.load(environ={}).port, 23460)   # first port of the project's block
         self.assertEqual(settings.timeout_seconds, 20)
         for values in [{'MDF_UNKNOWN': 'secret'}, {'MDF_PORT': 'bad'}, {'MDF_HOST': '0.0.0.0'}, {'MDF_TIMEOUT_SECONDS': '-1'}]:
             with self.assertRaises(ConfigurationError):
@@ -144,13 +145,13 @@ class ProductTests(unittest.TestCase):
             Service(Settings(data_root=self.settings.data_root, port=8766))
 
     def test_host_origin_csrf(self):
-        client = TestClient(create_app(self.settings), base_url='http://127.0.0.1:8765')
+        client = TestClient(create_app(self.settings), base_url=f'http://127.0.0.1:{self.settings.port}')
         self.assertEqual(client.get('/health', headers={'host':'evil.example'}).status_code,403)
         csrf = client.get('/api/v1/session').json()['csrf']
         url='/api/v1/runs'
         self.assertEqual(client.post(url,content=PDF).status_code,403)
         self.assertEqual(client.post(url,content=PDF,headers={'origin':'https://evil.example','x-mdf-csrf':csrf}).status_code,403)
-        response=client.post(url,content=PDF,headers={'origin':'http://127.0.0.1:8765','x-mdf-csrf':csrf,'x-filename':'ok.pdf'})
+        response=client.post(url,content=PDF,headers={'origin':f'http://127.0.0.1:{self.settings.port}','x-mdf-csrf':csrf,'x-filename':'ok.pdf'})
         self.assertEqual(response.status_code,202,response.text)
         self.assertIn("default-src 'none'", response.headers['content-security-policy'])
         self.assertEqual(client.get('/docs').status_code,404)
@@ -166,7 +167,7 @@ class ProductTests(unittest.TestCase):
         Worker(self.settings).reconcile()
         self.assertEqual(self.service.get(job['id'])['bundle'], 'invalid')
         (self.service.storage.root / row['source_path']).unlink()
-        client = TestClient(create_app(self.settings), base_url='http://127.0.0.1:8765')
+        client = TestClient(create_app(self.settings), base_url=f'http://127.0.0.1:{self.settings.port}')
         self.assertEqual(client.get('/api/v1/runs/' + job['id'] + '/source').status_code, 409)
 
     def test_publication_crash_boundaries(self):
@@ -329,7 +330,7 @@ class ProductTests(unittest.TestCase):
     def test_full_utf8_pagination_and_manifest_integrity(self):
         raw = ('αè正文\n' * 50000) + 'END-SENTINEL'
         job = self.completed(raw)
-        client = TestClient(create_app(self.settings), base_url='http://127.0.0.1:8765')
+        client = TestClient(create_app(self.settings), base_url=f'http://127.0.0.1:{self.settings.port}')
         offset, parts = 0, []
         while True:
             response = client.get('/api/v1/runs/' + job['id'] + '/text', params={'offset': offset})

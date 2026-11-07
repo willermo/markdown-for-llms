@@ -351,7 +351,7 @@ class ProgressViewTests(unittest.TestCase):
     def test_api_lists_and_shows_progress(self):
         job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
         self.set_run(job['id'], 'running', json.dumps(self.SNAPSHOT))
-        client = TestClient(create_app(self.settings), base_url='http://127.0.0.1:8765')
+        client = TestClient(create_app(self.settings), base_url=f'http://127.0.0.1:{self.settings.port}')
         self.assertEqual(client.get('/api/v1/runs/' + job['id']).json()['progress']['phase'], 'Recognizing Text')
         self.assertEqual(client.get('/api/v1/runs').json()[0]['progress']['current'], 12)
 

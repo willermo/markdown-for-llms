@@ -90,7 +90,7 @@ class StorageIdentityTests(unittest.TestCase):
         self.assertEqual(Service(self.settings).get('r1')['error'], 'old failure')
         # Time limits change without configure; any other setting still needs it.
         Service(replace(self.settings, timeout_seconds=900)).storage.close()
-        with self.assertRaisesRegex(StorageError, 'configuration mismatch'):
+        with self.assertRaisesRegex(StorageError, 'configuration mismatch.*MDF_PORT'):
             Service(replace(self.settings, port=8799))
         self.assertEqual(len(self.identity()['history']), 1)
 

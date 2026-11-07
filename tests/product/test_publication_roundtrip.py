@@ -85,7 +85,7 @@ class PublicationRoundtripTests(unittest.TestCase):
             self.assertEqual(archive.read('result/document.md'), raw)
         app = create_app(self.settings)
         self.addCleanup(app.state.service.storage.close)
-        with TestClient(app, base_url='http://127.0.0.1:8765') as client:
+        with TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}') as client:
             self.assertEqual(client.get('/api/v1/runs').status_code, 200)
             offset, observed = 0, b''
             while True:
@@ -195,7 +195,7 @@ class PublicationRoundtripTests(unittest.TestCase):
         other = self.s.submit(io.BytesIO(PDF), 'other.pdf')
         app = create_app(self.settings)
         self.addCleanup(app.state.service.storage.close)
-        with TestClient(app, base_url='http://127.0.0.1:8765') as client:
+        with TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}') as client:
             for case in ['bundle', 'path']:
                 with self.subTest(case=case):
                     manifest = json.loads(json.dumps(original))
@@ -220,7 +220,7 @@ class PublicationRoundtripTests(unittest.TestCase):
         before = sizes(unsafe.parent.parent, isolated=('attempts/unattributed',))
         app = create_app(self.settings)
         self.addCleanup(app.state.service.storage.close)
-        with TestClient(app, base_url='http://127.0.0.1:8765') as client:
+        with TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}') as client:
             with patch('markdown_for_llms.capacity.archive_sizes', side_effect=AssertionError('global scan on GET')):
                 with self.s.storage.lock('admission.lock'):
                     t = time.monotonic()

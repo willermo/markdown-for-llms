@@ -59,6 +59,25 @@ uv pip sync --python "$RUN_ENV/bin/python" --build-constraints "$RUN_REPO/build-
 
 Then install the canonical wheel and verify it as above. In the IDE select the absolute `.venv/bin/python`; a local example is in [settings.uv.example.json](../../.vscode/settings.uv.example.json). Copy it only into your own workspace settings and complete the verified installation; no global setting changes. The children of the phases use the same `sys.executable`, with `-I -B -m`, and the data workspace.
 
+## Run the full check
+
+`scripts/full-check.sh` is the project's full check (see `AGENTS.md`, "Verification"). At the root of a clean checkout it runs the chain of this guide on the current commit: tokenizer cache (T), origin of the managed interpreter (O), input inventory (P), standalone source manifest (S), offline build and audit of sdist and wheel (B), reinstallation of the wheel in the development venv with a RECORD check, installation receipt (I) and preflight (F); then the fast suite and `tests/api`. `tests/packaging` and `tests/docker` are not part of it: their prerequisites were removed on 2026-10-17. It never downloads or installs anything else: a missing cache or tool is a stop.
+
+It reads six absolute paths. A variable already set in the environment wins; the missing ones are read from `.full-check.env` at the root of the checkout, or of the main checkout when it runs in a worktree. The file is ignored by git and holds only `NAME=value` lines and `#` comments, read without shell expansion:
+
+| Variable | Path |
+| --- | --- |
+| `FULL_CHECK_PYTHON_INSTALL_DIR` | directory of the uv-managed interpreters, containing `cpython-3.12.13-linux-x86_64-gnu/` |
+| `FULL_CHECK_DEV_PYTHON` | `bin/python` of the development venv |
+| `FULL_CHECK_UV` | uv binary of the version in `required-version` of `pyproject.toml` |
+| `FULL_CHECK_UV_CACHE_DIR` | uv cache already prepared |
+| `FULL_CHECK_BACKEND_WHEEL` | `setuptools-84.0.0-py3-none-any.whl` |
+| `FULL_CHECK_TOKENIZER_CACHE` | tiktoken cache |
+
+The script stops when the tree is not clean, when a variable is missing or wrong, when an `MDF_` variable is set in the environment (the suites would read it), when a `PYTEST_` variable is set (for example `PYTEST_ADDOPTS` or `PYTEST_PLUGINS`, which change collection, selection or plugins) and when another full check is using the same development venv. The evidence of each step goes to a new directory `.cache/full-check/<commit>-<UTC time>/`, ignored by git; stdout carries one line per step with its duration, the pytest summary and counts of each suite, and `FULL_CHECK_PASS` or `FULL_CHECK_FAIL`. A suite passes only when pytest exits 0 and its JUnit report can be read, counts at least one test and has no failures and no errors. The exit code is 0 only when every step and both suites pass.
+
+The reinstallation replaces the package in the development venv. Two full checks never run at the same time, even from different worktrees, and API or worker processes that use the same venv should be stopped first.
+
 ## Explicit local tests without a run
 
 In a normal clone without `temp/`, select **standalone** deliberately. The absence of temp does not change the mode automatically. Before S, create an inventory with `make_input_inventory.py --repo "$RUN_REPO" --managed "$RUN_REPO/.venv-python" --backend-wheel "$RUN_BACKEND_WHEEL" --uv "$RUN_UV" --tokenizer-cache "$TIKTOKEN_CACHE_DIR" --output "$RUN_PROOF/package-inputs.json"`, using the verified managed interpreter with `-I -B`. The paths of the tools are under `scripts/diagnostics/run-a001-fase0-uv/`; the historical name does not impose a run. `RUN_PROOF` is a new ignored directory, for example `.cache/uv-fidelity/`.

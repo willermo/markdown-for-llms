@@ -87,7 +87,7 @@ class ErrorBoundaryTests(unittest.TestCase):
         self.publish(w, row, scratch)
         app = create_app(self.settings)
         self.addCleanup(app.state.service.storage.close)
-        with TestClient(app, base_url='http://127.0.0.1:8765') as c:
+        with TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}') as c:
             url = '/api/v1/runs/'+row['id']
             for offset in [-1, len(raw)+1, 262144, len(raw)-1]:
                 self.assertEqual(c.get(url+'/text', params={'offset': offset}).status_code, 400)
@@ -119,7 +119,7 @@ class ErrorBoundaryTests(unittest.TestCase):
             conn.execute('UPDATE runs SET manifest=? WHERE id=?', (json.dumps(manifest), row['id']))
         app = create_app(self.settings)
         self.addCleanup(app.state.service.storage.close)
-        with TestClient(app, base_url='http://127.0.0.1:8765') as c:
+        with TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}') as c:
             self.assertEqual(c.get('/api/v1/runs/'+row['id']+'/text', params={'offset': len(bad)-1}).status_code, 409)
             self.assertEqual(self.s.get(row['id'])['bundle'], 'invalid')
 
@@ -248,7 +248,7 @@ class ErrorBoundaryTests(unittest.TestCase):
         other = self.s.submit(io.BytesIO(PDF), 'other.pdf')
         app = create_app(self.settings)
         self.addCleanup(app.state.service.storage.close)
-        with TestClient(app, base_url='http://127.0.0.1:8765') as c:
+        with TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}') as c:
             self.assertEqual(c.get('/api/v1/runs').status_code, 200)
             self.assertEqual(c.get('/api/v1/runs/'+other['id']).status_code, 200)
 
@@ -374,7 +374,7 @@ class ErrorBoundaryTests(unittest.TestCase):
         self.publish(w, row, scratch)
         app = create_app(self.settings)
         self.addCleanup(app.state.service.storage.close)
-        with TestClient(app, base_url='http://127.0.0.1:8765') as c:
+        with TestClient(app, base_url=f'http://127.0.0.1:{self.settings.port}') as c:
             for err in [errno.EMFILE, errno.EIO, errno.ENOMEM, errno.EACCES]:
                 for endpoint in ['source', 'text']:
                     with self.subTest(errno=err, endpoint=endpoint), patch('markdown_for_llms.api.open_file', side_effect=OSError(err, 'injected')):

@@ -182,7 +182,7 @@ with s.upload('x.pdf') as u:
 
     def test_http_transient_source_text_gallery_and_manifest(self):
         j = self.completed(assets={'img.png': b'opaque'})
-        client = TestClient(create_app(self.settings), base_url='http://127.0.0.1:8765')
+        client = TestClient(create_app(self.settings), base_url=f'http://127.0.0.1:{self.settings.port}')
         for endpoint in ('source', 'text', 'artifacts/'+j['manifest']['artifacts'][1]['id']):
             with patch('markdown_for_llms.api.open_file', side_effect=OSError(errno.EIO, 'synthetic')):
                 self.assertEqual(client.get('/api/v1/runs/'+j['id']+'/'+endpoint).status_code, 503)
