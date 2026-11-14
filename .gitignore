@@ -30,6 +30,7 @@ MANIFEST
 .venv-python/
 .venv-marker/
 .venv-marker-gpu/
+.venv-bench/
 # Cache, temporanei e output package separati dalla baseline in /tmp.
 .cache/uv-package-s001/
 .cache/uv-fidelity/

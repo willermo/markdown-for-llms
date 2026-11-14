@@ -1,0 +1,11 @@
+{
+ "provisional": true,
+ "note": "Provisional values, the same for every profile; the maintainer decides them after the MFL027 campaign.",
+ "default": {"content": 0.95, "structure": 0.85, "form": 0.70},
+ "profiles": {
+  "scientific": {"content": 0.95, "structure": 0.85, "form": 0.70},
+  "scan": {"content": 0.95, "structure": 0.85, "form": 0.70},
+  "office": {"content": 0.95, "structure": 0.85, "form": 0.70},
+  "legal": {"content": 0.95, "structure": 0.85, "form": 0.70}
+ }
+}

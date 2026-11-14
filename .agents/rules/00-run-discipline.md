@@ -31,4 +31,4 @@ Applies to every non-trivial run in this repository, whatever the model and tool
 ## Safety
 
 - Never print or persist secrets or values from `.env.*`.
-- No push, pull request, merge, rebase, squash, deploy or remote change without Davide's explicit authorization.
+- No push, pull request, merge, rebase, squash, deploy or remote change without the maintainer's explicit authorization.

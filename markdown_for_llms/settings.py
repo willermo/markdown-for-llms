@@ -84,8 +84,8 @@ class Settings:
         sources.append(os.environ if environ is None else environ)
         for source in sources:
             for key, value in source.items():
-                if not key.startswith("MDF_"):
-                    continue
+                if not key.startswith("MDF_") or key.startswith("MDF_BENCH_"):
+                    continue   # MDF_BENCH_* belong to `mdf bench` (markdown_for_llms/bench/settings.py)
                 if key not in known:
                     raise ConfigurationError("Unknown MDF setting")
                 f = known[key]

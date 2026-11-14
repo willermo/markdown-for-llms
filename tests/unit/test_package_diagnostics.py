@@ -25,13 +25,21 @@ def record_bytes(name, content):
     return {'path':name,'kind':'file','bytes':len(content),'sha256':hashlib.sha256(content).hexdigest()}
 
 
-def metadata_bytes():
+LEGACY_ENGINE = ('marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4')
+BENCH = ('marker-pdf[full]==2.2.0','surya-ocr==0.23.0','torch==2.15.0','torchvision==0.29.1','markdown-it-py==4.0.0','mdit-py-plugins==0.5.0')
+EXTRAS = {
+    'app': ('fastapi==0.142.2','uvicorn==0.54.0','python-multipart','markdown-it-py==4.0.0','mdit-py-plugins==0.5.0','pillow==10.4.0'),
+    'marker-server': ('fastapi','uvicorn','python-multipart'),
+    'marker-cpu': LEGACY_ENGINE, 'marker-cu126': LEGACY_ENGINE,
+    'bench': BENCH, 'bench-cu132': BENCH,
+}
+
+
+def metadata_bytes(extras=None):
     lines = ['Name: markdown-for-llms','Version: 1.0.0','Requires-Python: >=3.12,<3.13']
     lines += ['Requires-Dist: '+r for r in ('requests>=2.31.0','tiktoken>=0.5.1','tqdm>=4.66.0','python-dotenv>=1.0.0')]
-    for extra in ('app','marker-server','marker-cpu','marker-cu126'):
+    for extra, deps in (EXTRAS if extras is None else extras).items():
         lines.append('Provides-Extra: '+extra)
-        deps = (('fastapi==0.142.2','uvicorn==0.54.0','python-multipart','markdown-it-py==4.0.0','mdit-py-plugins==0.5.0','pillow==10.4.0') if extra == 'app' else
-                ('fastapi','uvicorn','python-multipart') if extra == 'marker-server' else ('marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4'))
         lines += ['Requires-Dist: '+d+'; extra == "'+extra+'"' for d in deps]
     return ('\n'.join(lines)+'\n\n').encode()
 
@@ -104,6 +112,21 @@ class ArchiveIntegrityTests(unittest.TestCase):
                               (metadata,ep+b'\nextra = config:main')):
             with self.assertRaises(ValueError):
                 verify.check_metadata(data,entries)
+
+    def test_metadata_extras_are_exact_per_extra(self):
+        ep = ('[console_scripts]\n'+'\n'.join(k+' = '+v for k,v in verify.ENTRYPOINTS.items())).encode()
+        self.assertEqual(set(verify.EXTRA_REQUIREMENTS), set(EXTRAS))
+        cases = {
+            'bench requirement inside marker-cpu': dict(EXTRAS, **{'marker-cpu': LEGACY_ENGINE + ('torchvision==0.29.1',)}),
+            'Marker 1.10.2 inside bench': dict(EXTRAS, **{'bench': tuple(r for r in BENCH if not r.startswith('marker-pdf')) + ('marker-pdf[full]==1.10.2',)}),
+            'torchvision missing from bench': dict(EXTRAS, **{'bench': tuple(r for r in BENCH if not r.startswith('torchvision'))}),
+            'duplicate in bench-cu132': dict(EXTRAS, **{'bench-cu132': BENCH + ('torch==2.15.0',)}),
+            'seventh extra bench-cu134': dict(EXTRAS, **{'bench-cu134': BENCH}),
+            'bench extra missing': {k: v for k, v in EXTRAS.items() if k != 'bench'},
+        }
+        for name, extras in cases.items():
+            with self.subTest(case=name), self.assertRaises(ValueError):
+                verify.check_metadata(metadata_bytes(extras),ep)
 
     def test_full_synthetic_chain_and_stale_module(self):
         files = {name:('synthetic '+name+'\n').encode() for name in verify.MODULE_FILES}

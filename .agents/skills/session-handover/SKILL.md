@@ -15,7 +15,7 @@ Write the handover in the report (and, when the run uses a run folder, as a file
 - **Files inspected** and **files changed** (the latter only if implementation was authorized).
 - **Commands and tests** — exact commands and results; if not run, why.
 - **Risks and technical debt**.
-- **Decisions required** from Davide (or others, named).
+- **Decisions required** from the maintainer (or others, named).
 - **Knowledge base impact** — which notes should change (Backlog, Roadmap, Decisioni, documents).
 - **Next step** — one actionable step.
 

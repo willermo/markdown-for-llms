@@ -14,6 +14,7 @@ All notable changes for users of this project are documented here. The format fo
 - Estimated conversion progress in the Web UI (a progress bar updated in place), in the API and CLI JSON (`progress` field, separate from `state`) and on stderr for `mdf convert --wait` on a terminal. The percentage is an estimate; the engine phase and its count are exact.
 - `MDF_STALL_SECONDS` (default 900, minimum 60): the worker stops a conversion whose engine progress has not advanced for that long. See [ADR 0011](documentation/decisions/0011-stall-control-and-progress.md).
 - `mdf downgrade-storage` returns an archive upgraded from schema 1 to the previous version.
+- Experimental reference bench `mdf bench`, a development tool in its own venv (`bench` extra): `prepare --toolchain` builds and verifies a local Docker image of the reference tools, `list` and `fetch` download and verify the 19 documents of the reference set, `checks` and `checks --self-check` generate and self-check their checks; `MDF_BENCH_*` settings are read from `--env-file`. The measured conversion of each path, the scores of the conversions, `compare` and the reports are not available yet; they come with the conversion engine. See [Prepare the reference bench](docs/how-to/bench.md).
 
 ### Changed
 

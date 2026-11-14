@@ -40,6 +40,11 @@ class ProgressLine:
 
 
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv[:1] == ["bench"]:
+        # The bench has its own settings (MDF_BENCH_*): forward before the product settings load.
+        from .bench.cli import main as bench_main
+        return bench_main(argv[1:])
     parser = argparse.ArgumentParser(prog="mdf")
     parser.add_argument("--env-file")
     parser.add_argument("--data-root")

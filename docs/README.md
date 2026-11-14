@@ -13,4 +13,6 @@ The structure follows [Diátaxis](https://diataxis.fr/):
 
 The a002 development helpers have a [benchmark guide](how-to/fidelity-benchmark.md) and a [reference](reference/fidelity-benchmark.md); they are not application services.
 
+The reference bench `mdf bench` has a [guide for the commands that exist](how-to/bench.md): it prepares the documents and the checks, and does not convert yet.
+
 Proposals, decisions and the roadmap are in [`documentation/`](../documentation/README.md). This separation prevents a proposal from being mistaken for an available feature.

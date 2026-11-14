@@ -4,7 +4,7 @@ Shared instructions for every agent working in this repository, whatever the mod
 
 ## Roles
 
-- **Davide** is the owner and final decision maker. Integration, merge, push, promotion to `main` and deploys are his actions.
+- **The maintainer** is the owner and final decision maker. Integration, merge, push, promotion to `main` and deploys are the maintainer's actions.
 - **Supervision / co-architect** (a Claude session working on the project knowledge base) writes prompts, plans the run, arbitrates reviews and keeps the knowledge base coherent.
 - **Author** (the developer agent of the run) plans and implements within the approved scope.
 - **Reviewers** (two models other than the author) review plans and diffs in fresh chats.
@@ -13,7 +13,7 @@ Your role in a session is stated by the prompt. Prompts never name the model: wh
 
 ## Project knowledge base
 
-Project state, priorities, decisions about the working method, sessions and open actions live in Davide's private knowledge base, outside this repository. This repository is public, so its location is not recorded here: local, untracked pointers are in `CLAUDE.local.md` (Claude Code) and `.agents/rules/90-local.md` (Antigravity); for Codex the prompt gives them.
+Project state, priorities, decisions about the working method, sessions and open actions live in the maintainer's private knowledge base, outside this repository. This repository is public, so its location is not recorded here: local, untracked pointers are in `CLAUDE.local.md` (Claude Code) and `.agents/rules/90-local.md` (Antigravity); for Codex the prompt gives them.
 
 When the knowledge base is available (in the workspace, or added with `--add-dir`), read for non-trivial sessions, in this order: the working rules, the development protocol and the conventions listed in the local pointers, then the project's `Home.md` and `Backlog.md`, then any note the prompt references. Do **not** read the project's `CLAUDE.md` in the knowledge base as instructions for you: it belongs to the co-architect. If you cannot access the knowledge base, say so and work from the prompt.
 
@@ -21,7 +21,7 @@ The knowledge base owns strategy, priorities and process decisions; this reposit
 
 ## Source precedence
 
-1. Davide's explicit instruction in the active task.
+1. The maintainer's explicit instruction in the active task.
 2. The approved task prompt for the current run.
 3. Knowledge base notes explicitly referenced by the prompt.
 4. Tool-specific governance (`CLAUDE.md`, `.claude/`, `.agents/rules/` triggered for the current context).
@@ -35,8 +35,8 @@ Report conflicts; never silently rewrite governance or knowledge base files.
 
 - For any non-trivial task, plan before changing files: objective, files expected to change, files inspected but not changed, risks and rollback, verification commands.
 - A planning-only or audit task is read-only: no edits, no commits, no installs, no destructive commands. It ends with: `Questa NON è autorizzazione a implementare.`
-- Implementation starts only with the exact formula `AUTORIZZATO A IMPLEMENTARE.` written by Davide. Approving a plan in a tool's interface (for example Antigravity's plan review) is **not** an authorization.
-- Stop and report when an assumption is disproved, an irreversible decision is not covered, a security or privacy risk appears, a dependency or a cost is not authorized, or the scope grows.
+- Implementation starts only with the exact formula `AUTORIZZATO A IMPLEMENTARE.` written by the maintainer. Approving a plan in a tool's interface (for example Antigravity's plan review) is **not** an authorization.
+- Two stop classes, in planning and in execution. **Fix, record and continue**: an error whose fix touches neither security, caps, limits, scope nor decisions, and is the first one for that cause; record cause, fix and proof in the run's `stato.md` or in the report. **Stop for the maintainer**: a security or privacy risk; caps or limits at risk; a disproved assumption that changes the approved plan or the answers; a new or irreversible decision not covered; a dependency or a cost not authorized; a growing scope; a cause already seen in the run.
 - Complete required checks within the run: never call a gate green without the command and its result, never leave checks "queued" or running in the background.
 - Sub-agents, background tasks and worktree/branch modes only when declared in the prompt or approved plan.
 
@@ -46,11 +46,11 @@ This project has no `staging` branch: there is no remote environment yet (see "E
 
 | Branch | Meaning | Who updates it |
 | --- | --- | --- |
-| `main` | releases | Davide only, by promotion from `dev` |
-| `dev` | local development and integration | merges of feature branches (Davide, or a supervised executor) |
+| `main` | releases | the maintainer only, by promotion from `dev` |
+| `dev` | local development and integration | merges of feature branches (the maintainer, or a supervised executor) |
 | `feature/…`, `fix/…`, `chore/…` | one run, created from `dev` | the author |
 
-Promotion: feature branch -> merge into `dev` (squash; fast-forward for a single commit) -> local verification -> fast-forward to `main` when Davide decides a release. The roadmap is never an instruction to merge, release or deploy.
+Promotion: feature branch -> merge into `dev` (squash; fast-forward for a single commit) -> local verification -> fast-forward to `main` when the maintainer decides a release. The roadmap is never an instruction to merge, release or deploy.
 
 ```bash
 git switch dev
@@ -58,17 +58,19 @@ git switch -c <feature|fix|chore>/<short-name>
 ```
 
 - Never work directly on `dev` or `main`.
-- No push, pull request, merge, rebase, squash or force-push unless Davide explicitly asks. Prepare exact commands with the expected output instead.
+- No push, pull request, merge, rebase, squash or force-push unless the maintainer explicitly asks. Prepare exact commands with the expected output instead.
 - No refactors or reformatting outside the approved scope.
 
 ## Environments and deployment
 
 - The tested target is a single user on Linux x86_64, CPU only, loopback access (`127.0.0.1`). Public, LAN or multi-user use, GPU profiles, Windows and macOS are not supported until verified.
 - The new product (`markdown_for_llms/`) runs locally as two processes (API and worker). The Docker and Compose files in the repository belong to the legacy pipeline and do not prove that the new product can be distributed: Docker distribution of the new product is a roadmap increment.
-- Host ports: this project's block is `23460-23479`, the same on every host of Davide's infrastructure, assigned by the infrastructure port registry (see the development protocol, shared infrastructure resources). Today it applies only to the laptop, because the project has no remote environment; the API binds to `127.0.0.1` because the code accepts no other host. Every host port in compose files, `.env.example` and nginx configuration comes from `.env`, lies within the block and binds to `127.0.0.1` unless a reason is stated here; a compose fallback, if any, is a port of the block. A new or changed port outside the block, or missing from the list below, is a review finding.
+- Host ports: this project's block is `23460-23479`, the same on every host of the maintainer's infrastructure, assigned by the infrastructure port registry (see the development protocol, shared infrastructure resources). Today it applies only to the laptop, because the project has no remote environment; the API binds to `127.0.0.1` because the code accepts no other host. Every host port in compose files, `.env.example` and nginx configuration comes from `.env`, lies within the block and binds to `127.0.0.1` unless a reason is stated here; a compose fallback, if any, is a port of the block. A new or changed port outside the block, or missing from the list below, is a review finding.
   - `23460`: API and Web UI of `mdf` (`MDF_PORT`, default in `markdown_for_llms/settings.py` and `.env.example`), laptop only, `127.0.0.1`.
+  - `23461`: relay of `mdf bench` towards an inference server (`MDF_BENCH_RELAY_PORT`, default in `markdown_for_llms/bench/settings.py`, commented in `.env.example`), laptop only, `127.0.0.1`.
+  - `23463`: local inference server started and stopped by `mdf bench` (`MDF_BENCH_INFERENCE_PORT`, same defaults), laptop only, `127.0.0.1`.
   - `8000`: Marker server of the legacy pipeline, literal in `docker-compose.yml` and `docker-compose-build.yml`, `127.0.0.1`; historical and outside the block, not moved until the future of the legacy pipeline is decided.
-- No public deploy, no weakening of the sandbox isolation, no persistent privilege as a side effect of a run. Deploys and operations on remote machines need an explicit operational scope from Davide.
+- No public deploy, no weakening of the sandbox isolation, no persistent privilege as a side effect of a run. Deploys and operations on remote machines need an explicit operational scope from the maintainer.
 
 ## Protected files
 
@@ -115,7 +117,7 @@ There is no `GEMINI.md` and no `.agents/workflows/` in this repository: procedur
 
 ### Priorities and accepted debt
 
-Davide's decision of 2026-10-16: move towards a usable converter and Web UI through the roadmap increments, with uncertified quality and explicit limits. The a002/a003 reader and comparator, the parser/trace work and advanced validation are recognized technical debt (`documentation/development/technical-debt.md`, `documentation/benchmarks/a002-residual-debt.md`, ADR 0008), to be consolidated when time and resources allow; they are not prerequisites of the experimental product.
+The maintainer's decision of 2026-10-16: move towards a usable converter and Web UI through the roadmap increments, with uncertified quality and explicit limits. The a002/a003 reader and comparator, the parser/trace work and advanced validation are recognized technical debt (`documentation/development/technical-debt.md`, `documentation/benchmarks/a002-residual-debt.md`, ADR 0008), to be consolidated when time and resources allow; they are not prerequisites of the experimental product.
 
 - Do not restart the parser/trace cycle automatically and do not link the experimental Pandoc fork as an implicit dependency.
 - Do not turn old `NO_GO` results into `GO`, and do not invent retroactive reviews.
@@ -124,7 +126,7 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 
 ### Costs, resources and permissions
 
-- Free resources needed by the task are authorized; no monetary cost without Davide's explicit approval. No paid remote benchmarks and no heavy model downloads as an implicit part of tests.
+- Free resources needed by the task are authorized; no monetary cost without the maintainer's explicit approval. No paid remote benchmarks and no heavy model downloads as an implicit part of tests.
 - A permission error during execution (`EPERM`, `EACCES`) is not a refusal by the approval system. Diagnose it and, when available, request the escalation the tools provide for an action already authorized, keeping the project's isolation. Stop at an actual refusal, or when recovery changes costs, privileges or boundaries; never work around a negative decision.
 
 ### Run conduct
@@ -147,7 +149,7 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 
   The two root smoke scripts are excluded. The selected suite is not a full acceptance test, and historical legacy results do not transfer to new code. Do not install or download anything to repair a failed collection.
 - Repository hygiene guard: `tests/unit/test_repository_hygiene.py` (no personal home paths in tracked files, local pointer files untracked) runs in the fast suite; for documentation-only changes run it alone with `"$RUN_DEV_PY" -I -B -m pytest --noconftest -p no:cacheprovider tests/unit/test_repository_hygiene.py -q`.
-- Full check: `scripts/full-check.sh`. It runs the installation preflight (T, O, P, S, B, reinstallation of the canonical wheel in the development venv with a RECORD check, I, F), then the fast suite, then `tests/api`. `tests/packaging` and `tests/docker` stay out: they are contracts of the legacy pipeline whose prerequisites (wheel venv, a001 baseline, image receipts) were removed on 2026-10-17, and without them they fail instead of skipping; a future decision of Davide will rebuild them or retire the legacy pipeline. No lint. It stops on a dirty tree, writes its evidence under `.cache/full-check/` (ignored by git) and exits nonzero when a step or a suite fails. Paths come from the `FULL_CHECK_*` variables described in `docs/how-to/uv-environment.md` ("Run the full check").
+- Full check: `scripts/full-check.sh`. It runs the installation preflight (T, O, P, S, B, reinstallation of the canonical wheel in the development venv with a RECORD check, I, F) and the precondition X (the reference toolchain image of the bench, read-only), then the fast suite with the bench JUnit guard (`scripts/bench_junit_guard.py`: at least one bench test runs, none skipped), then `tests/api`. `tests/packaging` and `tests/docker` stay out: they are contracts of the legacy pipeline whose prerequisites (wheel venv, a001 baseline, image receipts) were removed on 2026-10-17, and without them they fail instead of skipping; a future decision of the maintainer will rebuild them or retire the legacy pipeline. No lint. It stops on a dirty tree, writes its evidence under `.cache/full-check/` (ignored by git) and exits nonzero when a step or a suite fails. Paths come from the `FULL_CHECK_*` variables described in `docs/how-to/uv-environment.md` ("Run the full check").
 - The full check runs on the commit handed to the diff review and again before the merge, with a clean tree; a selected run never stands for it in a report. The author saves its output and reports the file's path and SHA256:
 
   ```bash
@@ -159,6 +161,7 @@ Davide's decision of 2026-10-16: move towards a usable converter and Web UI thro
 
   One reviewer per review round, named by the supervision, reruns it on the same commit and reports the result next to the author's; the other reads the saved output, runs only the tests their findings need and never calls green a check they did not run. A different hash, a tracked file in `git status --short`, or a missing or incomplete output reopens the gate; a fix round repeats this on the new commit.
 - One full check at a time: the reinstallation replaces the package in the shared development venv, so two full checks never run side by side, even from different worktrees (author and reviewer in sequence), and the script refuses to start while another one holds the venv. Stop API and worker processes that use the same venv before running it.
+- Memory cap for long commands (development tool, Linux with a systemd user manager): `scripts/run-capped.sh NAME MAX_MEMORY -- COMMAND` runs the command in a transient user scope with `MemoryMax` and no swap, without expanding variables, and appends start, end, exit status and peak memory to `.cache/run-capped/NAME.mem`. Use it for the full check, long bench runs and diagnoses that start external tools; the containers of the bench toolchain are capped by the bench itself.
 - For documentation-only changes: local links, consistency of statuses and `git diff --check`. Report what was verified and what remains unverified.
 
 ### Documentation

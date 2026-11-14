@@ -1,0 +1,350 @@
+{
+ "schema": "mdf-bench-exclusions/1",
+ "exclusions": [
+  {
+   "document": "D19",
+   "check": "p12:order",
+   "code": "self_check_tool_limit",
+   "reason": "reading order of poppler: a centred line of page 1 is read before the preamble",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D19",
+   "check": "p21:order",
+   "code": "self_check_tool_limit",
+   "reason": "reading order of poppler: the two columns of a page are read in the wrong order",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D19",
+   "check": "p40:order",
+   "code": "self_check_tool_limit",
+   "reason": "reading order of poppler: the two columns of a page are read in the wrong order",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig8",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig10",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig21",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig41",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig59",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig60",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig65",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig66",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig71",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig86",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig89",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig93",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig95",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig96",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig97",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig98",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig100",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig102",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig108",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig111",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig114",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig116",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig118",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig120",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig126",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig127",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig128",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig137",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig138",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig144",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig146",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig147",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig153",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig185",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig186",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig188",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig190",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig192",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig193",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  },
+  {
+   "document": "D16",
+   "check": "fig194",
+   "code": "self_check_tool_limit",
+   "reason": "Pandoc drops the caption of an image in a nested text frame; LibreOffice prints it",
+   "origin": "self-check",
+   "generator_version": "4"
+  }
+ ],
+ "feedback": []
+}

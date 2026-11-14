@@ -1,0 +1,45 @@
+{
+ "schema": "mdf-bench-toolchain/1",
+ "context": {
+  "Dockerfile": "2eff64654c3fadb13bbbffb24cee453d94de7056fbc8060c278a783a10b6a9c2",
+  "content-manifest.sh": "de782de1cc11aeb20b6889aeb07d1b1c891a2f2be465c9f13668ee87fb648736",
+  "pixi.lock": "5452175af57bb8585f33a8dbf3f273607287e1d3c1430121a09bdaeab3511af8",
+  "pixi.toml": "bdac5b81b49265ef93a3494d76ea0fee158a3745b0d336735fd3dead8b8ff874"
+ },
+ "content_sha256": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+ "config": {
+  "Env": [
+   "PATH=/opt/djvulibre/bin:/opt/toolchain/.pixi/envs/default/bin:/usr/local/bin:/usr/bin:/bin",
+   "LC_ALL=C.UTF-8",
+   "LANG=C.UTF-8",
+   "LD_LIBRARY_PATH=/opt/djvulibre/lib"
+  ],
+  "Entrypoint": null,
+  "User": ""
+ },
+ "versions": {
+  "ddjvu": "3.5.29",
+  "qpdf": "12.4.2",
+  "pdftoppm": "26.11.0",
+  "pdftotext": "26.11.0",
+  "pdfinfo": "26.11.0",
+  "pandoc": "3.14",
+  "soffice": "26.8.3.1",
+  "gs": "10.08.0"
+ },
+ "image_id": "sha256:810ca7e109f79b3bd70d0e763c33601f3068db9eca7df148554cb81711dc725f",
+ "builder": {
+  "image": "moby/buildkit@sha256:c5f8862f52499773af85bc07695b2379ef08e8002352b0df2c4864c91d78dabe",
+  "memory": "6g"
+ },
+ "selftest": {
+  "qpdf": "fbf1e4bd047917f984f9208ac8d701e4e49aa68c25d2deb0a16c3eb9d57b5c68",
+  "ddjvu": "c776de7c0bcc0b7642eb680ad32dee09b05d7e57578b8344247faaf57c624136",
+  "pdftoppm": "0660fcab9371af33dde3c7c5e7fdd18f09d2eb67d736bbd6204533c4506e5d5c"
+ },
+ "notes": {
+  "ddjvu": "DjVuLibre 3.5.30 built from its source tarball, which reports version 3.5.29",
+  "image_id": "the build on which the reference hashes of the manifest and the self-check calibration were measured; another build with the same content_sha256 is the same toolchain",
+  "versions": "change only through an explicit commit of an authorized run: pixi update, URLs and SHA-256, Debian snapshot, self-test, derivations and self-check redone; a new content_sha256 opens a new baseline"
+ }
+}

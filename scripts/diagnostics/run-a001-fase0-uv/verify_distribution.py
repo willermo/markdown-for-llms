@@ -52,6 +52,18 @@ MAX_FILE = 16 * 1024 * 1024
 MAX_TOTAL = 64 * 1024 * 1024
 APP_REQUIREMENTS = {'fastapi==0.142.2', 'uvicorn==0.54.0', 'python-multipart',
                     'markdown-it-py==4.0.0', 'mdit-py-plugins==0.5.0', 'pillow==10.4.0'}
+LEGACY_ENGINE_REQUIREMENTS = {'marker-pdf[full]==1.10.2', 'surya-ocr==0.17.1', 'torch==2.7.1', 'beautifulsoup4'}
+BENCH_REQUIREMENTS = {'marker-pdf[full]==2.2.0', 'surya-ocr==0.23.0', 'torch==2.15.0', 'torchvision==0.29.1',
+                      'markdown-it-py==4.0.0', 'mdit-py-plugins==0.5.0'}
+# The only extras of the distribution, each with its exact set of requirements.
+EXTRA_REQUIREMENTS = {
+    'app': APP_REQUIREMENTS,
+    'marker-server': {'fastapi', 'uvicorn', 'python-multipart'},
+    'marker-cpu': LEGACY_ENGINE_REQUIREMENTS,
+    'marker-cu126': LEGACY_ENGINE_REQUIREMENTS,
+    'bench': BENCH_REQUIREMENTS,
+    'bench-cu132': BENCH_REQUIREMENTS,
+}
 
 
 def archive_directories(files):
@@ -134,24 +146,22 @@ def check_metadata(data, entrypoints):
     if base != {'requests>=2.31.0','tiktoken>=0.5.1','tqdm>=4.66.0','python-dotenv>=1.0.0'}:
         raise ValueError('Dipendenze runtime base difformi')
     extras = metadata.get_all('Provides-Extra', [])
-    if len(extras) != 4 or set(extras) != {'app','marker-server','marker-cpu','marker-cu126'}:
-        raise ValueError('Extra distribuzione difformi')
+    if len(extras) != len(EXTRA_REQUIREMENTS) or set(extras) != set(EXTRA_REQUIREMENTS):
+        raise ValueError('Distribution extras differ')
+    names = '|'.join(re.escape(name) for name in EXTRA_REQUIREMENTS)
     for requirement in requirements:
         if ';' in requirement:
             dependency, marker = requirement.split(';',1)
-            match = re.fullmatch(r'\s*extra\s*==\s*[\"\'](app|marker-server|marker-cpu|marker-cu126)[\"\']\s*',marker)
+            match = re.fullmatch(r'\s*extra\s*==\s*[\"\']('+names+r')[\"\']\s*',marker)
             if not match:
-                raise ValueError('Marker Requires-Dist inatteso')
-            allowed = (APP_REQUIREMENTS if match[1] == 'app' else {'fastapi','uvicorn','python-multipart'} if match[1] == 'marker-server' else
-                       {'marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4'})
-            if dependency.strip() not in allowed:
-                raise ValueError('Dipendenza extra inattesa')
+                raise ValueError('Unexpected Requires-Dist marker')
+            if dependency.strip() not in EXTRA_REQUIREMENTS[match[1]]:
+                raise ValueError('Unexpected extra dependency')
     for extra in extras:
-        selected = [r.split(';',1)[0].strip() for r in requirements if re.search(r'extra\s*==\s*[\"\']'+extra+r'[\"\']',r)]
-        expected = (APP_REQUIREMENTS if extra == 'app' else {'fastapi','uvicorn','python-multipart'} if extra == 'marker-server' else
-                    {'marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4'})
+        selected = [r.split(';',1)[0].strip() for r in requirements if re.search(r'extra\s*==\s*[\"\']'+re.escape(extra)+r'[\"\']',r)]
+        expected = EXTRA_REQUIREMENTS[extra]
         if len(selected) != len(expected) or set(selected) != expected:
-            raise ValueError('Extra incompleto/duplicato')
+            raise ValueError('Extra incomplete or duplicated')
 
 
 def check_record(data, files, installed=False):

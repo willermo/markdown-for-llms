@@ -1,0 +1,10 @@
+[workspace]
+name = "mdf-bench-toolchain"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[dependencies]
+pandoc = "==3.14"
+poppler = "==26.11.0"
+qpdf = "==12.4.2"
+ghostscript = "==10.08.0"

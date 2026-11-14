@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Full check of markdown-for-llms (AGENTS.md, "Verification"): installation preflight
-# (T, O, P, S, B, reinstallation of the canonical wheel with a RECORD check, I, F), then the
-# fast suite and tests/api. tests/packaging and tests/docker stay out: legacy contracts whose
+# (T, O, P, S, B, reinstallation of the canonical wheel with a RECORD check, I, F), the
+# precondition X (the reference toolchain image of the bench), then the fast suite and tests/api. tests/packaging and tests/docker stay out: legacy contracts whose
 # prerequisites were removed on 2026-10-17. Run it at the root of a clean checkout:
 #   scripts/full-check.sh
 # Paths come from the FULL_CHECK_* variables (docs/how-to/uv-environment.md, "Run the full
@@ -165,6 +165,14 @@ echo "I: $(cat "$PROOF/I.out")"; lap
 [ "$(cat "$PROOF/F.out")" = PASS_CURRENT_I ] || stop "F: unexpected output"
 echo "F: PASS_CURRENT_I"; lap
 
+# --- X: reference toolchain image of the bench (MFL026) ----------------------------------
+# The bench tests that use external tools run them in this image (built locally by
+# `mdf bench prepare --toolchain`); without it, or with an image that differs from
+# toolchain.json, they would fail: stop here with the reason. Read-only; no build, no network.
+"$FULL_CHECK_DEV_PYTHON" -I -B -m markdown_for_llms.bench.toolchain verify > "$PROOF/X.out" 2>&1 \
+  || stop "X: $(tail -n 1 "$PROOF/X.out")"
+echo "X: $(tail -n 1 "$PROOF/X.out")"; lap
+
 # --- suites ------------------------------------------------------------------------------
 export RUN_SOURCE_MANIFEST="$PROOF/S.json" RUN_INSTALLATION_RECEIPT="$PROOF/I.json" RUN_TEST_MODE=standalone
 # junit_counts <junit xml>: prints "tests failures errors skipped" of its single testsuite;
@@ -209,6 +217,15 @@ run_suite() {                                         # run_suite <name> <pytest
   lap
 }
 run_suite fast-suite tests/ --ignore=tests/api --ignore=tests/packaging --ignore=tests/docker
+# Bench tests (MFL026): at least one runs and none is skipped.
+rc=0
+"$MANAGED_PY" -I -B "$top/scripts/bench_junit_guard.py" "$PROOF/fast-suite.xml" > "$PROOF/bench-guard.out" 2>&1 || rc=$?
+echo "$(tail -n 1 "$PROOF/bench-guard.out")"
+if [ "$rc" -ne 0 ]; then
+  echo "  red: bench JUnit guard (exit $rc)"
+  grep -E '^problem: ' "$PROOF/bench-guard.out" >&2 || true
+  fail+=("bench-guard")
+fi
 run_suite api-suite tests/api
 
 # --- end ---------------------------------------------------------------------------------

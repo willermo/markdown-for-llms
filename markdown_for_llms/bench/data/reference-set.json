@@ -1,0 +1,959 @@
+{
+ "schema": "mdf-bench-manifest/1",
+ "set": "public",
+ "sources": {
+  "d01-pdf": {
+   "kind": "file",
+   "url": "https://arxiv.org/pdf/2312.09999v1",
+   "bytes": 222108,
+   "sha256": "8c2fbd4c6fdc60df60a3661a4d89a892a6281913e7faa1530b61e57a0e04c9c0"
+  },
+  "d01-src": {
+   "kind": "file",
+   "url": "https://arxiv.org/src/2312.09999v1",
+   "bytes": 17732,
+   "sha256": "b91e4cdf5b33a91c789967a179bb0491536c03f6a0d558d5b51582dc1c73ff24"
+  },
+  "d02-pdf": {
+   "kind": "file",
+   "url": "https://arxiv.org/pdf/2506.01472v1",
+   "bytes": 1127950,
+   "sha256": "cd80589ffe1819fb4690fbecc206caaf5ad4a1f9151daf2e991f55f8213cdf0c"
+  },
+  "d02-src": {
+   "kind": "file",
+   "url": "https://arxiv.org/src/2506.01472v1",
+   "bytes": 694627,
+   "sha256": "4b7b59aaf636e21cf979d3e831a03773dc3574bd6dca39ba763b7b1747e6d257"
+  },
+  "d03-html": {
+   "kind": "file",
+   "url": "https://arxiv.org/html/2506.01472v1",
+   "bytes": 374900,
+   "sha256": "1564655d386738a211efb7895eb11dfe37dd17597ad83b7ce4b0f98f9b53288a"
+  },
+  "d04-pdf": {
+   "kind": "file",
+   "url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC11656979.1/PMC11656979.1.pdf",
+   "bytes": 1011316,
+   "sha256": "7d05cbc25d639437031e913bc11e8e33b6bb758070e045a99e5c77d438a1705d"
+  },
+  "d04-jats": {
+   "kind": "file",
+   "url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC11656979.1/PMC11656979.1.xml",
+   "bytes": 140090,
+   "sha256": "26d1985b237082330251b73e0f5eb66d862fdf873db125193aa394e68f9fa638"
+  },
+  "d05-pdf": {
+   "kind": "file",
+   "url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC11218071.1/PMC11218071.1.pdf",
+   "bytes": 2183019,
+   "sha256": "67f17aa124ae85c6e22bda11b776428b7ea95138aadede4c84475cbbdf148404"
+  },
+  "d05-jats": {
+   "kind": "file",
+   "url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC11218071.1/PMC11218071.1.xml",
+   "bytes": 90369,
+   "sha256": "4606b713e6ab63b0438164387f30d80b055b1c668bb73313505a287d3e784267"
+  },
+  "d06-pdf": {
+   "kind": "file",
+   "url": "https://www.istat.it/wp-content/uploads/2026/10/La-poverta-in-Italia-2025.pdf",
+   "bytes": 533795,
+   "sha256": "3b8abd71b2f914af6205a5325836ace24c526db3a400b7b27282adc43078c741"
+  },
+  "d07-xlsx": {
+   "kind": "file",
+   "url": "https://www.istat.it/wp-content/uploads/2026/10/Prospetti-poverta-2024-25.xlsx",
+   "bytes": 109189,
+   "sha256": "0d9954253afc72d69e6982240f1edb3f3264779c175fd7a3e75b48b95deba696"
+  },
+  "d08-pptx": {
+   "kind": "file",
+   "url": "https://zenodo.org/api/records/17421921/files/2025-05-23_licences_CC_15min_en-v2_zenodo.pptx/content",
+   "bytes": 1309897,
+   "sha256": "7d0b4b4d91672568b6acd1b623368051e1e5b4254f3a6e13d032e70f1e6cc995"
+  },
+  "d09-pptx": {
+   "kind": "file",
+   "url": "https://zenodo.org/api/records/12696810/files/2024_monitoring_evaluation.pptx/content",
+   "bytes": 10707745,
+   "sha256": "8230544a4a5398f1fce14f4d88cc65e367b8662babe6d777eb9a851e70cb339e"
+  },
+  "d10-docx": {
+   "kind": "file",
+   "url": "https://zenodo.org/api/records/1116696/files/Mert%20Alt%C4%B1nta%C5%9F.docx/content",
+   "bytes": 618879,
+   "sha256": "edfdf6c57ca3894ae3af26ebd4ec5cce2a21d3ceb999e93310c4caf53a200a0e"
+  },
+  "d11-docx": {
+   "kind": "file",
+   "url": "https://zenodo.org/api/records/7425012/files/Fenton%20JSQ%20final%20submitted.docx/content",
+   "bytes": 124415,
+   "sha256": "f7c9f9e198abf2030a1730543b1e9a6d9bc8f2f532898ff93574096edf9b9950"
+  },
+  "d12-docx": {
+   "kind": "file",
+   "url": "https://zenodo.org/api/records/15672995/files/Leadership%20Data%20Analysis.docx/content",
+   "bytes": 235282,
+   "sha256": "2d48c33ea82e66c5fe7fe5f6ea82c9922f140276dc1289241b71bf47a7cc5876"
+  },
+  "d13-epub": {
+   "kind": "file",
+   "url": "https://zenodo.org/api/records/14445449/files/report_music_europe_data_collection.epub/content",
+   "bytes": 4528290,
+   "sha256": "8e222999866978c7623d0a0b3d70c81c5fb6cdd1124476aed82cbdfe9e4e06c1"
+  },
+  "d14-djvu": {
+   "kind": "file",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Veronese_-_La_geometria_non_archimedea.djvu",
+   "bytes": 782690,
+   "sha256": "c2fca7b72074060751285bc6f0afbce73fa7178299c9700afb305d24848aeb3f"
+  },
+  "d14-wikisource": {
+   "kind": "wikisource",
+   "api": "https://it.wikisource.org/w/api.php",
+   "index": "Veronese - La geometria non archimedea.djvu",
+   "pages": [
+    {"page": 1, "revid": 3952653, "sha1": "c47775121d908522fb4c6e47fb3c5a79f2acafa6", "quality": 4},
+    {"page": 2, "revid": 2021751, "sha1": "cf3de60d144bd7da571392bbd8acedd28756d043", "quality": 4},
+    {"page": 3, "revid": 2021757, "sha1": "4ed6e0071c7f188c3afc839c507a078d16a48e87", "quality": 4},
+    {"page": 4, "revid": 2021777, "sha1": "ac00b87219ea9cb420f69d8b5358c16dab434cb0", "quality": 4},
+    {"page": 5, "revid": 2021801, "sha1": "0c4384f0397ec4ed683c76dd3ff4b05c5b476df7", "quality": 4},
+    {"page": 6, "revid": 2021826, "sha1": "74a01446ed158a24788a0237bc459aba63ea89b0", "quality": 4},
+    {"page": 7, "revid": 2021848, "sha1": "6436fe831c4e54ef84e2dbbc7781cc3fc143242f", "quality": 4},
+    {"page": 8, "revid": 2021839, "sha1": "c885ddb89d346b9d3a2528a025cb7493eb388c59", "quality": 4},
+    {"page": 9, "revid": 2021840, "sha1": "c99ea387c11943451af7367e7a5c9600fb9596cd", "quality": 4},
+    {"page": 10, "revid": 2021844, "sha1": "371b6ac3803b22e427a44bcb2879cffb94afe4d6", "quality": 4},
+    {"page": 11, "revid": 2021845, "sha1": "ed0810dcf3834962175ca746a89a009a716c4591", "quality": 4},
+    {"page": 12, "revid": 2021846, "sha1": "57e4531e21c58ecd222e79cd411399dc759f3ff6", "quality": 4}
+   ]
+  },
+  "d15-docx": {
+   "kind": "file",
+   "url": "https://zenodo.org/api/records/8048366/files/pokryshkoFIN.docx/content",
+   "bytes": 1417779,
+   "sha256": "4eaede2233bacf0595d577a8bc534c149e8921ca6222fed4ee9a97a919f7a9fd"
+  },
+  "d16-pdf": {
+   "kind": "file",
+   "url": "https://documentation.libreoffice.org/assets/Uploads/Documentation/en/Tutorials/CustomShapes7/Custom-Shape-Tutorial.pdf",
+   "bytes": 6342584,
+   "sha256": "40574ee6e7fbcf3cdb5fd46c2a6bb3c64ac791a195d1bd1cf8bdb4ae77759a68"
+  },
+  "d16-odt": {
+   "kind": "file",
+   "url": "https://documentation.libreoffice.org/assets/Uploads/Documentation/en/Tutorials/CustomShapes7/Custom-Shape-Tutorial.odt",
+   "bytes": 9685839,
+   "sha256": "7d4c65538ff9cc811f3f5fb42943bb7c0aee2c49210b2420183bcc237c396371"
+  },
+  "d17-djvu": {
+   "kind": "file",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Lockyer_-_Astronomia%2C_1904.djvu",
+   "bytes": 13887762,
+   "sha256": "c25c877e9ce1b87730e84abcc90c918973b5e0a4c48fc38ad445c613d4ca3077"
+  },
+  "d17-wikisource": {
+   "kind": "wikisource",
+   "api": "https://it.wikisource.org/w/api.php",
+   "index": "Lockyer - Astronomia, 1904.djvu",
+   "pages": [
+    {"page": 1, "revid": 2525927, "sha1": "d8639250b4999cbd27e29991981875d2647fd9fc", "quality": 4},
+    {"page": 2, "revid": 2525929, "sha1": "702f9d52f2c0f7560a2ef83c7e327301aee11b42", "quality": 4},
+    {"page": 3, "revid": 2523776, "sha1": "dc03e65f8713e4d3a46a41f9c8fd6c4a8cd6ed80", "quality": 4},
+    {"page": 4, "revid": 2779121, "sha1": "e4ccebb3f3ed522d40f2386c78e0bb58fc95a341", "quality": 4},
+    {"page": 5, "revid": 2798632, "sha1": "ca4b95e59efff42a2893f70d46192dbe8e9c0436", "quality": 4},
+    {"page": 6, "revid": 2822401, "sha1": "74a44a8df8dda9434fb8c2c01c5e3159590f4a9d", "quality": 4},
+    {"page": 7, "revid": 2833158, "sha1": "6812b087e8a29b9765d24ec2412f0dd3ad892ad5", "quality": 4},
+    {"page": 8, "revid": 2878209, "sha1": "95a8cfc07d56b80764ebeb166634f19003b0c9cf", "quality": 4},
+    {"page": 9, "revid": 2906182, "sha1": "f821718ab51cd48d4620454637214ddd91553f5e", "quality": 4},
+    {"page": 10, "revid": 2357639, "sha1": "ef23521ed68ef53af48744f310d859cb8a32a70e", "quality": 0},
+    {"page": 11, "revid": 2906186, "sha1": "03a7d0dec0e8c5c833703b3ac92fb300c774d75b", "quality": 4},
+    {"page": 12, "revid": 2906187, "sha1": "6d8fa786e2f638fbd58ed31f8266473e0e4d75ef", "quality": 4},
+    {"page": 13, "revid": 2515059, "sha1": "4b64216fab9e38f8b36eaf8ef9b6b816bda2d85f", "quality": 4},
+    {"page": 14, "revid": 3378625, "sha1": "62ea22cca7c2dab363b5ff51e30321b6a8c5885e", "quality": 4},
+    {"page": 15, "revid": 2523421, "sha1": "2d9e4905cb06763ad38c98164eff2c7f86311e32", "quality": 4},
+    {"page": 16, "revid": 2523422, "sha1": "e1ecb74160d16d5088b87709f695c48f8ffe619d", "quality": 4},
+    {"page": 17, "revid": 2523423, "sha1": "5b140319b85eb978af54a8acacb175cb288c51c6", "quality": 4},
+    {"page": 18, "revid": 2523424, "sha1": "929332ccf6a208895246f6773c1f742a4ea27e43", "quality": 4},
+    {"page": 19, "revid": 2524860, "sha1": "7d62e514bdb0012ffb41e2638c36fa948016d0b0", "quality": 4},
+    {"page": 20, "revid": 2524861, "sha1": "bd7559244b7a05626a804837d0b4ff4c95509431", "quality": 4},
+    {"page": 21, "revid": 2524862, "sha1": "2c47b902d67b42f99aed7bd67993229fa1a1ca8b", "quality": 4},
+    {"page": 22, "revid": 2525428, "sha1": "344f9d825be313b4a2b5ddd82c87b1c5335f345c", "quality": 4},
+    {"page": 23, "revid": 2525242, "sha1": "5bfc36428034e78139329d0263a2de4040f48f88", "quality": 4},
+    {"page": 24, "revid": 2525427, "sha1": "60ab2d9ff2618feb1c87372efcd8ec4cb3168b7c", "quality": 4},
+    {"page": 25, "revid": 2525426, "sha1": "ed2bb6ba5403c6ed032e8a754f1f99ec6190b724", "quality": 4},
+    {"page": 26, "revid": 2525421, "sha1": "7112abc32156a4ab0146a33cef02bb4fb6392079", "quality": 4},
+    {"page": 27, "revid": 2525423, "sha1": "8d5f8a99aea41c9079985b397db4d526085e726e", "quality": 4},
+    {"page": 28, "revid": 2525424, "sha1": "e8be60a9ca009f804a28b719ce5045f96eb5b4e3", "quality": 4},
+    {"page": 29, "revid": 2525456, "sha1": "dc03cd601fa8a61d519e3513b626c77753e27869", "quality": 4},
+    {"page": 30, "revid": 2525457, "sha1": "18226eac32b2983eff5995ab879138e8e8dad8a2", "quality": 4},
+    {"page": 31, "revid": 2525458, "sha1": "a4a7a6c16703c49c4c9d4c849b6eab59a5e61256", "quality": 4},
+    {"page": 32, "revid": 2525460, "sha1": "754c6c7ca3dec9d44814fd9c2dec3de01ad626d6", "quality": 4},
+    {"page": 33, "revid": 2525462, "sha1": "c8cbf4dccb6ee647cdf3a0ee73b266b3567e8001", "quality": 4},
+    {"page": 34, "revid": 2525464, "sha1": "c02a52df43458bf52aa595d2f3a3730ad1602176", "quality": 4},
+    {"page": 35, "revid": 2525466, "sha1": "2ef3d3e69ba36decf0293aebed979dc78c9d3b2e", "quality": 4},
+    {"page": 36, "revid": 2525468, "sha1": "ca50eb97bc5739e31bce31c03c0db8d285241cc1", "quality": 4},
+    {"page": 37, "revid": 2525469, "sha1": "33370ec03c4c7b25b090f746b939c63c4d37666d", "quality": 4},
+    {"page": 38, "revid": 2526972, "sha1": "996e890e11a489580f26d5985e222eb550ea6031", "quality": 4},
+    {"page": 39, "revid": 2526973, "sha1": "44ea0837a8cf3b2ddbb737690c4fdebe52801e65", "quality": 4},
+    {"page": 40, "revid": 2526974, "sha1": "0b1c431bd772d1432edd880b90ee46db167e0c52", "quality": 4},
+    {"page": 41, "revid": 2526975, "sha1": "e1969454ebc7a267bf94d752121478f835a86e06", "quality": 4},
+    {"page": 42, "revid": 2526976, "sha1": "dbbe004cd3ad6d6f5ae1e754f6866afdd222714a", "quality": 4},
+    {"page": 43, "revid": 2906581, "sha1": "caa170dcbb97593c66f743a6614fc5842de5f0f8", "quality": 4},
+    {"page": 44, "revid": 2906585, "sha1": "001589c5886d5a3e2c20d6d5ac9eb4cb40f06697", "quality": 4},
+    {"page": 45, "revid": 2907339, "sha1": "f336a0a4fe799b964cdbb81ccc78d779dc0833ae", "quality": 4},
+    {"page": 46, "revid": 3549997, "sha1": "3db0a6eadc362577226dc9278e71dd7e5c86a5d9", "quality": 4},
+    {"page": 47, "revid": 2907371, "sha1": "d71c86246577456311078dcb6093b69623be49ae", "quality": 4},
+    {"page": 48, "revid": 2907431, "sha1": "1ee1122ce85cf26053896721c9412a015b5e0112", "quality": 4},
+    {"page": 49, "revid": 2907439, "sha1": "c5fd4a8c6af99834ad4108bec300edd646ab942f", "quality": 4},
+    {"page": 50, "revid": 2993859, "sha1": "8efdcfd9fe9f8664f079732c986e19f7f43bd628", "quality": 4},
+    {"page": 51, "revid": 3549984, "sha1": "9fdd883dba7d6d8d0189d473ab21eb4baab3b025", "quality": 4},
+    {"page": 52, "revid": 3549992, "sha1": "77eeb54ecd69c8eff1d3da81a9c4d149da6c1c84", "quality": 4},
+    {"page": 53, "revid": 3163210, "sha1": "9045c911bd85c669f6b1e694759d3df72da37c43", "quality": 4},
+    {"page": 54, "revid": 3549993, "sha1": "935351f491f12bc6086f55a137f828b32336481e", "quality": 4},
+    {"page": 55, "revid": 3549985, "sha1": "3f77dec361e3dfcc58f41b0d0f076d70402acb72", "quality": 4},
+    {"page": 56, "revid": 3549986, "sha1": "35d3dbf9c9041bb39062abce1bfc5d09af2772f0", "quality": 4},
+    {"page": 57, "revid": 3378626, "sha1": "afee51c88dc659386d4c6fdfc28ce23800a2e2ae", "quality": 4},
+    {"page": 58, "revid": 3549987, "sha1": "e2f163c471ce61be69d4e3da5d70dd461f8f4f28", "quality": 4},
+    {"page": 59, "revid": 3549988, "sha1": "1f7a3a62eeeeb9b901705e2ec85e0a1dfeecb560", "quality": 4},
+    {"page": 60, "revid": 3549989, "sha1": "dec4c381b96d2f969c57643ff3995b4df0657656", "quality": 4},
+    {"page": 61, "revid": 3549990, "sha1": "100874ec5c29398503616b9ab028097d64d8f37a", "quality": 4},
+    {"page": 62, "revid": 3549998, "sha1": "778cf2ea7a11e407c53ed4fec3deb497fe2dfdf5", "quality": 4},
+    {"page": 63, "revid": 3549999, "sha1": "cb2e540865e2990aec22355af21189e7d594b29c", "quality": 4},
+    {"page": 64, "revid": 3550000, "sha1": "596a04bb3492762b77380154054b416467bde3d0", "quality": 4},
+    {"page": 65, "revid": 3550001, "sha1": "bea1f9919bda08aad475a172eb016706840cc1a3", "quality": 4},
+    {"page": 66, "revid": 3550002, "sha1": "1761e325a7d3b514f574ddf922a1ba91f608b626", "quality": 4},
+    {"page": 67, "revid": 3550003, "sha1": "fca6acf4da682368a69c328c023f412c176527ec", "quality": 4},
+    {"page": 68, "revid": 3550004, "sha1": "863affc5581d51254792505e92d4894dc5fbf5b9", "quality": 4},
+    {"page": 69, "revid": 3550013, "sha1": "4a83620932665beb6b54225a21b755d2b9f97dde", "quality": 4},
+    {"page": 70, "revid": 3550006, "sha1": "3061eda66c44f050f3737f7f8e1efe59d46ec645", "quality": 4},
+    {"page": 71, "revid": 3550007, "sha1": "567c8532d97d591f0fae0c82001653c922403e32", "quality": 4},
+    {"page": 72, "revid": 3550008, "sha1": "e6dfc56fd6d4e4f6c309814b044d4b9a71b16e48", "quality": 4},
+    {"page": 73, "revid": 3550009, "sha1": "c4ad091d92654864c561f6e748e099f5ffd32ed9", "quality": 4},
+    {"page": 74, "revid": 3550010, "sha1": "81c727da9b72c52c1f6fe05f67bb19cc86e58891", "quality": 4},
+    {"page": 75, "revid": 3550011, "sha1": "b332968597ab92ae0ffed9f26f6a22d52ff6237e", "quality": 4},
+    {"page": 76, "revid": 3550015, "sha1": "c57cd9108ec35a93e06f619790cfcf3cf175bd06", "quality": 4},
+    {"page": 77, "revid": 3550016, "sha1": "ffe3a9ea569e53aec10cb7efe2018dcb2ac24099", "quality": 4},
+    {"page": 78, "revid": 3550017, "sha1": "bb8cff638eaab3bf7a1e5b6d7eb04b0da40e87c5", "quality": 4},
+    {"page": 79, "revid": 3550018, "sha1": "5855e11f6d472d506a708b988f460d5877157d9c", "quality": 4},
+    {"page": 80, "revid": 3550019, "sha1": "a9610cdd3b56bab010acf4ff08aea2519365afc9", "quality": 4},
+    {"page": 81, "revid": 3550020, "sha1": "648d10a974098e778c2c2a97e213aa9524b33b6b", "quality": 4},
+    {"page": 82, "revid": 3550021, "sha1": "d9f41d88bf75e30f0fe1db3e558507e0b362a6a3", "quality": 4},
+    {"page": 83, "revid": 3550022, "sha1": "de7054964abeb455495281635300f1b222272133", "quality": 4},
+    {"page": 84, "revid": 3550248, "sha1": "92d03cc8f95ca501016541a0104002eb6519367e", "quality": 4},
+    {"page": 85, "revid": 3550249, "sha1": "a597321ce7f38653af0ed903016c66399809729e", "quality": 4},
+    {"page": 86, "revid": 3550251, "sha1": "e5c7bf641aa4526b9397d615d0051776f24b6a60", "quality": 4},
+    {"page": 87, "revid": 3550252, "sha1": "c3aaacc6396167a6fca300bf3f53b49de29db29b", "quality": 4},
+    {"page": 88, "revid": 3550253, "sha1": "c8b85bfc6573b77ba408d1964e6ee23125748a14", "quality": 4},
+    {"page": 89, "revid": 3550254, "sha1": "5af65c4d13d3e6afd46f1f5b5b343ed096ea1c55", "quality": 4},
+    {"page": 90, "revid": 3550256, "sha1": "56d12110f4de0ecae3edac3c0e6874a23554601c", "quality": 4},
+    {"page": 91, "revid": 3568139, "sha1": "148fd5fe5a131abf7cc22daa3a85fec192351d94", "quality": 4},
+    {"page": 92, "revid": 3568140, "sha1": "98cc61f3b6fef7e476013d6412893612236ff370", "quality": 4},
+    {"page": 93, "revid": 3568142, "sha1": "80311984456832aea19e09c41250db498cefa1ec", "quality": 4},
+    {"page": 94, "revid": 3568143, "sha1": "b13928580474c5e9da4b48ae566a9ada5613f46e", "quality": 4},
+    {"page": 95, "revid": 3568144, "sha1": "a20312ccf36bd57152555d24ef41681f46e6811b", "quality": 4},
+    {"page": 96, "revid": 3568146, "sha1": "fb80dc3dea872acd242434daa3beb673c5f38233", "quality": 4},
+    {"page": 97, "revid": 3568148, "sha1": "8676373ef85bb256e104a8b725f6235eb9d30a76", "quality": 4},
+    {"page": 98, "revid": 3568149, "sha1": "1fc38a7b6b4683aebf529cb3204d6429ab5fcef4", "quality": 4},
+    {"page": 99, "revid": 3568150, "sha1": "16e4afb4ef03c5cf6ab9812694d34713c64b31b9", "quality": 4},
+    {"page": 100, "revid": 3569977, "sha1": "ea54d96207e6ef81b5f0193857f0d2d0e8840a8c", "quality": 4},
+    {"page": 101, "revid": 3641596, "sha1": "e43efe83008ed3a6dc5d7384db4b805eed0474ef", "quality": 4},
+    {"page": 102, "revid": 3568153, "sha1": "4fa165756e10a74fbe1ac13c7f70ec245b427368", "quality": 4},
+    {"page": 103, "revid": 3641597, "sha1": "3b59f4a7ed557cddc8a3f3556f2bc54c0df87168", "quality": 4},
+    {"page": 104, "revid": 3568157, "sha1": "ebf36135f7dcf897e9c15f6394426a6d56ebde64", "quality": 4},
+    {"page": 105, "revid": 3568160, "sha1": "be001b13e89554236cd399dd72e2943661ccca6b", "quality": 4},
+    {"page": 106, "revid": 3568161, "sha1": "ee076b6c8ab1bbca8d0fecfa497116f9c5eb5bb5", "quality": 4},
+    {"page": 107, "revid": 3568162, "sha1": "f326b8484723a88206d145799aafda25d7983409", "quality": 4},
+    {"page": 108, "revid": 3568163, "sha1": "f9d739017eddbcfeeecf4c6e7613b4d9c78f8b6f", "quality": 4},
+    {"page": 109, "revid": 3568164, "sha1": "5a9a47abd26d3e92d562505087f27525c5517b32", "quality": 4},
+    {"page": 110, "revid": 3568165, "sha1": "601c91e761a98e976df318b475b4bf0d85d9e2da", "quality": 4},
+    {"page": 111, "revid": 3568167, "sha1": "8114dc87a73b30781ead4d591094562f8c86fb7b", "quality": 4},
+    {"page": 112, "revid": 3568168, "sha1": "b79d71afe847050c17fa1b80dd839315f4f73670", "quality": 4},
+    {"page": 113, "revid": 3568169, "sha1": "17e3febb2e3244ff060c346ce04cc9af700f5064", "quality": 4},
+    {"page": 114, "revid": 3568170, "sha1": "e1f2b51c89aee65fb9f558b755a19ede653da05b", "quality": 4},
+    {"page": 115, "revid": 3568173, "sha1": "fbce7d400814be236fc11815a2433a4064d8d964", "quality": 4},
+    {"page": 116, "revid": 3568172, "sha1": "e35ac61eadd06fddd607091a292a1778657f342d", "quality": 4},
+    {"page": 117, "revid": 2357903, "sha1": "97544c742f3ca06aef7577a5e3a734e96cd831dc", "quality": 0},
+    {"page": 118, "revid": 2525924, "sha1": "735ec9b6babce674d0b664463beea9ed1b65d26b", "quality": 4},
+    {"page": 119, "revid": 2525925, "sha1": "241270b0bf3e4939fd4854f7819bbc69fe829bbd", "quality": 4},
+    {"page": 120, "revid": 2357904, "sha1": "97544c742f3ca06aef7577a5e3a734e96cd831dc", "quality": 0},
+    {"page": 121, "revid": 3568540, "sha1": "5c1ba882cfe325c09251e6a060eabca061f9513e", "quality": 4},
+    {"page": 122, "revid": 3568541, "sha1": "0afce5197df67ace30c3794dd597ac26a8a68dca", "quality": 4},
+    {"page": 123, "revid": 3641598, "sha1": "ea78e5fd12fbdf1e69ad8c394712607104fb5eb3", "quality": 4},
+    {"page": 124, "revid": 2525919, "sha1": "d11d15449085c3b022c141895bd49918b49df8ba", "quality": 4},
+    {"page": 125, "revid": 3568543, "sha1": "1da18d6f428781bfef3c5077e5152821948cabd6", "quality": 4},
+    {"page": 126, "revid": 3568544, "sha1": "9ec81df4ab66c8d0bc9914408c257e4efc03b47d", "quality": 4},
+    {"page": 127, "revid": 3568545, "sha1": "d4cc38ea73a27254afc8a87b53dce9f8f0c43c10", "quality": 4},
+    {"page": 128, "revid": 3568546, "sha1": "fb4520493e81785769de9469921a045012652b47", "quality": 4},
+    {"page": 129, "revid": 3568548, "sha1": "f124375c38ecebc95719e3e0980c107ca99e67cb", "quality": 4},
+    {"page": 130, "revid": 3568549, "sha1": "12cc06e344b01c10e739d7def49f8a5c6cfda167", "quality": 4},
+    {"page": 131, "revid": 3568550, "sha1": "2209a3d7145e489051d27a3aead2624c4d226f1e", "quality": 4},
+    {"page": 132, "revid": 3568551, "sha1": "694d1a9afc237cf7b4e4973de63d2b32e1175ebb", "quality": 4},
+    {"page": 133, "revid": 3641599, "sha1": "5c8fae961b9678d2b0d0e0a717b1cb7c79047808", "quality": 4},
+    {"page": 134, "revid": 3568569, "sha1": "ec8fde6a00288fc9f3ee7fdff1a01e7f0ed1a4e7", "quality": 4},
+    {"page": 135, "revid": 3569970, "sha1": "32ac93571ccb0122f25baf6f14b1bf3cc89591f9", "quality": 4},
+    {"page": 136, "revid": 3568556, "sha1": "2324b6816543123ff8f115f83da797798f9e3410", "quality": 4},
+    {"page": 137, "revid": 3568557, "sha1": "33f69d52197d83526c3633668740c4be8081541f", "quality": 4},
+    {"page": 138, "revid": 3568568, "sha1": "f5cad116ccf8567c8400e33442e659c0728818be", "quality": 4},
+    {"page": 139, "revid": 3568559, "sha1": "4b33f2d067f1ee5f4657ac0cd9d227dc56eed692", "quality": 4},
+    {"page": 140, "revid": 3568560, "sha1": "25df05d88f1267b82e785ac8871cf031d96d3182", "quality": 4},
+    {"page": 141, "revid": 3568561, "sha1": "4fb809c6c045ebeaadfb464186072dbdf5680514", "quality": 4},
+    {"page": 142, "revid": 3568570, "sha1": "1f3d94885c7185b90127ea936c4b7533a3c3747d", "quality": 4},
+    {"page": 143, "revid": 3568564, "sha1": "d1a4daccdeacebce34ce7bb1869f09850e727ae8", "quality": 4},
+    {"page": 144, "revid": 3568565, "sha1": "3f7401e5e2b555e6af15e381d0f9cd3191845c4d", "quality": 4},
+    {"page": 145, "revid": 3568566, "sha1": "9778e5f74ffe2c6e9befc5c11933032541668e82", "quality": 4},
+    {"page": 146, "revid": 3568567, "sha1": "d91d98a5b590fb00cb1e540d66ea1b84792015d4", "quality": 4},
+    {"page": 147, "revid": 3568903, "sha1": "8601341707d87bd374884b5f42e82b6722580507", "quality": 4},
+    {"page": 148, "revid": 3568904, "sha1": "0d2f6fb3edf7aa167eebb9377e3472487328183a", "quality": 4},
+    {"page": 149, "revid": 3568905, "sha1": "9cc70c0a7662534d0150863a8466d6d2cac4d846", "quality": 4},
+    {"page": 150, "revid": 3568906, "sha1": "c1aac92461888a9337b8fa9ad7d96ac9124a46b7", "quality": 4},
+    {"page": 151, "revid": 3568907, "sha1": "f94f6e05f9b9a436e80cb31b4909f5f37a2eec06", "quality": 4},
+    {"page": 152, "revid": 3569971, "sha1": "a51ebdaf89df32b692063bb391d67d06a8f99898", "quality": 4},
+    {"page": 153, "revid": 3568909, "sha1": "250c1b96bf640645dfb86eca9e0f7ea315541be5", "quality": 4},
+    {"page": 154, "revid": 3568910, "sha1": "36ca60f035211521e4a500043fcec241bd3bf311", "quality": 4},
+    {"page": 155, "revid": 3568911, "sha1": "f0eefdcf0cc145c112712d4bdd9053053b5200f1", "quality": 4},
+    {"page": 156, "revid": 3568912, "sha1": "bc1ef8bb75444614d2ea19aa7bba908fcf42998b", "quality": 4},
+    {"page": 157, "revid": 3568913, "sha1": "bd8036ece16291ec573be6269a15fad9eba78bc0", "quality": 4},
+    {"page": 158, "revid": 3568914, "sha1": "00f93d5263231b217faee3a03dfd8ad2258a9a0b", "quality": 4},
+    {"page": 159, "revid": 3568915, "sha1": "f0929481abc26d9e4cad2abac5b8f20085180001", "quality": 4},
+    {"page": 160, "revid": 3568916, "sha1": "5450d1ef6ed2eeed2d2892ada3aa23149c983f3a", "quality": 4},
+    {"page": 161, "revid": 3568917, "sha1": "7e4a049a2de1435a290b16c836ef9bd2f663f9c6", "quality": 4},
+    {"page": 162, "revid": 3568918, "sha1": "d24b9d0c6dfed0c08a94a4ccdd93db3ac09c9acd", "quality": 4},
+    {"page": 163, "revid": 3568919, "sha1": "9d70330401ae2f2d296efe54ebdb1e78482a41c4", "quality": 4},
+    {"page": 164, "revid": 3568920, "sha1": "425a262d206d95fe8eea0010097dc43a2ca6a1a7", "quality": 4},
+    {"page": 165, "revid": 3568921, "sha1": "98609f7d84387f048e6ab0b07dd485a5ea4ff35e", "quality": 4},
+    {"page": 166, "revid": 3568922, "sha1": "e5519731459356342040bc687fc84986da1b1a5d", "quality": 4},
+    {"page": 167, "revid": 3568923, "sha1": "dc60969b45cdcb963fe7a311997d3f3c5f00edde", "quality": 4},
+    {"page": 168, "revid": 3568924, "sha1": "d0e1f0252f8f54510f20fa3d3824ae88718136c7", "quality": 4},
+    {"page": 169, "revid": 3568925, "sha1": "e1de8cedbe2c932b4bb37d9d660f0dcc4ae0d271", "quality": 4},
+    {"page": 170, "revid": 3568926, "sha1": "0c44a5d3768a273d189e55865f9e35b428eefd29", "quality": 4},
+    {"page": 171, "revid": 3568927, "sha1": "b455f3cf873d4ca9f56ac209dc1d8ee2c5a35501", "quality": 4},
+    {"page": 172, "revid": 3568928, "sha1": "53a275112a8a2ebf767636a9ab5fc74ce470e315", "quality": 4},
+    {"page": 173, "revid": 3569254, "sha1": "9cf9d4a137e43b884eb872244cca4bfedbab01a5", "quality": 4},
+    {"page": 174, "revid": 3569255, "sha1": "9ea8a9e6b62e8503be8990ded0b8305f9f22510c", "quality": 4},
+    {"page": 175, "revid": 3569256, "sha1": "737c2d0b49116bda7a783f3792b5bb68c59bc8d4", "quality": 4},
+    {"page": 176, "revid": 3569972, "sha1": "9154c375e047b5f02dbf5526aa8949b3b3f5c1cb", "quality": 4},
+    {"page": 177, "revid": 3569283, "sha1": "3acbbeb466bb599a336ada59a1802eae692b8b98", "quality": 4},
+    {"page": 178, "revid": 3569259, "sha1": "0482aa4cb524a5376304f69e8ed129e136fefe71", "quality": 4},
+    {"page": 179, "revid": 3569260, "sha1": "8446539ac3fb4fc43cccf30f258d27eefd6d53a9", "quality": 4},
+    {"page": 180, "revid": 3569263, "sha1": "a4a418067dc69edb6bc631f4415c415f12eb0f80", "quality": 4},
+    {"page": 181, "revid": 3569264, "sha1": "645834308277160b575150c5dd8b36d9c63838e0", "quality": 4},
+    {"page": 182, "revid": 3569265, "sha1": "600d2113d20c53843fa2cd381cc25a7986a43c23", "quality": 4},
+    {"page": 183, "revid": 3569973, "sha1": "f811824b9ac8c1c1ef7103d55b93f65bdfb254fb", "quality": 4},
+    {"page": 184, "revid": 3569267, "sha1": "cb41faa23fc40d2996fa754002b05e24ffdab3d7", "quality": 4},
+    {"page": 185, "revid": 3569268, "sha1": "26250c57654106c3b93df3d9fac61cc404c138ac", "quality": 4},
+    {"page": 186, "revid": 3569269, "sha1": "2f3b05bfd8491006bf8ff602344f008c85c2b952", "quality": 4},
+    {"page": 187, "revid": 3569270, "sha1": "3930f75f9301aa4704a6749674002e7059e5088a", "quality": 4},
+    {"page": 188, "revid": 3569513, "sha1": "bc296f5cc27b70ebe0ec02f00fa51aec305c0cb5", "quality": 4},
+    {"page": 189, "revid": 3569974, "sha1": "e17745282e4a0b592e5143efa0e15286ba0e7b53", "quality": 4},
+    {"page": 190, "revid": 3569273, "sha1": "b9a903d3770fa3442b2d0831a764cd88c193df19", "quality": 4},
+    {"page": 191, "revid": 3569515, "sha1": "a905ae5703b99aa6455af52d5bf08e47db95ed56", "quality": 4},
+    {"page": 192, "revid": 3569516, "sha1": "c5e958323072c5b885c257fb7c4e1a93a74828b9", "quality": 4},
+    {"page": 193, "revid": 3569276, "sha1": "63fd9e47bdebd2ce3be4e62fbd96753b60b36707", "quality": 4},
+    {"page": 194, "revid": 3569277, "sha1": "1658c603bc3af0aff84d5ff532c517b060e7fb32", "quality": 4},
+    {"page": 195, "revid": 3569278, "sha1": "4f1b3306b702ca2f4a83644163ba74a819c79d28", "quality": 4},
+    {"page": 196, "revid": 3569517, "sha1": "d3dffacc1e4a472beb257e606e86e8072936a5a0", "quality": 4},
+    {"page": 197, "revid": 3569280, "sha1": "1b662b6ad4649eeb66054e214fe9c0620277b724", "quality": 4},
+    {"page": 198, "revid": 3569481, "sha1": "11087e12729804824304e6688e84edb4ce423ebe", "quality": 4},
+    {"page": 199, "revid": 3569518, "sha1": "138ad5d70f8400bcf9526ee38fa4d3931d74fe00", "quality": 4},
+    {"page": 200, "revid": 3569483, "sha1": "50c194de8c523eb08fdc7ba1fd524dc5572b350a", "quality": 4},
+    {"page": 201, "revid": 3569519, "sha1": "c79de7420d6be81ab3fda14334a1635912a15280", "quality": 4},
+    {"page": 202, "revid": 3569520, "sha1": "8d45d7b31020397d1f1ca77be0a43f2e010400a8", "quality": 4},
+    {"page": 203, "revid": 3569521, "sha1": "840e36d843faf92463422c8ff3d1d6f572e4f135", "quality": 4},
+    {"page": 204, "revid": 3569487, "sha1": "5a9cf0aa1f8b00147cb14fffc0a16551090a8dc4", "quality": 4},
+    {"page": 205, "revid": 3569522, "sha1": "91ff2cf8e39cd13be23a3d93fdd710b73ee86ba1", "quality": 4},
+    {"page": 206, "revid": 3569494, "sha1": "a0c57244c5e3057dcdef07384e19ad8b4d28e760", "quality": 4},
+    {"page": 207, "revid": 3569495, "sha1": "d71a18253d37ef990a5a0feeaa952cef4b1d7c89", "quality": 4},
+    {"page": 208, "revid": 3569496, "sha1": "c842ac5fe7c3f98ef24ee1efda69641b30964eb1", "quality": 4},
+    {"page": 209, "revid": 3569975, "sha1": "c71d5e8b9dfc24f7d3cd28250099b9608d29236e", "quality": 4},
+    {"page": 210, "revid": 3569497, "sha1": "86afec3fbf5b3dec40b724c52f3349747cbd3857", "quality": 4},
+    {"page": 211, "revid": 3569502, "sha1": "20268fb3231a19a39b23c4b70379572f4a39d2e0", "quality": 4},
+    {"page": 212, "revid": 3569503, "sha1": "0a2951b7b4f351393e3dc053b4e375ab48b73fbb", "quality": 4},
+    {"page": 213, "revid": 3569504, "sha1": "bc9b523ed4f2c7fc58b67757d0c457b524011253", "quality": 4},
+    {"page": 214, "revid": 3569505, "sha1": "6ce4bf29cf06f670e0a0623b654ac911be54329b", "quality": 4},
+    {"page": 215, "revid": 3569506, "sha1": "5022d91f9ddc2be192121e0b53ced744813f74dd", "quality": 4},
+    {"page": 216, "revid": 3569507, "sha1": "86a5c2e72670fb1786a9ef01e11b2b842c253832", "quality": 4},
+    {"page": 217, "revid": 3569524, "sha1": "6a42ea9e941bf91c2907a1e8fdb15e18a5ede720", "quality": 4},
+    {"page": 218, "revid": 3569525, "sha1": "7f9f790e572640e5e47ae5f86ef69a8071fff473", "quality": 4},
+    {"page": 219, "revid": 3569526, "sha1": "04d2519937e2bfec7e1d56c8fc80a02f4f804db2", "quality": 4},
+    {"page": 220, "revid": 3569527, "sha1": "6d1525c937868cc251b70ec9f5d03f0a25b6d265", "quality": 4},
+    {"page": 221, "revid": 3569530, "sha1": "4afaca35a26089ca09e9aeb80cf12400c1d84624", "quality": 4},
+    {"page": 222, "revid": 3569976, "sha1": "6e59494b4794356eb4e70766a527106794aadcb2", "quality": 4},
+    {"page": 223, "revid": 3569533, "sha1": "cf41255dd0398b8a709f84412e7d22efd53fd8a4", "quality": 4},
+    {"page": 224, "revid": 3569534, "sha1": "0ddf21be706e2e932954df9ba472d72fad34f6c4", "quality": 4},
+    {"page": 225, "revid": 3569707, "sha1": "0eb7924937e4d45b407c06c4bd353cca6f681fb0", "quality": 4},
+    {"page": 226, "revid": 3569708, "sha1": "d027608f6c59ba74102f523c4d63f0bef6847689", "quality": 4},
+    {"page": 227, "revid": 3569709, "sha1": "bb4fc4d86bfbf3e054f1494afbc84c1d94461c35", "quality": 4},
+    {"page": 228, "revid": 3569710, "sha1": "689d4764a76dbcac4959f5d89917cc6fcc605b51", "quality": 4},
+    {"page": 229, "revid": 3569711, "sha1": "a95ecf18c0e6873acd2514b21fae8db4567af32d", "quality": 4},
+    {"page": 230, "revid": 3569712, "sha1": "cff7df641fb5601862ef8076a7cfd021a70a3d08", "quality": 4},
+    {"page": 231, "revid": 3569717, "sha1": "1455ecc265e7f21b3fb7d54d8565d595f199ee1b", "quality": 4},
+    {"page": 232, "revid": 3569718, "sha1": "226cbd91a6c2c8e157c2bc615f26d947bf714fe6", "quality": 4},
+    {"page": 233, "revid": 3569719, "sha1": "fd3d6e80c7453ebba4c2d5051a6ff55e9d7b00e3", "quality": 4},
+    {"page": 234, "revid": 3569722, "sha1": "756d67e6829a70fe39d67c07d3d3495b3b111b74", "quality": 4},
+    {"page": 235, "revid": 3569723, "sha1": "17ccbd5efe2935e4b421042a9f3acfc32cfb1d81", "quality": 4},
+    {"page": 236, "revid": 3569724, "sha1": "43dd0a6e76b2fc7e0948f09a7f642d5f6544c413", "quality": 4},
+    {"page": 237, "revid": 3569725, "sha1": "892914942149333b82bb22d8ac7ad14105c35a92", "quality": 4},
+    {"page": 238, "revid": 3569728, "sha1": "1f3e131d1d250715dcc4cb60c092197e2c4d4dbd", "quality": 4},
+    {"page": 239, "revid": 3569729, "sha1": "6c34f31974ce69d4a7636b078724c08ad4adea5d", "quality": 4},
+    {"page": 240, "revid": 3569730, "sha1": "dd118279ffe14f25c3472f5be660961703383a8c", "quality": 4},
+    {"page": 241, "revid": 3569731, "sha1": "4e3f92d19fdfb9e5d8ac7f06449513df8880aa26", "quality": 4},
+    {"page": 242, "revid": 3569732, "sha1": "1045b71e85309b2cc945977669ef2e763b5109f8", "quality": 4},
+    {"page": 243, "revid": 3569735, "sha1": "5ab21bd3b6523c0a411864b2349189798aae5788", "quality": 4},
+    {"page": 244, "revid": 3569739, "sha1": "bfa0e348407ab40122c8de11118693dfa22ff39a", "quality": 4},
+    {"page": 245, "revid": 3569740, "sha1": "d6da686e22acd028bd6494b96338827e3c240542", "quality": 4},
+    {"page": 246, "revid": 3569741, "sha1": "32c01cffcba9a0a93f017d9877573f9161d7b2f7", "quality": 4},
+    {"page": 247, "revid": 3569742, "sha1": "a272849e6ca22e81f8738fe766a3023feb54ab0c", "quality": 4},
+    {"page": 248, "revid": 3569743, "sha1": "bc05f5a3f366eea952cfdcc3ff8b14213ace01ea", "quality": 4},
+    {"page": 249, "revid": 3569744, "sha1": "343230667fcd2e687185404d1edcd8a184d837f1", "quality": 4},
+    {"page": 250, "revid": 3569938, "sha1": "ae1820907a1f67024aed12b4a5aecb10e58258e9", "quality": 4},
+    {"page": 251, "revid": 3569939, "sha1": "57d527b490514ea2cdaf9b507315bec5b43dc1c4", "quality": 4},
+    {"page": 252, "revid": 3569940, "sha1": "fb1922f9694f770c0bb788889b38219f711ea39b", "quality": 4},
+    {"page": 253, "revid": 3569941, "sha1": "cca904bf6041986b80ae72689c98bc77423589ea", "quality": 4},
+    {"page": 254, "revid": 3569979, "sha1": "f35b6e5414d881260798db6eb9e41829cdc93d21", "quality": 4},
+    {"page": 255, "revid": 3569981, "sha1": "7b158538ac6a07c416ba9e24f8154b95947e8481", "quality": 4},
+    {"page": 256, "revid": 3569944, "sha1": "f79e026f6baee75af3fb9fa26faca092bb8d3e2e", "quality": 4},
+    {"page": 257, "revid": 3569948, "sha1": "f64e8c0a1adb126d409f3ab0112198b5a99bfdcc", "quality": 4},
+    {"page": 258, "revid": 3569949, "sha1": "66c1e18240cc504adbb05fe9b63c1f154955fc9a", "quality": 4},
+    {"page": 259, "revid": 3569980, "sha1": "d63e8f8a2147ffe2a54fe893702cfa83e3040e37", "quality": 4},
+    {"page": 260, "revid": 3569951, "sha1": "87e6bfc9e256518a3e526353e67f3601dffb1bdd", "quality": 4},
+    {"page": 261, "revid": 3569952, "sha1": "0ec606bbec495373815205a5a9bd942695ea9d57", "quality": 4},
+    {"page": 262, "revid": 3569953, "sha1": "9506dce2287bca25f95be23d25e46edc83a65fdb", "quality": 4},
+    {"page": 263, "revid": 3569954, "sha1": "1b446fc5f4a63b2d873ac3950f8f146c17f17505", "quality": 4},
+    {"page": 264, "revid": 3569978, "sha1": "5de1966c0373cf252b313fb77662defa64d329ab", "quality": 4},
+    {"page": 265, "revid": 3569958, "sha1": "049a790a141741a03e5d89674f85a2c7bc01e563", "quality": 4},
+    {"page": 266, "revid": 3569959, "sha1": "126b4bd5d775632050a5d2fbaa49b8df5b66ec3d", "quality": 4},
+    {"page": 267, "revid": 3569960, "sha1": "d3d2748aacaf653f38d19e7ab85dde5fb47f2222", "quality": 4},
+    {"page": 268, "revid": 3569961, "sha1": "7d496237442938857c48f1db7bb5d5668aaed4a2", "quality": 4},
+    {"page": 269, "revid": 3569962, "sha1": "77f9922c6acea64ccb35975644f34207843112a1", "quality": 4},
+    {"page": 270, "revid": 3569963, "sha1": "5d7586a1fba87c5b3769bc952e1cf130e1b20463", "quality": 4},
+    {"page": 271, "revid": 2906205, "sha1": "0c2230e2e7f9a8f8eb13bd03c5356572682c4edf", "quality": 4},
+    {"page": 272, "revid": 2357906, "sha1": "97544c742f3ca06aef7577a5e3a734e96cd831dc", "quality": 0}
+   ]
+  },
+  "d19-gu-pdf": {
+   "kind": "file",
+   "url": "https://www.gazzettaufficiale.it/eli/gu/2026/10/24/248/sg/pdf",
+   "bytes": 2296239,
+   "sha256": "ae4d1f20fe39f7373a6bade9dcea7720a46ecc90069d2d2a5fd483b03e81066c"
+  },
+  "d19-akn": {
+   "kind": "file",
+   "url": "https://www.normattiva.it/do/atto/caricaAKN?dataGU=20261024&codiceRedaz=26G00210&dataVigenza=20261113",
+   "bytes": 76380,
+   "sha256": "d95d59ce707f99b21c532bceb321095ea526970c2b6707fb1a72cf5cbe0521e1",
+   "session_url": "https://www.normattiva.it/atto/caricaDettaglioAtto?atto.dataPubblicazioneGazzetta=2026-10-24&atto.codiceRedazionale=26G00210"
+  },
+  "d19-normattiva-html": {
+   "kind": "file",
+   "url": "https://www.normattiva.it/esporta/attoCompleto?atto.dataPubblicazioneGazzetta=2026-10-24&atto.codiceRedazionale=26G00210",
+   "bytes": 64471,
+   "sha256": "0842830f705bcb8c81d2c7dfa4d8268e9d6b7441de779b47001a563bafbd3dfd",
+   "session_url": "https://www.normattiva.it/atto/caricaDettaglioAtto?atto.dataPubblicazioneGazzetta=2026-10-24&atto.codiceRedazionale=26G00210&tipoDettaglio=originario&qId="
+  }
+ },
+ "documents": [
+  {
+   "id": "D01",
+   "title": "On graphs without cycles of length 0 modulo 4",
+   "role": "Mathematics, English",
+   "license": "CC BY 4.0",
+   "attribution": "arXiv:2312.09999v1, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "pdf",
+   "pages": 17,
+   "input": {
+    "source": "d01-pdf"
+   },
+   "twin": {
+    "kind": "latex",
+    "source": "d01-src",
+    "main": "main.tex",
+    "bbl": "main.bbl"
+   }
+  },
+  {
+   "id": "D02",
+   "title": "Resonant states of structured photonic time crystals",
+   "role": "Two-column physics (REVTeX), English",
+   "license": "CC BY 4.0",
+   "attribution": "arXiv:2506.01472v1, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "pdf",
+   "pages": 17,
+   "input": {
+    "source": "d02-pdf"
+   },
+   "twin": {
+    "kind": "latex",
+    "source": "d02-src",
+    "main": "arxiv.tex",
+    "bbl": "arxiv.bbl"
+   }
+  },
+  {
+   "id": "D03",
+   "title": "Resonant states of structured photonic time crystals (arXiv HTML)",
+   "role": "Scientific HTML with MathML (D02 in HTML)",
+   "license": "CC BY 4.0",
+   "attribution": "arXiv:2506.01472v1, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "html",
+   "pages": null,
+   "pages_estimate": 17,
+   "input": {
+    "source": "d03-html"
+   },
+   "twin": {
+    "kind": "latex",
+    "source": "d02-src",
+    "main": "arxiv.tex",
+    "bbl": "arxiv.bbl"
+   }
+  },
+  {
+   "id": "D04",
+   "title": "The potential carcinogenicity of orthopaedic implants - a scoping review",
+   "role": "Two-column biomedical, cells on several lines (R10)",
+   "license": "CC BY 4.0",
+   "attribution": "BMC Cancer 2024, PMC11656979, its authors",
+   "levels": [
+    "quick",
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "pdf",
+   "pages": 12,
+   "input": {
+    "source": "d04-pdf"
+   },
+   "twin": {
+    "kind": "jats",
+    "source": "d04-jats"
+   }
+  },
+  {
+   "id": "D05",
+   "title": "Clinical trial results in context (RECOVERY)",
+   "role": "Biomedical with tables and figures",
+   "license": "CC BY 4.0",
+   "attribution": "Trials 2024, PMC11218071, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "pdf",
+   "pages": 11,
+   "input": {
+    "source": "d05-pdf"
+   },
+   "twin": {
+    "kind": "jats",
+    "source": "d05-jats"
+   }
+  },
+  {
+   "id": "D06",
+   "title": "La povertà in Italia - anno 2025",
+   "role": "Italian statistical report, mixed layout",
+   "license": "CC BY 4.0",
+   "attribution": "ISTAT",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "pdf",
+   "pages": 12,
+   "input": {
+    "source": "d06-pdf"
+   },
+   "twin": {
+    "kind": "xlsx-projection",
+    "source": "d07-xlsx",
+    "select": [
+     {
+      "sheet": "Prospetto_1",
+      "rows": [
+       5,
+       7,
+       15,
+       16,
+       18
+      ],
+      "cols": "D:I,L:Q",
+      "header_rows": [
+       2,
+       3
+      ],
+      "table": 1
+     },
+     {
+      "sheet": "Prospetto_8",
+      "rows": "4:29",
+      "cols": "B:C",
+      "header_rows": [
+       2
+      ],
+      "table": 2
+     },
+     {
+      "sheet": "Prospetto 18",
+      "rows": "4:15",
+      "cols": "B:C",
+      "header_rows": [
+       2
+      ],
+      "table": 2
+     }
+    ],
+    "verify": {
+     "text": "pdftotext-layout",
+     "second": "ghostscript-txtwrite"
+    }
+   }
+  },
+  {
+   "id": "D07",
+   "title": "Prospetti povertà 2024-25",
+   "role": "XLSX workbook, 21 sheets",
+   "license": "CC BY 4.0",
+   "attribution": "ISTAT",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "xlsx",
+   "pages": null,
+   "pages_estimate": 21,
+   "input": {
+    "source": "d07-xlsx"
+   },
+   "twin": {
+    "kind": "xlsx",
+    "source": "d07-xlsx"
+   }
+  },
+  {
+   "id": "D08",
+   "title": "Opening up your scientific contributions thanks to Creative Commons licenses",
+   "role": "Short PPTX with speaker notes",
+   "license": "CC BY-SA 4.0",
+   "attribution": "Zenodo record 17421921, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "pptx",
+   "pages": null,
+   "pages_estimate": 12,
+   "input": {
+    "source": "d08-pptx"
+   },
+   "twin": {
+    "kind": "pptx",
+    "source": "d08-pptx"
+   }
+  },
+  {
+   "id": "D09",
+   "title": "2024_monitoring_evaluation",
+   "role": "PPTX with tables",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 12696810, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "pptx",
+   "pages": null,
+   "pages_estimate": 37,
+   "input": {
+    "source": "d09-pptx"
+   },
+   "twin": {
+    "kind": "pptx",
+    "source": "d09-pptx"
+   }
+  },
+  {
+   "id": "D10",
+   "title": "Sensored vector control three phase motor driver design based on Cortex M7 ARM",
+   "role": "Technical DOCX with formulas",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 1116696, its author",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "docx",
+   "pages": null,
+   "pages_estimate": 10,
+   "input": {
+    "source": "d10-docx"
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d10-docx"
+   }
+  },
+  {
+   "id": "D11",
+   "title": "Moving Bodies: Corpses and Communal Space in Medieval Ashkenaz",
+   "role": "Humanities DOCX with footnotes",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 7425012, its author",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "docx",
+   "pages": null,
+   "pages_estimate": 15,
+   "input": {
+    "source": "d11-docx"
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d11-docx"
+   }
+  },
+  {
+   "id": "D12",
+   "title": "Employee Index Preference of Leadership Characteristics",
+   "role": "DOCX with complex tables",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 15672995, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "docx",
+   "pages": null,
+   "pages_estimate": 14,
+   "input": {
+    "source": "d12-docx"
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d12-docx"
+   }
+  },
+  {
+   "id": "D13",
+   "title": "Economy of music in Europe: novel data collection methods and indicators",
+   "role": "EPUB with notes, tables and images",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 14445449, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "epub",
+   "pages": null,
+   "pages_estimate": 150,
+   "input": {
+    "source": "d13-epub"
+   },
+   "twin": {
+    "kind": "epub",
+    "source": "d13-epub"
+   }
+  },
+  {
+   "id": "D14",
+   "title": "La geometria non archimedea (Veronese)",
+   "role": "Italian scientific scan",
+   "license": "Public domain (scan); CC BY-SA 4.0 (transcription)",
+   "attribution": "Giuseppe Veronese; transcription by it.wikisource contributors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scan",
+   "format": "pdf",
+   "pages": 12,
+   "input": {
+    "source": "d14-djvu",
+    "derive": [
+     {
+      "op": "djvu-to-pdf"
+     }
+    ],
+    "reference": {
+     "sha256": "684d194e8de0f26d8595c8cb96e6811b45c528974977a7d5eba03b38defcd111",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "wikisource",
+    "source": "d14-wikisource",
+    "pages": "all"
+   }
+  },
+  {
+   "id": "D15",
+   "title": "Comparison of ergonomic methods for inoculation of microorganisms (Ukrainian)",
+   "role": "Cyrillic scientific DOCX",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 8048366, its authors",
+   "levels": [
+    "quick",
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "docx",
+   "pages": null,
+   "pages_estimate": 5,
+   "input": {
+    "source": "d15-docx"
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d15-docx"
+   }
+  },
+  {
+   "id": "D16",
+   "title": "Custom Shape Tutorial (LibreOffice)",
+   "role": "Manual with its ODT",
+   "license": "CC BY 4.0 or GPL v3+",
+   "attribution": "Regina Henschel, LibreOffice Documentation Team, 2022",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "pdf",
+   "pages": 132,
+   "input": {
+    "source": "d16-pdf"
+   },
+   "twin": {
+    "kind": "odt",
+    "source": "d16-odt"
+   }
+  },
+  {
+   "id": "D17",
+   "title": "Astronomia (Lockyer, translated by G. Celoria, Hoepli 1904)",
+   "role": "Long scanned book",
+   "license": "Public domain (scan); CC BY-SA 4.0 (transcription)",
+   "attribution": "Norman Lockyer, Giovanni Celoria; transcription by it.wikisource contributors",
+   "levels": [
+    "long"
+   ],
+   "profile": "scan",
+   "format": "pdf",
+   "pages": 272,
+   "input": {
+    "source": "d17-djvu",
+    "derive": [
+     {
+      "op": "djvu-to-pdf"
+     }
+    ],
+    "reference": {
+     "sha256": "2c6115737a565ad8efef87721e7208da9c09ad5c59bd10b9c0b4803ffccd5968",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "wikisource",
+    "source": "d17-wikisource",
+    "pages": "all",
+    "isolated_pages": [
+     10,
+     117,
+     120,
+     272
+    ]
+   }
+  },
+  {
+   "id": "D18",
+   "title": "La geometria non archimedea (Veronese), page 3 as an image",
+   "role": "Single image (one page of D14)",
+   "license": "Public domain (scan); CC BY-SA 4.0 (transcription)",
+   "attribution": "Giuseppe Veronese; transcription by it.wikisource contributors",
+   "levels": [
+    "quick",
+    "standard"
+   ],
+   "profile": "scan",
+   "format": "png",
+   "pages": 1,
+   "input": {
+    "source": "d14-djvu",
+    "derive": [
+     {
+      "op": "djvu-to-pdf"
+     },
+     {
+      "op": "page-png",
+      "page": 3,
+      "dpi": 300,
+      "color": "rgb"
+     }
+    ],
+    "reference": {
+     "sha256": "586e4ff6dda45b94616f5099bf64784ffb75be11a5da43905b28b70222ba622f",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "wikisource",
+    "source": "d14-wikisource",
+    "pages": [
+     3
+    ]
+   }
+  },
+  {
+   "id": "D19",
+   "title": "D.lgs. 8 ottobre 2026, n. 194 (GU SG n. 248 del 24/10/2026, pp. 3-9)",
+   "role": "Two-column Italian legislation",
+   "license": "Official act, not protected by copyright (art. 5 L. 633/1941)",
+   "attribution": "Gazzetta Ufficiale della Repubblica Italiana; Normattiva (non-authentic text)",
+   "levels": [
+    "quick",
+    "standard"
+   ],
+   "profile": "legal",
+   "format": "pdf",
+   "pages": 7,
+   "input": {
+    "source": "d19-gu-pdf",
+    "derive": [
+     {
+      "op": "pdf-pages",
+      "first": 3,
+      "last": 9
+     }
+    ],
+    "reference": {
+     "sha256": "cdbf7f4b18a76679ce0a630c4cc9721367716babe551e65c129a3a96f8b7525a",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "akoma-ntoso",
+    "source": "d19-akn",
+    "inventory": "d19-normattiva-html",
+    "discard": [
+     "normattiva-preface-notes"
+    ],
+    "rules": [
+     "it-final-accent"
+    ]
+   }
+  }
+ ]
+}
