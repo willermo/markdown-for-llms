@@ -131,7 +131,7 @@ class ProductTests(unittest.TestCase):
         env.write_text('MDF_PORT=8766\nMDF_TIMEOUT_SECONDS=20\n')
         settings = Settings.load(env, {'port': 8768}, {'MDF_PORT': '8767'})
         self.assertEqual(settings.port, 8768)
-        self.assertEqual(Settings.load(environ={}).port, 23460)   # first port of the project's block
+        self.assertEqual(Settings.load(environ={}).port, 23465)   # odd port of the pair 23464/23465 in the project's block
         self.assertEqual(settings.timeout_seconds, 20)
         for values in [{'MDF_UNKNOWN': 'secret'}, {'MDF_PORT': 'bad'}, {'MDF_HOST': '0.0.0.0'}, {'MDF_TIMEOUT_SECONDS': '-1'}]:
             with self.assertRaises(ConfigurationError):

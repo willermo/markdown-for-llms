@@ -103,6 +103,18 @@ class StorageIdentityTests(unittest.TestCase):
         self.assertEqual(self.identity()['history'][0]['config'], v1_identity(self.settings, 5400))
         Service(self.settings).storage.close()
 
+    def test_archive_of_the_former_default_port_opens_only_with_that_port(self):
+        former = replace(self.settings, port=23460)
+        self.assertEqual(self.settings.port, 23465)
+        Storage(former).close()
+        before = (self.root / 'identity.json').read_bytes()
+        with self.assertRaises(StorageError) as raised:
+            Storage(self.settings)
+        self.assertIn('MDF_PORT', str(raised.exception))
+        self.assertIn('23460', str(raised.exception))
+        self.assertEqual((self.root / 'identity.json').read_bytes(), before)
+        Storage(former).close()
+
     def test_new_archive_is_born_with_schema_2(self):
         Service(self.settings).storage.close()
         self.assertEqual(self.identity()['config'], self.settings.identity())

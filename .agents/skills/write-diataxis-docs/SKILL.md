@@ -1,11 +1,13 @@
 ---
 name: write-diataxis-docs
-description: "Writes or reorganizes the README and the user and developer documentation in docs/ following Diátaxis. Use for tutorials, how-to guides, reference and explanation pages; for architecture choices use the ADR register in documentation/decisions/ instead."
+description: "Writes or reorganizes the README and the user and developer documentation in docs/ following Diátaxis. Use for tutorials, how-to guides, reference and explanation pages; for architecture choices use the ADR register in documentation/decisions/ instead. During the transition (AGENTS.md) only for the guides AGENTS.md keeps current."
 ---
 
 # Write documentation with Diátaxis
 
-1. Read the [docs index](../../../docs/README.md), the page concerned and the behaviour of the relevant code, schema and tests. Separate the legacy pipeline from the new product.
+**During the transition** (`AGENTS.md`, "Transition until the new initial commit") use this skill only for the guides that `AGENTS.md` keeps current (the full check guide and the how-to guide of a command the run adds or changes); do not update the README, the index or other pages, and do not fix links in them.
+
+1. Read the [docs index](../../../docs/README.md), the page concerned and the behaviour of the relevant code, schema and tests.
 2. Identify the reader's main need and choose one form:
    - `docs/tutorials/`: guided learning, prerequisites, a sample and the expected result;
    - `docs/how-to/`: a concrete task, the essential steps and a final check;

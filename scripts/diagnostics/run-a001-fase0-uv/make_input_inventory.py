@@ -5,22 +5,20 @@ from pathlib import Path
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    for key in ['repo','managed','backend-wheel','uv','tokenizer-cache','output']:
+    for key in ['repo','managed','backend-wheel','uv','output']:
         p.add_argument('--'+key,type=Path,required=True)
     a=p.parse_args()
     if not sys.flags.isolated or not sys.dont_write_bytecode:raise ValueError('Richiesto -I -B')
     spec=importlib.util.spec_from_file_location('guard',Path(__file__).with_name('guard_product_inputs.py'));guard=importlib.util.module_from_spec(spec);spec.loader.exec_module(guard)
     guard.inspect_prefix(Path(sys.executable),a.managed)
     files={a.backend_wheel,a.uv}
-    for directory in [a.managed,a.tokenizer_cache]:
+    for directory in [a.managed]:
         pending=[directory]
         while pending:
             path=pending.pop();info=path.lstat()
             if stat.S_ISDIR(info.st_mode):pending.extend(path.iterdir())
             elif stat.S_ISREG(info.st_mode):files.add(path)
-    for name in ['.python-version','README.md','LICENSE','MANIFEST.in','pyproject.toml','uv.lock','build-constraints.txt',
-                 'config.py','logging_config.py','exceptions.py','unified_converter.py','master_workflow.py','clean_markdown.py',
-                 'validate_markdown.py','chunk_markdown.py','batch_monitor.py','marker_api_server.py']:
+    for name in ['.python-version','README.md','LICENSE','MANIFEST.in','pyproject.toml','uv.lock','build-constraints.txt']:
         files.add(a.repo/name)
     files.update(Path(__file__).parent.glob('*.py'))
     rows=[]

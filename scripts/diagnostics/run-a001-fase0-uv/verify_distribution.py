@@ -37,9 +37,7 @@ def load_helper(name):
 source_tool = load_helper('make_source_manifest')
 origin_tool = load_helper('check_python_origin')
 MODULE_FILES = {m+'.py' for m in source_tool.MODULES}
-ENTRYPOINTS = {'markdown-pipeline':'master_workflow:main','markdown-config':'config:main',
-               'markdown-clean':'clean_markdown:main','markdown-validate':'validate_markdown:main',
-               'markdown-chunk':'chunk_markdown:main', 'mdf':'markdown_for_llms.cli:main'}
+ENTRYPOINTS = {'mdf':'markdown_for_llms.cli:main'}
 DIST = 'markdown_for_llms-1.0.0.dist-info'
 EGG = 'markdown_for_llms.egg-info'
 SDIST_FILES = MODULE_FILES | {'pyproject.toml','MANIFEST.in','README.md','LICENSE',
@@ -58,7 +56,6 @@ BENCH_REQUIREMENTS = {'marker-pdf[full]==2.2.0', 'surya-ocr==0.23.0', 'torch==2.
 # The only extras of the distribution, each with its exact set of requirements.
 EXTRA_REQUIREMENTS = {
     'app': APP_REQUIREMENTS,
-    'marker-server': {'fastapi', 'uvicorn', 'python-multipart'},
     'marker-cpu': LEGACY_ENGINE_REQUIREMENTS,
     'marker-cu126': LEGACY_ENGINE_REQUIREMENTS,
     'bench': BENCH_REQUIREMENTS,
@@ -143,8 +140,8 @@ def check_metadata(data, entrypoints):
         raise ValueError('Distribution entrypoints differ')
     requirements = metadata.get_all('Requires-Dist', [])
     base = {r.split(';')[0].strip() for r in requirements if ';' not in r}
-    if base != {'requests>=2.31.0','tiktoken>=0.5.1','tqdm>=4.66.0','python-dotenv>=1.0.0'}:
-        raise ValueError('Dipendenze runtime base difformi')
+    if base != {'requests>=2.31.0','tqdm>=4.66.0','python-dotenv>=1.0.0'}:
+        raise ValueError('Base runtime dependencies differ')
     extras = metadata.get_all('Provides-Extra', [])
     if len(extras) != len(EXTRA_REQUIREMENTS) or set(extras) != set(EXTRA_REQUIREMENTS):
         raise ValueError('Distribution extras differ')
@@ -235,7 +232,7 @@ def installation_record_files(data, locate, roots, prefix):
 
 
 def check_archives(payload, sdist, wheel):
-    # Application files are pinned in S alongside the ten legacy modules.
+    # Application files are pinned in S as build inputs.
     app = {str((Path(payload['host_repo']) / r['path']).relative_to(payload['repo'])): r
            for r in payload['build_inputs'] if r['kind'] == 'file' and
            (Path(payload['host_repo']) / r['path']).is_relative_to(Path(payload['repo']) / 'markdown_for_llms')}

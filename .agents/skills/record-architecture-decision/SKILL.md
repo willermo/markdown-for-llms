@@ -1,9 +1,11 @@
 ---
 name: record-architecture-decision
-description: "Records or updates architecture decisions of this converter in documentation/decisions/, keeping ADRs, the public roadmap and known limitations consistent. Use for choices about engines, document model, API, storage, frontend or distribution; not for small refactorings without architectural consequences."
+description: "Suspended during the transition until the new initial commit (AGENTS.md): no ADR is written or updated. Afterwards: records or updates architecture decisions of this converter in documentation/decisions/, keeping ADRs, the public roadmap and known limitations consistent. Use for choices about engines, document model, API, storage, frontend or distribution; not for small refactorings without architectural consequences."
 ---
 
 # Record an architecture decision
+
+**Suspended during the transition** (`AGENTS.md`, "Transition until the new initial commit"): do not write or update ADRs, their index or the roadmap. Report a significant architecture choice to the supervision, which records it in the knowledge base. The steps below apply again after the new initial commit.
 
 1. Read the [ADR index](../../../documentation/decisions/README.md) and the relevant ADRs. Separate the current request, the choices already agreed and the hypotheses.
 2. Describe the problem and compare realistic alternatives with proportionate evidence. For engines, models and APIs, separate declared capabilities from measured ones; cite up-to-date primary sources when the decision depends on capabilities, licences or tool versions.

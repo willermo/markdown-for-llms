@@ -59,13 +59,13 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "anyio", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "distro", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "httpx", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "jiter", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "sniffio", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "jiter" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d4/68/3b4c045edf6dc6933895e8f279cc77c7684874c8aba46a4e6241c8b147cf/anthropic-0.46.0.tar.gz", hash = "sha256:eac3d43271d02321a57c3ca68aca84c3d58873e8e72d1433288adee2d46b745b", size = 202191, upload-time = "2025-02-18T20:35:33.314Z" }
 wheels = [
@@ -82,14 +82,14 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "anyio", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "distro", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "docstring-parser", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "httpx", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "jiter", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "sniffio", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "docstring-parser" },
+    { name = "httpx" },
+    { name = "jiter" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/62/f8/6f0560884b5363848347bd640b6c1d04abc25e7aa61787a232f790c6b60a/anthropic-0.125.0.tar.gz", hash = "sha256:e0cdd336580cb7411c1cdab69f80973e9bf4bff7f8e08141811d46307d45c682", size = 1112593, upload-time = "2026-08-19T22:00:42.837Z" }
 wheels = [
@@ -158,8 +158,8 @@ name = "beautifulsoup4"
 version = "4.15.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "soupsieve", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "soupsieve" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/43/65/318323f98dbee45d42dff61d8f047181bc6f2268a9068cfad035a46be5af/beautifulsoup4-4.15.0.tar.gz", hash = "sha256:288e3ca7d54b06f2ac191970bc275c1939cb46d450b255bf6718b04aa37ab4f7", size = 632571, upload-time = "2026-06-07T16:44:20.453Z" }
 wheels = [
@@ -211,7 +211,7 @@ name = "brotlicffi"
 version = "1.1.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "cffi" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/95/9d/70caa61192f570fcf0352766331b735afa931b4c6bc9a348a0925cc13288/brotlicffi-1.1.0.0.tar.gz", hash = "sha256:b77827a689905143f87915310b93b273ab17888fd43ef350d4832c4a71083c13", size = 465192, upload-time = "2023-09-14T14:22:40.707Z" }
 wheels = [
@@ -237,7 +237,7 @@ name = "cffi"
 version = "2.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pycparser", marker = "(implementation_name != 'PyPy' and extra == 'extra-17-markdown-for-llms-bench') or (implementation_name != 'PyPy' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (implementation_name != 'PyPy' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (implementation_name != 'PyPy' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "pycparser", marker = "implementation_name != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz", hash = "sha256:dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be", size = 530807, upload-time = "2026-08-03T21:21:18.939Z" }
 wheels = [
@@ -370,7 +370,7 @@ name = "cryptography"
 version = "50.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "(platform_python_implementation != 'PyPy' and extra == 'extra-17-markdown-for-llms-bench') or (platform_python_implementation != 'PyPy' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_python_implementation != 'PyPy' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (platform_python_implementation != 'PyPy' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9d/af/182eb91b0df3fe75c4d9f26fe70684569566745f6ba7e5c9c73a862c5252/cryptography-50.0.2.tar.gz", hash = "sha256:7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5", size = 880623, upload-time = "2026-09-30T15:30:04.884Z" }
 wheels = [
@@ -420,8 +420,8 @@ name = "cssselect2"
 version = "0.10.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tinycss2", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "webencodings", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "tinycss2" },
+    { name = "webencodings" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/06/00/2456b6b664c7a770989cbe3c352aac4eb962c938486f03a2e1255ae963c6/cssselect2-0.10.1.tar.gz", hash = "sha256:83b0d820ef589dabaf693289b647c2f5b410f76d285f56deba911ffa75a7b9d1", size = 35653, upload-time = "2026-08-31T21:57:42.59Z" }
 wheels = [
@@ -433,7 +433,7 @@ name = "cuda-bindings"
 version = "13.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cuda-pathfinder", marker = "extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "cuda-pathfinder", marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b9/a6/13d14600381bdbfe55dfc35564e4bf4a208f169ee9f6cbeb356564268aff/cuda_bindings-13.5.0-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:40eadfad6ae1554f8c1aa456620a85a49a275fc902f2c6dd93ee8c488b2c5e9f", size = 7354398, upload-time = "2026-11-05T12:06:03.542Z" },
@@ -460,8 +460,8 @@ wheels = [
 
 [package.optional-dependencies]
 cublas = [
-    { name = "nvidia-cublas", version = "13.4.1.3", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "nvidia-cuda-nvrtc", version = "13.2.86", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cuda-nvrtc", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 cudart = [
     { name = "nvidia-cuda-runtime", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
@@ -477,7 +477,7 @@ cupti = [
     { name = "nvidia-cuda-cupti", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 cusolver = [
-    { name = "nvidia-cublas", version = "13.4.1.3", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "nvidia-cusolver", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "nvidia-cusparse", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
@@ -490,7 +490,7 @@ nvjitlink = [
     { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 nvrtc = [
-    { name = "nvidia-cuda-nvrtc", version = "13.2.86", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cuda-nvrtc", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 nvtx = [
     { name = "nvidia-nvtx", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'AMD64' and sys_platform == 'win32' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
@@ -528,8 +528,8 @@ name = "ebooklib"
 version = "0.18"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "lxml", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "six", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "lxml" },
+    { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e8/1d/90bb33317d756c25b40bb55312dda30a94afb691755763fc00976250c82b/EbookLib-0.18.tar.gz", hash = "sha256:38562643a7bc94d9bf56e9930b4927e4e93b5d1d0917f697a6454db5a1c1a533", size = 115484, upload-time = "2022-11-30T22:29:13.394Z" }
 
@@ -646,9 +646,9 @@ wheels = [
 
 [package.optional-dependencies]
 woff = [
-    { name = "brotli", marker = "(platform_python_implementation == 'CPython' and extra == 'extra-17-markdown-for-llms-bench') or (platform_python_implementation == 'CPython' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_python_implementation == 'CPython' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (platform_python_implementation == 'CPython' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "brotlicffi", marker = "(platform_python_implementation != 'CPython' and extra == 'extra-17-markdown-for-llms-bench') or (platform_python_implementation != 'CPython' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_python_implementation != 'CPython' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (platform_python_implementation != 'CPython' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "zopfli", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "brotli", marker = "platform_python_implementation == 'CPython'" },
+    { name = "brotlicffi", marker = "platform_python_implementation != 'CPython'" },
+    { name = "zopfli" },
 ]
 
 [[package]]
@@ -665,7 +665,7 @@ name = "ftfy"
 version = "6.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "wcwidth", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "wcwidth" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a5/d3/8650919bc3c7c6e90ee3fa7fd618bf373cbbe55dff043bd67353dbb20cd8/ftfy-6.3.1.tar.gz", hash = "sha256:9b3c3d90f84fb267fe64d375a07b7f8912d817cf86009ae134aa03e1819506ec", size = 308927, upload-time = "2024-10-26T00:50:35.149Z" }
 wheels = [
@@ -677,8 +677,8 @@ name = "google-auth"
 version = "2.60.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cryptography", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "pyasn1-modules", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "cryptography" },
+    { name = "pyasn1-modules" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6e/a0/d9a866dbcf9de983d717a969744e50492d1c9c56b10207a9f23b3fab85d7/google_auth-2.60.0.tar.gz", hash = "sha256:34aa0283ef72c99cd410e35db4417211fa3e6aaa5399183227bbe3b82bd15192", size = 387015, upload-time = "2026-10-05T16:05:09.724Z" }
 wheels = [
@@ -687,7 +687,7 @@ wheels = [
 
 [package.optional-dependencies]
 requests = [
-    { name = "requests", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "requests" },
 ]
 
 [[package]]
@@ -695,16 +695,16 @@ name = "google-genai"
 version = "1.75.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "anyio", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "distro", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "anyio" },
+    { name = "distro" },
     { name = "google-auth", extra = ["requests"], marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "httpx", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "requests", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "sniffio", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "tenacity", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "websockets", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "requests" },
+    { name = "sniffio" },
+    { name = "tenacity" },
+    { name = "typing-extensions" },
+    { name = "websockets" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9d/59/3ed61240ef20b3ae6ed54e82c6f8b6d1f194947bc6679679dd6cdb037594/google_genai-1.75.0.tar.gz", hash = "sha256:56bac3991b311c93f980c0a2abcd287b672146905df1fbd71c92ed633d5a07cf", size = 539039, upload-time = "2026-05-04T22:48:54.857Z" }
 wheels = [
@@ -774,14 +774,14 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "fsspec", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "hf-xet", marker = "(platform_machine == 'aarch64' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (platform_machine == 'aarch64' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (platform_machine == 'amd64' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (platform_machine == 'amd64' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (platform_machine == 'arm64' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (platform_machine == 'arm64' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (platform_machine == 'x86_64' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (platform_machine == 'x86_64' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "packaging", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pyyaml", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "requests", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" } },
+    { name = "fsspec" },
+    { name = "hf-xet", marker = "platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7c/b7/8cb61d2eece5fb05a83271da168186721c450eb74e3c31f7ef3169fa475b/huggingface_hub-0.36.2.tar.gz", hash = "sha256:1934304d2fb224f8afa3b87007d58501acfda9215b334eed53072dd5e815ff7a", size = 649782, upload-time = "2026-02-06T09:24:13.098Z" }
 wheels = [
@@ -798,15 +798,15 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "click", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "filelock", version = "3.32.7", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "fsspec", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "hf-xet", marker = "(platform_machine == 'AMD64' and extra == 'extra-17-markdown-for-llms-bench') or (platform_machine == 'AMD64' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'aarch64' and extra == 'extra-17-markdown-for-llms-bench') or (platform_machine == 'aarch64' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'amd64' and extra == 'extra-17-markdown-for-llms-bench') or (platform_machine == 'amd64' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'arm64' and extra == 'extra-17-markdown-for-llms-bench') or (platform_machine == 'arm64' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (platform_machine == 'x86_64' and extra == 'extra-17-markdown-for-llms-bench') or (platform_machine == 'x86_64' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "httpx", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "packaging", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pyyaml", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "click" },
+    { name = "filelock", version = "3.32.7", source = { registry = "https://pypi.org/simple" } },
+    { name = "fsspec" },
+    { name = "hf-xet", marker = "platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'" },
+    { name = "httpx" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/25/2a/484d112c0d8fc5f665d7b65137ac9cdb2953c982391598c3597968a12ee7/huggingface_hub-1.33.0.tar.gz", hash = "sha256:367be21a201db9523eddf8aeac7048f2602c1b308691c97640d5e72ed188007e", size = 1043548, upload-time = "2026-09-24T09:49:29.971Z" }
 wheels = [
@@ -836,11 +836,11 @@ name = "indra-ocr"
 version = "1.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "onnxruntime", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "opencv-python-headless", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pypdfium2", version = "5.10.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "numpy" },
+    { name = "onnxruntime" },
+    { name = "opencv-python-headless" },
+    { name = "pypdfium2", version = "5.10.1", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/04/f6/0d0cc6c9e386612fc3dba27cee7a7b8b3f65ea4b91746b9f3db191b79dad/indra_ocr-1.1.2.tar.gz", hash = "sha256:405a40b8a62eb28d36cf96f236f2639286fbc791407733c16f93451dbe733914", size = 112346, upload-time = "2026-10-20T01:41:19.679Z" }
 wheels = [
@@ -861,7 +861,7 @@ name = "jinja2"
 version = "3.1.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markupsafe", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "markupsafe" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
 wheels = [
@@ -899,7 +899,7 @@ name = "joblib"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cloudpickle", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "cloudpickle" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d5/1d/537ab090f302b838943a1b56497dd53059b9a9b46a074936470173a2e207/joblib-1.6.0.tar.gz", hash = "sha256:2ccc96785b12046c08fd6d55839c12857831b54a3c1673ffadd2f04bfc4eda03", size = 327903, upload-time = "2026-08-31T09:39:04.122Z" }
 wheels = [
@@ -960,7 +960,7 @@ name = "mammoth"
 version = "1.13.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cobble", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "cobble" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c3/a8/d6691d0b76cf55cf19851e9e189d0356526024d650c131a0969fcd76225d/mammoth-1.13.0.tar.gz", hash = "sha256:b359bee7bc00caba47dacc64286928133dd947917bab852eea01d0c8d8997296", size = 53987, upload-time = "2026-09-26T22:12:09.733Z" }
 wheels = [
@@ -975,7 +975,6 @@ default-groups = []
 dependencies = [
     { name = "python-dotenv" },
     { name = "requests" },
-    { name = "tiktoken" },
     { name = "tqdm" },
 ]
 
@@ -1019,11 +1018,6 @@ marker-cu126 = [
     { name = "surya-ocr", version = "0.17.1", source = { registry = "https://pypi.org/simple" } },
     { name = "torch", version = "2.7.1+cu126", source = { registry = "https://download.pytorch.org/whl/cu126" } },
 ]
-marker-server = [
-    { name = "fastapi" },
-    { name = "python-multipart" },
-    { name = "uvicorn" },
-]
 
 [package.dev-dependencies]
 dev = [
@@ -1041,7 +1035,6 @@ requires-dist = [
     { name = "beautifulsoup4", marker = "extra == 'marker-cpu'" },
     { name = "beautifulsoup4", marker = "extra == 'marker-cu126'" },
     { name = "fastapi", marker = "extra == 'app'", specifier = "==0.142.2" },
-    { name = "fastapi", marker = "extra == 'marker-server'" },
     { name = "markdown-it-py", marker = "extra == 'app'", specifier = "==4.0.0" },
     { name = "markdown-it-py", marker = "extra == 'bench'", specifier = "==4.0.0" },
     { name = "markdown-it-py", marker = "extra == 'bench-cu132'", specifier = "==4.0.0" },
@@ -1055,13 +1048,11 @@ requires-dist = [
     { name = "pillow", marker = "extra == 'app'", specifier = "==10.4.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "python-multipart", marker = "extra == 'app'" },
-    { name = "python-multipart", marker = "extra == 'marker-server'" },
     { name = "requests", specifier = ">=2.31.0" },
     { name = "surya-ocr", marker = "extra == 'bench'", specifier = "==0.23.0" },
     { name = "surya-ocr", marker = "extra == 'bench-cu132'", specifier = "==0.23.0" },
     { name = "surya-ocr", marker = "extra == 'marker-cpu'", specifier = "==0.17.1" },
     { name = "surya-ocr", marker = "extra == 'marker-cu126'", specifier = "==0.17.1" },
-    { name = "tiktoken", specifier = ">=0.5.1" },
     { name = "torch", marker = "extra == 'bench'", specifier = "==2.15.0", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "markdown-for-llms", extra = "bench" } },
     { name = "torch", marker = "extra == 'bench-cu132'", specifier = "==2.15.0", index = "https://download.pytorch.org/whl/cu132", conflict = { package = "markdown-for-llms", extra = "bench-cu132" } },
     { name = "torch", marker = "extra == 'marker-cpu'", specifier = "==2.7.1", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "markdown-for-llms", extra = "marker-cpu" } },
@@ -1070,9 +1061,8 @@ requires-dist = [
     { name = "torchvision", marker = "extra == 'bench-cu132'", specifier = "==0.29.1", index = "https://download.pytorch.org/whl/cu132", conflict = { package = "markdown-for-llms", extra = "bench-cu132" } },
     { name = "tqdm", specifier = ">=4.66.0" },
     { name = "uvicorn", marker = "extra == 'app'", specifier = "==0.54.0" },
-    { name = "uvicorn", marker = "extra == 'marker-server'" },
 ]
-provides-extras = ["app", "marker-server", "marker-cpu", "marker-cu126", "bench", "bench-cu132"]
+provides-extras = ["app", "marker-cpu", "marker-cu126", "bench", "bench-cu132"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1111,8 +1101,8 @@ name = "markdownify"
 version = "1.2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "beautifulsoup4", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "six", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "beautifulsoup4" },
+    { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/92/ab/d1297139c0e2ceb151ae564c8c4f57ac0155d8f1f8b4cbd5d6523c82ea36/markdownify-1.2.3.tar.gz", hash = "sha256:1a176f05522c8a2cb1dd3ab9d307dcdadbed5c26ae717855bfc42b3b6d38d937", size = 18852, upload-time = "2026-06-30T20:27:39.06Z" }
 wheels = [
@@ -1129,29 +1119,29 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "anthropic", version = "0.46.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "click", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "filetype", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "ftfy", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "google-genai", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "markdown2", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "markdownify", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "openai", version = "1.109.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pdftext", version = "0.6.3", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pillow", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pre-commit", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic-settings", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "python-dotenv", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "rapidfuzz", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "regex", version = "2024.11.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "scikit-learn", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "surya-ocr", version = "0.17.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "anthropic", version = "0.46.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "click" },
+    { name = "filetype" },
+    { name = "ftfy" },
+    { name = "google-genai" },
+    { name = "markdown2" },
+    { name = "markdownify" },
+    { name = "openai", version = "1.109.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "pdftext", version = "0.6.3", source = { registry = "https://pypi.org/simple" } },
+    { name = "pillow" },
+    { name = "pre-commit" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "rapidfuzz" },
+    { name = "regex", version = "2024.11.6", source = { registry = "https://pypi.org/simple" } },
+    { name = "scikit-learn" },
+    { name = "surya-ocr", version = "0.17.1", source = { registry = "https://pypi.org/simple" } },
     { name = "torch", version = "2.7.1", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.7.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.7.1+cu126", source = { registry = "https://download.pytorch.org/whl/cu126" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "tqdm" },
+    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/04/bc/a9e72fd015f562b1f86c9dbc201c80365e7baf43d5aa616ba1c89453537f/marker_pdf-1.10.2.tar.gz", hash = "sha256:ce0fc839e11ad7519a576d254ca9d51a0f9454b9d7da02211f722b141317f9f1", size = 140056, upload-time = "2026-01-31T00:04:55.179Z" }
 wheels = [
@@ -1160,11 +1150,11 @@ wheels = [
 
 [package.optional-dependencies]
 full = [
-    { name = "ebooklib", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "mammoth", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "openpyxl", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "python-pptx", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "weasyprint", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "ebooklib" },
+    { name = "mammoth" },
+    { name = "openpyxl" },
+    { name = "python-pptx" },
+    { name = "weasyprint" },
 ]
 
 [[package]]
@@ -1177,29 +1167,29 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "anthropic", version = "0.125.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "click", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "filetype", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "ftfy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "google-genai", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "indra-ocr", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "markdown2", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "markdownify", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "openai", version = "2.54.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pdftext", version = "0.7.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pillow", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "psutil", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic-settings", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "python-dotenv", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "rapidfuzz", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "regex", version = "2026.11.9", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "scikit-learn", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "surya-ocr", version = "0.23.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "anthropic", version = "0.125.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "click" },
+    { name = "filetype" },
+    { name = "ftfy" },
+    { name = "google-genai" },
+    { name = "indra-ocr" },
+    { name = "markdown2" },
+    { name = "markdownify" },
+    { name = "openai", version = "2.54.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "pdftext", version = "0.7.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "pillow" },
+    { name = "psutil" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "rapidfuzz" },
+    { name = "regex", version = "2026.11.9", source = { registry = "https://pypi.org/simple" } },
+    { name = "scikit-learn" },
+    { name = "surya-ocr", version = "0.23.0", source = { registry = "https://pypi.org/simple" } },
     { name = "torch", version = "2.15.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-bench') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.15.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.15.0+cu132", source = { registry = "https://download.pytorch.org/whl/cu132" }, marker = "extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "tqdm" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f1/b4/628afbec1e96022f2fff5ab771db918469bf98330b2e088510e42722490a/marker_pdf-2.2.0.tar.gz", hash = "sha256:5c37c9f527adea5440d45aa5ec2dac11a4439964e567cf8ed2a5415904cbe6c9", size = 5483656, upload-time = "2026-11-12T17:46:09.635Z" }
 wheels = [
@@ -1208,11 +1198,11 @@ wheels = [
 
 [package.optional-dependencies]
 full = [
-    { name = "ebooklib", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "mammoth", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "openpyxl", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "python-pptx", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "weasyprint", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "ebooklib" },
+    { name = "mammoth" },
+    { name = "openpyxl" },
+    { name = "python-pptx" },
+    { name = "weasyprint" },
 ]
 
 [[package]]
@@ -1283,7 +1273,7 @@ version = "2.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ast-serialize" },
-    { name = "librt", marker = "platform_python_implementation != 'PyPy' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "librt", marker = "platform_python_implementation != 'PyPy'" },
     { name = "mypy-extensions" },
     { name = "pathspec" },
     { name = "typing-extensions" },
@@ -1358,31 +1348,13 @@ wheels = [
 name = "nvidia-cublas"
 version = "13.4.1.3"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "platform_machine == 'aarch64' and sys_platform == 'linux'",
-    "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
-]
 dependencies = [
-    { name = "nvidia-cuda-nvrtc", version = "13.2.86", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cuda-nvrtc", marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d0/a0/5cd9d4b08a8320f7ca150ee0d66c97e98092922e338336cb4b62da7500c3/nvidia_cublas-13.4.1.3-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:4eb1472bf92b741e7cf24da7978dde251b58ddec2092d9f6a04f3623eb4e9a15", size = 513048232, upload-time = "2026-07-16T09:45:07.751Z" },
     { url = "https://files.pythonhosted.org/packages/e1/97/d483a41da34df5c88727c57319576967f6d7befba5028d70928d2999635e/nvidia_cublas-13.4.1.3-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:a5917cb642cfb07f4a0231ee16aec7e2e0357d8cb8b1b78a0c9c68dba3e6afc7", size = 404870805, upload-time = "2026-07-16T09:46:05.62Z" },
     { url = "https://files.pythonhosted.org/packages/bc/0f/8982a363ab246d22876f3eb8baccce81f0da6304d39f86d63b67389c5457/nvidia_cublas-13.4.1.3-py3-none-win_amd64.whl", hash = "sha256:7e7f780caf07bde7b36b0d25bdad29e8ccbacfc4b75066907bdb601af1e6d4aa", size = 388920654, upload-time = "2026-07-16T10:05:36.737Z" },
-]
-
-[[package]]
-name = "nvidia-cublas"
-version = "13.10.0.20"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "nvidia-cuda-nvrtc", version = "13.5.37", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b4/12/16628161ed8c109c8c73b38167df50cbc630a8a6e6548e2534d461526c3c/nvidia_cublas-13.10.0.20-py3-none-manylinux1_x86_64.manylinux_2_5_x86_64.whl", hash = "sha256:dcc6d63884c53d07e267ce7e6feac17b2538cebaafec5db865736c3e28e4dc84", size = 444289903, upload-time = "2026-11-04T23:27:26.095Z" },
-    { url = "https://files.pythonhosted.org/packages/5c/e3/a5a992c3cb1c49201cd4855345dd50ec9e9c075195a0e1e534ff7e914ca5/nvidia_cublas-13.10.0.20-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:c5f3418c0a845232a8cabc58f6fa52cfae7d8bd3680d94c3907aca710fd48d70", size = 560089875, upload-time = "2026-11-04T23:26:43.825Z" },
-    { url = "https://files.pythonhosted.org/packages/12/39/e1b1b4adb8b171894d9a89035df0596d448cf73dc403802d24dbe30cc0be/nvidia_cublas-13.10.0.20-py3-none-win_amd64.whl", hash = "sha256:c310b749eea855b88fafb906de08d6819b87216c6711640771764fea5dcd8546", size = 427284863, upload-time = "2026-11-04T23:36:18.775Z" },
-    { url = "https://files.pythonhosted.org/packages/4d/89/c875dcd88abc508a98a725214a30b2c001406095855154f32ee3f0946409/nvidia_cublas-13.10.0.20-py3-none-win_arm64.whl", hash = "sha256:05929d6a64af9edce1951ff82a514d630fc1a2369bcfe1ab195f5e85266dbfed", size = 279793527, upload-time = "2026-11-04T23:41:15.348Z" },
 ]
 
 [[package]]
@@ -1432,25 +1404,10 @@ wheels = [
 name = "nvidia-cuda-nvrtc"
 version = "13.2.86"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "platform_machine == 'aarch64' and sys_platform == 'linux'",
-    "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
-]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1e/39/c58835ec8392a91b8d7bad83760eafc3085f64788b722ec2b44a27b3ca3e/nvidia_cuda_nvrtc-13.2.86-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl", hash = "sha256:8111c5130e967b78222ea2124145f8efe9ce201b752b2579a2513100a53be1c5", size = 47018468, upload-time = "2026-07-16T09:40:35.085Z" },
     { url = "https://files.pythonhosted.org/packages/13/95/029e91026e1d378cba9fb2cdb62394bb15d06de7586bab73d76397df6b7f/nvidia_cuda_nvrtc-13.2.86-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:1e5d7b411a2eb83f5c71c98d58133a763fc9fa86a4241ee320c5c4782d9ad1fd", size = 44755454, upload-time = "2026-07-16T09:39:59.909Z" },
     { url = "https://files.pythonhosted.org/packages/dd/4e/2a19f2aa79ffc822c0d2be7c161fcac5a8b43aebd554c79ff982bb44071e/nvidia_cuda_nvrtc-13.2.86-py3-none-win_amd64.whl", hash = "sha256:bf070582c2d8b03f681cea8d34a9de900d808607deb813a826ecb3a585606f9a", size = 40818138, upload-time = "2026-07-16T10:02:27.876Z" },
-]
-
-[[package]]
-name = "nvidia-cuda-nvrtc"
-version = "13.5.37"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/54/db4e7f650746265f61c05cf1f8f556dd8c6739b58c823fbc9a7d6fda3247/nvidia_cuda_nvrtc-13.5.37-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl", hash = "sha256:86b4d68058807988b7d9af5b44917a0601e9c337f35ccd657bfb3c759ff8d8bc", size = 58185930, upload-time = "2026-11-04T23:23:57.537Z" },
-    { url = "https://files.pythonhosted.org/packages/4e/9f/e8321dfd9dcd923c864213fed3da815da474800ead891a99b6322bdd2039/nvidia_cuda_nvrtc-13.5.37-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:36e4fa2a8ada293f5693d308e531c196ab6f91cf7a0ff479bf96a537d43a6096", size = 56419462, upload-time = "2026-11-04T23:23:44.768Z" },
-    { url = "https://files.pythonhosted.org/packages/9f/6c/241c5155199a6de55bad8862213ed64b487dc9526aae817e4af31afea1a4/nvidia_cuda_nvrtc-13.5.37-py3-none-win_amd64.whl", hash = "sha256:e8e6c10b251385707ae3abd7b4ee118de6736fd7678d0f0f4eab4d759f679c21", size = 49248991, upload-time = "2026-11-04T23:35:13.589Z" },
-    { url = "https://files.pythonhosted.org/packages/d9/62/b858b2e6da4d9f4ab2744dcd337dc31c75bc4db4ad35543a04ee07bb3eab/nvidia_cuda_nvrtc-13.5.37-py3-none-win_arm64.whl", hash = "sha256:d47388d9054a9f16c705d86e59d7e6c57e85beece36d23d1657833531fa913aa", size = 45119472, upload-time = "2026-11-04T23:40:19.254Z" },
 ]
 
 [[package]]
@@ -1490,7 +1447,7 @@ name = "nvidia-cudnn-cu12"
 version = "9.5.1.17"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu12", marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
+    { name = "nvidia-cublas-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/99/93/a201a12d3ec1caa8c6ac34c1c2f9eeb696b886f0c36ff23c638b46603bd0/nvidia_cudnn_cu12-9.5.1.17-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:9fd4584468533c61873e5fda8ca41bac3a38bcb2d12350830c69b0a96a7e4def", size = 570523509, upload-time = "2024-10-25T19:53:03.148Z" },
@@ -1503,8 +1460,7 @@ name = "nvidia-cudnn-cu13"
 version = "9.26.0.51"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", version = "13.4.1.3", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "nvidia-cublas", version = "13.10.0.20", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cublas", marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c5/1c/01e1dd3dec6ffe0baaff7e722b8946d867353d05a01301f128f1730fde0b/nvidia_cudnn_cu13-9.26.0.51-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:8e5b4f5eccff721416f70ecf4353172fc4d5cdd8ca869fe6f983a4a5b0147b20", size = 595329497, upload-time = "2026-09-10T16:45:39.945Z" },
@@ -1530,7 +1486,7 @@ name = "nvidia-cufft-cu12"
 version = "11.3.0.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink-cu12", marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
+    { name = "nvidia-nvjitlink-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1f/37/c50d2b2f2c07e146776389e3080f4faf70bcc4fa6e19d65bb54ca174ebc3/nvidia_cufft_cu12-11.3.0.4-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:d16079550df460376455cba121db6564089176d9bac9e4f360493ca4741b22a6", size = 200164144, upload-time = "2024-11-20T17:40:58.288Z" },
@@ -1575,7 +1531,7 @@ name = "nvidia-cusolver"
 version = "12.2.0.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", version = "13.4.1.3", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cublas", marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "nvidia-cusparse", marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "nvidia-nvjitlink", marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
@@ -1590,9 +1546,9 @@ name = "nvidia-cusolver-cu12"
 version = "11.7.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu12", marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
-    { name = "nvidia-cusparse-cu12", marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
-    { name = "nvidia-nvjitlink-cu12", marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
+    { name = "nvidia-cublas-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cusparse-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-nvjitlink-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/93/17/dbe1aa865e4fdc7b6d4d0dd308fdd5aaab60f939abfc0ea1954eac4fb113/nvidia_cusolver_cu12-11.7.1.2-py3-none-manylinux2014_aarch64.whl", hash = "sha256:0ce237ef60acde1efc457335a2ddadfd7610b892d94efee7b776c64bb1cac9e0", size = 157833628, upload-time = "2024-10-01T17:05:05.591Z" },
@@ -1620,7 +1576,7 @@ name = "nvidia-cusparse-cu12"
 version = "12.5.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink-cu12", marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
+    { name = "nvidia-nvjitlink-cu12", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/eb/eb/6681efd0aa7df96b4f8067b3ce7246833dd36830bb4cec8896182773db7d/nvidia_cusparse_cu12-12.5.4.2-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:d25b62fb18751758fe3c93a4a08eff08effedfe4edf1c6bb5afd0890fe88f887", size = 216451147, upload-time = "2024-11-20T17:44:18.055Z" },
@@ -1694,7 +1650,7 @@ name = "nvidia-nvshmem-cu13"
 version = "3.7.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cuda-cccl", marker = "extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "nvidia-cuda-cccl", marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/81/11/1767ef120299972822a43aceffbc81ac813aad2089d817e36e4e12aa4c9c/nvidia_nvshmem_cu13-3.7.2-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:0e748308b9e0a8a8d81859353f3e6c98fbe85a85f652a915a2ba60149a0bd124", size = 135174619, upload-time = "2026-07-17T19:24:15.404Z" },
@@ -1728,10 +1684,10 @@ name = "onnxruntime"
 version = "1.32.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "flatbuffers", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "packaging", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "protobuf", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "flatbuffers" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "protobuf" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6f/a4/480cd367bc135dd9951c89d461cc6af6be9302cd2ce91e231f6cb0e7ee1b/onnxruntime-1.32.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:d52510bbbcc880c13b826f7d75cdf33ac5cf0bb864d960000fc29ce73f0cb83e", size = 22519308, upload-time = "2026-11-13T11:06:13.395Z" },
@@ -1751,14 +1707,14 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "anyio", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "distro", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "httpx", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "jiter", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "sniffio", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "jiter" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c6/a1/a303104dc55fc546a3f6914c842d3da471c64eec92043aef8f652eb6c524/openai-1.109.1.tar.gz", hash = "sha256:d173ed8dbca665892a6db099b4a2dfac624f94d20a93f46eb0b56aae940ed869", size = 564133, upload-time = "2025-09-24T13:00:53.075Z" }
 wheels = [
@@ -1775,14 +1731,14 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "anyio", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "distro", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "httpx", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "jiter", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "sniffio", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "jiter" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/9a/8c75e8c8a5b407a0586faeb2afac91674ff955c191ecc1d6d3b6669f6788/openai-2.54.0.tar.gz", hash = "sha256:e3e6f8bc1ba30ddf381ace1a14340eed381cb984a1a59bd0f34b5be3b5d49cfa", size = 1100285, upload-time = "2026-08-11T18:46:59.035Z" }
 wheels = [
@@ -1794,7 +1750,7 @@ name = "opencv-python-headless"
 version = "4.11.0.86"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "numpy" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/36/2f/5b2b3ba52c864848885ba988f24b7f105052f68da9ab0e693cc7c25b0b30/opencv-python-headless-4.11.0.86.tar.gz", hash = "sha256:996eb282ca4b43ec6a3972414de0e2331f5d9cda2b41091a49739c19fb843798", size = 95177929, upload-time = "2025-01-16T13:53:40.22Z" }
 wheels = [
@@ -1811,7 +1767,7 @@ name = "openpyxl"
 version = "3.1.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "et-xmlfile", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "et-xmlfile" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3d/f9/88d94a75de065ea32619465d2f77b29a0469500e99012523b91cc4141cd1/openpyxl-3.1.5.tar.gz", hash = "sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050", size = 186464, upload-time = "2024-06-28T14:03:44.161Z" }
 wheels = [
@@ -1858,10 +1814,10 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "click", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic-settings", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pypdfium2", version = "4.30.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "click" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pypdfium2", version = "4.30.0", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/7b/fe3205d44d6058932bbc785f0b9da2ed35b62e17479a8a7d2baca9df1cc6/pdftext-0.6.3.tar.gz", hash = "sha256:ab5c5dfe0f1fb78de1db837ccadac1ea41b07ce1890fead973c9a84cdaf54dec", size = 21968, upload-time = "2025-06-11T14:42:09.492Z" }
 wheels = [
@@ -1878,11 +1834,11 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "click", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic-settings", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pypdfium2", version = "5.10.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "click" },
+    { name = "numpy" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pypdfium2", version = "5.10.1", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b5/48/6c12661234ef71a9349bb1fbdd0259a6d8189376f664492e2c206ab3c397/pdftext-0.7.1.tar.gz", hash = "sha256:7484add28d48d8c04aab0076769f2d626454233de95de00c7b348cb6398045bd", size = 28483, upload-time = "2026-07-08T21:57:14.436Z" }
 wheels = [
@@ -1931,11 +1887,11 @@ name = "pre-commit"
 version = "4.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cfgv", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "identify", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "nodeenv", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pyyaml", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "virtualenv", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "cfgv" },
+    { name = "identify" },
+    { name = "nodeenv" },
+    { name = "pyyaml" },
+    { name = "virtualenv" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/74/89/1f3e8e1fc3e97de0fa963495832f581f025f29471602a309e48808244292/pre_commit-4.6.2.tar.gz", hash = "sha256:8f5d7bfb021ecdbcd9d49d89847082dd24172ccde534390081a679ad046e2441", size = 198670, upload-time = "2026-08-10T22:07:18.421Z" }
 wheels = [
@@ -1987,7 +1943,7 @@ name = "pyasn1-modules"
 version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pyasn1", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "pyasn1" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e9/e6/78ebbb10a8c8e4b61a59249394a4a594c1a7af95593dc933a349c8d00964/pyasn1_modules-0.4.2.tar.gz", hash = "sha256:677091de870a80aae844b1ca6134f54652fa2c8c5a52aa396440ac3106e941e6", size = 307892, upload-time = "2025-03-28T02:41:22.17Z" }
 wheels = [
@@ -2062,9 +2018,9 @@ name = "pydantic-settings"
 version = "2.15.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "python-dotenv", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "typing-inspection", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "typing-inspection" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/68/ca/31c57507b13119d7d3cfa1576dad2911a4861e3be07b579395f4e9d393f9/pydantic_settings-2.15.0.tar.gz", hash = "sha256:694b793e84f766ba76a90ebdefc01d0a9a045dab0382bee70393da93712ad117", size = 261253, upload-time = "2026-08-07T09:24:57.419Z" }
 wheels = [
@@ -2171,7 +2127,7 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
@@ -2213,7 +2169,7 @@ name = "python-discovery"
 version = "1.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0c/57/250bd238b966cece44328235eb85290045d059265fdaf7527a3a958123db/python_discovery-1.6.1.tar.gz", hash = "sha256:cf87d3627dfb4412437fdd5b13eae402607722998d21567993aedbc59b23c15e", size = 84338, upload-time = "2026-09-18T01:31:53.971Z" }
 wheels = [
@@ -2243,10 +2199,10 @@ name = "python-pptx"
 version = "1.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "lxml", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "pillow", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "typing-extensions", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "xlsxwriter", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "lxml" },
+    { name = "pillow" },
+    { name = "typing-extensions" },
+    { name = "xlsxwriter" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/52/a9/0c0db8d37b2b8a645666f7fd8accea4c6224e013c42b1d5c17c93590cd06/python_pptx-1.0.2.tar.gz", hash = "sha256:479a8af0eaf0f0d76b6f00b0887732874ad2e3188230315290cd1f9dd9cc7095", size = 10109297, upload-time = "2024-08-07T17:33:37.772Z" }
 wheels = [
@@ -2341,13 +2297,9 @@ name = "regex"
 version = "2026.11.9"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "sys_platform == 'darwin' and extra != 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126'",
-    "platform_machine == 'aarch64' and sys_platform == 'linux' and extra != 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126'",
-    "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra != 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126')",
-    "platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench' and extra != 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126'",
-    "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-bench' and extra != 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-bench' and extra != 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126')",
-    "sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-bench' and extra != 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126'",
-    "extra != 'extra-17-markdown-for-llms-bench' and extra != 'extra-17-markdown-for-llms-bench-cu132' and extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126'",
+    "sys_platform == 'darwin'",
+    "platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/61/27/a5afeb952577b84ee5fe48b8b9ce47ae662dbb69cc5b76c28eff98f83b1e/regex-2026.11.9.tar.gz", hash = "sha256:316a70fbd70e999c9664681cb0eb5b4982b2cc0f623c7c86a8a112e1bd4c6277", size = 419513, upload-time = "2026-11-09T00:42:09.786Z" }
 wheels = [
@@ -2389,8 +2341,8 @@ name = "rich"
 version = "15.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markdown-it-py", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pygments", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "markdown-it-py" },
+    { name = "pygments" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c13a6a0c696dacf35430f72e0ec571c4275d2371fca3e9/rich-15.0.0.tar.gz", hash = "sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36", size = 230680, upload-time = "2026-04-12T08:24:00.75Z" }
 wheels = [
@@ -2426,11 +2378,11 @@ name = "scikit-learn"
 version = "1.9.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "joblib", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "narwhals", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "scipy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "threadpoolctl", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "joblib" },
+    { name = "narwhals" },
+    { name = "numpy" },
+    { name = "scipy" },
+    { name = "threadpoolctl" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d2/eb/eaf5e07fcc0da7149b0e084f24e54edd7441b9a89ce7e034032ae97fe3a0/scikit_learn-1.9.1.tar.gz", hash = "sha256:629cada3e33e2b9bf376cdc7614a47a4140b8aedc1d836579e359736fbd82977", size = 7786908, upload-time = "2026-09-10T18:34:04.679Z" }
 wheels = [
@@ -2447,7 +2399,7 @@ name = "scipy"
 version = "1.18.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "numpy" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7e/74/66de6258867beb2ef08f35f9f2ac017a52cacd5081714d239ff1a442d458/scipy-1.18.1.tar.gz", hash = "sha256:52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307", size = 30781235, upload-time = "2026-08-21T23:28:50.599Z" }
 wheels = [
@@ -2531,21 +2483,21 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "click", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "einops", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "filetype", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "opencv-python-headless", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pillow", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "platformdirs", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pre-commit", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pydantic-settings", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pypdfium2", version = "4.30.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "python-dotenv", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "click" },
+    { name = "einops" },
+    { name = "filetype" },
+    { name = "opencv-python-headless" },
+    { name = "pillow" },
+    { name = "platformdirs" },
+    { name = "pre-commit" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pypdfium2", version = "4.30.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "python-dotenv" },
     { name = "torch", version = "2.7.1", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.7.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.7.1+cu126", source = { registry = "https://download.pytorch.org/whl/cu126" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
-    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b3/b4/b0f3afd024b4e6fcb4db6fdd17ee963d081e960c907aebd0556ff948abb6/surya_ocr-0.17.1.tar.gz", hash = "sha256:349d78d854c1ed5f816e583545ed6451aa0bc6992e283a805034799aacee8c24", size = 161854, upload-time = "2026-01-30T21:52:59.361Z" }
 wheels = [
@@ -2562,28 +2514,28 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "beautifulsoup4", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "click", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "filelock", version = "3.32.7", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "filetype", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "httpx", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "openai", version = "2.54.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "opencv-python-headless", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pillow", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "platformdirs", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pydantic-settings", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pypdfium2", version = "5.10.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "python-dotenv", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "requests", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "beautifulsoup4" },
+    { name = "click" },
+    { name = "filelock", version = "3.32.7", source = { registry = "https://pypi.org/simple" } },
+    { name = "filetype" },
+    { name = "httpx" },
+    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "openai", version = "2.54.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "opencv-python-headless" },
+    { name = "pillow" },
+    { name = "platformdirs" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pypdfium2", version = "5.10.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "python-dotenv" },
+    { name = "requests" },
     { name = "torch", version = "2.15.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-bench') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.15.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torch", version = "2.15.0+cu132", source = { registry = "https://download.pytorch.org/whl/cu132" }, marker = "extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torchvision", version = "0.29.1", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform == 'darwin' and extra == 'extra-17-markdown-for-llms-bench') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torchvision", version = "0.29.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-17-markdown-for-llms-bench') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
     { name = "torchvision", version = "0.29.1+cu132", source = { registry = "https://download.pytorch.org/whl/cu132" }, marker = "extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "transformers", version = "5.23.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "transformers", version = "5.23.0", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b4/b1/9c0ca22de3c2f4f0f68e42cafb7007c6fe99c8fca5534dbd5d4391af93c9/surya_ocr-0.23.0.tar.gz", hash = "sha256:3b0e5fd936c5306117445e09b0584b05b7bd8e2bfeaaa0960eb0b859ba571929", size = 12676434, upload-time = "2026-10-29T17:05:07.044Z" }
 wheels = [
@@ -2595,7 +2547,7 @@ name = "sympy"
 version = "1.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mpmath", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "mpmath" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/83/d3/803453b36afefb7c2bb238361cd4ae6125a569b4db67cd9e79846ba2d68c/sympy-1.14.0.tar.gz", hash = "sha256:d3d3fe8df1e5a0b42f0e7bdf50541697dbe7d23746e894990c030e2b05e72517", size = 7793921, upload-time = "2025-04-27T18:05:01.611Z" }
 wheels = [
@@ -2621,31 +2573,11 @@ wheels = [
 ]
 
 [[package]]
-name = "tiktoken"
-version = "0.14.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "regex", version = "2024.11.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "regex", version = "2026.11.9", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra != 'extra-17-markdown-for-llms-marker-cpu' and extra != 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/66/62/167a842aa0429d45f5e797354fd4343a96f6043d67d0513c675c7b8d36e6/tiktoken-0.14.0.tar.gz", hash = "sha256:231dec90efcdccf1b565a1416107736f1e09b1a08fe736ef9d6363e626d03874", size = 38898, upload-time = "2026-08-17T19:49:49.514Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8c/da/e273746b9d24a63c776bc60fba914351573ad9c575b52601eb5e60632564/tiktoken-0.14.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:8e947aefe98ef74cce94923f90e48c98fe34eb1ec0a6bfdfadfc5a96359bfc36", size = 1094408, upload-time = "2026-08-17T19:48:49.269Z" },
-    { url = "https://files.pythonhosted.org/packages/69/9f/fe6b1aca23331aa5271df5a4bd07bf68a7059254d47faee1b8272592a777/tiktoken-0.14.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:d6cebe67765569df3dafac8474e4eccf5c19d24140492567a5e58a11445732a4", size = 1038499, upload-time = "2026-08-17T19:48:50.666Z" },
-    { url = "https://files.pythonhosted.org/packages/0b/35/e9f47647c9e163bd1de30fe1a491669b7248cfc67b7404c35c009a701e1a/tiktoken-0.14.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:7db45b98e94adf4173a5cd7422b150999a7ee11ff847783a14f6e1b80cc38cb6", size = 1186355, upload-time = "2026-08-17T19:48:51.93Z" },
-    { url = "https://files.pythonhosted.org/packages/51/11/9976ad86980a00cdef05e730a0127a2578a1bc6d11644d8d47246de2eb26/tiktoken-0.14.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:7896eea257fe497a2b7134474d909156c6744ce8da35bce88011a960e008aa0d", size = 1204197, upload-time = "2026-08-17T19:48:53.18Z" },
-    { url = "https://files.pythonhosted.org/packages/d4/9c/7035b0bcfaa68d1ee4803fc5be5214ad865669b05bd20e7105ae8a18afc6/tiktoken-0.14.0-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:b950248272f1b303dc32986396e2dccfa10cf6d1e83ec8f0bba1776660305482", size = 1250635, upload-time = "2026-08-17T19:48:54.392Z" },
-    { url = "https://files.pythonhosted.org/packages/bc/1d/69cabf18bed7f4366da076735816abce0d4db3fae491ae338a6612128777/tiktoken-0.14.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:3de75343041a1c57333b1e707ac8a9769738241d7d6a55d39e12cf84548337c6", size = 1316085, upload-time = "2026-08-17T19:48:55.525Z" },
-    { url = "https://files.pythonhosted.org/packages/bd/bd/a2e884fb1402cba5be08836590320012b2d8ada0e2eef9911a64df4bcd2d/tiktoken-0.14.0-cp312-cp312-win_amd64.whl", hash = "sha256:087538c080e5ff421abd3a0785ed63c5111d06af98e6cd0d374dbe5969147ca3", size = 941208, upload-time = "2026-08-17T19:48:56.938Z" },
-]
-
-[[package]]
 name = "tinycss2"
 version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "webencodings", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "webencodings" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a3/ae/2ca4913e5c0f09781d75482874c3a95db9105462a92ddd303c7d285d3df2/tinycss2-1.5.1.tar.gz", hash = "sha256:d339d2b616ba90ccce58da8495a78f46e55d4d25f9fd71dfd526f07e7d53f957", size = 88195, upload-time = "2025-11-23T10:29:10.082Z" }
 wheels = [
@@ -2657,7 +2589,7 @@ name = "tinyhtml5"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "webencodings", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "webencodings" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b1/1f/cfe2f6b30557c92b3f31d41707e09cef5c1efbd87392bc6c0430c46b0e4d/tinyhtml5-2.1.0.tar.gz", hash = "sha256:60a50ec3d938a37e491efa01af895853060943dcebb5627de5b10d188b338a67", size = 179242, upload-time = "2026-03-05T17:06:30.704Z" }
 wheels = [
@@ -2674,7 +2606,7 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/73/6f/f80cfef4a312e1fb34baf7d85c72d4411afde10978d4657f8cdd811d3ccc/tokenizers-0.22.2.tar.gz", hash = "sha256:473b83b915e547aa366d1eee11806deaf419e17be16310ac0a14077f1e28f917", size = 372115, upload-time = "2026-01-05T10:45:15.988Z" }
 wheels = [
@@ -2705,7 +2637,7 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e0/7c/2cabb2174e772636683008f2c5621949b645da7d303c596589e84516a184/tokenizers-0.23.3.tar.gz", hash = "sha256:cded33237c77caeef62944d32aa9a7ef42bdce2b3497e18d137e072a8c4be438", size = 385286, upload-time = "2026-10-09T10:16:55.759Z" }
 wheels = [
@@ -2945,7 +2877,7 @@ name = "tqdm"
 version = "4.70.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0d/ea/b2a5bd54b28a324dae8211928b2d730b6547500342c7e6c6dea08bd0a485/tqdm-4.70.1.tar.gz", hash = "sha256:cefd0eca11b2a37a3aee776544d4f4ae913f02688135b5556b8788dfa474afc4", size = 171846, upload-time = "2026-09-11T07:25:16.601Z" }
 wheels = [
@@ -2962,16 +2894,16 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "packaging", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "pyyaml", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "regex", version = "2024.11.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "requests", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "safetensors", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "tokenizers", version = "0.22.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" } },
+    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" } },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "regex", version = "2024.11.6", source = { registry = "https://pypi.org/simple" } },
+    { name = "requests" },
+    { name = "safetensors" },
+    { name = "tokenizers", version = "0.22.2", source = { registry = "https://pypi.org/simple" } },
+    { name = "tqdm" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c4/35/67252acc1b929dc88b6602e8c4a982e64f31e733b804c14bc24b47da35e6/transformers-4.57.6.tar.gz", hash = "sha256:55e44126ece9dc0a291521b7e5492b572e6ef2766338a610b9ab5afbb70689d3", size = 10134912, upload-time = "2026-01-16T10:38:39.284Z" }
 wheels = [
@@ -2988,15 +2920,15 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "numpy", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "packaging", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "pyyaml", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "regex", version = "2026.11.9", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "safetensors", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "tokenizers", version = "0.23.3", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "tqdm", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "typer", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "huggingface-hub", version = "1.33.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "regex", version = "2026.11.9", source = { registry = "https://pypi.org/simple" } },
+    { name = "safetensors" },
+    { name = "tokenizers", version = "0.23.3", source = { registry = "https://pypi.org/simple" } },
+    { name = "tqdm" },
+    { name = "typer" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7e/d3/1ff04cfc1ddbc6853af16973b17cd437426b4303599bc3e84af11fe55057/transformers-5.23.0.tar.gz", hash = "sha256:19d647a4d5d903a7c644ca5cde2d86efc3dde7d8c687ae7988806ff2205efa71", size = 10614788, upload-time = "2026-11-13T14:10:39.947Z" }
 wheels = [
@@ -3011,7 +2943,7 @@ resolution-markers = [
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
 dependencies = [
-    { name = "setuptools", marker = "extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu')" },
+    { name = "setuptools", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (sys_platform != 'darwin' and sys_platform != 'linux' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cpu') or (extra == 'extra-17-markdown-for-llms-bench-cu132' and extra == 'extra-17-markdown-for-llms-marker-cu126') or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/24/5f/950fb373bf9c01ad4eb5a8cd5eaf32cdf9e238c02f9293557a2129b9c4ac/triton-3.3.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:9999e83aba21e1a78c1f36f21bce621b77bcaa530277a50484a7cb4a822f6e43", size = 155669138, upload-time = "2025-05-29T23:39:51.771Z" },
@@ -3035,11 +2967,11 @@ name = "typer"
 version = "0.29.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "annotated-doc", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "annotated-doc" },
     { name = "colorama", marker = "sys_platform == 'win32'" },
-    { name = "pydantic", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "rich", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
-    { name = "shellingham", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or (extra == 'extra-17-markdown-for-llms-marker-cpu' and extra == 'extra-17-markdown-for-llms-marker-cu126')" },
+    { name = "pydantic" },
+    { name = "rich" },
+    { name = "shellingham" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6c/aa/0de7986aa1fa856adb961c67345189b97d13f6e250b34ba68884df865f07/typer-0.29.1.tar.gz", hash = "sha256:ab6eb3880bf67ce96147734717f9ec333c06f66e361f3ea947d0be43da39f242", size = 205843, upload-time = "2026-11-11T09:18:39.782Z" }
 wheels = [
@@ -3094,11 +3026,11 @@ name = "virtualenv"
 version = "21.14.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "distlib", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "packaging", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "platformdirs", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
-    { name = "python-discovery", marker = "extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126' or (extra == 'extra-17-markdown-for-llms-bench' and extra == 'extra-17-markdown-for-llms-bench-cu132')" },
+    { name = "distlib" },
+    { name = "filelock", version = "4.0.12", source = { registry = "https://pypi.org/simple" } },
+    { name = "packaging" },
+    { name = "platformdirs" },
+    { name = "python-discovery" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c4/f9/f323b3b6058cff3853b31cf6a49c0425ed797bf9611572ec10d065e08bac/virtualenv-21.14.5.tar.gz", hash = "sha256:c4cb6c13e46b57225a999c7e22a09b163393878facc7ac4c059a57f46faa1647", size = 5467127, upload-time = "2026-10-02T17:42:25.613Z" }
 wheels = [
@@ -3130,14 +3062,14 @@ name = "weasyprint"
 version = "63.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "cssselect2", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "cffi" },
+    { name = "cssselect2" },
     { name = "fonttools", extra = ["woff"], marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "pillow", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "pydyf", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "pyphen", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "tinycss2", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
-    { name = "tinyhtml5", marker = "extra == 'extra-17-markdown-for-llms-bench' or extra == 'extra-17-markdown-for-llms-bench-cu132' or extra == 'extra-17-markdown-for-llms-marker-cpu' or extra == 'extra-17-markdown-for-llms-marker-cu126'" },
+    { name = "pillow" },
+    { name = "pydyf" },
+    { name = "pyphen" },
+    { name = "tinycss2" },
+    { name = "tinyhtml5" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2b/f0/1ac7d241b8cabaaf047278ef67b64869473a4e0a2218a1cbc0a6ffb0d8fd/weasyprint-63.1.tar.gz", hash = "sha256:cb424e63e8dd3f14195bfe5f203527646aa40a2f00ac819f9d39b8304cec0044", size = 491880, upload-time = "2024-12-10T15:51:29.034Z" }
 wheels = [

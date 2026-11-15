@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # Full check of markdown-for-llms (AGENTS.md, "Verification"): installation preflight
-# (T, O, P, S, B, reinstallation of the canonical wheel with a RECORD check, I, F), the
-# precondition X (the reference toolchain image of the bench), then the fast suite and tests/api. tests/packaging and tests/docker stay out: legacy contracts whose
-# prerequisites were removed on 2026-10-17. Run it at the root of a clean checkout:
+# (O, P, S, B, reinstallation of the canonical wheel with a RECORD check, I, F), the
+# precondition X (the reference toolchain image of the bench), then the fast suite on tests/
+# with the bench JUnit guard. Run it at the root of a clean checkout:
 #   scripts/full-check.sh
 # Paths come from the FULL_CHECK_* variables (docs/how-to/uv-environment.md, "Run the full
 # check"): environment first, then the untracked .full-check.env of this checkout or of the
 # main checkout. No download and no installation other than the wheel built here.
-# Exit 0 only when every step and both suites pass.
+# Exit 0 only when every step, the suite and the bench guard pass.
 set -euo pipefail
 shopt -s inherit_errexit
 
 stop() { printf 'STOP %s\n' "$*" >&2; exit 1; }
 VARS=(FULL_CHECK_PYTHON_INSTALL_DIR FULL_CHECK_DEV_PYTHON FULL_CHECK_UV
-      FULL_CHECK_UV_CACHE_DIR FULL_CHECK_BACKEND_WHEEL FULL_CHECK_TOKENIZER_CACHE)
+      FULL_CHECK_UV_CACHE_DIR FULL_CHECK_BACKEND_WHEEL)
 
 # --- preconditions -------------------------------------------------------------------------
 [ "$#" -eq 0 ] || stop "usage: scripts/full-check.sh (no arguments)"
@@ -48,7 +48,7 @@ for name in "${VARS[@]}"; do
   case $value in /*) ;; *) stop "$name is not an absolute path" ;; esac
   printf -v "$name" '%s' "$value"
 done
-for name in FULL_CHECK_PYTHON_INSTALL_DIR FULL_CHECK_UV_CACHE_DIR FULL_CHECK_TOKENIZER_CACHE; do
+for name in FULL_CHECK_PYTHON_INSTALL_DIR FULL_CHECK_UV_CACHE_DIR; do
   [ -d "${!name}" ] || stop "$name is not a directory"
 done
 [ -x "$FULL_CHECK_DEV_PYTHON" ] || stop "FULL_CHECK_DEV_PYTHON is not executable"
@@ -74,7 +74,7 @@ mkdir -p "$top/.cache/full-check"
 PROOF="$top/.cache/full-check/$(git rev-parse --short HEAD)-$(date -u +%Y%m%dT%H%M%SZ)"
 mkdir "$PROOF"
 echo "$head" > "$PROOF/head.txt"
-export TIKTOKEN_CACHE_DIR="$FULL_CHECK_TOKENIZER_CACHE" UV_CACHE_DIR="$FULL_CHECK_UV_CACHE_DIR"
+export UV_CACHE_DIR="$FULL_CHECK_UV_CACHE_DIR"
 export UV_PYTHON_INSTALL_DIR="$MANAGED_DIR" UV_PYTHON_DOWNLOADS=never UV_OFFLINE=1
 D="$top/scripts/diagnostics/run-a001-fase0-uv"
 echo "== full check at $head"
@@ -92,15 +92,6 @@ print("ok" if eval(sys.argv[2],{"d":d,"R":sys.argv[3]}) else "bad")' "$1" "$2" "
 t=$SECONDS
 lap() { echo "  ($((SECONDS - t))s)"; t=$SECONDS; }
 
-# --- T: tokenizer cache ------------------------------------------------------------------
-key=9b5ad71b2ce5302211f9c61530b329a4922fc6a4
-sum=223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7
-file="$TIKTOKEN_CACHE_DIR/$key"
-[ "$(ls -A "$TIKTOKEN_CACHE_DIR")" = "$key" ] || stop "T: unexpected tokenizer cache content"
-echo "$sum  $file" | sha256sum -c - > "$PROOF/T.out" || stop "T: sha256 mismatch"
-[ "$(cat "$PROOF/T.out")" = "$file: OK" ] || stop "T: unexpected sha256sum output"
-echo "T: ok"; lap
-
 # --- O: origin of the managed interpreter ------------------------------------------------
 "$MANAGED_PY" -I -B "$D/check_python_origin.py" --expected-managed "$MANAGED_DIR" > "$PROOF/O.out"
 [ "$(json_check "$PROOF/O.out" 'd["isolated"] is True and d["expected_managed"] == R')" = ok ] || stop "O: unexpected output"
@@ -108,7 +99,7 @@ echo "O: ok"; lap
 
 # --- P: input inventory ------------------------------------------------------------------
 "$MANAGED_PY" -I -B "$D/make_input_inventory.py" --repo "$top" --managed "$MANAGED_DIR" \
-  --backend-wheel "$FULL_CHECK_BACKEND_WHEEL" --uv "$FULL_CHECK_UV" --tokenizer-cache "$TIKTOKEN_CACHE_DIR" \
+  --backend-wheel "$FULL_CHECK_BACKEND_WHEEL" --uv "$FULL_CHECK_UV" \
   --output "$PROOF/package-inputs.json" > "$PROOF/P.out"
 [ "$(json_check "$PROOF/P.out" 'd["status"] == "PASS_INPUT_CAPTURE_ONLY"')" = ok ] || stop "P: unexpected output"
 echo "P: $(cat "$PROOF/P.out")"; lap
@@ -216,7 +207,7 @@ run_suite() {                                         # run_suite <name> <pytest
   fi
   lap
 }
-run_suite fast-suite tests/ --ignore=tests/api --ignore=tests/packaging --ignore=tests/docker
+run_suite fast-suite tests/
 # Bench tests (MFL026): at least one runs and none is skipped.
 rc=0
 "$MANAGED_PY" -I -B "$top/scripts/bench_junit_guard.py" "$PROOF/fast-suite.xml" > "$PROOF/bench-guard.out" 2>&1 || rc=$?
@@ -226,7 +217,6 @@ if [ "$rc" -ne 0 ]; then
   grep -E '^problem: ' "$PROOF/bench-guard.out" >&2 || true
   fail+=("bench-guard")
 fi
-run_suite api-suite tests/api
 
 # --- end ---------------------------------------------------------------------------------
 [ "$(git rev-parse HEAD)" = "$head" ] || fail+=("HEAD changed")

@@ -20,8 +20,9 @@ import sys
 import tomllib
 
 
-MODULES = ("config", "logging_config", "exceptions", "unified_converter", "master_workflow",
-           "clean_markdown", "validate_markdown", "chunk_markdown", "batch_monitor", "marker_api_server")
+# Top-level modules outside the package: none since the legacy pipeline was removed. The
+# "modules" field of S stays, empty, so schema 1 does not change.
+MODULES = ()
 INPUTS = ("pyproject.toml", ".python-version", "uv.lock", "build-constraints.txt", "README.md", "LICENSE",
           "MANIFEST.in", "setup.cfg", "setup.py", "requirements.txt", "uv.toml")
 
@@ -193,7 +194,7 @@ def validate_current(source, repo, official=False):
         raise ValueError('Standalone richiede clone esplicito senza snapshot/host diverso')
     expected_modules = sorted((repo / (m+'.py')).relative_to(host).as_posix() for m in MODULES)
     if [x['path'] for x in payload['modules']] != expected_modules:
-        raise ValueError('S deve identificare esattamente dieci moduli ordinati')
+        raise ValueError('S must identify exactly the expected top-level modules, in order')
     required_inputs = {(repo/n).relative_to(host).as_posix() for n in (*INPUTS, 'src')}
     if not required_inputs <= {x['path'] for x in payload['build_inputs']}:
         raise ValueError('Input build obbligatori mancanti')
@@ -261,7 +262,7 @@ def capture(args, snapshot_data, indexed):
             raise ValueError('Binario uv esplicito mancante')
     modules = sorted((entry(args.repo / f"{name}.py", host_repo) for name in MODULES), key=lambda e: e["path"])
     if any(item["kind"] != "file" for item in modules):
-        raise ValueError("Dieci moduli obbligatori mancanti")
+        raise ValueError("Required top-level modules missing")
     inputs = [entry(args.repo / name, host_repo) for name in INPUTS]
     inputs.extend(entry(p, host_repo) for p in application_files(args.repo))
     pyproject = args.repo / "pyproject.toml"
@@ -305,8 +306,8 @@ def capture(args, snapshot_data, indexed):
                 raise ValueError('Package: input obbligatorio assente: '+name)
         if (args.repo/'uv.toml').exists() or (args.repo/'setup.cfg').exists():
             raise ValueError('Configurazione aggiuntiva non inventariata nel backend: riesame necessario')
-        if config.get('tool',{}).get('setuptools',{}).get('py-modules') != list(MODULES):
-            raise ValueError('Elenco py-modules inatteso')
+        if config.get('tool',{}).get('setuptools',{}).get('py-modules', []) != list(MODULES):
+            raise ValueError('Unexpected py-modules list')
     diagnostics = sorted((entry(p, host_repo) for p in Path(__file__).parent.glob("*.py")), key=lambda e: e["path"])
     all_entries = modules + inputs + diagnostics + ([inventory] if inventory else [])
     if len({item["path"] for item in all_entries}) != len(all_entries):

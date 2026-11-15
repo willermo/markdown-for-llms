@@ -31,6 +31,15 @@ The knowledge base owns strategy, priorities and process decisions; this reposit
 
 Report conflicts; never silently rewrite governance or knowledge base files.
 
+## Transition until the new initial commit
+
+The project is being realigned by decisions of the maintainer (2026-11-12, 2026-11-14 and 2026-11-15, in the knowledge base). Until the documentation rewrite that precedes a new initial commit of the repository:
+
+- `README.md`, `CHANGELOG.md`, `documentation/` (ADRs, roadmap, technical debt, architecture notes, benchmark conclusions) and `docs/` describe the product before the realignment. They are history, not a reference for the direction: the direction in force is stated by the run prompt and by the knowledge base notes it references.
+- They are not maintained: runs do not update them, add no ADR and do not change the roadmap status. A stale public document, or a link in it broken by code a run removes, is not a review finding.
+- Exceptions, kept current because the reviewers need them to run the work: this governance (`AGENTS.md`, `CLAUDE.md`, `.agents/`, `.claude/`), the full check (`scripts/full-check.sh`) and its guide (`docs/how-to/uv-environment.md`), the how-to guide of a command a run adds or changes, and `.env.example` for the `MDF_` settings.
+- The rules below that depend on the public documentation state how they apply during the transition. The rest of this file stays in force; it is rewritten together with the new initial commit.
+
 ## Gates
 
 - For any non-trivial task, plan before changing files: objective, files expected to change, files inspected but not changed, risks and rollback, verification commands.
@@ -64,12 +73,11 @@ git switch -c <feature|fix|chore>/<short-name>
 ## Environments and deployment
 
 - The tested target is a single user on Linux x86_64, CPU only, loopback access (`127.0.0.1`). Public, LAN or multi-user use, GPU profiles, Windows and macOS are not supported until verified.
-- The new product (`markdown_for_llms/`) runs locally as two processes (API and worker). The Docker and Compose files in the repository belong to the legacy pipeline and do not prove that the new product can be distributed: Docker distribution of the new product is a roadmap increment.
+- The product (`markdown_for_llms/`) runs locally as two processes (API and worker). The legacy Docker and Compose files were removed with the legacy pipeline (decision of 2026-11-12), and the repository has no Docker distribution of the product; the only image is the reference toolchain of the bench, built locally by `mdf bench prepare --toolchain` from `scripts/bench-toolchain/`.
 - Host ports: this project's block is `23460-23479`, the same on every host of the maintainer's infrastructure, assigned by the infrastructure port registry (see the development protocol, shared infrastructure resources). Today it applies only to the laptop, because the project has no remote environment; the API binds to `127.0.0.1` because the code accepts no other host. Every host port in compose files, `.env.example` and nginx configuration comes from `.env`, lies within the block and binds to `127.0.0.1` unless a reason is stated here; a compose fallback, if any, is a port of the block. A new or changed port outside the block, or missing from the list below, is a review finding.
-  - `23460`: API and Web UI of `mdf` (`MDF_PORT`, default in `markdown_for_llms/settings.py` and `.env.example`), laptop only, `127.0.0.1`.
+  - `23465`: API and Web UI of `mdf` (`MDF_PORT`, default in `markdown_for_llms/settings.py` and `.env.example`), laptop only, `127.0.0.1`; odd port of the pair `23464`/`23465` (odd on the laptop and in staging, even in production, by the rule of the infrastructure port registry). An archive created with the former default `23460` keeps that port in its identity: the storage mismatch message names it.
   - `23461`: relay of `mdf bench` towards an inference server (`MDF_BENCH_RELAY_PORT`, default in `markdown_for_llms/bench/settings.py`, commented in `.env.example`), laptop only, `127.0.0.1`.
   - `23463`: local inference server started and stopped by `mdf bench` (`MDF_BENCH_INFERENCE_PORT`, same defaults), laptop only, `127.0.0.1`.
-  - `8000`: Marker server of the legacy pipeline, literal in `docker-compose.yml` and `docker-compose-build.yml`, `127.0.0.1`; historical and outside the block, not moved until the future of the legacy pipeline is decided.
 - No public deploy, no weakening of the sandbox isolation, no persistent privilege as a side effect of a run. Deploys and operations on remote machines need an explicit operational scope from the maintainer.
 
 ## Protected files
@@ -110,14 +118,14 @@ There is no `GEMINI.md` and no `.agents/workflows/` in this repository: procedur
 - Never declare an incomplete conversion or a batch with hidden errors as successful. Identify runs and artifacts by ID and hash, not by file name alone.
 - Keep the three status axes apart: job **state** (queued, running, completed…), result **bundle** integrity (ready, unchecked, incomplete, invalid) and content **quality** (currently always `unverified`). A completed job or a ready bundle does not certify fidelity.
 - Architecture: FastAPI, a separate worker for long conversions, SQLite and the local filesystem. Web UI, API and CLI share the same application services; do not duplicate logic in the UI or in endpoints. The API process does not import the ML engine.
-- Before changing the new architecture (`markdown_for_llms/`), read the ADR index (`documentation/decisions/README.md`) and the public roadmap (`documentation/roadmap.md`); distinguish what is proven, what works with unverified quality and what is only planned, and never present planned increments as available.
+- Before changing the architecture of `markdown_for_llms/`, read the direction stated by the run prompt and the knowledge base notes it references; during the transition the ADR index and the public roadmap describe the product before the realignment. Distinguish what is proven, what works with unverified quality and what is only planned, and never present planned work as available.
 - Conversion and AI review have separate providers and configuration. Local mode never sends documents to remote services through implicit fallbacks.
 - Configuration is typed (`MDF_` prefix), documented in `.env.example` and recorded per run. Never store secrets in logs or snapshots.
-- The legacy script pipeline (root modules, `markdown-pipeline` and related entry points) coexists with the new product (`mdf`). Do not confuse the two paths and do not remove legacy compatibility without an explicit decision.
+- The legacy script pipeline (root modules, the `markdown-*` entry points, the legacy Marker server with its Docker and Compose files, and its packaging and Docker test suites) was removed by the maintainer's decision of 2026-11-12, without compatibility. Do not reintroduce it: useful functions (for example chunking) come back later inside the product, by an explicit decision.
 
 ### Priorities and accepted debt
 
-The maintainer's decision of 2026-10-16: move towards a usable converter and Web UI through the roadmap increments, with uncertified quality and explicit limits. The a002/a003 reader and comparator, the parser/trace work and advanced validation are recognized technical debt (`documentation/development/technical-debt.md`, `documentation/benchmarks/a002-residual-debt.md`, ADR 0008), to be consolidated when time and resources allow; they are not prerequisites of the experimental product.
+The maintainer's decision of 2026-10-16, whose direction the decisions of 2026-11-12 to 2026-11-15 supersede (see "Transition until the new initial commit"): move towards a usable converter and Web UI through the roadmap increments, with uncertified quality and explicit limits. The a002/a003 reader and comparator, the parser/trace work and advanced validation are recognized technical debt (`documentation/development/technical-debt.md`, `documentation/benchmarks/a002-residual-debt.md`, ADR 0008); they are not prerequisites of the experimental product, and the a002 benchmark code was removed in 2026-11.
 
 - Do not restart the parser/trace cycle automatically and do not link the experimental Pandoc fork as an implicit dependency.
 - Do not turn old `NO_GO` results into `GO`, and do not invent retroactive reviews.
@@ -135,21 +143,21 @@ The maintainer's decision of 2026-10-16: move towards a usable converter and Web
 - Technical choices that are reversible and within requirements, costs and boundaries are allowed even if the prompt does not list them: record choice, reason, risks and evidence for the reviewers.
 - Reviewers work in fresh, independent chats, on the same object and with the same criteria, without reading the other review first. For each finding verify reachability on admitted inputs, impact, attribution to the baseline and the requirement violated; synthetic cases are valid for fidelity, boundaries and security.
 - Prefer the decisive minimal proof and the diagnosis of a recurring cause to large test matrices or repeated evidence bundles. Do not duplicate archives at every round: raw evidence stays in `temp/<run>/` and is cleaned selectively, only after the run's validation and after checking that nothing still active depends on it.
-- For UI changes, test in a browser including refresh, a failed job and persistence. When a change affects configuration, update `.env.example` and the reference docs; update the roadmap status only when its criteria are met.
+- For UI changes, test in a browser including refresh, a failed job and persistence. When a change affects configuration, update `.env.example`; during the transition the reference docs and the roadmap status are not updated (see "Transition until the new initial commit").
 
 ### Verification
 
 - Run checks proportionate to the change, keeping unit tests, integration tests and real benchmarks separate. For conversions, verify text, formulas, assets and order, not only the presence of files or metadata (skill `verify-conversion-fidelity`).
 - Use the virtual environment linked to the managed local CPython 3.12, with the package installed in the same interpreter as the child processes. After code changes rebuild sdist and wheel, reinstall the canonical wheel and compare hashes before running with `--no-sync`: `uv sync` alone is not proof. Procedure in `docs/how-to/uv-environment.md`.
-- Fast suite, the check of the development cycle, after the installation preflight (tokenizer cache, Pandoc and runner ready):
+- Fast suite, the check of the development cycle, after the installation preflight of the full check (`RUN_SOURCE_MANIFEST`, `RUN_INSTALLATION_RECEIPT` and `RUN_TEST_MODE=standalone`, as the full check sets them):
 
   ```bash
-  "$RUN_DEV_PY" -I -B -m pytest tests/ --ignore=tests/api --ignore=tests/packaging --ignore=tests/docker -q
+  "$RUN_DEV_PY" -I -B -m pytest tests/ -q
   ```
 
-  The two root smoke scripts are excluded. The selected suite is not a full acceptance test, and historical legacy results do not transfer to new code. Do not install or download anything to repair a failed collection.
+  The selected suite is not a full acceptance test, and historical legacy results do not transfer to new code. Do not install or download anything to repair a failed collection.
 - Repository hygiene guard: `tests/unit/test_repository_hygiene.py` (no personal home paths in tracked files, local pointer files untracked) runs in the fast suite; for documentation-only changes run it alone with `"$RUN_DEV_PY" -I -B -m pytest --noconftest -p no:cacheprovider tests/unit/test_repository_hygiene.py -q`.
-- Full check: `scripts/full-check.sh`. It runs the installation preflight (T, O, P, S, B, reinstallation of the canonical wheel in the development venv with a RECORD check, I, F) and the precondition X (the reference toolchain image of the bench, read-only), then the fast suite with the bench JUnit guard (`scripts/bench_junit_guard.py`: at least one bench test runs, none skipped), then `tests/api`. `tests/packaging` and `tests/docker` stay out: they are contracts of the legacy pipeline whose prerequisites (wheel venv, a001 baseline, image receipts) were removed on 2026-10-17, and without them they fail instead of skipping; a future decision of the maintainer will rebuild them or retire the legacy pipeline. No lint. It stops on a dirty tree, writes its evidence under `.cache/full-check/` (ignored by git) and exits nonzero when a step or a suite fails. Paths come from the `FULL_CHECK_*` variables described in `docs/how-to/uv-environment.md` ("Run the full check").
+- Full check: `scripts/full-check.sh`. It runs the installation preflight (O, P, S, B, reinstallation of the canonical wheel in the development venv with a RECORD check, I, F) and the precondition X (the reference toolchain image of the bench, read-only), then the fast suite with the bench JUnit guard (`scripts/bench_junit_guard.py`: at least one bench test runs, none skipped). No lint. It stops on a dirty tree, writes its evidence under `.cache/full-check/` (ignored by git) and exits nonzero when a step or a suite fails. Paths come from the `FULL_CHECK_*` variables described in `docs/how-to/uv-environment.md` ("Run the full check"); none of them lies under `temp/`.
 - The full check runs on the commit handed to the diff review and again before the merge, with a clean tree; a selected run never stands for it in a report. The author saves its output and reports the file's path and SHA256:
 
   ```bash
@@ -166,12 +174,13 @@ The maintainer's decision of 2026-10-16: move towards a usable converter and Web
 
 ### Documentation
 
+- During the transition the entries below describe the layout of the documentation, not content to maintain (see "Transition until the new initial commit").
 - `documentation/`: public project documentation of the product (architecture decision records, roadmap, known limitations and technical debt, architecture notes, benchmark conclusions). No evidence trees, review bundles, test dumps, runtimes or recursive copies of runs. A hash records an identity; it does not make deleted evidence available.
 - `docs/`: user and developer documentation of the available behaviour, organized by Diátaxis (skill `write-diataxis-docs`).
 - `README.md`: entry point to the product and its guides; run outcomes do not belong there.
-- Significant architecture choices go in an ADR (skill `record-architecture-decision`), keeping the decision status separate from the implementation status. Superseded ADRs are linked, not rewritten.
+- Significant architecture choices: during the transition no ADR is added or changed (skill `record-architecture-decision` suspended); report them to the supervision, which records them in the knowledge base. Superseded ADRs are linked, not rewritten.
 - Run plans, prompts, reviews, arbitrations, handovers and raw evidence live in `temp/<run>/`, ignored by git.
-- Language: code, comments, docstrings, commit messages, branch names and all repository documentation in **English**. Declared exceptions: test fixtures and corpus data under `tests/fixtures/`; code whose behaviour depends on Italian text (for example `scripts/benchmarks/document_response.py`, `scripts/benchmarks/corpus.py`); Italian comments, docstrings and messages still present in existing code, including build and configuration files (`Dockerfile`, `docker-compose.yml`, `MANIFEST.in`, `pyproject.toml`), translated when that code next changes; the product's user-facing messages (API errors, CLI and Web UI labels) until they are translated, quoted verbatim with an English gloss in the documentation; ADR 0007, superseded and kept unchanged; the mandatory gate formulas `AUTORIZZATO A IMPLEMENTARE.` and `Questa NON è autorizzazione a implementare.`. Do not rewrite historical commits.
+- Language: code, comments, docstrings, commit messages, branch names and all repository documentation in **English**. Declared exceptions: test fixtures and corpus data under `tests/fixtures/`; code whose behaviour depends on Italian text; Italian comments, docstrings and messages still present in existing code, including build and configuration files (`MANIFEST.in`, `pyproject.toml`), translated when that code next changes; the product's user-facing messages (API errors, CLI and Web UI labels) until they are translated, quoted verbatim with an English gloss in the documentation; ADR 0007, superseded and kept unchanged; the mandatory gate formulas `AUTORIZZATO A IMPLEMENTARE.` and `Questa NON è autorizzazione a implementare.`. Do not rewrite historical commits.
 - Run documents under `temp/` (prompts, plans, review reports, arbitrations, `stato.md`, handovers) are written in **Italian**, the owner's language; quotations from the repository, identifiers, paths and commands stay verbatim.
 
 ## Final report

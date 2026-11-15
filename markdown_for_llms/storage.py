@@ -25,7 +25,8 @@ class CapacityError(StorageError):
 SCHEMA = 2
 MISMATCH = ("Storage configuration mismatch; for an archive of a previous version, possible causes are "
             "an MDF_TIMEOUT_SECONDS or an MDF_PORT different from the ones it was created or configured "
-            "with (an archive created with the former default port needs MDF_PORT=8765)")
+            "with (an archive created with a former default port needs it in MDF_PORT: 23460, or 8765 "
+            "for archives created before 2026-11-07)")
 UPGRADE_BUSY = ("Storage upgrade needs exclusive access: stop the API, worker and CLI "
                 "of every version, then restart")
 

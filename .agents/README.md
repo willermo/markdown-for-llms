@@ -14,7 +14,7 @@ There is no `workflows/` folder: procedures are skills.
 | [plan-before-code](skills/plan-before-code/SKILL.md) | Before changing files in a non-trivial task, or in a planning-only run |
 | [session-start](skills/session-start/SKILL.md) | At the start of a session, or when resuming after a pause |
 | [session-handover](skills/session-handover/SKILL.md) | At the end of a session, or when the context is close to saturation |
-| [record-architecture-decision](skills/record-architecture-decision/SKILL.md) | To record or update an architecture decision, keeping ADRs and roadmap consistent |
+| [record-architecture-decision](skills/record-architecture-decision/SKILL.md) | Suspended during the transition (`AGENTS.md`); afterwards, to record or update an architecture decision, keeping ADRs and roadmap consistent |
 | [verify-conversion-fidelity](skills/verify-conversion-fidelity/SKILL.md) | When parsers, OCR, cleaning, formulas, assets or the serializer change, and for engine benchmarks |
 | [write-diataxis-docs](skills/write-diataxis-docs/SKILL.md) | To write user or developer documentation in the right Diátaxis form |
 | [prepare-release](skills/prepare-release/SKILL.md) | To prepare the integration of a reviewed run or a release, with the commands for the owner |

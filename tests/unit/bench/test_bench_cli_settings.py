@@ -35,7 +35,7 @@ class ForwardingTests(unittest.TestCase):
 class ProductPrefixTests(unittest.TestCase):
     def test_product_ignores_bench_variables_only(self):
         settings = Settings.load(environ={"MDF_BENCH_CACHE_DIR": "/x", "MDF_BENCH_ANYTHING": "y"})
-        self.assertEqual(settings.port, 23460)
+        self.assertEqual(settings.port, 23465)
         with self.assertRaises(ConfigurationError):
             Settings.load(environ={"MDF_BENCHX": "1"})
         with self.assertRaises(ConfigurationError):
