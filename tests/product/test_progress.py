@@ -380,7 +380,7 @@ class ProgressViewTests(unittest.TestCase):
                 with patch('markdown_for_llms.cli.Service', FakeService), patch('markdown_for_llms.cli.time.sleep'), \
                         patch.object(sys, 'stdout', out), patch.object(sys, 'stderr', err):
                     code = main(['--data-root', self.settings.data_root, '--model-root', self.settings.model_root,
-                                 'convert', '--wait', str(source)])
+                                 'submit', '--wait', str(source)])
                 self.assertEqual(code, 0)
                 self.assertEqual(json.loads(out.getvalue())['state'], 'completed')
                 if tty:

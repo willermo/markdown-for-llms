@@ -33,7 +33,7 @@ def application_files(repo):
     if not root.exists():
         return []
     return sorted(p for p in root.rglob('*') if p.is_file() and
-                  p.suffix in {'.py', '.json', '.sql', '.html', '.css', '.js'})
+                  p.suffix in {'.py', '.json', '.sql', '.html', '.css', '.js', '.lua'})
 
 
 def canonical(value):

@@ -137,7 +137,7 @@ class JUnitGuardTests(unittest.TestCase):
 
 
 CONTEXT = ROOT / "scripts" / "bench-toolchain"
-TOOLCHAIN_JSON = BENCH / "data" / "toolchain.json"
+TOOLCHAIN_JSON = ROOT / "markdown_for_llms" / "engine" / "data" / "toolchain.json"
 
 
 class ToolchainContextTests(unittest.TestCase):
@@ -155,7 +155,7 @@ class ToolchainContextTests(unittest.TestCase):
         manifest = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(manifest)
         files = {p.relative_to(ROOT).as_posix() for p in manifest.application_files(ROOT)}
-        self.assertIn("markdown_for_llms/bench/data/toolchain.json", files)
+        self.assertIn("markdown_for_llms/engine/data/toolchain.json", files)
         self.assertFalse([f for f in files if "bench-toolchain" in f])
 
     def test_prepare_refuses_a_context_that_differs(self):
@@ -196,7 +196,7 @@ class ToolchainContextTests(unittest.TestCase):
 
     def test_full_check_verifies_the_image_before_the_suites(self):
         text = (ROOT / "scripts" / "full-check.sh").read_text()
-        x = text.index("-m markdown_for_llms.bench.toolchain verify")
+        x = text.index("-m markdown_for_llms.engine.toolchain verify")
         self.assertLess(text.index('echo "F: PASS_CURRENT_I"'), x)
         self.assertLess(x, text.index("run_suite fast-suite"))
         self.assertIn('|| stop "X: ', text[x:x + 200])

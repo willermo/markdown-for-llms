@@ -39,7 +39,7 @@ KNOWN_COMMANDS = set(GREEK) | set(SYMBOLS) | WORD_COMMANDS | DROPPED | {
 def cache_key(doc, hashes):
     """The key of a check set; the toolchain identity comes from `toolchain.json`, without a container
     (the projection of D06 is read with poppler of the toolchain)."""
-    from . import toolchain
+    from ..engine import toolchain
     twin = doc["twin"]
     value = {"document_id": doc["id"], "input_sha256": hashes.get("derived", {}).get("sha256") if isinstance(hashes.get("derived"), dict) else hashes["source"],
              "twin_sha256": hashes["twin"], "inventory_sha256": hashes.get("inventory"),

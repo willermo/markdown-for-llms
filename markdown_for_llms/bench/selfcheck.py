@@ -24,7 +24,7 @@ from pathlib import Path
 import re
 import shutil
 
-from . import tools
+from ..engine import tools
 from .codes import BenchError, Code
 from .readers.htmltree import parse_html
 from .readers.safe import local, parse_xml, read_tar

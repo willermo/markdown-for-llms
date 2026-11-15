@@ -973,6 +973,7 @@ version = "1.0.0"
 source = { editable = "." }
 default-groups = []
 dependencies = [
+    { name = "charset-normalizer" },
     { name = "python-dotenv" },
     { name = "requests" },
     { name = "tqdm" },
@@ -1034,6 +1035,7 @@ dev = [
 requires-dist = [
     { name = "beautifulsoup4", marker = "extra == 'marker-cpu'" },
     { name = "beautifulsoup4", marker = "extra == 'marker-cu126'" },
+    { name = "charset-normalizer", specifier = ">=3.5.2" },
     { name = "fastapi", marker = "extra == 'app'", specifier = "==0.142.2" },
     { name = "markdown-it-py", marker = "extra == 'app'", specifier = "==4.0.0" },
     { name = "markdown-it-py", marker = "extra == 'bench'", specifier = "==4.0.0" },

@@ -30,7 +30,7 @@ def read_twin(doc, files, cache=None):
         return read_xlsx(files.twin["file"])
     if kind == "xlsx-projection":
         from .xlsx import project
-        from .. import tools
+        from ...engine import tools
         layout = tools.run("pdftotext", ["-layout", tools.In(files.input), "-"], cache.tool_work_dir, timeout=300)
         return project(files.twin["file"], twin["select"], layout.decode("utf-8", "replace"))
     if kind == "odt":

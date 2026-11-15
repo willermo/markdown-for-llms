@@ -36,7 +36,7 @@ EXTRAS = {
 
 def metadata_bytes(extras=None):
     lines = ['Name: markdown-for-llms','Version: 1.0.0','Requires-Python: >=3.12,<3.13']
-    lines += ['Requires-Dist: '+r for r in ('requests>=2.31.0','tqdm>=4.66.0','python-dotenv>=1.0.0')]
+    lines += ['Requires-Dist: '+r for r in ('requests>=2.31.0','charset-normalizer>=3.5.2','tqdm>=4.66.0','python-dotenv>=1.0.0')]
     for extra, deps in (EXTRAS if extras is None else extras).items():
         lines.append('Provides-Extra: '+extra)
         lines += ['Requires-Dist: '+d+'; extra == "'+extra+'"' for d in deps]

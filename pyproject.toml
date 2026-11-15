@@ -12,6 +12,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
     "requests>=2.31.0",
+    "charset-normalizer>=3.5.2",
     "tqdm>=4.66.0",
     "python-dotenv>=1.0.0",
 ]
@@ -34,13 +35,14 @@ dev = [
 
 [tool.setuptools]
 packages = [
-    "markdown_for_llms", "markdown_for_llms.engines", "markdown_for_llms.bench",
+    "markdown_for_llms", "markdown_for_llms.engine", "markdown_for_llms.engines", "markdown_for_llms.bench",
     "markdown_for_llms.bench.readers", "markdown_for_llms.bench.adapters",
 ]
 include-package-data = false
 
 [tool.setuptools.package-data]
 markdown_for_llms = ["web/*.html", "web/*.css", "web/*.js", "migrations/*.sql", "models.json"]
+"markdown_for_llms.engine" = ["data/*.json", "filters/*.lua"]
 "markdown_for_llms.bench" = ["data/*.json"]
 
 [tool.uv]
@@ -87,7 +89,7 @@ norecursedirs = [
     ".cache", "__pycache__", ".git",
 ]
 
-# Metadati EbookLib0.18 osservati in due wheel; ADR0006 e addendum r008.
+# EbookLib 0.18 metadata as observed in two wheels; ADR 0006 and addendum r008.
 [[tool.uv.dependency-metadata]]
 name = "ebooklib"
 version = "0.18"

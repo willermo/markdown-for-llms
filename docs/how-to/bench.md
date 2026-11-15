@@ -6,7 +6,7 @@ For developers on Linux. The bench is a development tool, separate from the expe
 
 | Command | What it does today |
 | --- | --- |
-| `mdf bench prepare --toolchain` | builds the reference toolchain image locally, verifies it file by file and self-tests it |
+| `mdf bench prepare --toolchain` | builds the reference toolchain image locally, verifies it file by file and self-tests it (also `mdf prepare --toolchain`: the image is the toolchain of the conversion engine too) |
 | `mdf bench list` | lists the documents of the manifest |
 | `mdf bench fetch` | downloads and verifies the documents, their twins and derived inputs |
 | `mdf bench checks` | generates the checks from the twins, from the cache only |
@@ -43,7 +43,7 @@ The bench has its own venv, `.venv-bench/`, with the `bench` extra (Marker 2.2.0
 .venv-bench/bin/mdf bench prepare --toolchain
 ```
 
-The command checks the build context `scripts/bench-toolchain/` of the checkout against the identity packaged in `markdown_for_llms/bench/data/toolchain.json` (it refuses a changed, added or missing file), creates the BuildKit builder `mdf-bench-toolchain` (memory cap 6 GiB) when it is absent, builds the image, verifies every file of the image against its content manifest and runs a self-test of the tools. Only then does it tag the image `mdf-bench-toolchain:<first 16 characters of the content SHA-256>`.
+The command checks the build context `scripts/bench-toolchain/` of the checkout against the identity packaged in `markdown_for_llms/engine/data/toolchain.json` (it refuses a changed, added or missing file), creates the BuildKit builder `mdf-bench-toolchain` (memory cap 6 GiB) when it is absent, builds the image, verifies every file of the image against its content manifest and runs a self-test of the tools. Only then does it tag the image `mdf-bench-toolchain:<first 16 characters of the content SHA-256>`.
 
 Everything happens on your machine: no account, no registry login, no push. The build needs the network: the BuildKit image and the Debian base image from Docker Hub, by digest, a Debian snapshot, conda-forge, the pixi release on GitHub, DjVuLibre on SourceForge and the LibreOffice archive, each input pinned by digest or SHA-256. A build from scratch took about 2.5 minutes on the tested laptop (161 s), and the whole command about 3 minutes. Expected output (abridged; the image ID of your build differs):
 
@@ -145,10 +145,10 @@ Ports 23461 and 23463 are only reserved for the measured conversion: no command 
 
 ## The image and the full check
 
-The fast suite runs the real tests of the bench inside the toolchain image, so [`scripts/full-check.sh`](uv-environment.md#run-the-full-check) needs the image: before the suites, its precondition X runs `python -m markdown_for_llms.bench.toolchain verify` in the development venv and stops when the image is missing or differs from `toolchain.json`. It never builds or downloads anything. To check the image before a full check:
+The fast suite runs the real tests of the bench and of the conversion engine inside the toolchain image, so [`scripts/full-check.sh`](uv-environment.md#run-the-full-check) needs the image: before the suites, its precondition X runs `python -m markdown_for_llms.engine.toolchain verify` in the development venv and stops when the image is missing or differs from `toolchain.json`. It never builds or downloads anything. To check the image before a full check:
 
 ```bash
-.venv-bench/bin/python -I -B -m markdown_for_llms.bench.toolchain verify
+.venv-bench/bin/python -I -B -m markdown_for_llms.engine.toolchain verify
 ```
 
 ```text

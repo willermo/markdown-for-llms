@@ -14,7 +14,7 @@ from pathlib import Path
 import re
 import shutil
 
-from . import toolchain, tools
+from ..engine import toolchain, tools
 from .cache import canonical, sha256_file, write_atomic
 from .codes import BenchError, Code
 

@@ -20,7 +20,8 @@ from pathlib import Path
 import re
 import shutil
 
-from . import derive, toolchain, tools
+from . import derive
+from ..engine import toolchain, tools
 from .codes import BenchError, Code
 
 VERSION_COMMANDS = {

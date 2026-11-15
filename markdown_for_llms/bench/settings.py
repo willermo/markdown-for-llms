@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 
 from .codes import BenchError, Code
-from .tools import DEFAULT_MEMORY_MB as DEFAULT_TOOL_MEMORY_MB, MEMORY_MB_RANGE
+from ..engine.tools import DEFAULT_MEMORY_MB as DEFAULT_TOOL_MEMORY_MB, MEMORY_MB_RANGE
 
 PREFIX = "MDF_BENCH_"
 PORT_BLOCK = range(23460, 23480)   # the project's block of host ports (AGENTS.md)

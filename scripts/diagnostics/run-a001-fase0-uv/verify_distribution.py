@@ -140,7 +140,7 @@ def check_metadata(data, entrypoints):
         raise ValueError('Distribution entrypoints differ')
     requirements = metadata.get_all('Requires-Dist', [])
     base = {r.split(';')[0].strip() for r in requirements if ';' not in r}
-    if base != {'requests>=2.31.0','tqdm>=4.66.0','python-dotenv>=1.0.0'}:
+    if base != {'requests>=2.31.0','charset-normalizer>=3.5.2','tqdm>=4.66.0','python-dotenv>=1.0.0'}:
         raise ValueError('Base runtime dependencies differ')
     extras = metadata.get_all('Provides-Extra', [])
     if len(extras) != len(EXTRA_REQUIREMENTS) or set(extras) != set(EXTRA_REQUIREMENTS):

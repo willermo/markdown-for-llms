@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Full check of markdown-for-llms (AGENTS.md, "Verification"): installation preflight
 # (O, P, S, B, reinstallation of the canonical wheel with a RECORD check, I, F), the
-# precondition X (the reference toolchain image of the bench), then the fast suite on tests/
-# with the bench JUnit guard. Run it at the root of a clean checkout:
+# precondition X (the toolchain image of the engine), then the fast suite on tests/ with the
+# JUnit guard of the bench and engine tests. Run it at the root of a clean checkout:
 #   scripts/full-check.sh
 # Paths come from the FULL_CHECK_* variables (docs/how-to/uv-environment.md, "Run the full
 # check"): environment first, then the untracked .full-check.env of this checkout or of the
@@ -156,11 +156,12 @@ echo "I: $(cat "$PROOF/I.out")"; lap
 [ "$(cat "$PROOF/F.out")" = PASS_CURRENT_I ] || stop "F: unexpected output"
 echo "F: PASS_CURRENT_I"; lap
 
-# --- X: reference toolchain image of the bench (MFL026) ----------------------------------
-# The bench tests that use external tools run them in this image (built locally by
-# `mdf bench prepare --toolchain`); without it, or with an image that differs from
-# toolchain.json, they would fail: stop here with the reason. Read-only; no build, no network.
-"$FULL_CHECK_DEV_PYTHON" -I -B -m markdown_for_llms.bench.toolchain verify > "$PROOF/X.out" 2>&1 \
+# --- X: toolchain image of the engine (MFL026, MFL032) ----------------------------------
+# The engine and bench tests that use external tools run them in this image (built locally by
+# `mdf prepare --toolchain`, alias `mdf bench prepare --toolchain`); without it, or with an
+# image that differs from toolchain.json, they would fail: stop here with the reason.
+# Read-only; no build, no network.
+"$FULL_CHECK_DEV_PYTHON" -I -B -m markdown_for_llms.engine.toolchain verify > "$PROOF/X.out" 2>&1 \
   || stop "X: $(tail -n 1 "$PROOF/X.out")"
 echo "X: $(tail -n 1 "$PROOF/X.out")"; lap
 
@@ -208,12 +209,12 @@ run_suite() {                                         # run_suite <name> <pytest
   lap
 }
 run_suite fast-suite tests/
-# Bench tests (MFL026): at least one runs and none is skipped.
+# Bench and engine tests (MFL026, MFL032): at least one of each runs and none is skipped.
 rc=0
 "$MANAGED_PY" -I -B "$top/scripts/bench_junit_guard.py" "$PROOF/fast-suite.xml" > "$PROOF/bench-guard.out" 2>&1 || rc=$?
 echo "$(tail -n 1 "$PROOF/bench-guard.out")"
 if [ "$rc" -ne 0 ]; then
-  echo "  red: bench JUnit guard (exit $rc)"
+  echo "  red: bench and engine JUnit guard (exit $rc)"
   grep -E '^problem: ' "$PROOF/bench-guard.out" >&2 || true
   fail+=("bench-guard")
 fi

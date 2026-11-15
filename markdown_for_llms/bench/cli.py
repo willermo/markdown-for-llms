@@ -24,7 +24,7 @@ def build_parser():
                                      "documents, generate and self-check the checks. It converts nothing yet.")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p = sub.add_parser("prepare", help="prepare what the bench needs locally")
+    p = sub.add_parser("prepare", help="prepare what the bench needs locally (also `mdf prepare`)")
     _common(p)
     p.add_argument("--toolchain", action="store_true",
                    help="build the reference toolchain image from the checkout (Docker), verify it and self-test it")
@@ -111,7 +111,7 @@ def cmd_checks(args, settings):
     from .fetch import resolve_document
     from .readers import read_twin
     from .selfcheck import run_self_check
-    from . import toolchain
+    from ..engine import toolchain
     m, docs = _selected(args)
     cache = Cache(settings.cache_dir)
     data = excl.load(args.exclusions)
@@ -168,12 +168,13 @@ def _r(value):
 def cmd_prepare(args, settings):
     from pathlib import Path
     from .cache import Cache
-    from . import toolchain
+    from .selftest import run_selftest
+    from ..engine import toolchain
     if not args.toolchain:
         print("prepare: nothing to prepare (use --toolchain)", file=sys.stderr)
         return 2
     context = Path(args.context) if args.context else Path.cwd() / toolchain.DEFAULT_CONTEXT
-    toolchain.prepare(context, Cache(settings.cache_dir), no_cache=args.no_cache)
+    toolchain.prepare(context, Cache(settings.cache_dir), no_cache=args.no_cache, selftest=run_selftest)
     return 0
 
 
@@ -184,11 +185,11 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     try:
         settings = BenchSettings.load(getattr(args, "env_file", None), cache=getattr(args, "cache", None))
-        from . import tools
+        from ..engine import tools
         tools.set_memory_limit(settings.tool_memory_mb)
         return COMMANDS[args.command](args, settings)
     except BenchError as exc:
-        from .toolchain import HINTS
+        from ..engine.toolchain import HINTS
         hint = HINTS.get(exc.code)
         print(f"error: {exc.code.value}" + (f" ({hint})" if hint else ""), file=sys.stderr)
         return 1
