@@ -19,6 +19,8 @@ from markdown_for_llms.services import Service
 from markdown_for_llms.settings import ConfigurationError, Settings, options
 from markdown_for_llms.storage import StorageError
 from markdown_for_llms.worker import Worker
+
+from engine_fake import fake_convert
 from fastapi.testclient import TestClient
 
 FIXTURES = json.loads(Path(__file__).with_name('reference_contract.json').read_text())['cases']
@@ -157,7 +159,7 @@ class ProductTests(unittest.TestCase):
         self.assertEqual(client.get('/docs').status_code,404)
 
     def test_no_ml_imports(self):
-        result=subprocess.run([sys.executable,'-I','-B','-c',"import markdown_for_llms.api,markdown_for_llms.cli,sys; assert not {'torch','marker','surya','PIL'} & sys.modules.keys()"],capture_output=True,text=True)
+        result=subprocess.run([sys.executable,'-I','-B','-c',"import markdown_for_llms.api,markdown_for_llms.cli,sys; assert not {'torch','marker','surya','PIL','pypdfium2','onnxruntime','indra_ocr'} & {m.split(chr(46))[0] for m in sys.modules}"],capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
 
     def test_missing_source_and_published_asset_reconciliation(self):
@@ -354,20 +356,14 @@ class ProductTests(unittest.TestCase):
                 job = self.service.submit(io.BytesIO(PDF), 'fault.pdf')
                 worker = Worker(self.settings)
                 row = worker.claim()
-                def engine(settings, scratch, source, **kwargs):
-                    if fault == 'abnormal_exit':
-                        return {'reason': None, 'exit': 17}
-                    original = scratch / 'original'
-                    original.mkdir()
-                    write(original, 'document.md', b'' if fault == 'empty_output' else b'preserved content')
-                    write_json(scratch, 'engine.json', {'inventory': [identify(original, 'document.md')], 'inventory_complete': True})
-                    return {'reason': None, 'exit': 0, 'elapsed_seconds': 0}
+                engine = fake_convert(code='engine_failed' if fault == 'abnormal_exit' else None,
+                                      document=b'' if fault == 'empty_output' else b'preserved content')
                 from markdown_for_llms.files import rename as real_rename
                 def rename_or_fail(*args, **kwargs):
                     if fault == 'publication_io_error':
                         raise OSError('controlled publication failure')
                     return real_rename(*args, **kwargs)
-                with patch('markdown_for_llms.worker.check_runtime', return_value={'mock': True}), patch('markdown_for_llms.worker.execute', side_effect=engine), patch('markdown_for_llms.worker.rename', side_effect=rename_or_fail):
+                with patch('markdown_for_llms.worker.convert', side_effect=engine), patch('markdown_for_llms.worker.rename', side_effect=rename_or_fail):
                     worker.process(row)
                 final = self.service.get(job['id'])
                 # A complete publishing result can recover through the shared barrier.

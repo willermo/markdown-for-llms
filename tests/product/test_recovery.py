@@ -23,11 +23,19 @@ from markdown_for_llms.api import create_app
 from markdown_for_llms.capacity import recover, sizes
 from markdown_for_llms.files import identify, write, write_json
 from markdown_for_llms.references import inspect
-from markdown_for_llms.sandbox import scratch_size
+from markdown_for_llms.capacity import sizes as _sizes
+
+
+def scratch_size(path):
+    return sum(_sizes(Path(path)).values())
+
+
 from markdown_for_llms.services import Service, ReadUnavailable
 from markdown_for_llms.settings import Settings
 from markdown_for_llms.storage import Storage, StorageError
 from markdown_for_llms.worker import Worker, validate_raster
+
+from engine_fake import fake_convert
 
 PDF = b'%PDF-1.4\nsynthetic recovery contract\n'
 
@@ -96,19 +104,19 @@ class RecoveryTests(unittest.TestCase):
         j = self.s.submit(io.BytesIO(pdf), 'x.pdf')
         w = Worker(self.settings); self.addCleanup(w.storage.close); row = w.claim()
         admitted = []
-        def engine(settings, scratch, source, **kw):
+        def engine(source, out, *args, **kw):
             # A distinct service sees the outstanding commitment before growth.
-            other = Service(settings)
+            other = Service(self.settings)
             try:
                 for _ in range(20):
                     try: admitted.append(other.submit(io.BytesIO(pdf), 'concurrent.pdf')['id'])
                     except StorageError: break
                 self.assertLess(len(admitted), 8)
-                self.output(row, raw=b'x'*(2*1048576))
+                result = fake_convert(document=b'x'*(2*1048576))(source, out, *args, **kw)
                 self.s.storage.capacity()
-                return {'exit': 0, 'reason': None, 'elapsed_seconds': 0}
+                return result
             finally: other.storage.close()
-        with patch('markdown_for_llms.worker.check_runtime', return_value={'mock': True}), patch('markdown_for_llms.worker.execute', side_effect=engine): w.process(row)
+        with patch('markdown_for_llms.worker.convert', side_effect=engine): w.process(row)
         self.assertEqual(self.s.get(j['id'])['state'], 'completed')
         self.s.storage.capacity(); self.assert_clean()
 
@@ -237,12 +245,13 @@ with s.upload('x.pdf') as u:
     def test_worker_stop_distinct_from_user_cancel(self):
         for cancel in (False, True):
             j = self.s.submit(io.BytesIO(PDF), 'x.pdf'); w = Worker(self.settings); self.addCleanup(w.storage.close); row = w.claim()
-            def engine(*a, **kw):
+            def stop(observer):
                 if cancel: self.s.cancel(j['id'])
                 else: w.stop = True
-                reason = kw['tick'](None)
-                return {'exit': -15, 'reason': reason or 'fixture'}
-            with patch('markdown_for_llms.worker.check_runtime', return_value={}), patch('markdown_for_llms.worker.execute', side_effect=engine): w.process(row)
+            def engine(source, out, request=None, limits=None, work=None, observer=None, **kw):
+                stop(observer)
+                return fake_convert(events=[{'event': 'tick'}])(source, out, request, limits, work, observer, **kw)
+            with patch('markdown_for_llms.worker.convert', side_effect=engine): w.process(row)
             self.assertEqual(self.s.get(j['id'])['state'], 'cancelled' if cancel else 'interrupted')
             self.assertEqual(identify(self.s.storage.root, self.s.storage.get(j['id'])['source_path'])['bytes'], len(PDF))
 
@@ -264,11 +273,11 @@ with s.upload('x.pdf') as u:
     def test_malformed_engine_and_sqlite_faults_have_visible_states(self):
         for fault in ('metadata', 'sqlite'):
             j = self.s.submit(io.BytesIO(PDF), 'x.pdf'); w = Worker(self.settings); self.addCleanup(w.storage.close); row = w.claim()
-            def engine(settings, scratch, source, **kw):
+            def engine(source, out, *args, **kw):
                 if fault == 'sqlite': raise sqlite3.OperationalError('database is locked')
-                write_json(scratch, 'engine.json', {'inventory_complete': True, 'inventory': [None]})
-                return {'exit': 0, 'reason': None, 'elapsed_seconds': 0}
-            with patch('markdown_for_llms.worker.check_runtime', return_value={}), patch('markdown_for_llms.worker.execute', side_effect=engine): w.process(row)
+                result = fake_convert()(source, out, *args, **kw)
+                return dict(result, inventory=[None])
+            with patch('markdown_for_llms.worker.convert', side_effect=engine): w.process(row)
             self.assertEqual(self.s.get(j['id'])['state'], 'failed'); self.assertTrue(self.s.get(j['id'])['error'])
         j = self.s.submit(io.BytesIO(PDF), 'x.pdf'); w = Worker(self.settings); row = w.claim()
         with patch.object(w, '_process', side_effect=sqlite3.OperationalError('readonly')), patch.object(w.storage, 'connect', side_effect=sqlite3.OperationalError('readonly')), self.assertRaisesRegex(StorageError, 'requires reconciliation'): w.process(row)

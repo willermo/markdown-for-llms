@@ -6,7 +6,8 @@
 (problems included, listed in the summary), 1 for a failure with its closed code, 2 for a usage
 error. `mdf submit` sends files to the archive of the product (the same durable services as the
 HTTP application) and `--wait` follows them. `mdf prepare --toolchain` builds the toolchain image
-of the engine (the same function as `mdf bench prepare --toolchain`).
+of the engine (the same function as `mdf bench prepare --toolchain`); `mdf prepare --weights`
+downloads and checks the weights of the Marker route (`engine/weights.py`).
 """
 import argparse
 import json
@@ -71,25 +72,48 @@ def summary(result, out):
             "files": len(result.get("inventory") or []), "problem_counts": result.get("problem_counts"),
             "problem_codes": result.get("problem_codes"),
             "problems": problems[:20], "limits": result.get("limits") or [],
-            "transit": result.get("transit"), "engine_json": str(Path(out) / "engine.json")}
+            "transit": result.get("transit"), "cost": result.get("cost"),
+            "engine_json": str(Path(out) / "engine.json")}
 
 
-def convert_file(args, settings):
+def convert_file(args, settings, key=None):
     from .engine.core import convert
-    limits = {"memory_mib": settings.memory_mib, "output_mib": settings.output_mib,
-              "timeout_seconds": settings.timeout_seconds,
-              "max_pages": settings.max_pages if args.max_pages is None else args.max_pages}
+    limits = settings.engine_limits(args.max_pages)
     if limits["max_pages"] < 1:
         emit({"error": "invalid --max-pages"})
         return 2
     request = {"route": args.route, "ocr": args.ocr, "lang": args.lang}
+    if args.route == "datalab":
+        # the document leaves the machine: only with --confirm-transit, under --datalab-cap-usd;
+        # without the confirmation the engine stops before sending, with the pages and the estimate
+        request["datalab"] = {"mode": args.datalab_mode, "transit_confirmed": args.confirm_transit,
+                              "cap_usd": args.datalab_cap_usd}
+    elif args.confirm_transit or args.datalab_mode or args.datalab_cap_usd is not None:
+        emit({"status": "refused", "error": "route_option_unsupported", "out": args.out})
+        return 2
     try:
-        result = convert(args.file, args.out, request, limits, work=args.work, observer=StepLine(sys.stderr))
+        result = convert(args.file, args.out, request, limits, work=args.work, observer=StepLine(sys.stderr),
+                         model_root=settings.model_root, datalab_key=key)
     except EngineError as exc:          # refused before the conversion (the output or work directory)
         emit({"status": "refused", "error": exc.code.value, "out": args.out})
         return 2
     emit(summary(result, args.out))
     return 0 if result["status"] == "complete" else 1
+
+
+def prepare_weights(argv):
+    """`mdf prepare --weights [--model-root DIR]`: the only download of the Marker weights."""
+    from .engine import weights
+    parser = argparse.ArgumentParser(prog="mdf prepare")
+    parser.add_argument("--weights", action="store_true", required=True)
+    parser.add_argument("--model-root", help="model root (default: %s)" % weights.default_root())
+    args = parser.parse_args(argv)
+    try:
+        emit(weights.prepare(args.model_root or weights.default_root()))
+    except EngineError as exc:
+        emit({"status": "failed", "error": exc.code.value, "detail": exc.detail})
+        return 1
+    return 0
 
 
 def main(argv=None):
@@ -98,6 +122,8 @@ def main(argv=None):
         # The bench has its own settings (MDF_BENCH_*): forward before the product settings load.
         from .bench.cli import main as bench_main
         return bench_main(argv[1:])
+    if argv[:1] == ["prepare"] and "--weights" in argv:
+        return prepare_weights(argv[1:])
     if argv[:1] == ["prepare"]:
         # `mdf prepare --toolchain` is `mdf bench prepare --toolchain` (D8 of MFL032).
         from .bench.cli import main as bench_main
@@ -122,6 +148,12 @@ def main(argv=None):
     convert.add_argument("--lang", help="language of the document (recorded; no converter of this version uses it)")
     convert.add_argument("--max-pages", type=int, help="page limit (default: MDF_MAX_PAGES)")
     convert.add_argument("--work", help="directory for the private work of the conversion (default: a temporary one)")
+    convert.add_argument("--datalab-mode", choices=("lite", "fast", "balanced", "accurate"),
+                         help="mode of the Datalab route (default: balanced)")
+    convert.add_argument("--datalab-cap-usd", default=None,
+                         help="spending cap of this conversion with Datalab, in USD (default: 0, nothing is sent)")
+    convert.add_argument("--confirm-transit", action="store_true",
+                         help="confirm that the document leaves the machine for Datalab")
     submit = sub.add_parser("submit", help="send files to the archive of the product")
     submit.add_argument("files", nargs="+")
     submit.add_argument("--wait", action="store_true")
@@ -133,10 +165,20 @@ def main(argv=None):
             p.add_argument("--output", required=True)
             p.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
+    key = None
+    if args.command == "convert" and args.route == "datalab":
+        # the key file is checked (regular, of the caller, 0600, no link) before anything else
+        # reads it, Settings.load included (HC2 of the review of B of MFL032)
+        from .engine import datalab
+        try:
+            key = datalab.read_key(args.env_file)
+        except EngineError as exc:
+            emit({"status": "refused", "error": exc.code.value, "out": args.out})
+            return 1
     try:
         settings = Settings.load(args.env_file, {"data_root": args.data_root, "model_root": args.model_root})
         if args.command == "convert":
-            return convert_file(args, settings)
+            return convert_file(args, settings, key)
         if args.command == "worker":
             from .worker import Worker
             worker = Worker(settings)

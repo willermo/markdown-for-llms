@@ -1,0 +1,141 @@
+{
+ "schema": "mdf-engine-weights/1",
+ "about": "Weights of Marker 2.2.0 fast on the CPU (indra-ocr 1.1.2): the files of datalab-to/indra-ocr at the commit of tag v1.1.0 (2026-10-19) and the GoNoto font that Marker renders with. Bytes and SHA-256 observed on 2026-11-15: the LFS SHA-256 published by Hugging Face, the git blob SHA-1 for the two JSON files, the SHA-256 of the font as recorded for the earlier Marker profile. Downloaded only by `mdf prepare --weights`; never redistributed.",
+ "indra_ocr": {
+  "repository": "datalab-to/indra-ocr",
+  "tag": "v1.1.0",
+  "commit": "bd02167fdf2005a19962cc15188f8496a2c87d3b",
+  "directory": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b"
+ },
+ "font": "fonts/GoNotoCurrent-Regular.ttf",
+ "files": [
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/det.onnx",
+   "bytes": 389948,
+   "sha256": "f2bd4cba23e9c328cf7ec824634e423e191a2c6aacbbf35c62bd79dd70f62f59",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/det.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec.onnx",
+   "bytes": 5042161,
+   "sha256": "475972a2710be4a3cbfeb2bc7f3624ffd563de07de42476fc7a290d4e1ece484",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec_cjk.onnx",
+   "bytes": 10176018,
+   "sha256": "4a035516a17e62cdf33a4fe2d88077654cb8841cff024685cdef4e351694ef50",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec_cjk.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec_rtl.onnx",
+   "bytes": 4812710,
+   "sha256": "468796bd684486a8388c30c8b4ed2a26e3eeb1f8ff02831c24c2e12c79a2a834",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec_rtl.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec_world.onnx",
+   "bytes": 5627990,
+   "sha256": "c8d1e59f21b04966f179d2d2d8e22b230d22110b3f89855bbbf2624a58c40043",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/rec_world.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/order.onnx",
+   "bytes": 2973138,
+   "sha256": "a42db2e8b536ad3d84045a4b7f9b0a72667cf8be4aa02d63f7b38004719fb180",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/order.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/orient.onnx",
+   "bytes": 371802,
+   "sha256": "20eaf670f55a7cf9facfe1bdd6c7b8e40be75bbf4d48a3df43f66aa3bbd874fd",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/orient.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/script.onnx",
+   "bytes": 191630,
+   "sha256": "b6ce4e926e19c243faaf37bd46880398bf2cb4ae56a29e1177a3b017c1280e36",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/script.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/meta.json",
+   "bytes": 211869,
+   "sha256": "4ce4c94b46f5d644033c02e718322014ff4081270f385038c571912b56696339",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/meta.json",
+   "git_sha1": "13473e59be561a618a49cf3bc8f3cc503ecf0763"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/lm.npz",
+   "bytes": 15695957,
+   "sha256": "6c0fb618a363a0acdd05d4f5b0edd9e8146d2d990541b87f6130bbfe17cea58d",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/lm.npz"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/lm_cjk.npz",
+   "bytes": 18955160,
+   "sha256": "6d64f13f4f90f4e529bd63340c6df76238d007feaef2abb903d8cd28d92bc2f3",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/lm_cjk.npz"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/lm_world.npz",
+   "bytes": 11641215,
+   "sha256": "34df5e74a2fcbb9cf5e7f360a559375ffa2e04d2d2943a42308c177bcb444d5d",
+   "set": "base",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/lm_world.npz"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/mathcls.onnx",
+   "bytes": 191005,
+   "sha256": "818b1556e9ef337958db6be0c9791299d3f74a4575586b0cd469aaae9534ff96",
+   "set": "math",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/mathcls.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_enc.onnx",
+   "bytes": 9889575,
+   "sha256": "d4e4a6c40dad1ee988d32c6403b1590ca42864d4483bbe1e671c5dbb999a5a97",
+   "set": "math",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_enc.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_dec_init.onnx",
+   "bytes": 1356364,
+   "sha256": "919417fde9962c3318aeb478c1fe3955dd2bb8cd34476c68debed2ba39e5dcd6",
+   "set": "math",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_dec_init.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_dec_step.onnx",
+   "bytes": 8429418,
+   "sha256": "5ff6e6cbaf0dea70314f66222a1469736a8c5e7994fab06a5b4e53c90469239f",
+   "set": "math",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_dec_step.onnx"
+  },
+  {
+   "path": "indra-ocr/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_meta.json",
+   "bytes": 7797,
+   "sha256": "85d9715fb8a77791b55ef89f57fb41e72eb3170ec58a7c3bee3b394268bf2b10",
+   "set": "math",
+   "url": "https://huggingface.co/datalab-to/indra-ocr/resolve/bd02167fdf2005a19962cc15188f8496a2c87d3b/math_meta.json",
+   "git_sha1": "27c61906b0e933c2fb9ce29e9362273e680a5774"
+  },
+  {
+   "path": "fonts/GoNotoCurrent-Regular.ttf",
+   "bytes": 14700060,
+   "sha256": "882afbab965608c2d2bc627fd8016b962aa5a6be2d358f9de24a7b5967c5632e",
+   "set": "font",
+   "url": "https://models.datalab.to/artifacts/GoNotoCurrent-Regular.ttf"
+  }
+ ]
+}

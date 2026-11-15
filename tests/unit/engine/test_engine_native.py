@@ -10,7 +10,9 @@ import json
 from pathlib import Path
 import shutil
 import tempfile
+import os
 import unittest
+from unittest import mock
 
 from engine_test_support import (FIXTURES, TEXT_DJVU, derive_epub, drawing, inspect_out, make_docx, make_fodp,
                                  make_odt, make_odt_chart, make_odt_nested, make_xlsx, para, png, replace_figure, require_toolchain)
@@ -232,6 +234,26 @@ class LossTests(Base):
                                  [("media_lost", "incomplete", "not in document.md")])
                 self.assertEqual(result["corrections"]["counts"].get("asset_unreferenced_removed"), 1)
 
+    def test_a_member_with_the_same_bytes_and_another_role_does_not_hide_the_loss(self):
+        """F1 of the fix A2 review (Sol): the dropped inline image has the bytes of a member that the
+        audit lists as `unused` or `alternate`; neither declares its loss, so it is media_lost."""
+        for twin, extra in (("unused", [("media_unused", "Pictures/duplicate.png", "warning")]), ("alternate", [])):
+            with self.subTest(twin=twin):
+                result, out, md = self.complete(make_odt_nested(self.root / f"twin-{twin}.odt", True, inner="binary",
+                                                                twin=twin))
+                self.assert_image_linked(out, md, count=1)
+                lost = [(p["code"], p["severity"], p.get("detail")) for p in result["problems"] if p["code"] == "media_lost"]
+                self.assertEqual(lost, [("media_lost", "incomplete", "not in document.md")])
+                self.assertEqual([p for p in self.problems(result) if p[0] != "media_lost"], extra)
+
+    def test_a_true_alternative_is_no_loss(self):
+        """F1, positive: the second image of a frame is an alternative of the first; with both pictures
+        kept (Markdown table) there is no problem, and its bytes are not an asset of their own."""
+        result, out, md = self.complete(make_odt_nested(self.root / "twin-ok.odt", False, inner="binary", twin="alternate"))
+        self.assert_image_linked(out, md, count=2)
+        self.assertEqual(self.problems(result), [])
+        self.assertEqual(result["package"]["media_roles"], {"content": 1, "alternate": 1})
+
     def test_a_literal_asset_path_in_the_text_is_no_reference(self):
         """FB2 (Carbon HF2): the text names `assets/asset-0002.png`, the file of the image the writer
         left out; only references (images, links, img src and a href of HTML) keep a file."""
@@ -307,10 +329,12 @@ class DjvuTests(Base):
 
 
 class FailureTests(Base):
-    def test_pages_family_is_unavailable_until_tranche_b(self):
-        result, out = self.convert(FIXTURES / "C06-pdf-text-it.pdf")
-        self.assertEqual((result["status"], result["error"]["code"]), ("failed", "route_unavailable"))
-        self.assertEqual(result["route"]["converter"], "marker")
+    def test_datalab_without_a_key_sends_nothing(self):
+        with mock.patch.dict(os.environ, {"DATALAB_API_KEY": ""}):
+            result, out = self.convert(FIXTURES / "C06-pdf-text-it.pdf", route="datalab")
+        self.assertEqual((result["status"], result["error"]["code"]), ("failed", "datalab_key_missing"))
+        self.assertFalse(result["transit"]["left_machine"])
+        self.assertEqual(result["route"]["converter"], "datalab")
         self.assertEqual(sorted(p.name for p in out.iterdir()), ["diagnostics", "engine.json"])
 
     def test_scenarios_1_and_6(self):

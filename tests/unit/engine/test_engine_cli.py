@@ -4,6 +4,7 @@ import io
 import json
 from pathlib import Path
 import tempfile
+import os
 import unittest
 from unittest import mock
 
@@ -41,8 +42,15 @@ class CliTests(unittest.TestCase):
         self.assertTrue((self.root / "o" / "engine.json").is_file())
 
     def test_convert_failures_and_usage(self):
-        code, out, _ = self.run_cli(["convert", str(FIXTURES / "C06-pdf-text-it.pdf"), "--out", str(self.root / "p")])
-        self.assertEqual((code, json.loads(out)["error"]), (1, "route_unavailable"))
+        empty = self.root / "no-models"
+        empty.mkdir()
+        code, out, _ = self.run_cli(["--model-root", str(empty), "convert", str(FIXTURES / "C06-pdf-text-it.pdf"),
+                                     "--out", str(self.root / "p")])
+        self.assertEqual((code, json.loads(out)["error"]), (1, "weights_missing"))
+        with mock.patch.dict(os.environ, {"DATALAB_API_KEY": ""}):
+            code, out, _ = self.run_cli(["convert", str(FIXTURES / "C06-pdf-text-it.pdf"), "--route", "datalab",
+                                         "--out", str(self.root / "p2")])
+        self.assertEqual((code, json.loads(out)["error"]), (1, "datalab_key_missing"))       # B4: no key, nothing sent
         notes = self.root / "n.md"
         notes.write_text("x")
         code, out, _ = self.run_cli(["convert", str(notes), "--out", str(self.root / "q")])
@@ -55,6 +63,32 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 2)
         code, out, _ = self.run_cli(["convert", str(notes), "--out", str(self.root / "s"), "--max-pages", "0"])
         self.assertEqual(code, 2)
+
+    def test_convert_passes_the_configured_threads_and_stall(self):                      # FC4
+        src = self.root / "a.txt"
+        src.write_text("x\n", encoding="utf-8")
+        seen = []
+        with mock.patch.dict(os.environ, {"MDF_THREADS": "1", "MDF_STALL_SECONDS": "60", "MDF_TIMEOUT_SECONDS": "0"}), \
+                mock.patch("markdown_for_llms.engine.core.convert",
+                           side_effect=lambda *a, **k: seen.append(a[3]) or {"status": "complete"}):
+            code, out, _ = self.run_cli(["convert", str(src), "--out", str(self.root / "lim"), "--max-pages", "7"])
+        self.assertEqual(code, 0, out)
+        self.assertEqual({k: seen[0].get(k) for k in ("threads", "stall_seconds", "max_pages", "poll_seconds")},
+                         {"threads": 1, "stall_seconds": 60, "max_pages": 7, "poll_seconds": 1})
+        from markdown_for_llms.settings import Settings
+        settings = Settings.load(environ={"MDF_THREADS": "1", "MDF_STALL_SECONDS": "60"})
+        self.assertEqual(seen[0], settings.engine_limits(7))      # the worker uses the same limits
+
+    def test_datalab_key_file_is_checked_before_the_settings(self):                     # HC2
+        dangling = self.root / "dangling.env"
+        dangling.symlink_to(self.root / "absent")
+        fifo = self.root / "fifo.env"
+        os.mkfifo(fifo, 0o600)
+        for env in (dangling, fifo):
+            with self.subTest(env=env.name):
+                code, out, _ = self.run_cli(["--env-file", str(env), "convert", str(FIXTURES / "C06-pdf-text-it.pdf"),
+                                             "--route", "datalab", "--out", str(self.root / ("k-" + env.name))])
+                self.assertEqual((code, json.loads(out)["error"]), (1, "datalab_key_unsafe"))
 
     def test_submit_is_the_archive_command(self):
         class FakeService:

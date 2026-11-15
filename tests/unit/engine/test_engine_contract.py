@@ -1,7 +1,9 @@
 """The output contract (`engine/contract.py`) and `convert` without external tools (txt)."""
 import json
 import os
+from unittest import mock
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 
@@ -175,9 +177,13 @@ class TextConvertTests(Base):
         self.assertEqual(result["error"]["code"], "cancelled")
 
     def test_availability_reports_every_converter(self):
-        found = availability()
+        empty = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, empty, True)
+        with mock.patch.dict(os.environ, {"DATALAB_API_KEY": ""}):
+            found = availability(model_root=empty)
         self.assertEqual(set(found), {"text", "pandoc", "djvutxt", "marker", "datalab"})
-        self.assertEqual(found["marker"], {"available": False, "code": "route_unavailable"})
+        self.assertEqual(found["marker"], {"available": False, "code": "weights_missing"})
+        self.assertEqual(found["datalab"], {"available": False, "code": "datalab_key_missing"})
         self.assertTrue(found["text"]["available"])
 
     def test_availability_without_bubblewrap(self):

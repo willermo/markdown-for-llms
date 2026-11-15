@@ -50,6 +50,8 @@ PROBLEMS = {
     "page_blank": WARNING,
     "ocr_forced_document": WARNING,
     "pictures_skipped_rotated": WARNING,
+    "datalab_delete_failed": WARNING,     # the result stays on Datalab until its one-day lifecycle
+    "datalab_cost_unknown": WARNING,      # no billed cost in the answer: the estimate is the bound
 }
 MAX_PROBLEMS = 2000
 MAX_CORRECTIONS = 2000

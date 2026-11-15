@@ -50,16 +50,18 @@ MAX_FILE = 16 * 1024 * 1024
 MAX_TOTAL = 64 * 1024 * 1024
 APP_REQUIREMENTS = {'fastapi==0.142.2', 'uvicorn==0.54.0', 'python-multipart',
                     'markdown-it-py==4.0.0', 'mdit-py-plugins==0.5.0', 'pillow==10.4.0'}
-LEGACY_ENGINE_REQUIREMENTS = {'marker-pdf[full]==1.10.2', 'surya-ocr==0.17.1', 'torch==2.7.1', 'beautifulsoup4'}
-BENCH_REQUIREMENTS = {'marker-pdf[full]==2.2.0', 'surya-ocr==0.23.0', 'torch==2.15.0', 'torchvision==0.29.1',
-                      'markdown-it-py==4.0.0', 'mdit-py-plugins==0.5.0'}
+# The conversion engine on the CPU (MFL032): Marker 2.2.0 with the versions its adapter is bound to.
+ENGINE_REQUIREMENTS = {'marker-pdf[full]==2.2.0', 'surya-ocr==0.23.0', 'indra-ocr==1.1.2', 'pypdfium2==5.10.1',
+                       'torch==2.15.0', 'torchvision==0.29.1', 'markdown-it-py==4.0.0'}
+BENCH_REQUIREMENTS = ENGINE_REQUIREMENTS | {'mdit-py-plugins==0.5.0'}
+BENCH_CU132_REQUIREMENTS = {'marker-pdf[full]==2.2.0', 'surya-ocr==0.23.0', 'torch==2.15.0', 'torchvision==0.29.1',
+                            'markdown-it-py==4.0.0', 'mdit-py-plugins==0.5.0'}
 # The only extras of the distribution, each with its exact set of requirements.
 EXTRA_REQUIREMENTS = {
     'app': APP_REQUIREMENTS,
-    'marker-cpu': LEGACY_ENGINE_REQUIREMENTS,
-    'marker-cu126': LEGACY_ENGINE_REQUIREMENTS,
+    'engine': ENGINE_REQUIREMENTS,
     'bench': BENCH_REQUIREMENTS,
-    'bench-cu132': BENCH_REQUIREMENTS,
+    'bench-cu132': BENCH_CU132_REQUIREMENTS,
 }
 
 
@@ -140,7 +142,7 @@ def check_metadata(data, entrypoints):
         raise ValueError('Distribution entrypoints differ')
     requirements = metadata.get_all('Requires-Dist', [])
     base = {r.split(';')[0].strip() for r in requirements if ';' not in r}
-    if base != {'requests>=2.31.0','charset-normalizer>=3.5.2','tqdm>=4.66.0','python-dotenv>=1.0.0'}:
+    if base != {'requests>=2.31.0','charset-normalizer>=3.5.2','python-dotenv>=1.0.0'}:
         raise ValueError('Base runtime dependencies differ')
     extras = metadata.get_all('Provides-Extra', [])
     if len(extras) != len(EXTRA_REQUIREMENTS) or set(extras) != set(EXTRA_REQUIREMENTS):
@@ -348,7 +350,7 @@ def check_installed(payload, wheel_files, wheel_path, profile):
         raise ValueError('Dev/backend nel profilo base')
     if profile in {'api','cpu'} and not {'fastapi','uvicorn','python-multipart'} <= names:
         raise ValueError('Extra server incompleto')
-    if profile == 'cpu' and not {'marker-pdf','surya-ocr','torch','beautifulsoup4'} <= names:
+    if profile == 'cpu' and not {'marker-pdf','surya-ocr','indra-ocr','torch'} <= names:
         raise ValueError('Extra CPU incompleto')
     files = [descriptor(installed_paths[n]) for n in sorted(installed)]
     if DIST+'/direct_url.json' not in installed_paths:

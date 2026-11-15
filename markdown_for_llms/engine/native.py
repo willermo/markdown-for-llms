@@ -216,9 +216,12 @@ def pandoc_route(ctx, src, fmt):
     dropped = drop_unreferenced(ctx, stage)
     if dropped:
         ctx.correction_counts["asset_unreferenced_removed"] = len(dropped)
-        # the audit accounts for the bytes it lists (media_problems below); the others are lost here
+        # the audit accounts for the bytes of the content images it lists (media_problems below
+        # reports them); the others are lost here. A member with the same bytes but another role
+        # (unused, alternate, furniture) does not account for an inline image that was dropped.
         kept = asset_digests(stage)
-        audited = {m["sha1"] for m in (package or {}).get("media", []) if m.get("bytes")}
+        audited = {m["sha1"] for m in (package or {}).get("media", [])
+                   if m.get("bytes") and m.get("kind", "image") == "image" and m["role"] in ("content", "unresolved")}
         original = {m["path"]: m.get("original") for m in report.get("media", [])}
         for path, digest in dropped.items():
             if digest not in kept and digest not in audited:

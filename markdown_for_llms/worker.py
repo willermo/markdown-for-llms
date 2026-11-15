@@ -1,22 +1,221 @@
-"""Durable single-host worker with explicit retries and publication fencing."""
+"""Durable single-host worker with explicit retries and publication fencing.
+
+A PDF of the archive goes through the conversion engine (`engine.convert`, the default route of
+the matrix: Marker 2.2.0 `fast` on the CPU). The observer of the engine renews the lease,
+records the running child (`runs.child`: the pid with its start time, the systemd scope of the
+Marker child, the container of a tool) and passes on cancellation and stop; reconciliation stops
+what a dead worker left by that record. The full result of the engine stays next to the
+published result (`engine-result.json`); the manifest carries a bounded summary of it (K9).
+"""
 from pathlib import Path
 from contextlib import contextmanager
-from dataclasses import replace
 import json
 import os
+import shutil
 import signal
 import sqlite3
 import logging
 import time
 import uuid
 
+from .engine import isolation
+from .engine.codes import Code, EngineError
+from .engine.core import availability, convert
+from .engine.progress import finishing
 from .files import identify, make_directory, open_file, read_json, rename, sync_directory, write_json, sync_tree, corruption, relative, IntegrityError, MetadataError, decode_json, publication_barrier, directory, FileSafetyError, json_bytes
-from .progress import finishing
 from .references import inspect
-from .runtime import check_runtime
-from .sandbox import execute, process_identity
 from .services import Service, ReadUnavailable, stored_manifest, publication_budget
 from .storage import StorageError, CapacityError
+
+MAX_ISSUES = 200                 # engine problems listed in the manifest; all of them are counted
+MANIFEST_LIMIT = 1048576         # the JSON limit of files.decode_json
+READY_SECONDS = 60               # how long a successful readiness check of the Marker route holds
+ENGINE_FILES = ("engine-out", "engine-work")
+
+
+def process_identity(pid):
+    try:
+        raw = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
+        return {"pid": pid, "start": raw[19], "state": raw[0]}
+    except (FileNotFoundError, ProcessLookupError, IndexError):
+        return None
+
+
+def execute(settings, scratch, module, inputs=(), tick=None, deadline=60, memory_mib=512, output_mib=None,
+            label="process"):
+    """A light child of the engine (`engine/isolation.py`) for the raster validation and the
+    isolation probe: Bubblewrap without network, read-only system and `inputs`, `scratch/label`
+    its only writable directory. Returns a receipt: `exit`, `reason` (a closed code of the
+    engine or None), `elapsed_seconds`, `dir` (where the child wrote its results)."""
+    work = Path(scratch) / label
+    started = time.monotonic()
+
+    def observer(event):
+        if tick is None:
+            return None
+        child = {"pid": event["pid"]} if event.get("pid") else None
+        if child and (ident := process_identity(event["pid"])):
+            child["start"] = ident["start"]
+        stop = tick(child, None)
+        return "interrupted" if stop == "interrupted" else "cancelled" if stop else None
+    try:
+        rc, _ = isolation.run(work, module, inputs=inputs, memory_mib=memory_mib,
+                              output_mib=output_mib or settings.output_mib, timeout=deadline,
+                              observer=observer, poll_seconds=0.2)
+        reason = None
+    except EngineError as exc:
+        rc, reason = None, exc.code.value
+    return {"exit": rc, "reason": reason, "elapsed_seconds": time.monotonic() - started, "dir": work}
+
+
+def stop_attempt_scopes(attempt_id):
+    """Stop every scope of the Marker child that an attempt may have left, by the prefix of its
+    names (`mdf-eng-<attempt[:16]>-`), also when the worker died before recording one (HC1); an
+    unreachable manager keeps the reservation, as for a recorded scope (PB8)."""
+    prefix = 'mdf-eng-%s-' % attempt_id[:16]
+    try:
+        names = isolation.list_scopes(prefix)
+    except isolation.ScopeUnreachable as exc:
+        raise StorageError('User systemd manager unreachable (%s): scopes %s* not attested; reservation kept'
+                           % (exc, prefix)) from None
+    for name in names:
+        stop_child({'scope': name})
+
+
+def stop_child(child):
+    """Stop what a dead attempt left running, from its `runs.child` record (K7, PB8): the systemd
+    scope of a Marker child, the container of a tool (the pid is handled by the caller). An
+    unreachable user manager or Docker is no proof that the child is gone: the reconciliation is
+    not attested, the reservation is kept and the error is visible."""
+    scope = child.get('scope')
+    if scope:
+        if not isinstance(scope, str) or not isolation.UNIT.fullmatch(scope.removesuffix('.scope')):
+            raise StorageError('Malformed child record')
+        try:
+            state = isolation.stop_scope(scope)
+        except isolation.ScopeUnreachable as exc:
+            raise StorageError('User systemd manager unreachable (%s): stop of %s not attested; reservation kept'
+                               % (exc, scope)) from None
+        if state != 'absent':
+            raise StorageError('Previous conversion scope still active: %s; reservation kept' % scope)
+    container = child.get('container')
+    if container:
+        if not isinstance(container, str) or not isolation.UNIT.fullmatch(container):
+            raise StorageError('Malformed child record')
+        from .engine.toolchain import remove_container
+        if not remove_container(container):
+            raise StorageError('Previous conversion container not removed (Docker unreachable?): %s; '
+                               'reservation kept' % container)
+
+
+class Observer:
+    """The observer of one conversion (K7): every event of the engine may renew the lease; the
+    child record changes before the child does anything. An exception of the lease or of the
+    database is kept and stops the engine (`interrupted`), then raised again by the worker."""
+
+    def __init__(self, worker, row):
+        self.worker, self.row = worker, row
+        self.child = self.progress = self.error = None
+        self.last = 0.0
+        self.interval = max(0.2, worker.settings.poll_seconds / 2)
+
+    def __call__(self, event):
+        if self.error is not None:
+            return "interrupted"
+        kind, changed = event.get("event"), False
+        if kind == "child":
+            child = {"pid": event["pid"]} if event.get("pid") else {}     # no pid: the scope before the start
+            if event.get("pid") and (ident := process_identity(event["pid"])):
+                child["start"] = ident["start"]
+            if event.get("scope"):
+                child["scope"] = event["scope"]
+            self.child, changed = child, True
+        elif kind == "tool" and event.get("container"):
+            self.child, changed = {"container": event["container"]}, True
+        elif kind == "progress" and isinstance(event.get("progress"), dict):
+            self.progress = event["progress"]
+        now = time.monotonic()
+        if not changed and now - self.last < self.interval:
+            return None
+        self.last = now
+        try:
+            stop = self.worker.tick(self.row, self.child, self.progress)
+        except Exception as exc:            # raised again after the engine has stopped its child
+            self.error = exc
+            return "interrupted"
+        return "interrupted" if stop == "interrupted" else "cancelled" if stop else None
+
+
+def engine_message(code, settings):
+    """The error of a run for a closed code of the engine."""
+    if code == Code.STALLED.value:
+        return ('No conversion progress for %d s (MDF_STALL_SECONDS); attempt stopped, '
+                'source kept, retry available' % settings.stall_seconds)
+    if code == Code.TIMEOUT.value:
+        return ('Conversion exceeded %d s (MDF_TIMEOUT_SECONDS); attempt stopped, '
+                'source kept, retry available' % settings.timeout_seconds)
+    return 'Conversion failed: %s; source kept, diagnostics in the attempt, retry available' % code
+
+
+def pdf_name(name):
+    """The name the engine records for the source: the user's name when it says PDF, else the
+    name of the archived file (the archive admits PDFs only until tranche C of MFL032)."""
+    return name if isinstance(name, str) and name.lower().endswith('.pdf') and '/' not in name else None
+
+
+def engine_request(options, attempt):
+    """The request of the engine for the options of a run (schema 2 of the archive): the default
+    route; `force_ocr` -> `ocr: force`; `strip_existing_ocr` has no equivalent and is dropped
+    (D3 of MFL032: an existing OCR layer is set aside by the engine itself)."""
+    return {"route": None, "ocr": "force" if options.get("force_ocr") else "auto", "attempt": attempt}
+
+
+def summarize(result, inventory):
+    """The bounded summary of an engine result that the manifest carries (K9, PB9): every count,
+    at most MAX_ISSUES problems (the incomplete ones first, as the engine lists them), the page
+    classes without the per-page records, the corrections counted only."""
+    summary = {k: result[k] for k in ("schema", "status", "attempt", "started_at", "source", "options", "limits",
+                                      "problem_codes", "problem_counts", "components", "timings", "transit", "cost")
+               if k in result}
+    route = result.get("route") or {}
+    summary["route"] = {k: route.get(k) for k in ("converter", "family", "chosen_by", "reason")}
+    if isinstance(result.get("pages"), dict):
+        summary["pages"] = {k: result["pages"].get(k) for k in ("count", "classes")}
+    summary["corrections"] = (result.get("corrections") or {}).get("counts", {})
+    problems = result.get("problems") or []
+    summary["problems"] = problems[:MAX_ISSUES]
+    summary["problems_listed"] = len(summary["problems"])
+    summary["inventory"] = inventory
+    summary["inventory_complete"] = True
+    return summary
+
+
+def engine_issues(engine):
+    """The problems of an engine summary as `checks.issues` (K9): `code` incomplete or unchecked,
+    a readable `reason` that names the page (the Web UI reads `reason`), `path` and `page`.
+    The severities come from the counts of all the problems, before any truncation (PB9)."""
+    issues = []
+    for p in engine.get("problems") or []:
+        if not isinstance(p, dict) or not isinstance(p.get("code"), str):
+            raise StorageError("Malformed engine problems")
+        reason = p["code"].replace("_", " ")
+        if isinstance(p.get("page"), int):
+            reason += " on page %d" % p["page"]
+        if isinstance(p.get("path"), str):
+            reason += ": " + p["path"]
+        if isinstance(p.get("detail"), str):
+            reason += " (" + p["detail"] + ")"
+        issue = {"code": "incomplete" if p.get("severity") == "incomplete" else "unchecked", "reason": reason[:500]}
+        for key in ("path", "page"):
+            if p.get(key) is not None:
+                issue[key] = p[key]
+        issues.append(issue)
+    counts = engine.get("problem_counts") or {}
+    total = sum(v for v in counts.values() if type(v) is int)
+    if total > len(issues):
+        issues.append({"code": "incomplete" if counts.get("incomplete") else "unchecked",
+                       "reason": "%d more problems of the engine, counted in engine-result.json" % (total - len(issues))})
+    return issues, counts
 
 
 class Worker:
@@ -28,6 +227,19 @@ class Worker:
         self.stop = False
         self.lease = None
         self._worker_locked = False
+        self._ready_at = None
+
+    def ready(self):
+        """The Marker route can run here: versions of the adapter, Bubblewrap with a systemd user
+        scope, the weights verified under `model_root`. A success holds for READY_SECONDS; the
+        engine verifies the weights again before every child."""
+        now = time.monotonic()
+        if self._ready_at is not None and now - self._ready_at < READY_SECONDS:
+            return
+        state = availability(model_root=self.settings.model_root, only=('marker',))['marker']
+        if not state['available']:
+            raise ValueError('Marker route unavailable: ' + str(state['code']))
+        self._ready_at = now
 
     @contextmanager
     def exclusive(self):
@@ -64,10 +276,12 @@ class Worker:
             selected.append(row)
             if row['state'] not in {'running', 'publishing'}:
                 continue
+            stop_attempt_scopes(row['attempt_id'])
             if row['child'] and json.loads(row['child']):
                 old = json.loads(row['child'])
-                now = process_identity(old['pid'])
-                if now and now['start'] == old['start'] and now['state'] != 'Z':
+                stop_child(old)
+                now = process_identity(old['pid']) if old.get('pid') else None
+                if now and now['start'] == old.get('start') and now['state'] != 'Z':
                     os.kill(old['pid'], signal.SIGKILL)
                     deadline = time.monotonic() + self.settings.grace_seconds
                     while time.monotonic() < deadline:
@@ -221,22 +435,32 @@ class Worker:
         source = identify(self.storage.root, row['source_path'])
         if source['sha256'] != row['source_sha256'] or source['bytes'] != row['source_bytes']:
             raise StorageError('Archived source identity mismatch')
-        runtime = check_runtime(self.settings)
-        write_json(scratch, 'request.json', {'options': json.loads(row['options']),
-                   'max_pages': self.settings.max_pages, 'threads': self.settings.threads})
-        receipt = execute(self.settings, scratch, self.storage.root / row['source_path'],
-                          tick=lambda child, progress: self.tick(row, child, progress),
-                          deadline=self.settings.timeout_seconds or None, stall=self.settings.stall_seconds)
-        if receipt['reason'] == 'stalled':
-            raise StorageError('No conversion progress for %d s (MDF_STALL_SECONDS); attempt stopped, '
-                               'source kept, retry available' % self.settings.stall_seconds)
-        if receipt['reason'] == 'timeout':
-            raise StorageError('Conversion exceeded %d s (MDF_TIMEOUT_SECONDS); attempt stopped, '
-                               'source kept, retry available' % self.settings.timeout_seconds)
-        if receipt['reason'] or receipt['exit'] != 0:
-            raise StorageError(receipt['reason'] or 'Engine process failed; bounded diagnostic log retained')
-        self.tick(row, None, finishing(receipt.get('progress')))
-        self.publish(row, scratch, runtime, receipt)
+        options = json.loads(row['options'])
+        request = engine_request(options, row['attempt_id'])
+        write_json(scratch, 'request.json', {'options': options, 'engine_request': request,
+                   'dropped_options': ['strip_existing_ocr'] if options.get('strip_existing_ocr') else []})
+        limits = self.settings.engine_limits()
+        observer = Observer(self, row)
+        result = convert(self.storage.root / row['source_path'], scratch / 'engine-out', request, limits,
+                         work=scratch / 'engine-work', observer=observer, name=pdf_name(row.get('name')),
+                         model_root=self.settings.model_root)
+        if observer.error is not None:
+            raise observer.error
+        if result.get('status') != 'complete':
+            raise StorageError(engine_message((result.get('error') or {}).get('code', 'engine_failed'), self.settings))
+        self.tick(row, None, finishing(observer.progress))
+        # inside the private attempt, synchronized with it before the publication (sync_tree)
+        out = scratch / 'engine-out'
+        if (out / 'diagnostics').is_dir():
+            (out / 'diagnostics').rename(scratch / 'diagnostics')
+        (out / 'engine.json').rename(scratch / 'engine-result.json')
+        out.rename(scratch / 'original')
+        shutil.rmtree(scratch / 'engine-work', ignore_errors=True)
+        inventory = [i for i in result['inventory'] if not i['path'].startswith('diagnostics/')]
+        write_json(scratch, 'engine.json', summarize(result, inventory))
+        runtime = {'engine': 'markdown_for_llms.engine', 'converter': result['route']['converter'],
+                   'components': result.get('components')}
+        self.publish(row, scratch, runtime, {'elapsed_seconds': result['timings']['total_seconds']})
 
     def publish(self, row, scratch, runtime, receipt):
         with self.exclusive():
@@ -276,20 +500,26 @@ class Worker:
         if not raw.strip():
             raise StorageError("Empty conversion output")
         checks = inspect(raw, names)
-        if engine.get('issues'):
-            checks['issues'].append({'code': 'incomplete', 'reason': 'Engine reported conversion errors'})
+        issues, counts = engine_issues(engine)
+        checks['issues'].extend(issues)
+        if engine.get('issues') or counts.get('incomplete'):      # `issues`: results of the engine before MFL032
+            if engine.get('issues'):
+                checks['issues'].append({'code': 'incomplete', 'reason': 'Engine reported conversion errors'})
             if checks['bundle'] != 'invalid':
                 checks['bundle'] = 'incomplete'
+        elif counts.get('warning') and checks['bundle'] == 'ready':
+            checks['bundle'] = 'unchecked'
         artifacts = [dict(item, id=uuid.uuid4().hex, gallery=False) for item in inventory]
         candidates = [item for item in inventory if item['path'] != 'document.md']
         if candidates:
-            write_json(scratch, 'raster-request.json', dict(artifacts=candidates,
+            shutil.rmtree(scratch / 'raster', ignore_errors=True)
+            make_directory(scratch, 'raster')
+            write_json(scratch / 'raster', 'raster-request.json', dict(artifacts=candidates,
                        max_pixels=self.settings.max_pixels, max_dimension=self.settings.max_dimension))
-            raster = execute(replace(self.settings, memory_mib=512), scratch,
-                             module='markdown_for_llms.engines.raster', label='raster',
-                             tick=lambda child, progress: self.tick(row, child, progress), deadline=60)
+            raster = execute(self.settings, scratch, 'markdown_for_llms.engines.raster', inputs=[(original, 'original')],
+                             tick=lambda child, progress: self.tick(row, child, progress), deadline=60, label='raster')
             if raster['exit'] == 0 and not raster['reason']:
-                results = validate_raster(read_json(scratch, 'raster-result.json'), candidates, self.settings)
+                results = validate_raster(read_json(raster.get('dir', scratch), 'raster-result.json'), candidates, self.settings)
                 for item in artifacts:
                     item.update(results.get(item['path'], {}))
             else:
@@ -300,6 +530,7 @@ class Worker:
             for item in inventory:
                 if identify(original, item['path']) != item:
                     raise StorageError('Raster validation changed original bytes')
+            shutil.rmtree(scratch / 'raster', ignore_errors=True)
         manifest = dict(schema=1, run_id=row["id"], attempt_id=row["attempt_id"], document_id=row["document_id"],
                         source={"sha256": row["source_sha256"], "bytes": row["source_bytes"]},
                         state="completed", bundle=checks["bundle"], quality="unverified", artifacts=artifacts,
@@ -307,6 +538,8 @@ class Worker:
                         elapsed_seconds=receipt["elapsed_seconds"],
                         limits=["Experimental conversion; formulas, OCR, reading order and semantic asset completeness require manual verification"])
         body = json_bytes(manifest)
+        if len(body) > MANIFEST_LIMIT:
+            raise StorageError('Manifest over %d bytes; engine-result.json kept in the attempt' % MANIFEST_LIMIT)
         # The exact bytes written to file, DB and new ZIPs share the reader contract.
         stored_manifest(body, row)
         db_body = body.decode('utf-8')
@@ -360,19 +593,19 @@ class Worker:
             make_directory(self.storage.root, 'staging/' + probe.name)
             with self.storage.reservation('worker', (2 * self.settings.output_mib + 1) * 1048576,
                                           self.token, ('staging/' + probe.name,)):
-                receipt = execute(replace(self.settings, memory_mib=256), probe,
-                                  module='markdown_for_llms.engines.probe', deadline=10)
+                receipt = execute(self.settings, probe, 'markdown_for_llms.engines.probe', deadline=20,
+                                  memory_mib=256, label='probe')
             if receipt['exit'] or receipt['reason']:
                 self.heartbeat('Isolamento non disponibile; nessun fallback')
                 raise StorageError('Isolation readiness failed; diagnostic retained')
             while not self.stop:
                 try:
-                    check_runtime(self.settings, verify_models=False)
+                    self.ready()
                     self.heartbeat()
                 except (ValueError, OSError, ImportError) as exc:
-                    self.heartbeat("runtime unavailable: " + type(exc).__name__)
+                    self.heartbeat("runtime unavailable: " + str(exc)[:120])
                     if once:
-                        raise StorageError("ML runtime unavailable") from None
+                        raise StorageError("Conversion engine unavailable: " + str(exc)[:120]) from None
                     time.sleep(self.settings.poll_seconds)
                     continue
                 row = self.claim()

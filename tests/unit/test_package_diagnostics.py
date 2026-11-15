@@ -25,18 +25,21 @@ def record_bytes(name, content):
     return {'path':name,'kind':'file','bytes':len(content),'sha256':hashlib.sha256(content).hexdigest()}
 
 
-LEGACY_ENGINE = ('marker-pdf[full]==1.10.2','surya-ocr==0.17.1','torch==2.7.1','beautifulsoup4')
-BENCH = ('marker-pdf[full]==2.2.0','surya-ocr==0.23.0','torch==2.15.0','torchvision==0.29.1','markdown-it-py==4.0.0','mdit-py-plugins==0.5.0')
+ENGINE = ('marker-pdf[full]==2.2.0','surya-ocr==0.23.0','indra-ocr==1.1.2','pypdfium2==5.10.1','torch==2.15.0','torchvision==0.29.1','markdown-it-py==4.0.0')
+BENCH = ENGINE + ('mdit-py-plugins==0.5.0',)
+BENCH_CU132 = ('marker-pdf[full]==2.2.0','surya-ocr==0.23.0','torch==2.15.0','torchvision==0.29.1','markdown-it-py==4.0.0','mdit-py-plugins==0.5.0')
 EXTRAS = {
     'app': ('fastapi==0.142.2','uvicorn==0.54.0','python-multipart','markdown-it-py==4.0.0','mdit-py-plugins==0.5.0','pillow==10.4.0'),
-    'marker-cpu': LEGACY_ENGINE, 'marker-cu126': LEGACY_ENGINE,
-    'bench': BENCH, 'bench-cu132': BENCH,
+    'engine': ENGINE, 'bench': BENCH, 'bench-cu132': BENCH_CU132,
 }
 
 
-def metadata_bytes(extras=None):
+BASE = ('requests>=2.31.0','charset-normalizer>=3.5.2','python-dotenv>=1.0.0')
+
+
+def metadata_bytes(extras=None, base=BASE):
     lines = ['Name: markdown-for-llms','Version: 1.0.0','Requires-Python: >=3.12,<3.13']
-    lines += ['Requires-Dist: '+r for r in ('requests>=2.31.0','charset-normalizer>=3.5.2','tqdm>=4.66.0','python-dotenv>=1.0.0')]
+    lines += ['Requires-Dist: '+r for r in base]
     for extra, deps in (EXTRAS if extras is None else extras).items():
         lines.append('Provides-Extra: '+extra)
         lines += ['Requires-Dist: '+d+'; extra == "'+extra+'"' for d in deps]
@@ -118,8 +121,11 @@ class ArchiveIntegrityTests(unittest.TestCase):
         ep = ('[console_scripts]\n'+'\n'.join(k+' = '+v for k,v in verify.ENTRYPOINTS.items())).encode()
         self.assertEqual(set(verify.EXTRA_REQUIREMENTS), set(EXTRAS))
         cases = {
-            'bench requirement inside marker-cpu': dict(EXTRAS, **{'marker-cpu': LEGACY_ENGINE + ('torchvision==0.29.1',)}),
-            'Marker 1.10.2 inside bench': dict(EXTRAS, **{'bench': tuple(r for r in BENCH if not r.startswith('marker-pdf')) + ('marker-pdf[full]==1.10.2',)}),
+            'bench requirement inside engine': dict(EXTRAS, **{'engine': ENGINE + ('mdit-py-plugins==0.5.0',)}),
+            'a second engine extra': dict(EXTRAS, **{'engine-old': ('marker-pdf[full]==2.1.0','torch==2.15.0')}),
+            'indra-ocr missing from engine': dict(EXTRAS, **{'engine': tuple(r for r in ENGINE if not r.startswith('indra-ocr'))}),
+            'another Marker inside bench': dict(EXTRAS, **{'bench': tuple(r for r in BENCH if not r.startswith('marker-pdf')) + ('marker-pdf[full]==2.1.0',)}),
+            'another Marker inside engine': dict(EXTRAS, **{'engine': tuple(r for r in ENGINE if not r.startswith('marker-pdf')) + ('marker-pdf[full]==2.1.0',)}),
             'torchvision missing from bench': dict(EXTRAS, **{'bench': tuple(r for r in BENCH if not r.startswith('torchvision'))}),
             'duplicate in bench-cu132': dict(EXTRAS, **{'bench-cu132': BENCH + ('torch==2.15.0',)}),
             'seventh extra bench-cu134': dict(EXTRAS, **{'bench-cu134': BENCH}),
@@ -128,6 +134,10 @@ class ArchiveIntegrityTests(unittest.TestCase):
         for name, extras in cases.items():
             with self.subTest(case=name), self.assertRaises(ValueError):
                 verify.check_metadata(metadata_bytes(extras),ep)
+        # tqdm left the base dependencies with the tqdm progress parser (MFL032)
+        verify.check_metadata(metadata_bytes(), ep)
+        with self.assertRaises(ValueError):
+            verify.check_metadata(metadata_bytes(base=BASE + ('tqdm>=4.66.0',)), ep)
 
     def test_full_synthetic_chain_and_stale_module(self):
         files = {name:('synthetic '+name+'\n').encode() for name in verify.MODULE_FILES}

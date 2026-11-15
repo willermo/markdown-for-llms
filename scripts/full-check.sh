@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Full check of markdown-for-llms (AGENTS.md, "Verification"): installation preflight
 # (O, P, S, B, reinstallation of the canonical wheel with a RECORD check, I, F), the
-# precondition X (the toolchain image of the engine), then the fast suite on tests/ with the
-# JUnit guard of the bench and engine tests. Run it at the root of a clean checkout:
+# preconditions X (the toolchain image of the engine) and W (the weights of the Marker route),
+# then the fast suite on tests/ with the JUnit guard of the bench and engine tests. Run it at the root of a clean checkout:
 #   scripts/full-check.sh
 # Paths come from the FULL_CHECK_* variables (docs/how-to/uv-environment.md, "Run the full
 # check"): environment first, then the untracked .full-check.env of this checkout or of the
@@ -13,7 +13,7 @@ shopt -s inherit_errexit
 
 stop() { printf 'STOP %s\n' "$*" >&2; exit 1; }
 VARS=(FULL_CHECK_PYTHON_INSTALL_DIR FULL_CHECK_DEV_PYTHON FULL_CHECK_UV
-      FULL_CHECK_UV_CACHE_DIR FULL_CHECK_BACKEND_WHEEL)
+      FULL_CHECK_UV_CACHE_DIR FULL_CHECK_BACKEND_WHEEL FULL_CHECK_MODEL_ROOT)
 
 # --- preconditions -------------------------------------------------------------------------
 [ "$#" -eq 0 ] || stop "usage: scripts/full-check.sh (no arguments)"
@@ -48,7 +48,7 @@ for name in "${VARS[@]}"; do
   case $value in /*) ;; *) stop "$name is not an absolute path" ;; esac
   printf -v "$name" '%s' "$value"
 done
-for name in FULL_CHECK_PYTHON_INSTALL_DIR FULL_CHECK_UV_CACHE_DIR; do
+for name in FULL_CHECK_PYTHON_INSTALL_DIR FULL_CHECK_UV_CACHE_DIR FULL_CHECK_MODEL_ROOT; do
   [ -d "${!name}" ] || stop "$name is not a directory"
 done
 [ -x "$FULL_CHECK_DEV_PYTHON" ] || stop "FULL_CHECK_DEV_PYTHON is not executable"
@@ -165,8 +165,18 @@ echo "F: PASS_CURRENT_I"; lap
   || stop "X: $(tail -n 1 "$PROOF/X.out")"
 echo "X: $(tail -n 1 "$PROOF/X.out")"; lap
 
+# --- W: weights of the Marker route (MFL032) -------------------------------------------
+# The real Marker tests of the engine run Marker 2.2.0 on the CPU with the 18 files of
+# markdown_for_llms/engine/data/weights.json under FULL_CHECK_MODEL_ROOT (prepared by
+# `mdf prepare --weights --model-root DIR`); without them, or with a file that differs, they would
+# fail: stop here with the reason. Read-only; no download.
+"$FULL_CHECK_DEV_PYTHON" -I -B -m markdown_for_llms.engine.weights verify "$FULL_CHECK_MODEL_ROOT" > "$PROOF/W.out" 2>&1 \
+  || stop "W: $(tail -n 1 "$PROOF/W.out")"
+echo "W: $(tail -n 1 "$PROOF/W.out")"; lap
+
 # --- suites ------------------------------------------------------------------------------
 export RUN_SOURCE_MANIFEST="$PROOF/S.json" RUN_INSTALLATION_RECEIPT="$PROOF/I.json" RUN_TEST_MODE=standalone
+export FULL_CHECK_MODEL_ROOT
 # junit_counts <junit xml>: prints "tests failures errors skipped" of its single testsuite;
 # exits nonzero, with the reason on stderr, when the file is missing, unreadable or unexpected.
 junit_counts() {

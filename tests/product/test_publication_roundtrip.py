@@ -19,7 +19,7 @@ from fastapi.testclient import TestClient
 from markdown_for_llms.api import create_app
 from markdown_for_llms.capacity import CONTROL, sizes
 from markdown_for_llms.files import identify, write, write_json, FileSafetyError
-from markdown_for_llms.sandbox import process_identity
+from markdown_for_llms.worker import process_identity
 from markdown_for_llms.services import Service
 from markdown_for_llms.settings import Settings
 from markdown_for_llms.worker import Worker
@@ -310,7 +310,7 @@ from unittest.mock import patch
 from markdown_for_llms.settings import Settings
 from markdown_for_llms.services import Service
 from markdown_for_llms.worker import Worker
-from markdown_for_llms.sandbox import process_identity
+from markdown_for_llms.worker import process_identity
 from markdown_for_llms.files import write, write_json, identify
 base = Path(sys.argv[1])
 s = Settings(data_root=str(base/'data'), model_root=str(base/'models'), upload_mib=1,

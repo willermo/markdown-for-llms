@@ -187,18 +187,21 @@ def make_odt(path, text_box=False, fallback=False, empty_first=False):
 CHART_NS = 'xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0"'
 
 
-def make_odt_nested(path, html_table, inner="member", after="After the table."):
+def make_odt_nested(path, html_table, inner="member", after="After the table.", twin=None):
     """An odt whose table cell holds a text box with two picture frames: pandoc's ODT reader puts the
     second image inside the alternative text of the first (as in D16). With `html_table` a cell before
     it holds two paragraphs, so the writer emits the table as HTML, where alternative text is text.
     `inner`: the second image as the member `Pictures/b.png` ("member"), or its bytes inline in the
     content, as `office:binary-data` ("binary") or a `data:` URI ("data"); `after`: the paragraph
-    after the table."""
+    after the table; `twin`: the bytes of the second image also as the member `Pictures/duplicate.png`,
+    not referenced ("unused") or the second image of the frame of the first picture ("alternate")."""
     data = base64.b64encode(png(8, 6, (0, 0, 250))).decode()
     second = {"member": '<draw:image xlink:href="Pictures/b.png"/>',
               "binary": f'<draw:image><office:binary-data>{data}</office:binary-data></draw:image>',
               "data": f'<draw:image xlink:href="data:image/png;base64,{data}"/>'}[inner]
+    alternate = '<draw:image xlink:href="Pictures/duplicate.png"/>' if twin == "alternate" else ""
     pictures = ('<draw:frame draw:name="A" svg:width="2cm" svg:height="1.5cm"><draw:image xlink:href="Pictures/a.png"/>'
+                f'{alternate}'
                 f'<svg:title>First picture</svg:title></draw:frame><text:tab/>'
                 f'<draw:frame draw:name="B" svg:width="2cm" svg:height="1.5cm">{second}</draw:frame>')
     cells = ('<table:table-cell><text:p>First paragraph of a cell.</text:p><text:p>Second paragraph.</text:p></table:table-cell>'
@@ -217,6 +220,8 @@ def make_odt_nested(path, html_table, inner="member", after="After the table."):
     members = {"META-INF/manifest.xml": manifest, "content.xml": content, "styles.xml": styles, "Pictures/a.png": png()}
     if inner == "member":
         members["Pictures/b.png"] = png(8, 6, (0, 0, 250))
+    if twin:
+        members["Pictures/duplicate.png"] = png(8, 6, (0, 0, 250))
     return write_zip(path, members, stored_first=("mimetype", b"application/vnd.oasis.opendocument.text"))
 
 
@@ -328,3 +333,88 @@ def zip_bytes(members):
         for name, data in members.items():
             z.writestr(name, data)
     return buf.getvalue()
+
+
+# --- synthetic PDFs of the pages family (MFL032 tranche B) ---------------------------------
+
+def checker_rgb(w, h, cell=10):
+    """A grey checkerboard, RGB bytes."""
+    return bytes(v for y in range(h) for x in range(w) for v in ((40,) * 3 if (x // cell + y // cell) % 2 == 0 else (220,) * 3))
+
+
+def scan_of(text_lines, scale=2.0):
+    """(w, h, RGB bytes) of the rendering of a native page with `text_lines`: the image of a scan
+    whose text OCR can read."""
+    import pypdfium2 as pdfium
+    content = b"BT /F1 20 Tf 60 760 Td 26 TL " + b" ".join(b"(" + line.encode("latin-1") + b") '" for line in text_lines) + b" ET"
+    doc = pdfium.PdfDocument(make_pdf([{"content": content}]))
+    try:
+        bitmap = doc[0].render(scale=scale, rev_byteorder=True)
+        img = bitmap.to_pil().convert("RGB")
+    finally:
+        doc.close()
+    return img.width, img.height, img.tobytes()
+
+
+def make_pdf(pages, font="Helvetica"):
+    """A PDF of `pages`, each a dict: `content` (page content stream, bytes; /F1 is the font,
+    /Im1 the image, /Fm1 the form), `image` ((w, h, RGB bytes) drawn by /Im1), `form` (content
+    of a Form XObject /Fm1 over the whole page, which may draw /Im1 and /F1), `images` (more
+    images {name: (w, h, RGB bytes)}), `mediabox`,
+    `cropbox`, `rotate`. The font is a Type1 font named `font`."""
+    objs = []
+
+    def add(body):
+        objs.append(body)
+        return len(objs)
+    f1 = add(b"<< /Type /Font /Subtype /Type1 /BaseFont /" + font.encode() + b" >>")
+    kids = []
+    pages_id = None
+    deferred = []
+    for page in pages:
+        xobjects = {}
+        images = dict(page.get("images") or {})
+        if page.get("image"):
+            images["Im1"] = page["image"]
+        for name, (w, h, rgb) in images.items():
+            data = zlib.compress(rgb)
+            xobjects[name] = add(b"<< /Type /XObject /Subtype /Image /Width %d /Height %d /ColorSpace /DeviceRGB "
+                                 b"/BitsPerComponent 8 /Filter /FlateDecode /Length %d >>\nstream\n" % (w, h, len(data))
+                                 + data + b"\nendstream")
+        box = page.get("mediabox", (0, 0, 595, 842))
+        if page.get("form") is not None:
+            fs = page["form"]
+            res = b"<< /Font << /F1 %d 0 R >>" % f1 + (b" /XObject << /Im1 %d 0 R >>" % xobjects["Im1"] if "Im1" in xobjects else b"") + b" >>"
+            xobjects["Fm1"] = add(b"<< /Type /XObject /Subtype /Form /BBox [%d %d %d %d] /Resources " % tuple(box) + res
+                                  + b" /Length %d >>\nstream\n" % len(fs) + fs + b"\nendstream")
+        content = page.get("content", b"")
+        k = add(b"<< /Length %d >>\nstream\n" % len(content) + content + b"\nendstream")
+        xo = b" ".join(b"/%s %d 0 R" % (n.encode(), i) for n, i in xobjects.items())
+        extra = b""
+        if page.get("cropbox"):
+            extra += b" /CropBox [%d %d %d %d]" % tuple(page["cropbox"])
+        if page.get("rotate"):
+            extra += b" /Rotate %d" % page["rotate"]
+        deferred.append((k, xo, box, extra))
+    pages_id = len(objs) + len(deferred) + 1
+    for k, xo, box, extra in deferred:
+        kids.append(add(b"<< /Type /Page /Parent %d 0 R /MediaBox [%d %d %d %d]" % ((pages_id,) + tuple(box)) + extra
+                        + b" /Resources << /Font << /F1 %d 0 R >> /XObject << " % f1 + xo + b" >> >> /Contents %d 0 R >>" % k))
+    assert add(b"<< /Type /Pages /Kids [" + b" ".join(b"%d 0 R" % i for i in kids) + b"] /Count %d >>" % len(kids)) == pages_id
+    catalog = add(b"<< /Type /Catalog /Pages %d 0 R >>" % pages_id)
+    buf = bytearray(b"%PDF-1.4\n")
+    offsets = []
+    for i, body in enumerate(objs, 1):
+        offsets.append(len(buf))
+        buf += b"%d 0 obj\n" % i + body + b"\nendobj\n"
+    xref = len(buf)
+    buf += b"xref\n0 %d\n0000000000 65535 f \n" % (len(objs) + 1) + b"".join(b"%010d 00000 n \n" % o for o in offsets)
+    buf += b"trailer\n<< /Size %d /Root %d 0 R >>\nstartxref\n%d\n%%%%EOF\n" % (len(objs) + 1, catalog, xref)
+    return bytes(buf)
+
+
+NATIVE_TEXT = b"BT /F1 14 Tf 72 760 Td (Native text of the synthetic page, with a figure below.) Tj ET"
+FIGURE = b"q 200 0 0 150 72 500 cm /Im1 Do Q"
+SCAN = b"q 595 0 0 842 0 0 cm /Im1 Do Q"
+INVISIBLE = b"BT 3 Tr /F1 12 Tf 72 700 Td (INVISIBLE OCR LAYER TEXT OF THE SCANNED PAGE) Tj ET"
+GLYPHLESS_MODE0 = b"BT 0 Tr /F1 12 Tf 72 700 Td (GLYPHLESS OCR LAYER TEXT OF THE SCANNED PAGE) Tj ET"

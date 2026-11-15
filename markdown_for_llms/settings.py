@@ -43,6 +43,8 @@ class Settings:
     lease_seconds: int = 15
     grace_seconds: int = 5
     process_limit: int = 512
+    # a label of the storage identity schema 2 only (until tranche C of MFL032): the conversions
+    # run on the engine (Marker 2.2.0), which records its own versions in engine.json
     bind_profile: str = "marker-cpu-v1"
     review_provider: str = "disabled"
 
@@ -98,6 +100,13 @@ class Settings:
                 raise ConfigurationError("Unknown administrative argument")
             values.update({k: v for k, v in overrides.items() if v is not None})
         return cls(**values)
+
+    def engine_limits(self, max_pages=None):
+        """The limits of `engine.convert` from these settings: the same for `mdf convert` and the
+        worker (FC4 of the review of B of MFL032)."""
+        return {"memory_mib": self.memory_mib, "output_mib": self.output_mib, "timeout_seconds": self.timeout_seconds,
+                "max_pages": self.max_pages if max_pages is None else max_pages, "poll_seconds": self.poll_seconds,
+                "threads": self.threads, "stall_seconds": self.stall_seconds}
 
     def public(self):
         return {k: v for k, v in asdict(self).items() if k not in {"data_root", "model_root"}}

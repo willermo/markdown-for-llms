@@ -1,4 +1,5 @@
-"""Validate raster gallery candidates without importing Marker."""
+"""Validate raster gallery candidates in the light child of the engine (originals read-only
+under /in/original, request and result in /scratch); no conversion library imported."""
 from pathlib import Path
 import json
 import warnings
@@ -15,7 +16,7 @@ def main(args):
     for item in config['artifacts']:
         result = dict(path=item['path'], gallery=False, reason='Unsupported raster format')
         try:
-            with open_file(Path('/scratch/original'), item['path']) as stream:
+            with open_file(Path('/in/original'), item['path']) as stream:
                 with Image.open(stream, formats=['PNG', 'JPEG']) as image:
                     width, height = image.size
                     if width < 1 or height < 1 or max(width, height) > config['max_dimension'] or width * height > config['max_pixels']:

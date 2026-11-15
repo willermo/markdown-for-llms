@@ -20,6 +20,12 @@ def _fails(action):
 
 
 def main(args):
+    if args[:1] == ["allocate"]:          # a process that grows past a memory cap (tests of the scope)
+        held = []
+        for _ in range(int(args[1])):
+            held.append(bytearray(1 << 20))
+            held[-1][::4096] = b"x" * len(held[-1][::4096])
+        return 0
     host_path = args[0] if args else "/home"
 
     def connect():

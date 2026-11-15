@@ -11,7 +11,7 @@ import uuid
 import zipfile
 
 from .files import digest, identify, open_file, read_json, relative, rename, sync_directory, corruption, make_directory, write_json, IntegrityError, MetadataError, decode_json, FileSafetyError, json_bytes
-from .progress import STAGES
+from .engine.progress import STAGES
 from .settings import options
 from .storage import Storage, StorageError, CapacityError
 

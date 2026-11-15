@@ -21,7 +21,8 @@ def main(argv=None):
     resource.setrlimit(resource.RLIMIT_FSIZE, (limits["output_mib"] * 1048576,) * 2)
     resource.setrlimit(resource.RLIMIT_CPU, (limits["cpu_seconds"],) * 2)
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
-    resource.setrlimit(resource.RLIMIT_NOFILE, (64, 64))
+    files = limits.get("files_limit", 64)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (files, files))
     resource.setrlimit(resource.RLIMIT_NPROC, (limits["process_limit"],) * 2)
     try:
         return importlib.import_module(argv[1]).main(argv[2:])

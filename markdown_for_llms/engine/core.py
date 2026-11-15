@@ -1,22 +1,29 @@
 """`convert` and `availability`: the entry points of the engine.
 
-    convert(source, out, request=None, limits=None, work=None, observer=None, name=None) -> dict
+    convert(source, out, request=None, limits=None, work=None, observer=None, name=None,
+            model_root=None) -> dict
 
 `request`: `route` (None: the default of the matrix), `ocr` (`auto` | `force`), `lang` (recorded;
 no converter of this version accepts a language), `attempt` (an ID for the names of containers
 and directories, `ATTEMPT`; random when absent; any other value is `invalid_setting` before any
 directory is made). `limits`: `memory_mib` (the cap of each tool and child),
 `output_mib` (the output and every /work), `timeout_seconds` (0: none), `max_pages`,
-`poll_seconds`. `work`: where the private directories of the attempt go (a temporary directory
+`poll_seconds`, `threads` (of the Marker child), `stall_seconds` (a Marker child that writes no
+event and uses no CPU time for that long is stopped: `stalled`). `model_root`: the weights of the
+Marker route (`weights.py`; default `weights.default_root()`). `work`: where the private directories of the attempt go (a temporary directory
 when absent); it is never `out`. `observer(event)` receives the steps and the ticks of every
-tool call and child and may stop the conversion by returning `cancelled` or `interrupted`.
+tool call and child, and `{"event": "progress", "progress": snapshot}` from the Marker child
+(`progress.py`), and may stop the conversion by returning `cancelled` or `interrupted` to a step
+or a tick.
 
-The result is the content of `out/engine.json`, also on a failure (see `contract.py`). Marker
-and Datalab are routes of the matrix that this version does not run yet (tranche B of MFL032):
-`route_unavailable`.
+The result is the content of `out/engine.json`, also on a failure (see `contract.py`). The
+Datalab route (`datalab.py`) needs `request["datalab"]` (`mode`, `transit_confirmed`, `cap_usd`)
+and the key: `datalab_key` (a `datalab.Key`, read by the caller) or `DATALAB_API_KEY` in the
+environment of the process; the key is never part of the result.
 """
 from datetime import datetime, timezone
 from pathlib import Path
+import os
 import re
 import secrets
 import shutil
@@ -28,18 +35,23 @@ from . import contract, formats, routes
 from .codes import Code, EngineError
 
 DEFAULT_LIMITS = {"memory_mib": 4096, "output_mib": 512, "timeout_seconds": 0, "max_pages": 50,
-                  "poll_seconds": 0.25}
-NOT_YET = {routes.MARKER: "Marker 2.2.0 arrives in tranche B of MFL032",
-           routes.DATALAB: "Datalab arrives in tranche B of MFL032"}
+                  "poll_seconds": 0.25, "threads": 4, "stall_seconds": 900}
+NOT_YET = {}
 TOOLCHAIN_ROUTES = (routes.PANDOC, routes.DJVUTXT)
 ATTEMPT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
+PREPARING = ("image-to-pdf", "ddjvu", "provider", "classify", "strip")      # steps before the Marker child
 
 
 class Context:
     """The state of one attempt, shared by the routes."""
 
-    def __init__(self, attempt, work, stage, limits, observer):
+    def __init__(self, attempt, work, stage, limits, observer, model_root=None):
         self.attempt, self.work, self.stage, self.observer = attempt, work, stage, observer
+        self.model_root = model_root
+        self.threads = limits["threads"]
+        self.stall_seconds = limits["stall_seconds"]
+        self.limits, self.weights, self.marker_versions, self.child_runs = [], None, None, 0
+        self.progress = None
         self.tool_root = work / "tools"
         self.memory_mib = limits["memory_mib"]
         self.output_mib = limits["output_mib"]
@@ -50,6 +62,7 @@ class Context:
         self.steps, self.problems, self.corrections, self.correction_counts = [], [], [], {}
         self.unlisted_problems = {}         # problems counted by a converter but not in its list
         self.diagnostics, self.package, self.pages = {}, None, None
+        self.cost = self.transit = self.datalab_versions = None
 
     def timeout(self):
         """Seconds left for the next call (a day when there is no deadline)."""
@@ -65,7 +78,17 @@ class Context:
         return Watch(self.output_mib, observer=self.observer, attempt=self.attempt, deadline=self.deadline,
                      poll_seconds=self.poll_seconds, steps=self.steps)
 
+    def feed_events(self, events):
+        """Events of the Marker child: the progress snapshot goes to the observer."""
+        from .progress import Progress
+        if self.progress is None:
+            self.progress = Progress()
+        if any([self.progress.feed(e) for e in events]) and self.observer is not None:
+            self.observer({"event": "progress", "progress": self.progress.snapshot()})
+
     def event(self, step):
+        if step in PREPARING:
+            self.feed_events([{"event": "prepare"}])
         if self.observer is not None:
             stop = self.observer({"event": "step", "step": step})
             if stop:
@@ -80,8 +103,18 @@ def _version(dist):
         return None
 
 
-def availability():
-    """{converter: {"available": bool, "code": closed code or None}} on this machine."""
+def availability(model_root=None, only=None):
+    """{converter: {"available": bool, "code": closed code or None}} on this machine. Marker
+    needs Bubblewrap, a systemd user scope and the verified weights under `model_root`. `only`:
+    the converters to check (the worker asks for Marker alone)."""
+    if only is not None:
+        out = {}
+        if routes.MARKER in only:
+            out[routes.MARKER] = _marker_availability(model_root)
+        if set(only) - {routes.MARKER}:
+            full = availability(model_root)
+            out.update({k: full[k] for k in only})
+        return out
     out = {routes.TEXT: {"available": True, "code": None}}
     try:
         from . import toolchain
@@ -94,9 +127,24 @@ def availability():
     from . import isolation
     if ok["available"] and not isolation.available():        # the packages of pandoc are audited in the child
         out[routes.PANDOC] = {"available": False, "code": Code.ISOLATION_UNAVAILABLE.value}
-    for converter in NOT_YET:
-        out[converter] = {"available": False, "code": Code.ROUTE_UNAVAILABLE.value}
+    out[routes.MARKER] = _marker_availability(model_root)
+    out[routes.DATALAB] = ({"available": True, "code": None} if os.environ.get("DATALAB_API_KEY")
+                           else {"available": False, "code": Code.DATALAB_KEY_MISSING.value})
     return out
+
+
+def _marker_availability(model_root):
+    from . import isolation, weights
+    found = {name: _version(name) for name in ("marker-pdf", "indra-ocr")}
+    if found != {"marker-pdf": "2.2.0", "indra-ocr": "1.1.2"}:
+        return {"available": False, "code": Code.ENGINE_ADAPTER_MISMATCH.value}
+    if not isolation.scope_available():
+        return {"available": False, "code": Code.ISOLATION_UNAVAILABLE.value}
+    try:
+        weights.verify(model_root or weights.default_root())
+    except EngineError as exc:
+        return {"available": False, "code": exc.code.value}
+    return {"available": True, "code": None}
 
 
 def detect(path, name=None):
@@ -114,7 +162,7 @@ def _source_record(path, name, info):
 
 def _components(converter, ctx):
     comp = {"package": {"markdown-for-llms": _version("markdown-for-llms")}}
-    if converter in TOOLCHAIN_ROUTES:
+    if converter in TOOLCHAIN_ROUTES or any(not s["tool"].startswith("bwrap:") for s in ctx.steps):
         from . import toolchain
         r = toolchain.report()
         used = sorted({s["tool"] for s in ctx.steps if not s["tool"].startswith("bwrap:")})
@@ -126,10 +174,17 @@ def _components(converter, ctx):
                 comp["toolchain"]["versions"][t] = r["versions"].get(VERSION_OF[t])
     if converter == routes.TEXT:
         comp["charset-normalizer"] = _version("charset-normalizer")
+    if converter == routes.MARKER:
+        comp["marker"] = ctx.marker_versions
+        comp["weights"] = ctx.weights
+    if converter == routes.DATALAB:
+        from . import datalab
+        comp["datalab"] = {"endpoint": datalab.API, "versions": ctx.datalab_versions}
     return comp
 
 
-def convert(source, out, request=None, limits=None, work=None, observer=None, name=None):
+def convert(source, out, request=None, limits=None, work=None, observer=None, name=None, model_root=None,
+            datalab_key=None):
     request = dict(request or {})
     limits = {**DEFAULT_LIMITS, **(limits or {})}
     attempt = request.get("attempt")
@@ -147,8 +202,13 @@ def convert(source, out, request=None, limits=None, work=None, observer=None, na
     attempt_dir.mkdir(parents=True, mode=0o700)
     stage = attempt_dir / "stage"
     (stage / "diagnostics").mkdir(parents=True, mode=0o700)
-    ctx = Context(attempt, attempt_dir, stage, limits, observer)
+    if model_root is None:
+        from .weights import default_root
+        model_root = default_root()
+    ctx = Context(attempt, attempt_dir, stage, limits, observer, Path(model_root).absolute())
     requested = {k: request.get(k) for k in ("route", "ocr", "lang")}
+    if request.get("datalab") is not None:
+        requested["datalab"] = {k: request["datalab"].get(k) for k in ("mode", "transit_confirmed", "cap_usd")}
     result = {"schema": contract.SCHEMA, "attempt": attempt, "started_at": at, "source": None,
               "route": None, "options": {"requested": requested, "effective": None}, "components": None,
               "corrections": None, "problems": [], "limits": [], "transit": {"left_machine": False, "service": None},
@@ -180,6 +240,14 @@ def convert(source, out, request=None, limits=None, work=None, observer=None, na
         elif converter == routes.DJVUTXT:
             from . import native
             result["djvutxt"] = native.djvutxt_route(ctx, src)
+        elif converter == routes.MARKER:
+            from . import pages
+            result["marker"] = pages.marker_route(ctx, src, fmt, request)
+            result["options"]["effective"]["ocr"] = "force" if result["marker"]["force_ocr"] else "auto"
+        elif converter == routes.DATALAB:
+            from . import datalab
+            result["datalab"] = datalab.datalab_route(ctx, src, fmt, request, key=datalab_key)
+            result["options"]["effective"]["ocr"] = "auto"
         else:
             raise EngineError(Code.ROUTE_INVALID, converter)
         _finish(result, ctx, converter, started)
@@ -215,6 +283,11 @@ def _finish(result, ctx, converter, started):
         result["package"] = ctx.package
     if ctx.pages is not None:
         result["pages"] = ctx.pages
+    if ctx.cost is not None:
+        result["cost"] = ctx.cost
+    if ctx.transit is not None:
+        result["transit"] = ctx.transit
+    result["limits"] = list(ctx.limits)
     result["components"] = _components(converter, ctx) if converter else None
     result["timings"] = {"total_seconds": round(time.monotonic() - started, 3)}
 
