@@ -35,6 +35,15 @@ FORMATS = {
     "txt": (NATIVE, ("txt",)),
 }
 EXTENSIONS = {ext: fmt for fmt, (_, exts) in FORMATS.items() for ext in exts}
+# the media type of a source of each format (the download of the archived source, MFL032 C2)
+MIME = {"pdf": "application/pdf", "png": "image/png", "jpeg": "image/jpeg", "tiff": "image/tiff",
+        "djvu": "image/vnd.djvu",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "odt": "application/vnd.oasis.opendocument.text", "ods": "application/vnd.oasis.opendocument.spreadsheet",
+        "epub": "application/epub+zip", "doc": "application/msword", "rtf": "application/rtf",
+        "html": "text/html", "txt": "text/plain"}
 MAX_MEMBERS = 10000
 MIMETYPE_MAX = 128
 TEXT_PROBE = 64 * 1024

@@ -118,26 +118,31 @@ class PictureTests(unittest.TestCase):
                              {"label": "Text", "bbox": [0, 500, 600, 550], "text": "caption"}])
         counts = marker_child.add_pictures(p, [[300, 100, 500, 300], [0, 100, 200, 300], [10, 110, 50, 150],
                                                 [5, 5, 5, 5]])
-        self.assertEqual(counts, (2, 2, 0))                     # one inside a bigger one, one empty
-        labels = [(b["label"], b["bbox"][0]) for b in p.blocks]
-        self.assertEqual(labels, [("Text", 0), ("Picture", 0.0), ("Picture", 300.0), ("Text", 0)])
+        with self.subTest("geometry"):
+            labels = [(b["label"], b["bbox"][0]) for b in p.blocks]
+            self.assertEqual(labels, [("Text", 0), ("Picture", 0.0), ("Picture", 300.0), ("Text", 0)])
+        with self.subTest("diagnostics"):
+            self.assertEqual(counts, (2, 2, 0))                 # one inside a bigger one, one empty
 
     def test_a_partial_overlap_widens_the_crop_to_the_union(self):                     # FC1
         # two pictures overlapping on a slide: covered at 67 %, not contained; nothing is cut
         p = FakePage(blocks=[{"label": "Text", "bbox": [0, 0, 600, 50], "text": "title"}])
         counts = marker_child.add_pictures(p, [[100, 100, 300, 250], [160, 100, 340, 250]])
-        self.assertEqual(counts, (1, 0, 1))
-        self.assertEqual([b["bbox"] for b in p.blocks if b["label"] == "Picture"], [[100.0, 100.0, 340.0, 250.0]])
+        with self.subTest("geometry"):                  # H2: the covered area first, the counters after
+            self.assertEqual([b["bbox"] for b in p.blocks if b["label"] == "Picture"], [[100.0, 100.0, 340.0, 250.0]])
+        with self.subTest("diagnostics"):
+            self.assertEqual(counts, (1, 0, 1))
 
     def test_only_a_complete_containment_is_part_of_another_figure(self):             # FC1
-        for inner, expected in (([150, 120, 250, 200], (1, 1, 0)),                   # inside
-                                ([100.5, 99.5, 300.5, 250.5], (1, 1, 0)),             # inside within the tolerance
-                                ([150, 120, 302, 200], (1, 0, 1))):                   # 2 px out: union
-            with self.subTest(inner=inner):
-                p = FakePage(blocks=[{"label": "Text", "bbox": [0, 0, 600, 50], "text": "t"}])
-                self.assertEqual(marker_child.add_pictures(p, [[100, 100, 300, 250], inner]), expected)
-                if expected[2]:
-                    self.assertEqual(p.blocks[1]["bbox"], [100.0, 100.0, 302.0, 250.0])
+        for inner, crop, expected in (([150, 120, 250, 200], [100.0, 100.0, 300.0, 250.0], (1, 1, 0)),     # inside
+                                      ([100.5, 99.5, 300.5, 250.5], [100.5, 99.5, 300.5, 250.5], (1, 1, 0)),  # tolerance: the larger is kept
+                                      ([150, 120, 302, 200], [100.0, 100.0, 302.0, 250.0], (1, 0, 1))):  # 2 px out: union
+            p = FakePage(blocks=[{"label": "Text", "bbox": [0, 0, 600, 50], "text": "t"}])
+            counts = marker_child.add_pictures(p, [[100, 100, 300, 250], inner])
+            with self.subTest("geometry", inner=inner):
+                self.assertEqual([b["bbox"] for b in p.blocks if b["label"] == "Picture"], [crop])
+            with self.subTest("diagnostics", inner=inner):
+                self.assertEqual(counts, expected)
 
     def test_boxes_that_only_touch_stay_two_figures(self):
         p = FakePage(blocks=[{"label": "Text", "bbox": [0, 0, 600, 50], "text": "t"}])
@@ -145,8 +150,32 @@ class PictureTests(unittest.TestCase):
 
     def test_a_partial_overlap_with_a_picture_of_indra_widens_it(self):
         p = FakePage(blocks=[{"label": "Picture", "bbox": [100, 100, 300, 250]}])
-        self.assertEqual(marker_child.add_pictures(p, [[250, 100, 400, 250]]), (0, 0, 1))
-        self.assertEqual(p.blocks[0]["bbox"], [100, 100, 400.0, 250])
+        counts = marker_child.add_pictures(p, [[250, 100, 400, 250]])
+        with self.subTest("geometry"):
+            self.assertEqual([b["bbox"] for b in p.blocks], [[100, 100, 400.0, 250]])
+        with self.subTest("diagnostics"):
+            self.assertEqual(counts, (0, 0, 1))
+
+    def test_a_widened_picture_of_indra_moves_by_the_centre_rule(self):                # H1 of the fix of B
+        # the counterexample of the review: a raster in the free corner of a picture of Indra
+        # widens it upwards; the picture goes before the paragraph its new centre is above,
+        # the text of Indra keeps its order
+        p = FakePage(blocks=[{"label": "Text", "bbox": [0, 0, 600, 20], "text": "title"},
+                             {"label": "Text", "bbox": [0, 340, 180, 360], "text": "paragraph"},
+                             {"label": "Picture", "bbox": [200, 300, 400, 500]},
+                             {"label": "Text", "bbox": [0, 600, 600, 620], "text": "caption"}])
+        counts = marker_child.add_pictures(p, [[0, 100, 230, 330]])
+        with self.subTest("order"):
+            self.assertEqual([b.get("text", b["label"]) for b in p.blocks], ["title", "Picture", "paragraph", "caption"])
+            self.assertEqual(p.blocks[1]["bbox"], [0.0, 100, 400, 500])
+        with self.subTest("diagnostics"):
+            self.assertEqual(counts, (0, 0, 1))
+        # a picture of Indra that nothing widens stays where Indra put it
+        p = FakePage(blocks=[{"label": "Text", "bbox": [0, 0, 600, 20], "text": "title"},
+                             {"label": "Text", "bbox": [0, 340, 180, 360], "text": "paragraph"},
+                             {"label": "Picture", "bbox": [200, 300, 400, 500]}])
+        marker_child.add_pictures(p, [[450, 600, 550, 700]])
+        self.assertEqual([b.get("text", b["label"]) for b in p.blocks], ["title", "paragraph", "Picture", "Picture"])
 
     def test_blocks_are_made_from_lines_first(self):
         line = SimpleNamespace(box=[0, 400, 600, 420], text="the only line")
@@ -550,7 +579,8 @@ class RealMarkerTests(unittest.TestCase):
             result = convert(src, Path(tmp) / "out", {"attempt": "overlap"}, {"memory_mib": 4096, "threads": 2},
                              work=Path(tmp) / "work", model_root=model_root())
             self.assertEqual(result["status"], "complete", result.get("error"))
-            self.assertEqual(result["pages"]["pages"][0]["pictures_merged"], 1)
+            # H2 of the review of the fix of B: the proportions and the pixels first, so that a red
+            # on a version without the union proves the loss; the counters after them
             assets = list((Path(tmp) / "out" / "assets").iterdir())
             self.assertEqual(len(assets), 1)
             with Image.open(assets[0]) as img:
@@ -560,6 +590,7 @@ class RealMarkerTests(unittest.TestCase):
                 self.assertTrue(r > 150 and g < 100, (r, g, b))
                 r, g, b = rgb.getpixel((3, rgb.height // 2))                    # the left edge is green
                 self.assertTrue(g > 150 and r < 100, (r, g, b))
+            self.assertEqual(result["pages"]["pages"][0].get("pictures_merged"), 1)
 
     def test_missing_weights_stop_before_the_child(self):                              # 12.12
         from markdown_for_llms.engine.core import convert

@@ -36,7 +36,7 @@ import re
 import stat
 import time
 
-from . import contract
+from . import contract, routes
 from .codes import Code, EngineError
 
 API = "https://www.datalab.to/api/v1"
@@ -49,6 +49,7 @@ PRICE_SOURCE = "https://www.datalab.to/pricing (read 2026-11-15; listed with the
 DISCOUNTED_PER_1000 = {"lite": Decimal("0.375"), "fast": Decimal("1"), "balanced": Decimal("3"),
                        "accurate": Decimal("7.50")}
 LIST_PER_1000 = {mode: price / Decimal("0.75") for mode, price in DISCOUNTED_PER_1000.items()}
+assert tuple(LIST_PER_1000) == routes.DATALAB_MODES, "the job options of routes.py name the priced modes"
 DEFAULT_MODE = "balanced"
 MARGIN_CENTS = Decimal(1)
 POLL_SECONDS = 2.0

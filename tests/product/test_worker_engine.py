@@ -121,6 +121,8 @@ class ReconciliationTests(Base):
     def test_scopes_of_the_attempt_are_stopped_by_prefix(self):                          # HC1
         from markdown_for_llms.engine.isolation import ScopeUnreachable
         job = self.interrupted_row(None)                     # the worker died before any record
+        with self.service.storage.connect() as conn:         # an attempt of a previous version: no indicator
+            conn.execute('UPDATE runs SET scope_recorded=NULL WHERE id=?', (job['id'],))
         row = self.service.storage.get(job['id'])
         prefix = 'mdf-eng-%s-' % row['attempt_id'][:16]
         with patch('markdown_for_llms.worker.isolation.list_scopes', side_effect=ScopeUnreachable('bus')), \
@@ -133,6 +135,48 @@ class ReconciliationTests(Base):
         listed.assert_called_once_with(prefix)
         stop.assert_called_once_with(prefix + 'marker-2.scope')
         self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
+
+    def test_only_attempts_that_recorded_a_scope_ask_the_user_manager(self):             # indicator of the scope
+        from markdown_for_llms.engine.isolation import ScopeUnreachable
+        # no scope was ever named (a native or Datalab route, or a death before the first one):
+        # the reconciliation does not need the user manager, even when it is unreachable
+        job = self.interrupted_row({"container": "mdf-eng-abc-1"})
+        self.assertEqual(self.service.storage.get(job['id'])['scope_recorded'], 0)
+        with patch('markdown_for_llms.worker.isolation.list_scopes', side_effect=ScopeUnreachable('no bus')) as listed, \
+                patch('markdown_for_llms.engine.toolchain.remove_container', return_value=True):
+            Worker(self.settings).reconcile()
+        listed.assert_not_called()
+        self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
+        # a scope was named, then runs.child was replaced (the raster child of the publication):
+        # the indicator stays 1 and the scope is still found by its prefix
+        job = self.interrupted_row({"pid": None, "scope": "mdf-eng-x-marker-1.scope"})
+        worker = Worker(self.settings)
+        self.addCleanup(worker.storage.close)
+        row = self.service.storage.get(job['id'])
+        with self.service.storage.connect() as conn:
+            conn.execute("UPDATE runs SET token=? WHERE id=?", (worker.token, job['id']))
+        worker.tick(dict(row, token=worker.token), {"pid": 999999999})
+        with self.service.storage.connect() as conn:
+            conn.execute("UPDATE runs SET token='dead-worker' WHERE id=?", (job['id'],))
+        row = self.service.storage.get(job['id'])
+        self.assertEqual((row['scope_recorded'], json.loads(row['child'])), (1, {"pid": 999999999}))
+        prefix = 'mdf-eng-%s-' % row['attempt_id'][:16]
+        with patch('markdown_for_llms.worker.isolation.list_scopes', side_effect=ScopeUnreachable('no bus')):
+            with self.assertRaisesRegex(StorageError, 'not attested'):
+                Worker(self.settings).reconcile()
+        with patch('markdown_for_llms.worker.isolation.list_scopes', return_value=[prefix + 'marker-1.scope']) as listed, \
+                patch('markdown_for_llms.worker.isolation.stop_scope', return_value='absent') as stop:
+            Worker(self.settings).reconcile()
+        stop.assert_called_once_with(prefix + 'marker-1.scope')
+        self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
+
+    def test_a_queued_run_of_a_previous_version_gets_the_indicator_when_claimed(self):
+        job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
+        with self.service.storage.connect() as conn:
+            conn.execute('UPDATE runs SET scope_recorded=NULL WHERE id=?', (job['id'],))
+        worker = Worker(self.settings)
+        self.addCleanup(worker.storage.close)
+        self.assertEqual(worker.claim()['scope_recorded'], 0)
 
     def test_the_scope_is_recorded_before_the_child_has_a_pid(self):                    # HC1
         job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
@@ -165,18 +209,116 @@ class ReconciliationTests(Base):
 
 
 class ReadinessTests(Base):
-    def test_marker_route_unavailable_is_visible_and_checked_again_later(self):
+    AVAILABLE = {"text": {"available": True, "code": None}, "pandoc": {"available": True, "code": None},
+                 "djvutxt": {"available": True, "code": None}, "datalab": {"available": False, "code": "datalab_key_missing"}}
+
+    def test_an_unavailable_route_fails_its_job_and_the_queue_goes_on(self):            # C3
+        docx = __import__('test_formats_product').SAMPLES['docx'][1]
+        pdf_job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
+        docx_job = self.service.submit(io.BytesIO(docx), 'letter.docx')
         worker = Worker(self.settings)
         self.addCleanup(worker.storage.close)
-        states = [{"marker": {"available": False, "code": "weights_missing"}},
-                  {"marker": {"available": True, "code": None}}]
-        with patch('markdown_for_llms.worker.availability', side_effect=states) as check:
-            with self.assertRaisesRegex(ValueError, 'weights_missing'):
-                worker.ready()
+        states = [dict(self.AVAILABLE, marker={"available": False, "code": "weights_missing"}),
+                  dict(self.AVAILABLE, marker={"available": True, "code": None})]
+        calls = []
+        with patch('markdown_for_llms.worker.availability', side_effect=states) as check, \
+                patch('markdown_for_llms.worker.convert', side_effect=fake_convert(calls=calls)):
             worker.ready()
+            worker.heartbeat()
+            worker.process(worker.claim())
+            worker.process(worker.claim())
             worker.ready()                                    # held for READY_SECONDS
-        self.assertEqual(check.call_count, 2)
-        self.assertEqual(check.call_args.kwargs, {'model_root': self.settings.model_root, 'only': ('marker',)})
+            self.assertEqual(check.call_count, 1)
+            worker._ready_at -= 61
+            self.assertTrue(worker.ready()['marker']['available'])
+        self.assertEqual(check.call_args.kwargs, {'model_root': self.settings.model_root})
+        failed, done = self.service.get(pdf_job['id']), self.service.get(docx_job['id'])
+        self.assertEqual(failed['state'], 'failed')
+        self.assertTrue(failed['error'].startswith('Conversion failed: route_unavailable (marker: weights_missing)'),
+                        failed['error'])
+        self.assertEqual(done['state'], 'completed')
+        self.assertEqual([(c['request']['route'], c['name']) for c in calls], [(None, 'letter.docx')])
+        with self.service.storage.connect() as conn:
+            readiness = json.loads(conn.execute('SELECT readiness FROM worker').fetchone()[0])
+        self.assertEqual(readiness['converters']['marker'], {"available": False, "code": "weights_missing"})
+        self.assertIn('routes unavailable: datalab (datalab_key_missing), marker (weights_missing)', readiness['message'])
+
+
+class DatalabWorkerTests(Base):
+    SECRET = 'synthetic-datalab-key-0123456789'
+
+    def test_cli_retry_of_a_datalab_run_confirms_the_transit_again(self):            # FD2 of the fix of C
+        """A Datalab run completed through the worker, the engine and the fake transport of
+        test_engine_datalab (no network); `mdf retry ID` without the confirmation queues nothing
+        and exits 1 with transit_not_confirmed, `--confirm-transit` queues a new attempt."""
+        import contextlib
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'unit' / 'engine'))
+        from engine_test_support import NATIVE_TEXT, make_pdf
+        from test_engine_datalab import FakeTransport
+        from markdown_for_llms import cli
+        from markdown_for_llms.engine import datalab
+        from dataclasses import replace
+        settings = replace(self.settings, datalab_cap_usd='0.05')
+        pdf = make_pdf([{"content": NATIVE_TEXT}, {"content": NATIVE_TEXT}])
+        job = self.service.submit(io.BytesIO(pdf), 'remote.pdf', {'route': 'datalab', 'transit_confirmed': True})
+        with patch.dict(os.environ, {'DATALAB_API_KEY': self.SECRET}):
+            worker = Worker(settings)
+        self.addCleanup(worker.storage.close)
+        transport = FakeTransport()
+        with patch.object(datalab, 'Transport', return_value=transport), patch.object(datalab, 'POLL_SECONDS', 0.01):
+            worker.process(worker.claim())
+        done = self.service.get(job['id'])
+        self.assertEqual((done['state'], transport.methods()[0], transport.methods()[-1]), ('completed', 'POST', 'DELETE'),
+                         done.get('error'))
+        base = ['--data-root', self.settings.data_root, '--model-root', self.settings.model_root]
+
+        def run(argv):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                code = cli.main(base + argv)
+            return code, json.loads(out.getvalue())
+        code, body = run(['retry', job['id']])
+        self.assertEqual((code, body.get('code')), (1, 'transit_not_confirmed'), body)
+        self.assertEqual(len(self.service.list()), 1)                    # no new attempt
+        code, body = run(['retry', job['id'], '--confirm-transit'])
+        self.assertEqual(code, 0, body)
+        self.assertEqual((body['retry_of'], body['state'], body['options']['transit_confirmed']), (job['id'], 'queued', True))
+        self.assertEqual(len(self.service.list()), 2)
+        # the same refusal as the API for a run that is not a Datalab one
+        local = self.service.submit(io.BytesIO(pdf), 'local.pdf')
+        self.service.cancel(local['id'])
+        code, body = run(['retry', local['id'], '--confirm-transit'])
+        self.assertEqual((code, body.get('code')), (1, 'route_option_unsupported'), body)
+
+    def test_the_key_leaves_the_environment_and_the_transit_is_the_one_of_the_job(self):
+        from dataclasses import replace
+        settings = replace(self.settings, datalab_cap_usd='0.05')
+        job = self.service.submit(io.BytesIO(PDF), 'p.pdf', {'route': 'datalab', 'transit_confirmed': True,
+                                                             'datalab_mode': 'balanced'})
+        with patch.dict(os.environ, {'DATALAB_API_KEY': self.SECRET}):
+            worker = Worker(settings)
+            self.assertNotIn('DATALAB_API_KEY', os.environ)          # no child of the worker inherits it
+        self.addCleanup(worker.storage.close)
+        self.assertEqual(worker.datalab_state(), {"available": True, "code": None})
+        self.assertEqual(Worker(self.settings).datalab_state()['code'], 'datalab_key_missing')
+        calls = []
+        with patch('markdown_for_llms.worker.convert', side_effect=fake_convert(calls=calls)):
+            worker.process(worker.claim())
+        self.assertEqual(calls[0]['request']['datalab'], {'mode': 'balanced', 'transit_confirmed': True, 'cap_usd': '0.05'})
+        self.assertIs(calls[0]['datalab_key'], worker.datalab_key)
+        self.assertEqual(repr(worker.datalab_key), 'Key(***)')
+        row = self.service.storage.get(job['id'])
+        self.assertEqual(row['state'], 'completed')
+        self.assertTrue(json.loads(row['options'])['transit_confirmed'])
+        for path in Path(self.settings.data_root).rglob('*'):
+            if path.is_file():
+                self.assertNotIn(self.SECRET.encode(), path.read_bytes(), path)
+        # a capped worker without a cap above 0 reports Datalab unavailable
+        with patch.dict(os.environ, {'DATALAB_API_KEY': self.SECRET}):
+            zero = Worker(self.settings)
+        self.addCleanup(zero.storage.close)
+        self.assertEqual(zero.datalab_state(), {"available": False, "code": "datalab_cap"})
 
 
 def model_root():
@@ -218,6 +360,32 @@ class RealWorkerTests(unittest.TestCase):
                 document = next(n for n in names if n.endswith('document.md'))
                 self.assertIn("Native text of the synthetic page", z.read(document).decode())
                 self.assertTrue(any('/assets/asset-0001.' in n or n.startswith('assets/asset-0001.') for n in names), names)
+
+    def test_docx_through_worker_native_route_and_download(self):                       # C3, 12.1
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'unit' / 'engine'))
+        from engine_test_support import drawing, make_docx, para, png
+        with tempfile.TemporaryDirectory() as tmp:
+            settings = Settings(data_root=tmp + '/data', model_root=model_root(), threads=2, memory_mib=4096,
+                                storage_mib=4096, output_mib=256)
+            service = Service(settings)
+            self.addCleanup(service.storage.close)
+            docx = make_docx(Path(tmp) / 'letter.docx', para('Native text of the synthetic letter') + '<w:p><w:r>'
+                             + drawing('rId1') + '</w:r></w:p>', media={'image1.png': png()})
+            job = service.submit(docx.open('rb'), 'letter.docx')
+            worker = Worker(settings)
+            self.addCleanup(worker.storage.close)
+            self.assertTrue(worker.ready()['pandoc']['available'])
+            worker.process(worker.claim())
+            final = service.get(job['id'])
+            self.assertEqual((final['state'], final['bundle'], final['format']), ('completed', 'ready', 'docx'), final.get('error'))
+            engine = json.loads((service.storage.root / service.storage.get(job['id'])['result_path'] / 'engine-result.json').read_text())
+            self.assertEqual((engine['route']['converter'], engine['source']['name']), ('pandoc', 'letter.docx'))
+            with zipfile.ZipFile(service.bundle(job['id'])) as z:
+                names = z.namelist()
+                self.assertIn('source/document.docx', names)
+                self.assertIn('Native text of the synthetic letter', z.read('result/document.md').decode())
+                self.assertIn('result/assets/asset-0001.png', names)
 
 
 if __name__ == '__main__':

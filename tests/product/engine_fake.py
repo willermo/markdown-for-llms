@@ -8,10 +8,11 @@ from markdown_for_llms.files import identify, write, write_json
 
 def fake_convert(document=b'converted', assets=None, problems=None, code=None, events=(), calls=None,
                  before=None, counts=None):
-    def convert(source, out, request=None, limits=None, work=None, observer=None, name=None, model_root=None):
+    def convert(source, out, request=None, limits=None, work=None, observer=None, name=None, model_root=None,
+                datalab_key=None):
         if calls is not None:
             calls.append(dict(source=Path(source), request=request, limits=limits, work=work, name=name,
-                              model_root=model_root))
+                              model_root=model_root, datalab_key=datalab_key))
         stops = [observer(event) for event in events] if observer else []
         if before is not None:
             before(observer)

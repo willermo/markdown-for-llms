@@ -88,7 +88,7 @@ class ProgressPersistenceTests(unittest.TestCase):
         self.assertEqual({k: call['limits'][k] for k in ('stall_seconds', 'timeout_seconds', 'max_pages', 'memory_mib')},
                          {'stall_seconds': 900, 'timeout_seconds': 0, 'max_pages': 50, 'memory_mib': 16384})
         row = self.service.storage.get(job['id'])
-        self.assertEqual(call['request'], {'route': None, 'ocr': 'auto', 'attempt': row['attempt_id']})
+        self.assertEqual(call['request'], {'route': None, 'ocr': 'auto', 'lang': None, 'attempt': row['attempt_id']})
         self.assertEqual((call['name'], call['model_root']), ('p.pdf', self.settings.model_root))
         self.assertEqual(seen, [{'pid': 999999999, 'scope': 'mdf-eng-x-marker-1.scope'}])        # K7
         stored = self.stored(job['id'])
@@ -99,7 +99,14 @@ class ProgressPersistenceTests(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in (result / 'original').iterdir()), ['document.md'])
 
     def test_force_ocr_is_ocr_force_and_strip_is_dropped(self):
-        job = self.service.submit(io.BytesIO(PDF), 'p.pdf', {'force_ocr': True, 'strip_existing_ocr': True})
+        # a run queued by a previous version, with the options of schema 2 (Marker 1)
+        job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
+        v2 = dict(use_llm=False, force_ocr=True, strip_existing_ocr=True, disable_image_extraction=False,
+                  paginate_output=True, pdftext_workers=1, layout_batch_size=1, recognition_batch_size=1,
+                  detection_batch_size=1, table_rec_batch_size=1, ocr_error_batch_size=1,
+                  lowres_image_dpi=96, highres_image_dpi=192)
+        with self.service.storage.connect() as conn:
+            conn.execute('UPDATE runs SET options=? WHERE id=?', (json.dumps(v2), job['id']))
         calls = []
         worker = Worker(self.settings)
         self.addCleanup(worker.storage.close)
@@ -251,7 +258,14 @@ class SettingsTests(unittest.TestCase):
                 Settings.load(environ=values)
         changed = replace(settings, timeout_seconds=600, stall_seconds=1200)
         self.assertEqual(changed.identity(), settings.identity())
-        self.assertEqual(replace(settings, timeout_seconds=450).legacy_identity(), settings.legacy_identity())
+        # schema 3 (MFL032 C): the port, the model root and the Datalab cap are operational too
+        for other in (dict(port=23460), dict(model_root='/elsewhere/models'), dict(datalab_cap_usd='0.25')):
+            with self.subTest(other=other):
+                self.assertEqual(replace(settings, **other).identity(), settings.identity())
+        self.assertNotEqual(replace(settings, memory_mib=8192).identity(), settings.identity())
+        from markdown_for_llms import legacy_identity
+        root = settings.model_root
+        self.assertEqual(legacy_identity.v1(replace(settings, timeout_seconds=450), root), legacy_identity.v1(settings, root))
         self.assertEqual((changed.public()['timeout_seconds'], changed.public()['stall_seconds']), (600, 1200))
 
 

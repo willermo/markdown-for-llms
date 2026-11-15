@@ -1,11 +1,21 @@
 """Durable single-host worker with explicit retries and publication fencing.
 
-A PDF of the archive goes through the conversion engine (`engine.convert`, the default route of
-the matrix: Marker 2.2.0 `fast` on the CPU). The observer of the engine renews the lease,
-records the running child (`runs.child`: the pid with its start time, the systemd scope of the
-Marker child, the container of a tool) and passes on cancellation and stop; reconciliation stops
-what a dead worker left by that record. The full result of the engine stays next to the
-published result (`engine-result.json`); the manifest carries a bounded summary of it (K9).
+Every file of the archive goes through the conversion engine (`engine.convert`) on the route of
+its job: the default of the conversion matrix or the one the user chose, with the options
+validated again by `engine.routes.job_options` (MFL032 C3). A route that cannot run on this
+machine fails its job with `route_unavailable` and the queue goes on. The Datalab route runs only
+with the transit confirmed in the job, under the cap `MDF_DATALAB_CAP_USD` of each conversion,
+with the key `DATALAB_API_KEY` that the worker takes out of its own environment when it starts
+(never a setting, never passed to a child, never written).
+
+The observer of the engine renews the lease, records the running child (`runs.child`: the pid
+with its start time, the systemd scope of the Marker child, the container of a tool) and passes
+on cancellation and stop; reconciliation stops what a dead worker left by that record. A scope is
+named to the observer before it starts, and the attempt keeps the monotonic indicator
+`runs.scope_recorded` (0 until then, 1 after): reconciliation asks the systemd user manager only
+for the attempts that recorded a scope, and for those of a previous version without the
+indicator (NULL). The full result of the engine stays next to the published result
+(`engine-result.json`); the manifest carries a bounded summary of it (K9).
 """
 from pathlib import Path
 from contextlib import contextmanager
@@ -18,18 +28,21 @@ import logging
 import time
 import uuid
 
-from .engine import isolation
+from decimal import Decimal
+
+from .engine import isolation, routes
 from .engine.codes import Code, EngineError
 from .engine.core import availability, convert
+from .engine.formats import extension_of
 from .engine.progress import finishing
 from .files import identify, make_directory, open_file, read_json, rename, sync_directory, write_json, sync_tree, corruption, relative, IntegrityError, MetadataError, decode_json, publication_barrier, directory, FileSafetyError, json_bytes
 from .references import inspect
-from .services import Service, ReadUnavailable, stored_manifest, publication_budget
+from .services import Service, ReadUnavailable, source_format, stored_manifest, stored_options, publication_budget
 from .storage import StorageError, CapacityError
 
 MAX_ISSUES = 200                 # engine problems listed in the manifest; all of them are counted
 MANIFEST_LIMIT = 1048576         # the JSON limit of files.decode_json
-READY_SECONDS = 60               # how long a successful readiness check of the Marker route holds
+READY_SECONDS = 60               # how long a check of the availability of the converters holds
 ENGINE_FILES = ("engine-out", "engine-work")
 
 
@@ -146,6 +159,14 @@ class Observer:
         return "interrupted" if stop == "interrupted" else "cancelled" if stop else None
 
 
+def take_datalab_key(environ=None):
+    """The Datalab key of the worker: `DATALAB_API_KEY` taken out of the environment of the
+    process (so no child can inherit it), or None."""
+    from .engine import datalab
+    value = (os.environ if environ is None else environ).pop(datalab.KEY_NAME, None)
+    return datalab.Key(value) if value else None
+
+
 def engine_message(code, settings):
     """The error of a run for a closed code of the engine."""
     if code == Code.STALLED.value:
@@ -157,17 +178,27 @@ def engine_message(code, settings):
     return 'Conversion failed: %s; source kept, diagnostics in the attempt, retry available' % code
 
 
-def pdf_name(name):
-    """The name the engine records for the source: the user's name when it says PDF, else the
-    name of the archived file (the archive admits PDFs only until tranche C of MFL032)."""
-    return name if isinstance(name, str) and name.lower().endswith('.pdf') and '/' not in name else None
+def source_name(name, source_path):
+    """The name the engine records for the source: the user's name when its extension is the one
+    of the archived source, else the name of the archived file."""
+    ok = isinstance(name, str) and '/' not in name and extension_of(name) == extension_of(source_path)
+    return name if ok else None
 
 
-def engine_request(options, attempt):
-    """The request of the engine for the options of a run (schema 2 of the archive): the default
-    route; `force_ocr` -> `ocr: force`; `strip_existing_ocr` has no equivalent and is dropped
-    (D3 of MFL032: an existing OCR layer is set aside by the engine itself)."""
-    return {"route": None, "ocr": "force" if options.get("force_ocr") else "auto", "attempt": attempt}
+def engine_request(options, attempt, fmt=None, cap_usd="0"):
+    """The request of the engine for the stored options of a run (`services.stored_options`: a
+    run of schema 2 maps `force_ocr` to `ocr: force`; `strip_existing_ocr` has no equivalent and
+    is dropped, D3 of MFL032: an existing OCR layer is set aside by the engine itself). With `fmt`
+    the options are validated again by the routes of the engine (EngineError when refused); the
+    Datalab route gets the confirmed transit of the job and the cap of the settings."""
+    opts = stored_options(options)
+    if fmt is not None:
+        opts = routes.job_options(fmt, opts)
+    request = {"route": opts.get("route"), "ocr": opts.get("ocr", "auto"), "lang": opts.get("lang"), "attempt": attempt}
+    if fmt is not None and routes.resolve(fmt, opts["route"])[0] == routes.DATALAB:
+        request["datalab"] = {"mode": opts["datalab_mode"], "transit_confirmed": opts["transit_confirmed"],
+                              "cap_usd": cap_usd}
+    return request
 
 
 def summarize(result, inventory):
@@ -228,18 +259,33 @@ class Worker:
         self.lease = None
         self._worker_locked = False
         self._ready_at = None
+        self.converters = None           # availability per converter, from `ready`
+        self.readiness = {"ready": False, "message": "Worker starting", "converters": None}
+        self.datalab_key = take_datalab_key()
+
+    def datalab_state(self):
+        """Datalab can run here with the key of the worker and a cap above 0."""
+        if self.datalab_key is None:
+            return {"available": False, "code": Code.DATALAB_KEY_MISSING.value}
+        if Decimal(self.settings.datalab_cap_usd) <= 0:
+            return {"available": False, "code": Code.DATALAB_CAP.value}
+        return {"available": True, "code": None}
 
     def ready(self):
-        """The Marker route can run here: versions of the adapter, Bubblewrap with a systemd user
-        scope, the weights verified under `model_root`. A success holds for READY_SECONDS; the
-        engine verifies the weights again before every child."""
+        """The availability of every converter on this machine (`engine.availability`: the
+        toolchain image, Bubblewrap, the systemd user scope and the verified weights of Marker;
+        Datalab from the key of the worker and the cap), checked again after READY_SECONDS; the
+        engine verifies the weights again before every Marker child. Returns it."""
         now = time.monotonic()
         if self._ready_at is not None and now - self._ready_at < READY_SECONDS:
-            return
-        state = availability(model_root=self.settings.model_root, only=('marker',))['marker']
-        if not state['available']:
-            raise ValueError('Marker route unavailable: ' + str(state['code']))
-        self._ready_at = now
+            return self.converters
+        state = availability(model_root=self.settings.model_root)
+        state[routes.DATALAB] = self.datalab_state()
+        missing = sorted('%s (%s)' % (name, s['code']) for name, s in state.items() if not s['available'])
+        self.converters, self._ready_at = state, now
+        self.readiness = {"ready": True, "converters": state,
+                          "message": "Local worker ready" + ("; routes unavailable: " + ", ".join(missing) if missing else "")}
+        return state
 
     @contextmanager
     def exclusive(self):
@@ -253,9 +299,12 @@ class Worker:
             finally:
                 self._worker_locked = False
 
-    def heartbeat(self, readiness="ready"):
+    def heartbeat(self, readiness=None):
+        """Record the worker alive with its readiness (a JSON object: `ready`, `message`, the
+        availability of each converter, read by /api/v1/readiness and /api/v1/session)."""
+        value = json.dumps(readiness or self.readiness, allow_nan=False)
         with self.storage.connect() as conn:
-            conn.execute("INSERT INTO worker VALUES (1,?,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,heartbeat=excluded.heartbeat,readiness=excluded.readiness", (self.token, time.time(), readiness))
+            conn.execute("INSERT INTO worker VALUES (1,?,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,heartbeat=excluded.heartbeat,readiness=excluded.readiness", (self.token, time.time(), value))
 
     def reconcile(self, run_id=None):
         with self.exclusive():
@@ -276,7 +325,10 @@ class Worker:
             selected.append(row)
             if row['state'] not in {'running', 'publishing'}:
                 continue
-            stop_attempt_scopes(row['attempt_id'])
+            if row.get('scope_recorded') != 0:
+                # 1: the attempt recorded a scope before starting it; NULL: an attempt of a previous
+                # version, without the indicator. 0: no scope was ever started, nothing to ask
+                stop_attempt_scopes(row['attempt_id'])
             if row['child'] and json.loads(row['child']):
                 old = json.loads(row['child'])
                 stop_child(old)
@@ -367,7 +419,8 @@ class Worker:
             row = conn.execute("SELECT id FROM runs WHERE state='queued' ORDER BY created LIMIT 1").fetchone()
             if row is None:
                 return None
-            conn.execute("UPDATE runs SET state='running',token=?,lease=?,updated=? WHERE id=? AND state='queued'", (self.token, time.time() + self.settings.lease_seconds, time.time(), row["id"]))
+            # a queued run never started an attempt: one of a previous version gets the indicator too
+            conn.execute("UPDATE runs SET state='running',token=?,lease=?,updated=?,scope_recorded=COALESCE(scope_recorded,0) WHERE id=? AND state='queued'", (self.token, time.time() + self.settings.lease_seconds, time.time(), row["id"]))
         return self.storage.get(row["id"])
 
     def tick(self, row, child, progress=None):
@@ -378,9 +431,13 @@ class Worker:
             current = conn.execute("SELECT token,cancel FROM runs WHERE id=?", (row["id"],)).fetchone()
             if current["token"] != self.token:
                 return True
-            conn.execute("UPDATE runs SET lease=?,child=?,updated=?,progress=COALESCE(?,progress) WHERE id=? AND token=?",
+            # a scope is named here before it starts: the indicator of the attempt becomes 1 in the
+            # same update, and never goes back (a trigger of 003.sql)
+            conn.execute("UPDATE runs SET lease=?,child=?,updated=?,progress=COALESCE(?,progress),"
+                         "scope_recorded=CASE WHEN ? THEN 1 ELSE scope_recorded END WHERE id=? AND token=?",
                          (time.time() + self.settings.lease_seconds, json.dumps(child, allow_nan=False) if child else None, time.time(),
-                          json.dumps(progress, allow_nan=False) if progress else None, row["id"], self.token))
+                          json.dumps(progress, allow_nan=False) if progress else None,
+                          bool(child and child.get('scope')), row["id"], self.token))
         if self.stop:
             return 'interrupted'
         if self.lease:
@@ -436,14 +493,24 @@ class Worker:
         if source['sha256'] != row['source_sha256'] or source['bytes'] != row['source_bytes']:
             raise StorageError('Archived source identity mismatch')
         options = json.loads(row['options'])
-        request = engine_request(options, row['attempt_id'])
+        fmt = source_format(row['source_path'])
+        try:
+            request = engine_request(options, row['attempt_id'], fmt, self.settings.datalab_cap_usd)
+        except EngineError as exc:          # validated by the API too: a job of another version
+            raise StorageError('Conversion refused: %s; source kept' % exc.code.value) from None
+        converter = routes.resolve(fmt, request['route'])[0]
+        state = (self.converters or {}).get(converter)
+        if state is not None and not state['available']:
+            # the queue goes on: only this job fails, with the reason of the route
+            raise StorageError('Conversion failed: %s (%s: %s); source kept, retry available when the route is ready'
+                               % (Code.ROUTE_UNAVAILABLE.value, converter, state['code']))
         write_json(scratch, 'request.json', {'options': options, 'engine_request': request,
                    'dropped_options': ['strip_existing_ocr'] if options.get('strip_existing_ocr') else []})
         limits = self.settings.engine_limits()
         observer = Observer(self, row)
         result = convert(self.storage.root / row['source_path'], scratch / 'engine-out', request, limits,
-                         work=scratch / 'engine-work', observer=observer, name=pdf_name(row.get('name')),
-                         model_root=self.settings.model_root)
+                         work=scratch / 'engine-work', observer=observer, name=source_name(row.get('name'), row['source_path']),
+                         model_root=self.settings.model_root, datalab_key=self.datalab_key)
         if observer.error is not None:
             raise observer.error
         if result.get('status') != 'complete':
@@ -596,14 +663,15 @@ class Worker:
                 receipt = execute(self.settings, probe, 'markdown_for_llms.engines.probe', deadline=20,
                                   memory_mib=256, label='probe')
             if receipt['exit'] or receipt['reason']:
-                self.heartbeat('Isolamento non disponibile; nessun fallback')
+                self.heartbeat({"ready": False, "message": "Isolation unavailable; no fallback", "converters": None})
                 raise StorageError('Isolation readiness failed; diagnostic retained')
             while not self.stop:
                 try:
                     self.ready()
                     self.heartbeat()
                 except (ValueError, OSError, ImportError) as exc:
-                    self.heartbeat("runtime unavailable: " + str(exc)[:120])
+                    self.heartbeat({"ready": False, "message": "Conversion engine unavailable: " + str(exc)[:120],
+                                    "converters": None})
                     if once:
                         raise StorageError("Conversion engine unavailable: " + str(exc)[:120]) from None
                     time.sleep(self.settings.poll_seconds)

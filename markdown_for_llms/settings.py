@@ -1,5 +1,6 @@
 """Strict administrative settings and a closed per-job conversion profile."""
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass, field, fields
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 import hashlib
 import json
@@ -13,18 +14,25 @@ class ConfigurationError(ValueError):
 # Operational time limits change neither quotas, paths nor stored data: they are
 # recorded per run in the manifest and stay out of the storage identity (ADR 0011).
 TIME_LIMITS = frozenset({"timeout_seconds", "stall_seconds"})
-# Fields hashed by identity schema 1 (before ADR 0011), frozen for the automatic upgrade.
-LEGACY_FIELDS = ("data_root", "model_root", "host", "port", "timeout_seconds", "memory_mib",
-                 "upload_mib", "max_pages", "output_mib", "log_mib", "storage_mib", "reserve_mib",
-                 "max_pixels", "max_dimension", "threads", "poll_seconds", "lease_seconds",
-                 "grace_seconds", "process_limit", "bind_profile", "review_provider")
-LEGACY_TIMEOUT_SECONDS = 450
+# Identity schema 3 (MFL032 tranche C): the port (MFL021), the model root (the weights are
+# identified by hash in every engine.json, D10) and the Datalab settings are operational too.
+# Schemas 1 and 2 are frozen in legacy_identity.py.
+OPERATIONAL = TIME_LIMITS | {"port", "model_root", "datalab_cap_usd"}
+IDENTITY_SCHEMA = 3
+PROFILE = "engine-v1"
+
+
+def default_model_root():
+    """`${XDG_CACHE_HOME:-~/.cache}/markdown-for-llms/models` (D10 of MFL032), the default of
+    `engine.weights.default_root`."""
+    base = os.environ.get("XDG_CACHE_HOME") or str(Path.home() / ".cache")
+    return str(Path(base) / "markdown-for-llms" / "models")
 
 
 @dataclass(frozen=True)
 class Settings:
     data_root: str = "./mdf-data"
-    model_root: str = "./mdf-models"
+    model_root: str = field(default_factory=default_model_root)
     host: str = "127.0.0.1"
     port: int = 23465
     timeout_seconds: int = 0          # total deadline of a conversion; 0 = none (ADR 0011)
@@ -43,10 +51,13 @@ class Settings:
     lease_seconds: int = 15
     grace_seconds: int = 5
     process_limit: int = 512
-    # a label of the storage identity schema 2 only (until tranche C of MFL032): the conversions
-    # run on the engine (Marker 2.2.0), which records its own versions in engine.json
-    bind_profile: str = "marker-cpu-v1"
+    # the profile of the storage identity: the conversions run on the engine, which records
+    # the versions of its routes in every engine.json
+    bind_profile: str = PROFILE
     review_provider: str = "disabled"
+    # spending cap of one Datalab conversion, in USD (0: nothing is sent); the key is never a
+    # setting: it is DATALAB_API_KEY in the environment of the worker
+    datalab_cap_usd: str = "0"
 
     def __post_init__(self):
         for field in fields(self):
@@ -58,8 +69,14 @@ class Settings:
             raise ConfigurationError("Stall limit below 60 seconds: stall_seconds")
         if self.host != "127.0.0.1" or self.port > 65535:
             raise ConfigurationError("Only IPv4 loopback and valid ports are supported")
-        if self.bind_profile != "marker-cpu-v1" or self.review_provider != "disabled":
+        if self.bind_profile != PROFILE or self.review_provider != "disabled":
             raise ConfigurationError("Unsupported provider/profile")
+        try:
+            cap = Decimal(self.datalab_cap_usd) if isinstance(self.datalab_cap_usd, str) else None
+        except InvalidOperation:
+            cap = None
+        if cap is None or not cap.is_finite() or cap < 0 or len(self.datalab_cap_usd) > 32:
+            raise ConfigurationError("Invalid amount: datalab_cap_usd (a finite amount in USD, 0 or more)")
         if self.lease_seconds < 3 * self.poll_seconds or self.threads > 64:
             raise ConfigurationError("Inconsistent lease/poll/thread settings")
         for name in ("data_root", "model_root"):
@@ -112,30 +129,11 @@ class Settings:
         return {k: v for k, v in asdict(self).items() if k not in {"data_root", "model_root"}}
 
     def identity(self):
-        """Storage identity schema 2: every setting except the operational time limits."""
-        value = {k: v for k, v in asdict(self).items() if k not in TIME_LIMITS}
-        value["identity_schema"] = 2
-        return digest(value)
-
-    def legacy_identity(self):
-        """Storage identity schema 1, with the timeout an unset variable used to mean."""
-        value = {name: getattr(self, name) for name in LEGACY_FIELDS}
-        value["timeout_seconds"] = self.timeout_seconds or LEGACY_TIMEOUT_SECONDS
+        """Storage identity schema 3: every setting except the operational ones."""
+        value = {k: v for k, v in asdict(self).items() if k not in OPERATIONAL}
+        value["identity_schema"] = IDENTITY_SCHEMA
         return digest(value)
 
 
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
-
-
-def options(overrides=None):
-    result = dict(use_llm=False, force_ocr=False, strip_existing_ocr=False,
-                  disable_image_extraction=False, paginate_output=True,
-                  pdftext_workers=1, layout_batch_size=1, recognition_batch_size=1,
-                  detection_batch_size=1, table_rec_batch_size=1, ocr_error_batch_size=1,
-                  lowres_image_dpi=96, highres_image_dpi=192)
-    if overrides:
-        if set(overrides) - {"force_ocr", "strip_existing_ocr"} or any(type(v) is not bool for v in overrides.values()):
-            raise ConfigurationError("Unsupported job option or non-boolean value")
-        result.update(overrides)
-    return result

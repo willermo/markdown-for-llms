@@ -76,14 +76,14 @@ class RecoveryTests(unittest.TestCase):
     def test_reject_stream_failure_replay_conflict_leave_no_bytes(self):
         accepted = self.s.submit(io.BytesIO(PDF), 'x.pdf', key='key')
         before = sizes(self.s.storage.root)
-        for body, name in [(b'wrong', 'x.pdf'), (PDF, 'x.txt'), (PDF+b'x'*1048576, 'x.pdf')]:
+        for body, name in [(b'wrong', 'x.pdf'), (PDF, 'x.docx'), (PDF, 'x.exe'), (PDF+b'x'*1048576, 'x.pdf')]:
             with self.assertRaises(StorageError): self.s.submit(io.BytesIO(body), name)
         class Broken:
             def read(self, n): raise OSError(errno.EIO, 'synthetic stream fault')
         with self.assertRaises(OSError): self.s.submit(Broken(), 'x.pdf')
         for _ in range(30):
             self.assertEqual(self.s.submit(io.BytesIO(PDF), 'x.pdf', key='key')['id'], accepted['id'])
-        for body, opts in [(PDF+b'x', None), (PDF, {'force_ocr': True})]:
+        for body, opts in [(PDF+b'x', None), (PDF, {'ocr': 'force'})]:
             with self.assertRaises(StorageError): self.s.submit(io.BytesIO(body), 'x.pdf', opts, key='key')
         self.assert_clean()
         self.assertEqual(before, sizes(self.s.storage.root))

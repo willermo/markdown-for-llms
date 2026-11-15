@@ -10,12 +10,61 @@ import time
 import uuid
 import zipfile
 
+from . import legacy_identity
 from .files import digest, identify, open_file, read_json, relative, rename, sync_directory, corruption, make_directory, write_json, IntegrityError, MetadataError, decode_json, FileSafetyError, json_bytes
+from .engine import routes
+from .engine.codes import EngineError
+from .engine.formats import EXTENSIONS, detect, extension_of
 from .engine.progress import STAGES
-from .settings import options
-from .storage import Storage, StorageError, CapacityError
+from .storage import OWNER, Storage, StorageError, CapacityError
 
 TERMINAL = {"completed", "failed", "interrupted", "cancelled"}
+# The texts of the refusals that carry a closed code of the engine or of its routes (MFL032 C2):
+# the API returns the code next to the text.
+REFUSALS = {
+    "format_unsupported": "Format not supported: the extension of the file name is not in the conversion matrix",
+    "format_mismatch": "The content of the file does not match the extension of its name",
+    "input_unreadable": "The file cannot be read (damaged or truncated?)",
+    "route_invalid": "This format has no such route",
+    "route_option_unsupported": "The route does not accept this option",
+    "transit_not_confirmed": "The Datalab route sends the document out of this computer: confirm the transit first",
+    "invalid_setting": "Invalid job option",
+    "route_unavailable": "The route is not available on this machine",
+}
+
+
+class Refused(StorageError):
+    """A request refused with a closed code of the engine or of its routes."""
+
+    def __init__(self, code, message=None):
+        super().__init__(message or REFUSALS.get(code, "Request refused"))
+        self.code = code
+
+
+def refused(exc):
+    return Refused(exc.code.value)
+
+
+def source_format(source_path):
+    """The format of an archived source, from its name `sources/<token>.<ext>` (MFL032 C2;
+    `sources/<token>.pdf` in the archives of previous versions)."""
+    fmt = EXTENSIONS.get(extension_of(source_path))
+    if fmt is None:
+        raise IntegrityError("Archived source of unknown format")
+    return fmt
+
+
+def stored_options(raw):
+    """The options of a stored run in the shape of schema 3. A run of schema 2 has the options of
+    Marker 1: `force_ocr` becomes `ocr: force`, `strip_existing_ocr` has no equivalent (D3 of
+    MFL032: the engine sets an existing OCR layer aside by itself)."""
+    value = json.loads(raw) if isinstance(raw, str) else raw
+    if legacy_identity.v2_options(value):
+        return {"route": None, "ocr": "force" if value["force_ocr"] else "auto", "lang": None,
+                "datalab_mode": None, "transit_confirmed": False}
+    if not isinstance(value, dict):
+        raise IntegrityError("Malformed stored options")
+    return value
 
 
 class Service:
@@ -29,16 +78,25 @@ class Service:
         if not isinstance(key, str) or len(key) > 128 or not key:
             raise StorageError("Invalid idempotency key")
         with self.storage.connect() as conn:
-            row = conn.execute("SELECT r.id,r.options,d.source_sha256,d.source_bytes FROM runs r JOIN documents d ON d.id=r.document_id WHERE idempotency_key=?", (key,)).fetchone()
+            row = conn.execute("SELECT r.id,r.options,d.source_path,d.source_sha256,d.source_bytes FROM runs r JOIN documents d ON d.id=r.document_id WHERE idempotency_key=?", (key,)).fetchone()
         return dict(row) if row else None
 
     @contextmanager
     def upload(self, name, overrides=None, key=None):
-        opts = options(overrides)
-        if not isinstance(name, str) or not name.lower().endswith('.pdf'):
-            raise StorageError('Only PDF files with PDF signature are accepted')
+        """Receive one file of the conversion matrix: its format comes from the extension of
+        `name` and is confirmed by its signature in `finish` (K3 of MFL032); the options are
+        validated by the routes of the engine before any byte is stored."""
+        if not isinstance(name, str) or not name or '\0' in name:
+            raise Refused('format_unsupported')
+        ext = extension_of(name)
+        if ext not in EXTENSIONS:
+            raise Refused('format_unsupported')
+        try:
+            opts = routes.job_options(EXTENSIONS[ext], overrides)
+        except EngineError as exc:
+            raise refused(exc) from None
         previous = self.previous(key)
-        receiver = Upload(self, name, opts, key)
+        receiver = Upload(self, name, opts, key, ext)
         if previous:
             # Validate the complete replay without making another disk copy.
             receiver.previous = previous
@@ -46,7 +104,7 @@ class Service:
             return
         token = receiver.token
         stage = 'staging/upload-' + token
-        dest = 'sources/' + token + '.pdf'
+        dest = 'sources/' + token + '.' + ext
         with self.storage.reservation('upload', self.settings.upload_mib * 1048576 + 65536,
                                       token, (stage, dest)):
             make_directory(self.storage.root, stage)
@@ -64,12 +122,13 @@ class Service:
         if corruption(exc):
             self.invalidate(run_id, 'Source, manifest or artifact missing/altered/unsafe')
             raise StorageError('Bundle invalid: source, manifest or artifact missing/altered/unsafe') from exc
-        raise ReadUnavailable('Lettura temporaneamente indisponibile; riprovare senza riconvertire') from exc
+        raise ReadUnavailable('Read temporarily unavailable; retry without converting again') from exc
 
     def get(self, run_id):
         row = self.storage.get(run_id)
         result = {k: row[k] for k in ("id", "document_id", "attempt_id", "retry_of", "name", "state", "bundle", "quality", "created", "updated", "error")}
-        result["options"] = json.loads(row["options"])
+        result["options"] = stored_options(row["options"])
+        result["format"] = source_format(row["source_path"])
         try:
             result["manifest"] = stored_manifest(row['manifest'], row) if row['manifest'] else None
         except IntegrityError:
@@ -96,14 +155,14 @@ class Service:
             if deferred:
                 result['error'] = result['error'] or 'Publication pending; worker recovery deferred'
                 result['recovery'] = 'Restore capacity/I/O if unavailable, then restart the worker to reconcile this same run; no new conversion'
-        states = {'queued': 'In coda', 'running': 'Conversione in corso', 'publishing': 'Pubblicazione',
-                  'completed': 'Terminata', 'failed': 'Fallita', 'interrupted': 'Interrotta', 'cancelled': 'Annullata'}
-        bundles = {'pending': 'bundle in attesa', 'ready': 'bundle disponibile; riferimenti controllati nel profilo',
-                   'unchecked': 'bundle disponibile; riferimenti non completamente controllati',
-                   'incomplete': 'asset mancante o errore noto; bundle incompleto', 'invalid': 'bundle non valido'}
-        result['message'] = states[row['state']] + ' — ' + bundles[result['bundle']] + ' — qualità non verificata'
+        states = {'queued': 'Queued', 'running': 'Converting', 'publishing': 'Publishing',
+                  'completed': 'Completed', 'failed': 'Failed', 'interrupted': 'Interrupted', 'cancelled': 'Cancelled'}
+        bundles = {'pending': 'bundle pending', 'ready': 'bundle available; references checked in the profile',
+                   'unchecked': 'bundle available; references not completely checked',
+                   'incomplete': 'missing asset or known error; bundle incomplete', 'invalid': 'bundle invalid'}
+        result['message'] = states[row['state']] + ' — ' + bundles[result['bundle']] + ' — quality not verified'
         if row['state'] == 'interrupted':
-            result['message'] += ' — sorgente conservata; ripetizione disponibile'
+            result['message'] += ' — source kept; retry available'
         result['progress'] = progress_view(row['state'], row.get('progress'), self.settings.stall_seconds)
         return result
 
@@ -114,13 +173,18 @@ class Service:
         row = self.storage.get(run_id)
         if row["state"] not in TERMINAL:
             raise StorageError("Only terminal runs can be retried")
-        opts = json.loads(row["options"])
-        if overrides:
-            opts.update({k: v for k, v in options(overrides).items() if k in overrides})
+        opts = stored_options(row["options"])
+        # the confirmation of a transit to Datalab is for one sending: a retry confirms it again
+        opts["transit_confirmed"] = False
+        opts.update(overrides or {})
+        try:
+            opts = routes.job_options(source_format(row["source_path"]), opts)
+        except EngineError as exc:
+            raise refused(exc) from None
         new_id, attempt = uuid.uuid4().hex, uuid.uuid4().hex
         with self.storage.reservation('control', 65536), self.storage.connect() as conn:
             now = time.time()
-            conn.execute("INSERT INTO runs (id,document_id,retry_of,attempt_id,options,state,created,updated) VALUES (?,?,?,?,?,'queued',?,?)", (new_id, row["document_id"], run_id, attempt, json.dumps(opts, allow_nan=False), now, now))
+            conn.execute("INSERT INTO runs (id,document_id,retry_of,attempt_id,options,state,created,updated,owner,scope_recorded) VALUES (?,?,?,?,?,'queued',?,?,?,0)", (new_id, row["document_id"], run_id, attempt, json.dumps(opts, allow_nan=False), now, now, OWNER))
         return self.get(new_id)
 
     def cancel(self, run_id):
@@ -141,7 +205,8 @@ class Service:
         except IntegrityError as exc:
             self.read_failure(run_id, exc)
         try:
-            paths = [("source/document.pdf", row["source_path"], {"sha256": row["source_sha256"], "bytes": row["source_bytes"]})]
+            paths = [("source/document." + extension_of(row["source_path"]), row["source_path"],
+                      {"sha256": row["source_sha256"], "bytes": row["source_bytes"]})]
             for artifact in manifest["artifacts"]:
                 paths.append(("result/" + relative(artifact["path"]), row["result_path"] + "/original/" + artifact["path"], artifact))
             if read_json(self.storage.root, row['result_path'] + '/manifest.json') != manifest:
@@ -180,7 +245,7 @@ class Service:
                                 raise IntegrityError('Cached ZIP CRC mismatch')
                 except (OSError, ValueError, zipfile.BadZipFile) as exc:
                     if isinstance(exc, OSError) and not corruption(exc):
-                        raise ReadUnavailable('Lettura ZIP temporaneamente indisponibile; riprovare') from exc
+                        raise ReadUnavailable('ZIP read temporarily unavailable; retry') from exc
                     raise StorageError('Cached ZIP unavailable; archive preserved') from exc
                 return self.storage.root / final_name
             # ZIP_STORED has a calculable upper bound, including headers and manifest.
@@ -335,45 +400,53 @@ def stored_manifest(body, row=None):
 
 class Upload:
     """One bounded ingestion path for CLI and the HTTP request body."""
-    def __init__(self, service, name, opts, key):
-        self.service, self.name, self.opts, self.key = service, name, opts, key
+    def __init__(self, service, name, opts, key, ext):
+        self.service, self.name, self.opts, self.key, self.ext = service, name, opts, key, ext
         self.token = uuid.uuid4().hex
         self.stream, self.previous = None, None
-        self.hash, self.size, self.signature = hashlib.sha256(), 0, b''
+        self.hash, self.size = hashlib.sha256(), 0
 
     def write(self, chunk):
         self.size += len(chunk)
         if self.size > self.service.settings.upload_mib * 1048576:
-            raise StorageError('PDF upload limit exceeded')
-        self.signature = (self.signature + chunk)[:5] if len(self.signature) < 5 else self.signature
+            raise StorageError('Upload limit exceeded (MDF_UPLOAD_MIB)')
         self.hash.update(chunk)
         if self.stream:
             self.stream.write(chunk)
 
     def finish(self):
-        if self.signature != b'%PDF-':
-            raise StorageError('Only PDF files with PDF signature are accepted')
         sha = self.hash.hexdigest()
         service = self.service
+        stage = 'staging/upload-' + self.token
+        if self.stream is not None:
+            self.stream.flush()
+            os.fsync(self.stream.fileno())
+            # K3 of MFL032: extension and signature on the whole staged file (the central
+            # directory of a ZIP package is at its end), before the admission
+            try:
+                detect(service.storage.root / stage / 'body', self.name)
+            except EngineError as exc:
+                raise refused(exc) from None
         with service.storage.lock('admission.lock'):
             previous = service.previous(self.key)
             if previous:
+                # a replay: the same bytes are the same format; the extension of the new name must
+                # be the one of the registered source (PC1 of MFL032)
                 if (previous['source_sha256'] != sha or previous['source_bytes'] != self.size
-                        or json.loads(previous['options']) != self.opts):
+                        or stored_options(previous['options']) != self.opts
+                        or extension_of(previous['source_path']) != self.ext):
                     raise StorageError('Idempotency key conflicts with different input')
                 return service.get(previous['id'])
             if self.stream is None:
                 raise StorageError('Idempotent registration disappeared; retry request')
-            self.stream.flush()
-            os.fsync(self.stream.fileno())
             document_id, run_id, attempt_id = [uuid.uuid4().hex for _ in range(3)]
-            dest = 'sources/' + self.token + '.pdf'
+            dest = 'sources/' + self.token + '.' + self.ext
             with service.storage.connect() as conn:
                 conn.execute('BEGIN IMMEDIATE')
-                rename(service.storage.root, 'staging/upload-' + self.token + '/body', dest)
+                rename(service.storage.root, stage + '/body', dest)
                 now = time.time()
-                conn.execute('INSERT INTO documents VALUES (?,?,?,?,?,?)',
-                             (document_id, self.name[:255], dest, sha, self.size, now))
-                conn.execute("INSERT INTO runs (id,document_id,attempt_id,idempotency_key,options,state,created,updated) VALUES (?,?,?,?,?,'queued',?,?)",
-                             (run_id, document_id, attempt_id, self.key, json.dumps(self.opts, allow_nan=False), now, now))
+                conn.execute('INSERT INTO documents (id,name,source_path,source_sha256,source_bytes,created,owner) VALUES (?,?,?,?,?,?,?)',
+                             (document_id, self.name[:255], dest, sha, self.size, now, OWNER))
+                conn.execute("INSERT INTO runs (id,document_id,attempt_id,idempotency_key,options,state,created,updated,owner,scope_recorded) VALUES (?,?,?,?,?,'queued',?,?,?,0)",
+                             (run_id, document_id, attempt_id, self.key, json.dumps(self.opts, allow_nan=False), now, now, OWNER))
         return service.get(run_id)

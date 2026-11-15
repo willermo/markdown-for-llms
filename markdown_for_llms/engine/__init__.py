@@ -5,5 +5,5 @@ It recognizes the format of a file by extension and signature (`formats`), choos
 the conversion matrix (`routes`), runs the converter of that route in its isolation and writes
 the output contract (`contract`: `document.md`, `assets/`, `engine.json`). `convert` and
 `availability` are in `core`. Importing the package imports nothing else: the API process uses
-only `formats` and `routes`, which need the standard library alone.
+only `codes`, `formats`, `progress` and `routes`, which need the standard library alone.
 """

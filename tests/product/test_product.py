@@ -16,7 +16,9 @@ from markdown_for_llms.api import create_app
 from markdown_for_llms.files import identify, open_file, relative, write, write_json
 from markdown_for_llms.references import inspect
 from markdown_for_llms.services import Service
-from markdown_for_llms.settings import ConfigurationError, Settings, options
+from markdown_for_llms.engine import routes
+from markdown_for_llms.engine.codes import EngineError
+from markdown_for_llms.settings import ConfigurationError, Settings
 from markdown_for_llms.storage import StorageError
 from markdown_for_llms.worker import Worker
 
@@ -105,10 +107,10 @@ class ProductTests(unittest.TestCase):
         self.service.cancel(job['id'])
         self.assertTrue(worker.tick(row, None))
         worker.reconcile()
-        retry = self.service.retry(job['id'], {'force_ocr': True})
+        retry = self.service.retry(job['id'], {'ocr': 'force'})
         self.assertNotEqual(retry['attempt_id'], job['attempt_id'])
         self.assertEqual(retry['retry_of'], job['id'])
-        self.assertTrue(retry['options']['force_ocr'])
+        self.assertEqual(retry['options']['ocr'], 'force')
 
     def test_safe_paths_and_opening(self):
         for name in ['../x','/etc/passwd','a/../b','a//b','C:/x','x\\y','x\x00','x%2fy','file:x','x?y','x#y']:
@@ -138,13 +140,15 @@ class ProductTests(unittest.TestCase):
         for values in [{'MDF_UNKNOWN': 'secret'}, {'MDF_PORT': 'bad'}, {'MDF_HOST': '0.0.0.0'}, {'MDF_TIMEOUT_SECONDS': '-1'}]:
             with self.assertRaises(ConfigurationError):
                 Settings.load(environ=values)
-        with self.assertRaises(ConfigurationError):
-            options({'force_ocr': 'false'})
+        with self.assertRaises(EngineError):
+            routes.job_options('pdf', {'ocr': 'false'})
         for data, models in [('/tmp/model/data', '/tmp/model'), ('/tmp/data', '/tmp/data/models')]:
             with self.assertRaises(ConfigurationError):
                 Settings(data_root=data, model_root=models)
+        # schema 3: another port opens the same archive (MFL021); another quota does not
+        Service(Settings(data_root=self.settings.data_root, model_root=self.settings.model_root, port=8766)).storage.close()
         with self.assertRaises(StorageError):
-            Service(Settings(data_root=self.settings.data_root, port=8766))
+            Service(Settings(data_root=self.settings.data_root, model_root=self.settings.model_root, upload_mib=40))
 
     def test_host_origin_csrf(self):
         client = TestClient(create_app(self.settings), base_url=f'http://127.0.0.1:{self.settings.port}')
@@ -157,6 +161,16 @@ class ProductTests(unittest.TestCase):
         self.assertEqual(response.status_code,202,response.text)
         self.assertIn("default-src 'none'", response.headers['content-security-policy'])
         self.assertEqual(client.get('/docs').status_code,404)
+
+    def test_the_engine_modules_of_the_api_process(self):                           # FD3 of the fix of C
+        code = ("import markdown_for_llms.api,sys; print(sorted(m for m in sys.modules "
+                "if m.startswith('markdown_for_llms.engine.')))")
+        result = subprocess.run([sys.executable, '-I', '-B', '-c', code], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        used = {'markdown_for_llms.engine.' + m for m in ('codes', 'formats', 'progress', 'routes')}
+        self.assertEqual(set(__import__("ast").literal_eval(result.stdout)), used)
+        doc = __import__('markdown_for_llms.engine', fromlist=['x']).__doc__
+        self.assertIn('the API process uses\nonly `codes`, `formats`, `progress` and `routes`', doc)
 
     def test_no_ml_imports(self):
         result=subprocess.run([sys.executable,'-I','-B','-c',"import markdown_for_llms.api,markdown_for_llms.cli,sys; assert not {'torch','marker','surya','PIL','pypdfium2','onnxruntime','indra_ocr'} & {m.split(chr(46))[0] for m in sys.modules}"],capture_output=True,text=True)
@@ -253,7 +267,8 @@ class ProductTests(unittest.TestCase):
         with patch('markdown_for_llms.storage.shutil.disk_usage', return_value=Usage(100,99,1)):
             with self.assertRaises(StorageError):
                 self.service.submit(io.BytesIO(PDF), 'space.pdf')
-        for payload, name in [(b'plain text', 'x.pdf'), (PDF, 'x.txt')]:
+        # a file without the signature of its extension, or of a format outside the matrix
+        for payload, name in [(b'plain text', 'x.pdf'), (PDF, 'x.epub'), (PDF, 'x.zip')]:
             with self.assertRaises(StorageError):
                 self.service.submit(io.BytesIO(payload), name)
 
@@ -272,6 +287,18 @@ class ProductTests(unittest.TestCase):
         for raw, inventory, expected in cases:
             with self.subTest(raw=raw):
                 self.assertEqual(inspect(raw, inventory)['bundle'], expected)
+
+    def test_images_nested_in_an_alternative_text_are_references(self):         # Carbon BF2 of fix A
+        # pandoc writes an image inside the alternative text of another (D16), and the engine
+        # reads both destinations: the product does as well
+        raw = '![![inner](assets/asset-0002.png)](assets/asset-0001.png)'
+        result = inspect(raw, ['assets/asset-0001.png', 'assets/asset-0002.png'])
+        self.assertEqual(result['bundle'], 'ready')
+        self.assertEqual([r['destination'] for r in result['references'] if r['kind'] == 'local'],
+                         ['assets/asset-0001.png', 'assets/asset-0002.png'])
+        missing = inspect(raw, ['assets/asset-0001.png'])
+        self.assertEqual(missing['bundle'], 'incomplete')
+        self.assertEqual([(i['code'], i['path']) for i in missing['issues']], [('incomplete', 'assets/asset-0002.png')])
 
     def test_link_destination_not_a_file_name(self):
         warning = 'Local link destination is not a file name; not checked as an asset'

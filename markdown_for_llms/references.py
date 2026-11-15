@@ -123,7 +123,9 @@ def inspect(raw, inventory):
                 parser.feed(token.content)
                 if parser.rawdata and parser.rawdata != '<':
                     unknown('Unrecognized/incomplete HTML-like text')
-            if token.children and token.type != "image":
+            if token.children:
+                # the children of an image are its alternative text, where an image may be
+                # nested (`![![x](a.png)](b.png)`): the engine reads those destinations too
                 walk(token.children)
     walk(md.parse(raw))
     codes = {p["code"] for p in problems}

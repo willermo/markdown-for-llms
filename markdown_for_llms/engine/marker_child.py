@@ -101,7 +101,9 @@ def add_pictures(page, boxes):
     that only partly overlaps a kept crop widens it to their union, so no pixel of either is cut
     (two photographs or diagrams overlapping on a slide). The crops go, top then left, before the
     first block below their centre that overlaps them horizontally (the rule of
-    marker/ocr/indra.py). Returns (added, contained, merged)."""
+    marker/ocr/indra.py); a picture block of Indra that a union widened moves by the same rule
+    (H1 of the review of the fix of B), the other blocks keep their order. Returns (added,
+    contained, merged)."""
     if not boxes:
         return 0, 0, 0
     if not page.blocks and page.lines:
@@ -110,7 +112,7 @@ def add_pictures(page, boxes):
         page.blocks = [{"label": "Text", "bbox": ln.box, "text": ln.text} for ln in page.lines
                        if ln.text and ln.text.strip()]
     pictures = [b for b in page.blocks if b.get("label") in ("Picture", "Figure")]
-    kept, contained, merged = [], 0, 0
+    kept, widened, contained, merged = [], [], 0, 0
     for box in sorted(boxes, key=lambda b: -(b[2] - b[0]) * (b[3] - b[1])):
         box = [float(v) for v in box]
         if (box[2] - box[0]) <= 0 or (box[3] - box[1]) <= 0:
@@ -122,6 +124,8 @@ def add_pictures(page, boxes):
         block = next((b for b in pictures if _meets(box, b["bbox"])), None)
         if block is not None:                   # widen the picture of Indra instead of cutting
             block["bbox"] = _union(block["bbox"], box)
+            if not any(w is block for w in widened):
+                widened.append(block)
             merged += 1
             continue
         joined = False
@@ -133,12 +137,19 @@ def add_pictures(page, boxes):
             box, joined = _union(box, other), True
         merged += joined
         kept.append(box)
-    for box in sorted(kept, key=lambda b: (round(b[1], 1), b[0])):
+    def place(block):
+        box = block["bbox"]
         cy = (box[1] + box[3]) / 2
         at = next((j for j, b in enumerate(page.blocks)
                    if (b["bbox"][1] + b["bbox"][3]) / 2 > cy and min(box[2], b["bbox"][2]) > max(box[0], b["bbox"][0])),
                   len(page.blocks))
-        page.blocks.insert(at, {"label": "Picture", "bbox": box})
+        page.blocks.insert(at, block)
+
+    for block in sorted(widened, key=lambda b: (round(b["bbox"][1], 1), b["bbox"][0])):
+        del page.blocks[next(j for j, b in enumerate(page.blocks) if b is block)]
+        place(block)
+    for box in sorted(kept, key=lambda b: (round(b[1], 1), b[0])):
+        place({"label": "Picture", "bbox": box})
     return len(kept), contained, merged
 
 

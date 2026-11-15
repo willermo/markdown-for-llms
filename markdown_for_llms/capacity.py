@@ -107,7 +107,7 @@ def cleanup(storage, record):
         stage = storage.root / 'staging' / ('upload-' + token)
         if stage.exists():
             shutil.rmtree(stage)
-        path = 'sources/' + token + '.pdf'
+        path = upload_source(record)
         with storage.connect() as conn:
             accepted = conn.execute('SELECT 1 FROM documents WHERE source_path=?', (path,)).fetchone()
         if not accepted:
@@ -123,6 +123,22 @@ def cleanup(storage, record):
         sync_directory(storage.root)
     elif record['kind'] not in {'worker', 'control'}:
         raise ValueError('Unknown capacity owner')
+
+
+def upload_source(record):
+    """The source an upload reservation owns, from its own paths (K4 of MFL032): exactly one
+    `sources/<token>.<ext>` with an extension of the conversion matrix; a reservation written
+    before tranche C without one owns `sources/<token>.pdf`. Never a suffix search or a glob."""
+    from .engine.formats import EXTENSIONS
+    token = record['token']
+    paths = record.get('paths') or []
+    sources = [p for p in paths if isinstance(p, str) and p.startswith('sources/')]
+    if not sources:
+        return 'sources/' + token + '.pdf'
+    stem, dot, ext = sources[0].removeprefix('sources/').partition('.')
+    if len(sources) != 1 or stem != token or not dot or ext not in EXTENSIONS:
+        raise ValueError('Invalid upload reservation source')
+    return sources[0]
 
 
 def recover(storage, workers=False):

@@ -19,7 +19,7 @@ import sys
 import time
 
 from .engine.codes import EngineError
-from .engine.routes import CONVERTERS, OCR_MODES
+from .engine.routes import CONVERTERS, DATALAB_MODES, OCR_MODES
 from .services import Service, TERMINAL
 from .settings import Settings
 from .files import open_file
@@ -148,7 +148,7 @@ def main(argv=None):
     convert.add_argument("--lang", help="language of the document (recorded; no converter of this version uses it)")
     convert.add_argument("--max-pages", type=int, help="page limit (default: MDF_MAX_PAGES)")
     convert.add_argument("--work", help="directory for the private work of the conversion (default: a temporary one)")
-    convert.add_argument("--datalab-mode", choices=("lite", "fast", "balanced", "accurate"),
+    convert.add_argument("--datalab-mode", choices=DATALAB_MODES,
                          help="mode of the Datalab route (default: balanced)")
     convert.add_argument("--datalab-cap-usd", default=None,
                          help="spending cap of this conversion with Datalab, in USD (default: 0, nothing is sent)")
@@ -157,10 +157,19 @@ def main(argv=None):
     submit = sub.add_parser("submit", help="send files to the archive of the product")
     submit.add_argument("files", nargs="+")
     submit.add_argument("--wait", action="store_true")
-    submit.add_argument("--force-ocr", action="store_true")
+    submit.add_argument("--route", choices=CONVERTERS, help="a route of the matrix other than the default")
+    submit.add_argument("--ocr", choices=OCR_MODES, default="auto")
+    submit.add_argument("--lang", help="language of the document (recorded; no converter of this version uses it)")
+    submit.add_argument("--datalab-mode", choices=DATALAB_MODES, help="mode of the Datalab route (default: balanced)")
+    submit.add_argument("--confirm-transit", action="store_true",
+                        help="confirm that the document leaves the machine for Datalab (the worker applies MDF_DATALAB_CAP_USD)")
     for name in ("show", "retry", "cancel", "download"):
         p = sub.add_parser(name)
         p.add_argument("id")
+        if name == "retry":
+            # a retry of a Datalab run sends the document again: the transit is confirmed again
+            p.add_argument("--confirm-transit", action="store_true",
+                           help="confirm that the document leaves the machine for Datalab again")
         if name == "download":
             p.add_argument("--output", required=True)
             p.add_argument("--overwrite", action="store_true")
@@ -203,7 +212,10 @@ def main(argv=None):
         service = Service(settings)
         if args.command == "jobs":
             emit(service.list())
-        elif args.command in {"show", "retry", "cancel"}:
+        elif args.command == "retry":
+            # the same as POST /api/v1/runs/ID/retry?transit_confirmed=true
+            emit(service.retry(args.id, {"transit_confirmed": True} if args.confirm_transit else None))
+        elif args.command in {"show", "cancel"}:
             emit(getattr(service, "get" if args.command == "show" else args.command)(args.id))
         elif args.command == "download":
             bundle = service.bundle(args.id)
@@ -220,7 +232,9 @@ def main(argv=None):
             for name in args.files:
                 try:
                     with Path(name).open("rb") as stream:
-                        job = service.submit(stream, Path(name).name, {"force_ocr": args.force_ocr})
+                        options = {"route": args.route, "ocr": args.ocr, "lang": args.lang,
+                                   "datalab_mode": args.datalab_mode, "transit_confirmed": args.confirm_transit}
+                        job = service.submit(stream, Path(name).name, options)
                     if args.wait:
                         line = ProgressLine(sys.stderr)
                         try:
@@ -234,11 +248,11 @@ def main(argv=None):
                     failed |= job["state"] in {"failed", "interrupted", "cancelled"} or job["bundle"] in {"incomplete", "invalid"}
                 except (ValueError, OSError, sqlite3.OperationalError) as exc:
                     failed = True
-                    emit({"file": Path(name).name, "error": str(exc)})
+                    emit({"file": Path(name).name, "error": str(exc), **({"code": exc.code} if getattr(exc, "code", None) else {})})
             return int(failed)
         return 0
     except (ValueError, OSError, sqlite3.OperationalError) as exc:
-        emit({"error": str(exc)})
+        emit({"error": str(exc), **({"code": exc.code} if getattr(exc, "code", None) else {})})
         return 1
 
 

@@ -11,6 +11,7 @@ import stat
 import time
 import uuid
 
+from . import legacy_identity
 from .files import directory, open_file, read_json, write_json, sync_directory
 
 
@@ -22,11 +23,15 @@ class CapacityError(StorageError):
     """A finite space commitment was refused; stored bytes are not corrupt."""
 
 
-SCHEMA = 2
-MISMATCH = ("Storage configuration mismatch; for an archive of a previous version, possible causes are "
-            "an MDF_TIMEOUT_SECONDS or an MDF_PORT different from the ones it was created or configured "
-            "with (an archive created with a former default port needs it in MDF_PORT: 23460, or 8765 "
-            "for archives created before 2026-11-07)")
+SCHEMA = 3
+OWNER = "local"         # the owner of every document and run until the product has users
+MISMATCH = ("Storage configuration mismatch; for an archive of a previous version (identity schema 1 or 2), "
+            "possible causes are an MDF_TIMEOUT_SECONDS, an MDF_PORT or an MDF_MODEL_ROOT different from "
+            "the ones it was created or configured with (an archive created with a former default port needs "
+            "it in MDF_PORT: 23460, or 8765 for archives created before 2026-11-07; one with the former "
+            "default model root needs MDF_MODEL_ROOT set to the absolute path of that mdf-models directory, "
+            "or ./mdf-models from the directory the archive was used from). "
+            "Its first opening upgrades it to schema 3, which depends on none of them")
 UPGRADE_BUSY = ("Storage upgrade needs exclusive access: stop the API, worker and CLI "
                 "of every version, then restart")
 
@@ -87,16 +92,17 @@ class Storage:
             write_json(self.root, "identity.json", {"id": uuid.uuid4().hex, "config": self.settings.identity()})
             sync_directory(self.root)
         self.identity = read_json(self.root, "identity.json")
-        if self.identity["config"] not in (self.settings.identity(), self.settings.legacy_identity()):
+        if (self.identity["config"] != self.settings.identity()
+                and self.identity["config"] not in legacy_identity.candidates(self.settings)):
             raise StorageError(MISMATCH)
         with self.connect() as conn:
             schema = conn.execute("PRAGMA user_version").fetchone()[0]
-            if schema not in (0, 1, SCHEMA):
+            if schema not in (0, 1, 2, SCHEMA):
                 raise StorageError("Unsupported database schema")
             if schema == 0:
                 if conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' LIMIT 1").fetchone():
                     raise StorageError("Unrecognized unversioned database")
-                conn.executescript("BEGIN IMMEDIATE;\n" + migration("001") + migration("002"))
+                conn.executescript("BEGIN IMMEDIATE;\n" + migration("001") + migration("002") + migration("003"))
                 conn.execute("INSERT INTO metadata VALUES ('storage_id',?)", (self.identity["id"],))
                 conn.commit()
                 schema = SCHEMA
@@ -107,16 +113,26 @@ class Storage:
 
     def upgrade(self):
         """Caller holds configuration.lock exclusively. Database first, identity.json last:
-        an interrupted upgrade is completed by the next exclusive opening."""
+        an interrupted upgrade is completed by the next exclusive opening. An identity of schema 1
+        goes through schema 2 as the previous version upgraded it (`identity-v2`, so that version
+        can still return it to schema 1), then to schema 3 (`identity-v3`, with the model root its
+        legacy identity was recognized with, for the return to schema 2)."""
         with self.lock("schema.lock"):
             schema = self._load()
-            if schema == 1:
+            if schema in (1, 2):
                 with self.connect() as conn:
-                    conn.executescript("BEGIN IMMEDIATE;\n" + migration("002"))
+                    conn.executescript("BEGIN IMMEDIATE;\n" + (migration("002") if schema == 1 else "")
+                                       + migration("003"))
+            legacy = legacy_identity.candidates(self.settings).get(self.identity["config"])
+            if legacy and legacy[0] == 1:
+                self.replace_identity(legacy_identity.v2(self.settings, legacy[1]), dict(
+                    config=self.identity["config"], settings=self.settings.public(),
+                    changed=time.time(), reason="identity-v2"))
+                legacy = (2, legacy[1])
             if self.identity["config"] != self.settings.identity():
                 self.replace_identity(self.settings.identity(), dict(
                     config=self.identity["config"], settings=self.settings.public(),
-                    changed=time.time(), reason="identity-v2"))
+                    changed=time.time(), reason="identity-v3", model_root=legacy[1]))
 
     def replace_identity(self, config, entry):
         """Caller holds configuration.lock exclusively; the change is recorded in history."""
@@ -235,29 +251,57 @@ class Storage:
 
     @classmethod
     def downgrade(cls, settings, expected):
-        """Return an upgraded archive to identity and database schema 1 (ADR 0011)."""
+        """Return an archive upgraded from schema 2 (or 1) to identity and database schema 2 (K5 of
+        MFL032), one level: only while every source is a PDF, every run has the job options of
+        schema 2 and the owner `local`, and no run is running; otherwise an explicit refusal."""
         storage = cls(settings, administrative=True)
         try:
             storage.quiesce(expected)
-            legacy = settings.legacy_identity()
-            if storage.identity['config'] != legacy:
-                upgrades = [entry for entry in storage.identity.get('history', [])
-                            if isinstance(entry, dict) and entry.get('reason') == 'identity-v2']
-                if not upgrades:
-                    raise StorageError('Downgrade unavailable: this archive was not upgraded from schema 1')
-                if upgrades[-1].get('config') != legacy:
-                    raise StorageError('Downgrade unavailable: settings differ from those of the upgrade')
+            target = storage._downgrade_target()
             with storage.connect() as conn:
                 if conn.execute("SELECT 1 FROM runs WHERE state IN ('running','publishing') LIMIT 1").fetchone():
                     raise StorageError('Downgrade unavailable: start the worker once to reconcile running runs')
+                if conn.execute("PRAGMA user_version").fetchone()[0] == SCHEMA:
+                    storage._check_v2_content(conn)
             with storage.lock('schema.lock'):
                 with storage.connect() as conn:
                     if conn.execute("PRAGMA user_version").fetchone()[0] == SCHEMA:
-                        conn.executescript("BEGIN IMMEDIATE;\n" + migration("002-down"))
-                if storage.identity['config'] != legacy:
-                    storage.replace_identity(legacy, dict(config=storage.identity['config'],
+                        conn.executescript("BEGIN IMMEDIATE;\n" + migration("003-down"))
+                if storage.identity['config'] != target:
+                    storage.replace_identity(target, dict(config=storage.identity['config'],
                                              settings=settings.public(), changed=time.time(),
-                                             reason='downgrade-v1'))
-            return {'previous_config': expected, 'config': legacy, 'schema': 1}
+                                             reason='downgrade-v2'))
+            return {'previous_config': expected, 'config': target, 'schema': 2}
         finally:
             storage.close()
+
+    def _downgrade_target(self):
+        """The identity of schema 2 this archive returns to: the one recorded by its upgrade."""
+        current = self.identity['config']
+        legacy = legacy_identity.candidates(self.settings).get(current)
+        if legacy is not None:
+            if legacy[0] != 2:
+                raise StorageError('Downgrade unavailable: the archive is at identity schema 1')
+            return current                       # an interrupted downgrade: the database is completed
+        upgrades = [entry for entry in self.identity.get('history', [])
+                    if isinstance(entry, dict) and entry.get('reason') == 'identity-v3']
+        if not upgrades:
+            raise StorageError('Downgrade unavailable: this archive was not upgraded from schema 2')
+        root = upgrades[-1].get('model_root')
+        if not isinstance(root, str) or upgrades[-1].get('config') != legacy_identity.v2(self.settings, root):
+            raise StorageError('Downgrade unavailable: settings differ from those of the upgrade')
+        return upgrades[-1]['config']
+
+    @staticmethod
+    def _check_v2_content(conn):
+        """What schema 2 cannot hold refuses the return (K5)."""
+        if conn.execute("SELECT 1 FROM documents WHERE owner != ? OR lower(source_path) NOT LIKE '%.pdf' LIMIT 1",
+                        (OWNER,)).fetchone():
+            raise StorageError('Downgrade unavailable: the archive holds sources other than PDF or of another owner')
+        for (owner, options) in conn.execute("SELECT owner, options FROM runs"):
+            try:
+                shaped = legacy_identity.v2_options(json.loads(options))
+            except ValueError:
+                shaped = False
+            if owner != OWNER or not shaped:
+                raise StorageError('Downgrade unavailable: a run has job options of schema 3 or another owner')

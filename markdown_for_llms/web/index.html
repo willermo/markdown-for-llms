@@ -1,7 +1,19 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Markdown for LLMs</title><link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script></head>
-<body><header><p>CONVERTITORE LOCALE · SPERIMENTALE</p><h1>Dal PDF al tuo Markdown</h1><p>Conserva il sorgente, consulta il testo estratto e scarica il documento con le immagini.</p><p id="readiness" role="status"></p></header>
-<main><section aria-labelledby="upload-title"><h2 id="upload-title">Nuova conversione</h2><form id="upload"><label for="files">Scegli uno o più PDF</label><input id="files" type="file" accept="application/pdf,.pdf" multiple required><button type="submit">Converti</button></form><p id="upload-status" role="status"></p></section>
-<div class="workspace"><section aria-labelledby="archive-title"><h2 id="archive-title">Coda e archivio</h2><p>Le conversioni rimangono disponibili dopo il riavvio. La cancellazione dall’archivio non è inclusa.</p><div id="jobs"></div></section>
-<section id="detail" aria-labelledby="detail-title"><h2 id="detail-title">Il tuo documento</h2><p>Seleziona una conversione nell’archivio.</p></section></div>
-<section class="notice"><h2>Qualità non verificata</h2><p>Il testo è l’output originale del motore. Formule, OCR, numeri, ordine di lettura e completezza delle immagini richiedono un controllo sul PDF. Un bundle disponibile non certifica la fedeltà.</p><p>Il lettore mostra il Markdown come testo, senza eseguire HTML o aprire collegamenti esterni. Le formule restano nel formato estratto.</p></section></main><footer>PDF · Marker CPU · Nessun servizio remoto</footer></body></html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Markdown for LLMs</title><link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script></head>
+<body><header><p>LOCAL CONVERTER · EXPERIMENTAL</p><h1>From your documents to Markdown</h1><p>Keeps the source, shows the extracted text and downloads the document with its images.</p><p id="readiness" role="status"></p><ul id="converters" class="converters" aria-label="Routes on this machine"></ul></header>
+<main><section aria-labelledby="upload-title"><h2 id="upload-title">New conversion</h2><form id="upload">
+<label for="files">Choose one or more files</label><input id="files" type="file" multiple required>
+<p id="formats" class="hint"></p>
+<fieldset id="options"><legend>Route and options</legend>
+<label for="route">Route</label><select id="route"></select>
+<p id="route-hint" class="hint"></p>
+<div id="ocr-box"><label><input id="ocr" type="checkbox"> Force OCR on every page (Marker only)</label></div>
+<label for="lang">Language of the document (optional, recorded; no converter of this version uses it)</label><input id="lang" type="text" maxlength="40" placeholder="for example it or en-GB" autocomplete="off">
+<div id="datalab-box" class="transit" hidden><h3>Datalab: the document leaves this computer</h3><p id="transit-notice"></p><p id="datalab-cap"></p>
+<label for="datalab-mode">Datalab mode</label><select id="datalab-mode"></select>
+<label class="confirm"><input id="transit" type="checkbox"> I confirm that these documents are sent to Datalab</label></div>
+</fieldset>
+<button type="submit" id="convert">Convert</button></form><p id="upload-status" role="status"></p></section>
+<div class="workspace"><section aria-labelledby="archive-title"><h2 id="archive-title">Queue and archive</h2><p>Conversions stay available after a restart. Deleting from the archive is not included.</p><div id="jobs"></div></section>
+<section id="detail" aria-labelledby="detail-title"><h2 id="detail-title">Your document</h2><p>Select a conversion in the archive.</p></section></div>
+<section class="notice"><h2>Quality not verified</h2><p>The text is the original output of the engine. Formulas, OCR, numbers, reading order and the completeness of the images need a check against the source. An available bundle does not certify fidelity.</p><p>The reader shows the Markdown as text, without running HTML or opening external links. Formulas stay in the extracted form.</p></section></main><footer>Local conversion engine · Datalab, a remote service, only when you choose it and confirm the transit</footer></body></html>

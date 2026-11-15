@@ -91,18 +91,35 @@ class CliTests(unittest.TestCase):
                 self.assertEqual((code, json.loads(out)["error"]), (1, "datalab_key_unsafe"))
 
     def test_submit_is_the_archive_command(self):
+        seen = []
+
         class FakeService:
             def __init__(self, settings):
                 pass
 
             def submit(self, stream, name, overrides):
-                self.seen = (name, overrides)
+                seen.append((name, overrides))
                 return dict(id="r", state="queued", bundle="pending", progress=None)
         src = self.root / "p.pdf"
         src.write_bytes((FIXTURES / "C06-pdf-text-it.pdf").read_bytes())
         with mock.patch("markdown_for_llms.cli.Service", FakeService):
-            code, out, _ = self.run_cli(["submit", "--force-ocr", str(src)])
-        self.assertEqual((code, json.loads(out)["state"]), (0, "queued"))
+            code, out, _ = self.run_cli(["submit", "--ocr", "force", "--lang", "it", str(src)])
+            self.assertEqual((code, json.loads(out)["state"]), (0, "queued"))
+            code, out, _ = self.run_cli(["submit", "--route", "datalab", "--datalab-mode", "fast", "--confirm-transit", str(src)])
+            self.assertEqual(code, 0)
+        self.assertEqual(seen, [("p.pdf", {"route": None, "ocr": "force", "lang": "it", "datalab_mode": None,
+                                           "transit_confirmed": False}),
+                                ("p.pdf", {"route": "datalab", "ocr": "auto", "lang": None, "datalab_mode": "fast",
+                                           "transit_confirmed": True})])
+
+    def test_submit_reports_the_code_of_a_refusal(self):
+        src = self.root / "fake.docx"
+        src.write_bytes(b"%PDF-1.4\n")
+        code, out, _ = self.run_cli(["submit", str(src)])
+        self.assertEqual(code, 1)
+        self.assertEqual(json.loads(out)["code"], "format_mismatch")
+        code, out, _ = self.run_cli(["submit", "--route", "datalab", str(src)])
+        self.assertEqual(json.loads(out)["code"], "route_invalid")
 
     def test_prepare_is_the_bench_prepare(self):
         with mock.patch("markdown_for_llms.bench.cli.main", return_value=0) as bench:
