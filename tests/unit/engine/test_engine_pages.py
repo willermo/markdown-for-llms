@@ -551,6 +551,12 @@ class RealMarkerTests(unittest.TestCase):
             self.assertTrue(any(e.get("event") == "progress" for e in events))
             self.assertTrue(any(e.get("event") == "child" and e.get("scope") == "mdf-eng-realmarker-marker-1.scope"
                                 for e in events))
+            # M5 of MFL026: the stages and the seconds of each page, from the clock of the child
+            timings = result["timings"]
+            self.assertEqual(set(timings["stages"]), {"models", "pages", "structure", "processors", "render"})
+            self.assertEqual((timings["pages"]["count"], len(timings["pages"]["values"])), (2, 2))
+            self.assertLessEqual(sum(timings["stages"].values()), timings["total_seconds"])
+            self.assertEqual(timings["pages"]["max"], max(timings["pages"]["values"]))
 
     def test_repeated_figure_logo_and_fill(self):                                       # PB12
         from markdown_for_llms.engine.core import convert

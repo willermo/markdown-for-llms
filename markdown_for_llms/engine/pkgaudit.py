@@ -27,14 +27,17 @@ Two recoveries, written to the scratch directory for pandoc and the filter:
   not rewritten.
 - `package-media.json` and `media/`: pandoc 3.14 does not read the drawings of spreadsheet
   sheets; the images anchored by the drawings that a sheet uses are copied out and listed per
-  sheet, in row and column order, for the filter to place after the sheet's table.
+  sheet, in row and column order, for the filter to place after the sheet's table. With the flag
+  `slides` (the LibreOffice route of a pptx, whose HTML export has no images) the primary images
+  of the pictures of each slide are copied out and listed per slide, in the order of
+  `p:sldIdLst` and of the slide, for the filter to place after the heading of their slide.
 
 Limits: at most `MAX_MEMBERS` members, `MAX_PART` decompressed bytes per member, `MAX_TOTAL`
 decompressed bytes read in all (counted on the bytes actually decompressed, the copy included),
 no DOCTYPE or entity declaration. Over a limit or on an unreadable archive the audit refuses
 the package (exit 4, `package_unsafe`). Standard library only.
 
-Usage in the child: pkgaudit FORMAT /in/source.<ext>  ->  /scratch/audit.json [, normalized.<ext>, media/]
+Usage in the child: pkgaudit FORMAT /in/source.<ext> [slides]  ->  /scratch/audit.json [, normalized.<ext>, media/]
 """
 import hashlib
 from html.parser import HTMLParser
@@ -312,6 +315,59 @@ def ooxml(pkg, fmt):
         if "/media/" in name and name not in media and not name.endswith("/"):
             record(name)
     return content, media, sheets, scans
+
+
+def slide_images(pkg):
+    """The slides of a pptx in the order of `p:sldIdLst`, each with the primary images of its
+    pictures (`p:pic`, the `a:blip r:embed` of its `p:blipFill`) in document order: never the
+    SVG twin (`asvg:svgBlip`), the fallback of an `mc:AlternateContent` or the notes. Returns
+    [{"index", "part", "images": [{"member", "name", "descr"}]}], or None when the order of the
+    slides cannot be read."""
+    root_rels = rels_of(pkg, "") if "_rels/.rels" in pkg.names else {}
+    main = next((t for ty, t in root_rels.values() if ty == T + "officeDocument"), None)
+    if not main or main not in pkg.names:
+        return None
+    mrels, order = rels_of(pkg, main), []
+
+    def start(tag, attrs):
+        if tag.endswith(" sldId") and attrs.get(R + " id"):
+            order.append(attrs[R + " id"])
+    try:
+        parse(pkg, main, start)
+    except xml.parsers.expat.ExpatError:
+        return None
+    slides = []
+    for rid in order:
+        ty, part = mrels.get(rid, (None, None))
+        if ty != T + "slide" or part not in pkg.names:
+            continue
+        rels, images, stack, pic = rels_of(pkg, part), [], [], {}
+
+        def start(tag, attrs, rels=rels, images=images, stack=stack, pic=pic):
+            local = tag.rsplit(" ", 1)[-1]
+            stack.append(local)
+            if local == "pic" and "Fallback" not in stack:
+                pic.clear()
+                pic["open"] = True
+            elif pic.get("open") and local == "cNvPr" and "nvPicPr" in stack:
+                pic["name"], pic["descr"] = attrs.get("name", ""), attrs.get("descr", "")
+            elif pic.get("open") and local == "blip" and len(stack) >= 2 and stack[-2] == "blipFill" \
+                    and "rid" not in pic:
+                pic["rid"] = attrs.get(R + " embed")
+
+        def end(tag, rels=rels, images=images, stack=stack, pic=pic):
+            local = stack.pop()
+            if local == "pic" and pic.get("open"):
+                ty2, target = rels.get(pic.get("rid"), (None, None))
+                if ty2 in IMAGE_TYPES and target in pkg.names:
+                    images.append({"member": target, "name": pic.get("name", ""), "descr": pic.get("descr", "")})
+                pic.clear()
+        try:
+            parse(pkg, part, start, end)
+        except xml.parsers.expat.ExpatError:
+            return None
+        slides.append({"index": len(slides) + 1, "part": part, "images": images})
+    return slides
 
 
 def drawing_images(pkg, part):
@@ -783,7 +839,17 @@ def epub(pkg):
 
 # --- main -----------------------------------------------------------------------------------
 
-def audit(fmt, source, out):
+def copy_out(pkg, media_dir, member, n):
+    """Copy a media member to `media_dir` as m-NNNN.<ext>; returns (file name, SHA-1)."""
+    ext = member.rsplit(".", 1)[-1].lower()
+    data = pkg.read(member)
+    media_dir.mkdir(exist_ok=True)
+    name = f"m-{n:04d}.{ext}"
+    (media_dir / name).write_bytes(data)
+    return name, sha1(data)
+
+
+def audit(fmt, source, out, slides=False):
     out = Path(out)
     pkg = Pkg(source)
     report = {"format": fmt, "members": len(pkg.names), "normalized": {}, "not_normalized": {},
@@ -826,13 +892,25 @@ def audit(fmt, source, out):
                     if img["member"] not in pkg.names or ext not in MEDIA_EXT:
                         continue
                     n += 1
-                    data = pkg.read(img["member"])
-                    media_dir.mkdir(exist_ok=True)
-                    name = f"m-{n:04d}.{ext}"
-                    (media_dir / name).write_bytes(data)
-                    s["images"].append(dict(img, file=name, sha1=sha1(data)))
+                    name, digest = copy_out(pkg, media_dir, img["member"], n)
+                    s["images"].append(dict(img, file=name, sha1=digest))
             s["images"].sort(key=lambda i: (i["row"], i["col"]))
         report["sheets"] = sheets
+    if fmt == "pptx" and slides:
+        # the images of each slide for the LibreOffice route, one file per member
+        found, files = slide_images(pkg), {}
+        report["slides"] = found if found is not None else []
+        report["slide_order"] = "known" if found is not None else "unknown"
+        for s in report["slides"]:
+            kept = []
+            for img in s["images"]:
+                if img["member"].rsplit(".", 1)[-1].lower() not in MEDIA_EXT:
+                    continue
+                if img["member"] not in files:
+                    files[img["member"]] = copy_out(pkg, out / "media", img["member"], len(files) + 1)
+                name, digest = files[img["member"]]
+                kept.append(dict(img, file=name, sha1=digest))
+            s["images"] = kept
     report["media"] = rows
     report["bytes_read"] = pkg.total
     (out / "audit.json").write_text(json.dumps(report, indent=1, ensure_ascii=False))
@@ -840,9 +918,11 @@ def audit(fmt, source, out):
 
 
 def main(args):
-    fmt, source = args
+    fmt, source, *flags = args
     try:
-        report = audit(fmt, source, "/scratch")
+        if set(flags) - {"slides"}:
+            raise Refused("flags")
+        report = audit(fmt, source, "/scratch", slides="slides" in flags)
     except Refused as exc:
         Path("/scratch/audit.json").write_text(json.dumps({"refused": str(exc)}))
         return REFUSED_EXIT

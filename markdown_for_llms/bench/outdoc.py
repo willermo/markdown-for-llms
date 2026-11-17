@@ -5,6 +5,11 @@ HTML tables inside it with the lenient tree of `readers.htmltree`; plain text (t
 third-party tool in the self-check) is read line by line. Declared normalizations: Marker page
 separators removed, words broken at a line end joined (and recorded for the form checks),
 `text.score_tokens` for the tokens. Math never enters the text tokens.
+
+Images (C R6.2 of plan r2): a Markdown image, also in the cell of a table, and every `img` with a
+`src` in an HTML block (`<figure>` with its caption, the `<table>` of Calc, any other) or in an
+inline HTML tag, in the order of the document. With `assets_dir` (the `out/` of an attempt) each one
+is checked: a local file under it, never a URL, an absolute path or `..`.
 """
 from dataclasses import dataclass, field
 import os
@@ -139,11 +144,12 @@ def from_markdown(markdown, assets_dir=None):
                     text, math, emph, html, imgs = _inline(s.children or [])
                     row.append(text)
                     formulas.extend((False, m) for m in math)
+                    images.extend(imgs)
                 j += 1
             _table_block(blocks, tokens, token_block, broken, rows, header_rows)
             i = j
         elif t == "html_block":
-            _html_block(tok.content, blocks, tokens, token_block, broken)
+            _html_block(tok.content, blocks, tokens, token_block, broken, images)
         elif t in ("fence", "code_block"):
             _add_block(blocks, tokens, token_block, broken, Block("code"), tok.content)
         i += 1
@@ -163,10 +169,17 @@ def _table_block(blocks, tokens, token_block, broken, rows, header_rows):
     _add_block(blocks, tokens, token_block, broken, block, "\n".join(" | ".join(r) for r in rows))
 
 
-def _html_block(content, blocks, tokens, token_block, broken):
+def _img_sources(root):
+    """(src, True) of every `img` with a `src` under an HTML tree, in document order."""
+    from .readers.safe import local
+    return [(el.get("src"), True) for el in root.iter() if local(el.tag) == "img" and el.get("src")]
+
+
+def _html_block(content, blocks, tokens, token_block, broken, images):
     from .readers.htmltree import parse_html
     from .readers.safe import local
     root = parse_html(content.encode("utf-8"))
+    images.extend(_img_sources(root))
     tables = [x for x in root.iter() if local(x.tag) == "table"]
     if tables:
         for table in tables:
@@ -229,6 +242,9 @@ def _inline(children):
                 html = True
             if re.match(r"<br\s*/?>", c.content, re.I):
                 parts.append(" ")
+            elif re.match(r"<img\b", c.content, re.I):
+                from .readers.htmltree import parse_html
+                images.extend(_img_sources(parse_html(c.content.encode("utf-8"))))
         elif t == "footnote_ref":
             parts.append(" ")
     return "".join(parts), math, emph, html, images

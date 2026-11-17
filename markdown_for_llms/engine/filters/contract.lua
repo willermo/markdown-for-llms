@@ -30,7 +30,9 @@
 -- and the report of the changes to /work/contract-report.json: the corrections and their counts,
 -- the problems and, apart, their counts per code taken before the list is truncated (at most
 -- LIMIT items per severity). Optional inputs: /in/package-media.json (the package audit) and,
--- for xlsx, /in/media/, whose images are placed after the table of their sheet.
+-- for xlsx, /in/media/, whose images are placed after the table of their sheet; for the pptx of
+-- the LibreOffice route the same files per slide, placed after the heading of their slide; for
+-- the HTML of Calc, /in/lo-media.json and /in/lo-media/, the images its `img` elements name.
 
 local report = {media = {}, corrections = {}, problems = {}, counts = {}, problem_counts = {}}
 local LIMIT = 2000
@@ -544,6 +546,60 @@ local function place_sheet_images(doc, audit)
   return doc
 end
 
+-- slides of pptx (LibreOffice route) ---------------------------------------------------------
+
+-- The images of the n-th slide follow the blocks of the n-th top-level level-1 heading (empty
+-- ones included), when there are as many such headings as slides; otherwise no image is placed
+-- (no image ever moves to another slide) and the report says `slide_boundaries: unknown`. Each
+-- occurrence (slide, index) is placed once.
+local function place_slide_images(doc, audit)
+  if not audit or not audit.slides then return doc end
+  local headings = 0
+  for _, b in ipairs(doc.blocks) do if b.t == "Header" and b.level == 1 then headings = headings + 1 end end
+  if headings ~= #audit.slides or audit.slide_order ~= "known" then
+    report.slide_boundaries = "unknown"
+    return doc
+  end
+  report.slide_boundaries = "known"
+  local blocks, slide = pandoc.Blocks{}, 0
+  local function flush()
+    local s = audit.slides[slide]
+    if not s then return end
+    for _, img in ipairs(s.images or {}) do
+      local h = io.open("/in/media/" .. img.file, "rb")
+      if h then
+        local bytes = h:read("a"); h:close()
+        local key = add_media(img.member, nil, bytes)
+        local alt = (img.descr ~= "" and img.descr) or img.name or ""
+        blocks:insert(pandoc.Para{pandoc.Image({pandoc.Str(alt)}, key, string.format("slide %d", s.index))})
+        correction("slide_image_placed", img.member)
+      end
+    end
+  end
+  for _, b in ipairs(doc.blocks) do
+    if b.t == "Header" and b.level == 1 then flush(); slide = slide + 1 end
+    blocks:insert(b)
+  end
+  flush()
+  doc.blocks = blocks
+  return doc
+end
+
+-- The images LibreOffice wrote beside its HTML (Calc), listed by name in /in/lo-media.json and
+-- mounted in /in/lo-media/: the `img src` of the HTML names them.
+local function load_lo_media()
+  local f = io.open("/in/lo-media.json", "rb")
+  if not f then return end
+  local listed = pandoc.json.decode(f:read("a")); f:close()
+  for _, name in ipairs(listed or {}) do
+    local h = io.open("/in/lo-media/" .. name, "rb")
+    if h then
+      local bytes = h:read("a"); h:close()
+      add_media(name, nil, bytes)
+    end
+  end
+end
+
 -- Only the media the body references stay in the mediabag (and in the report).
 local function prune_media(doc)
   local referenced = {}
@@ -569,9 +625,11 @@ function Pandoc(doc)
   for fp, mt, contents in pandoc.mediabag.items() do table.insert(items, {fp, mt, contents}) end
   pandoc.mediabag.empty()
   for _, it in ipairs(items) do add_media(it[1], it[2], it[3]) end
+  load_lo_media()
   local audit = read_audit()
   if audit then map_members(audit) end
   doc = place_sheet_images(doc, audit)
+  doc = place_slide_images(doc, audit)
   doc:walk({Image = function(el) local key = map[el.src] or (known[el.src] and el.src)
                                   if key then used_images[key] = true end end})
   -- top-down: a list is cleaned before the lists inside its elements, so an active element

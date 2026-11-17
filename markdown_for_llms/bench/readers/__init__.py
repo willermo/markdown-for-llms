@@ -45,4 +45,7 @@ def read_twin(doc, files, cache=None):
     if kind == "akoma-ntoso":
         from .akn import read_akn
         return read_akn(files.twin["file"], tuple(twin.get("discard", ())))
+    if kind == "html":
+        from .htmltwin import read_html_twin
+        return read_html_twin(files.twin["file"])
     raise BenchError(Code.MANIFEST_INVALID, "twin kind " + kind)

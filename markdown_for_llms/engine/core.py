@@ -16,7 +16,9 @@ tool call and child, and `{"event": "progress", "progress": snapshot}` from the 
 (`progress.py`), and may stop the conversion by returning `cancelled` or `interrupted` to a step
 or a tick.
 
-The result is the content of `out/engine.json`, also on a failure (see `contract.py`). The
+The result is the content of `out/engine.json`, also on a failure (see `contract.py`); its
+`timings` hold `total_seconds` and, on the Marker route, `stages` and `pages`
+(`pages.marker_timings`). The
 Datalab route (`datalab.py`) needs `request["datalab"]` (`mode`, `transit_confirmed`, `cap_usd`)
 and the key: `datalab_key` (a `datalab.Key`, read by the caller) or `DATALAB_API_KEY` in the
 environment of the process; the key is never part of the result.
@@ -37,9 +39,11 @@ from .codes import Code, EngineError
 DEFAULT_LIMITS = {"memory_mib": 4096, "output_mib": 512, "timeout_seconds": 0, "max_pages": 50,
                   "poll_seconds": 0.25, "threads": 4, "stall_seconds": 900}
 NOT_YET = {}
-TOOLCHAIN_ROUTES = (routes.PANDOC, routes.DJVUTXT)
+TOOLCHAIN_ROUTES = (routes.PANDOC, routes.LIBREOFFICE, routes.DJVUTXT)
+AUDITED_ROUTES = (routes.PANDOC, routes.LIBREOFFICE)      # the package audit runs in a Bubblewrap child
 ATTEMPT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 PREPARING = ("image-to-pdf", "ddjvu", "provider", "classify", "strip")      # steps before the Marker child
+MAX_CHILD_EVENTS = 20000            # events of one Marker child kept for the timings (pages, processors)
 
 
 class Context:
@@ -63,6 +67,7 @@ class Context:
         self.unlisted_problems = {}         # problems counted by a converter but not in its list
         self.diagnostics, self.package, self.pages = {}, None, None
         self.cost = self.transit = self.datalab_versions = None
+        self.child_events, self.timings = [], {}     # events of the current Marker child; stages and pages
 
     def timeout(self):
         """Seconds left for the next call (a day when there is no deadline)."""
@@ -83,6 +88,9 @@ class Context:
         from .progress import Progress
         if self.progress is None:
             self.progress = Progress()
+        room = MAX_CHILD_EVENTS - len(self.child_events)
+        if room > 0:
+            self.child_events.extend(events[:room])
         if any([self.progress.feed(e) for e in events]) and self.observer is not None:
             self.observer({"event": "progress", "progress": self.progress.snapshot()})
 
@@ -125,8 +133,9 @@ def availability(model_root=None, only=None):
     for converter in TOOLCHAIN_ROUTES:
         out[converter] = dict(ok)
     from . import isolation
-    if ok["available"] and not isolation.available():        # the packages of pandoc are audited in the child
-        out[routes.PANDOC] = {"available": False, "code": Code.ISOLATION_UNAVAILABLE.value}
+    if ok["available"] and not isolation.available():        # the packages are audited in the child
+        for converter in AUDITED_ROUTES:
+            out[converter] = {"available": False, "code": Code.ISOLATION_UNAVAILABLE.value}
     out[routes.MARKER] = _marker_availability(model_root)
     out[routes.DATALAB] = ({"available": True, "code": None} if os.environ.get("DATALAB_API_KEY")
                            else {"available": False, "code": Code.DATALAB_KEY_MISSING.value})
@@ -233,10 +242,13 @@ def convert(source, out, request=None, limits=None, work=None, observer=None, na
         if converter == routes.TEXT:
             ctx.event("text")
             from . import text as text_route
-            result["text"] = text_route.convert(src, stage)
+            result["text"] = text_route.convert(src, stage, ctx.output_mib)
         elif converter == routes.PANDOC:
             from . import native
             result["pandoc"] = native.pandoc_route(ctx, src, fmt)
+        elif converter == routes.LIBREOFFICE:
+            from . import native
+            result["libreoffice"] = native.libreoffice_route(ctx, src, fmt)
         elif converter == routes.DJVUTXT:
             from . import native
             result["djvutxt"] = native.djvutxt_route(ctx, src)
@@ -289,7 +301,7 @@ def _finish(result, ctx, converter, started):
         result["transit"] = ctx.transit
     result["limits"] = list(ctx.limits)
     result["components"] = _components(converter, ctx) if converter else None
-    result["timings"] = {"total_seconds": round(time.monotonic() - started, 3)}
+    result["timings"] = {"total_seconds": round(time.monotonic() - started, 3), **ctx.timings}
 
 
 def _failed(out, result, ctx, converter, started, exc):

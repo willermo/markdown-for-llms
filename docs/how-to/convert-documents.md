@@ -57,10 +57,11 @@ Each format has a default route; `--route` imposes one of its alternatives.
 
 | Format | Default | Alternatives | In this version |
 | --- | --- | --- | --- |
-| docx, xlsx, pptx, epub, html | `pandoc` | `marker` | available (`marker`: Marker's own provider makes a PDF first) |
+| docx, epub, html | `pandoc` | `marker` | available (`marker`: Marker's own provider makes a PDF first) |
+| xlsx, pptx | `pandoc` | `marker`, `libreoffice` | available (`libreoffice`: see below) |
 | odt, rtf | `pandoc` | — | available |
 | doc, ods | `pandoc`, after LibreOffice converts them to docx and xlsx | — | available |
-| txt | `text` (encoding detected by charset-normalizer, text kept verbatim) | — | available |
+| txt | `text` (encoding from a byte order mark, otherwise detected by charset-normalizer; text kept verbatim) | — | available; see below for UTF-16 and UTF-32 |
 | djvu | `marker` (after `ddjvu` makes a PDF of images) | `djvutxt`, `datalab` | available; `djvutxt` keeps the text layer, page by page |
 | pdf, png, jpeg, tiff | `marker` (an image becomes a PDF page, a TIFF one page per frame) | `datalab` | available |
 
@@ -70,6 +71,25 @@ Each format has a default route; `--route` imposes one of its alternatives.
 
 `--max-pages` (default `MDF_MAX_PAGES` of the product settings, 50) bounds the pages of the pages family (`page_limit`). `--lang` is recorded in `engine.json`; no converter of this version uses it. `--ocr force` reads every page with OCR on the Marker route and is refused with `route_option_unsupported` by the others. The memory cap of each tool (`MDF_MEMORY_MIB`, at most 2,048 MiB for the package audit), the output cap (`MDF_OUTPUT_MIB`, `engine.json` included, also the cap of the private working directory of each tool) and the total deadline (`MDF_TIMEOUT_SECONDS`, 0 for none) come from the product settings; `--env-file` of `mdf` selects them.
 
+### The `libreoffice` route
+
+LibreOffice, in the toolchain image, writes the workbook or the presentation as HTML, and pandoc reads that HTML with the same contract as the `pandoc` route:
+
+- xlsx: Calc writes every sheet as a table and its images as files beside the HTML; those images are the images of the document.
+- pptx: `impress_html_Export` writes one level-1 heading per slide (empty for a slide without a title) and its text, without images and without speaker notes. The images come from the package instead: the pictures of each slide, in the order of the slide list, follow the heading of their slide (`engine.json`: `libreoffice.images: package`, `grouped: slide`). The layout inside a slide is not rebuilt. When the headings are not as many as the slides, no image is placed and each one is `media_lost` with the detail `slide_boundaries_unknown`: an image never moves to another slide.
+
+An export that LibreOffice leaves empty fails with `tool_failed`. `--ocr force` is refused.
+
+```bash
+.venv-dev/bin/mdf convert slides.pptx --route libreoffice --out out/slides
+```
+
+### Text files and their encoding
+
+A txt that starts with a byte order mark is read in that encoding: UTF-32 (`FF FE 00 00`, `00 00 FE FF`), UTF-16 (`FF FE`, `FE FF`) or UTF-8 (`EF BB BF`), the 4-byte marks first. The Unicode text of Windows Notepad is UTF-16 with a mark. `engine.json` records the canonical name (`utf_32`, `utf_16`, `utf_8`) under `text.encoding` and `text.bom: true`. Without a mark charset-normalizer chooses the encoding; a short text in a legacy code page can be read in a neighbouring one.
+
+After a UTF-16 or UTF-32 mark the whole file must decode strictly, and the text must not hold C0 control characters other than tab, line feed, vertical tab, form feed and carriage return: a file with any other one is refused with `format_mismatch`, at the upload too. This is a choice against binary files behind a mark, not a statement on the encoding, and it also refuses real texts: a UTF-16 or UTF-32 log with ANSI escapes (`ESC`, `\x1b`) or a text ending with the DOS end-of-file character (`\x1a`) is `format_mismatch`. Without a mark that rule does not apply (only a NUL byte is refused there). The UTF-8 form of the text must fit `MDF_OUTPUT_MIB` (`output_limit` otherwise, nothing written): from UTF-16 it can grow by half.
+
 ## The Marker route
 
 Marker 2.2.0 runs in `fast` mode on the CPU, in a Bubblewrap child without network, the weights read-only, under a systemd scope whose memory cap is `MDF_MEMORY_MIB`; a child that writes no progress event and uses no CPU time for `MDF_STALL_SECONDS` is stopped (`stalled`). The PDF is classified first, page by page (`pages` in `engine.json`): `native` (visible text), `ocr_layer` (an image over most of the page with only invisible text, including the glyphless layers of OCR programs) or `image`.
@@ -77,6 +97,8 @@ Marker 2.2.0 runs in `fast` mode on the CPU, in a Bubblewrap child without netwo
 - Only native pages: Marker reads their text; Indra, its reader, still runs OCR where the text layer is broken (for example a broken font map or text without ink) and says so per page: `indra_source` `hybrid` (part of the page) or `ocr` (the whole page), with the reason in `note`.
 - No native page, or `--ocr force`: every page is read with OCR.
 - Native pages with OCR-layer pages: the invisible text of those pages is removed and the copy is checked (the same rendering, no layer left); if the copy renders differently the original goes with OCR on every page (`ocr_forced_document`).
+
+The times of the conversion are in `engine.json` under `timings`: `total_seconds` for every route and, on the Marker route, `stages` (seconds of loading the models, reading the pages, structure, processors and render, from the events of the child) and `pages` (the seconds of each page read by Indra, as the interval between two consecutive page events, with their median and maximum: the reading of the page only, not structure, processors and render; the seconds per page of the whole conversion are `total_seconds` divided by the pages). The archive keeps the stages and the statistics of the pages, not the value of each page.
 
 Every page has its class, Indra's source and Marker's method in `engine.json`; an OCR-layer page keeps its class after the removal of the layer, the class of the clean copy is `class_after_strip`, and an OCR that finds nothing where the layer had text is `page_text_lost`. A native page that gives no text, an empty output or a missing page fail the conversion (`page_failed`, `output_empty`, `converter_failed`).
 

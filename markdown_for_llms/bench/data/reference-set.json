@@ -1,5 +1,5 @@
 {
- "schema": "mdf-bench-manifest/1",
+ "schema": "mdf-bench-manifest/2",
  "set": "public",
  "sources": {
   "d01-pdf": {
@@ -451,6 +451,54 @@
    "bytes": 64471,
    "sha256": "0842830f705bcb8c81d2c7dfa4d8268e9d6b7441de779b47001a563bafbd3dfd",
    "session_url": "https://www.normattiva.it/atto/caricaDettaglioAtto?atto.dataPubblicazioneGazzetta=2026-10-24&atto.codiceRedazionale=26G00210&tipoDettaglio=originario&qId="
+  },
+  "d31-txt": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/52484/pg52484.txt",
+   "bytes": 288897,
+   "sha256": "b51a398da257709bfd2c0007e42980935751276cdca4178d738fa4c92f799ae6"
+  },
+  "d31-html": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/52484/pg52484-images.html",
+   "bytes": 350069,
+   "sha256": "b028f752992f0fc7962180929cc4195a136d4b1ca2780414584762c84058a8b7"
+  },
+  "d32-txt": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/13083/pg13083.txt",
+   "bytes": 151133,
+   "sha256": "57deb28237aafc4e66717913d066048a29963725f55f304a7c565f46db3c1c74"
+  },
+  "d32-html": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/13083/pg13083-images.html",
+   "bytes": 329402,
+   "sha256": "a771caa0d258e3f305d8166049a4589b68e7170a3bb6be484c2f1ddb95a7c90c"
+  },
+  "d33-txt": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/16527/pg16527.txt",
+   "bytes": 271449,
+   "sha256": "a0a1492d7b206d628095a71e9fce2e90f8e384ce4c21f846654480550ab60b53"
+  },
+  "d33-html": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/16527/pg16527-images.html",
+   "bytes": 280309,
+   "sha256": "eaee1dfd76ab3634850d54c99321ad3b167c2f2f9d39079c6f62036b0b739bbb"
+  },
+  "d34-txt": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/31631/pg31631.txt",
+   "bytes": 519490,
+   "sha256": "977d47591e7fc37f093c34409551d19320d67cd49a38a4e4326849f0f6c06b7c"
+  },
+  "d34-html": {
+   "kind": "file",
+   "url": "https://gutenberg.pglaf.org/cache/epub/31631/pg31631-images.html",
+   "bytes": 560558,
+   "sha256": "c7e991600a29faf75c384de2c0d6db0b714d84285d862208e4ad051eec79f60e"
   }
  },
  "documents": [
@@ -466,6 +514,12 @@
    "profile": "scientific",
    "format": "pdf",
    "pages": 17,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d01-pdf"
    },
@@ -488,6 +542,12 @@
    "profile": "scientific",
    "format": "pdf",
    "pages": 17,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d02-pdf"
    },
@@ -511,6 +571,12 @@
    "format": "html",
    "pages": null,
    "pages_estimate": 17,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d03-html"
    },
@@ -534,6 +600,12 @@
    "profile": "scientific",
    "format": "pdf",
    "pages": 12,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d04-pdf"
    },
@@ -554,6 +626,12 @@
    "profile": "scientific",
    "format": "pdf",
    "pages": 11,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d05-pdf"
    },
@@ -574,6 +652,12 @@
    "profile": "office",
    "format": "pdf",
    "pages": 12,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d06-pdf"
    },
@@ -635,6 +719,12 @@
    "format": "xlsx",
    "pages": null,
    "pages_estimate": 21,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d07-xlsx"
    },
@@ -650,12 +740,19 @@
    "license": "CC BY-SA 4.0",
    "attribution": "Zenodo record 17421921, its authors",
    "levels": [
+    "quick",
     "standard"
    ],
    "profile": "office",
    "format": "pptx",
    "pages": null,
    "pages_estimate": 12,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d08-pptx"
    },
@@ -677,6 +774,12 @@
    "format": "pptx",
    "pages": null,
    "pages_estimate": 37,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d09-pptx"
    },
@@ -698,6 +801,12 @@
    "format": "docx",
    "pages": null,
    "pages_estimate": 10,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d10-docx"
    },
@@ -719,6 +828,12 @@
    "format": "docx",
    "pages": null,
    "pages_estimate": 15,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d11-docx"
    },
@@ -740,6 +855,12 @@
    "format": "docx",
    "pages": null,
    "pages_estimate": 14,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d12-docx"
    },
@@ -761,6 +882,15 @@
    "format": "epub",
    "pages": null,
    "pages_estimate": 150,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "limits": {
+    "max_pages": 200
+   },
    "input": {
     "source": "d13-epub"
    },
@@ -781,6 +911,12 @@
    "profile": "scan",
    "format": "pdf",
    "pages": 12,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d14-djvu",
     "derive": [
@@ -813,6 +949,14 @@
    "format": "docx",
    "pages": null,
    "pages_estimate": 5,
+   "language": [
+    "uk",
+    "en"
+   ],
+   "scripts": [
+    "Cyrl",
+    "Latn"
+   ],
    "input": {
     "source": "d15-docx"
    },
@@ -833,6 +977,15 @@
    "profile": "office",
    "format": "pdf",
    "pages": 132,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "limits": {
+    "max_pages": 200
+   },
    "input": {
     "source": "d16-pdf"
    },
@@ -853,6 +1006,16 @@
    "profile": "scan",
    "format": "pdf",
    "pages": 272,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "limits": {
+    "max_pages": 300,
+    "output_mib": 1024
+   },
    "input": {
     "source": "d17-djvu",
     "derive": [
@@ -890,6 +1053,12 @@
    "profile": "scan",
    "format": "png",
    "pages": 1,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d14-djvu",
     "derive": [
@@ -929,6 +1098,12 @@
    "profile": "legal",
    "format": "pdf",
    "pages": 7,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
    "input": {
     "source": "d19-gu-pdf",
     "derive": [
@@ -954,6 +1129,673 @@
      "it-final-accent"
     ]
    }
+  },
+  {
+   "id": "D20",
+   "title": "La geometria non archimedea (Veronese)",
+   "role": "Italian scientific scan, as the DjVu with its text layer",
+   "license": "Public domain (scan); CC BY-SA 4.0 (transcription)",
+   "attribution": "Giuseppe Veronese; transcription by it.wikisource contributors",
+   "levels": [
+    "quick",
+    "standard"
+   ],
+   "profile": "scan",
+   "format": "djvu",
+   "pages": 12,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d14-djvu"
+   },
+   "twin": {
+    "kind": "wikisource",
+    "source": "d14-wikisource",
+    "pages": "all"
+   }
+  },
+  {
+   "id": "D21",
+   "title": "Astronomia (Lockyer, translated by G. Celoria, Hoepli 1904)",
+   "role": "Long scanned book, as the DjVu with its text layer",
+   "license": "Public domain (scan); CC BY-SA 4.0 (transcription)",
+   "attribution": "Norman Lockyer, Giovanni Celoria; transcription by it.wikisource contributors",
+   "levels": [
+    "long"
+   ],
+   "profile": "scan",
+   "format": "djvu",
+   "pages": 272,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "limits": {
+    "max_pages": 300,
+    "output_mib": 1024
+   },
+   "input": {
+    "source": "d17-djvu"
+   },
+   "twin": {
+    "kind": "wikisource",
+    "source": "d17-wikisource",
+    "pages": "all",
+    "isolated_pages": [
+     10,
+     117,
+     120,
+     272
+    ]
+   }
+  },
+  {
+   "id": "D22",
+   "title": "Sensored vector control three phase motor driver design based on Cortex M7 ARM",
+   "role": "Technical DOCX with formulas, saved as .doc by LibreOffice",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 1116696, its author",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "doc",
+   "pages": null,
+   "pages_estimate": 10,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d10-docx",
+    "derive": [
+     {
+      "op": "office-convert",
+      "to": "doc"
+     }
+    ],
+    "reference": {
+     "sha256": "da5df1960d5115e02e7310bc2e8ed2cc685282a1b52daea6e9e05560824569ac",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d10-docx"
+   }
+  },
+  {
+   "id": "D23",
+   "title": "Employee Index Preference of Leadership Characteristics",
+   "role": "DOCX with complex tables, saved as .doc by LibreOffice",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 15672995, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "doc",
+   "pages": null,
+   "pages_estimate": 14,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d12-docx",
+    "derive": [
+     {
+      "op": "office-convert",
+      "to": "doc"
+     }
+    ],
+    "reference": {
+     "sha256": "25e315d9a935d465814975c80220a4a11132e3875a776e6fe4a40acf1df514a4",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "deterministic": false
+    }
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d12-docx"
+   }
+  },
+  {
+   "id": "D24",
+   "title": "Prospetti povertà 2024-25",
+   "role": "XLSX workbook, 21 sheets, saved as .ods by LibreOffice",
+   "license": "CC BY 4.0",
+   "attribution": "ISTAT",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "ods",
+   "pages": null,
+   "pages_estimate": 21,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d07-xlsx",
+    "derive": [
+     {
+      "op": "office-convert",
+      "to": "ods"
+     }
+    ],
+    "reference": {
+     "sha256": "9c45455d45e31dfe5c0ed1504889365f1df36a938ccdd05a9b5c7dac00199153",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "deterministic": false
+    }
+   },
+   "twin": {
+    "kind": "xlsx",
+    "source": "d07-xlsx"
+   }
+  },
+  {
+   "id": "D25",
+   "title": "Moving Bodies: Corpses and Communal Space in Medieval Ashkenaz",
+   "role": "Humanities DOCX with footnotes, saved as .rtf by LibreOffice",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 7425012, its author",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "rtf",
+   "pages": null,
+   "pages_estimate": 15,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d11-docx",
+    "derive": [
+     {
+      "op": "office-convert",
+      "to": "rtf"
+     }
+    ],
+    "reference": {
+     "sha256": "0c84c18e41be59b83d7245e5151266b0986adb02172d53e949ee437831aa2c77",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d11-docx"
+   }
+  },
+  {
+   "id": "D26",
+   "title": "Custom Shape Tutorial (LibreOffice)",
+   "role": "Manual as its ODT source",
+   "license": "CC BY 4.0 or GPL v3+",
+   "attribution": "Regina Henschel, LibreOffice Documentation Team, 2022",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "odt",
+   "pages": null,
+   "pages_estimate": 132,
+   "language": [
+    "en"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d16-odt"
+   },
+   "twin": {
+    "kind": "odt",
+    "source": "d16-odt"
+   }
+  },
+  {
+   "id": "D27",
+   "title": "La geometria non archimedea (Veronese), page 3 as an image",
+   "role": "Single image (one page of D14), JPEG",
+   "license": "Public domain (scan); CC BY-SA 4.0 (transcription)",
+   "attribution": "Giuseppe Veronese; transcription by it.wikisource contributors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scan",
+   "format": "jpeg",
+   "pages": 1,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d14-djvu",
+    "derive": [
+     {
+      "op": "djvu-to-pdf"
+     },
+     {
+      "op": "page-image",
+      "page": 3,
+      "dpi": 300,
+      "format": "jpeg"
+     }
+    ],
+    "reference": {
+     "sha256": "de3fb983a55f143ccac775afa4f6b3a3d5b502f03cd20ca93b69297c7a63a271",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "wikisource",
+    "source": "d14-wikisource",
+    "pages": [
+     3
+    ]
+   }
+  },
+  {
+   "id": "D28",
+   "title": "La geometria non archimedea (Veronese), page 3 as an image",
+   "role": "Single image (one page of D14), TIFF",
+   "license": "Public domain (scan); CC BY-SA 4.0 (transcription)",
+   "attribution": "Giuseppe Veronese; transcription by it.wikisource contributors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scan",
+   "format": "tiff",
+   "pages": 1,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "input": {
+    "source": "d14-djvu",
+    "derive": [
+     {
+      "op": "djvu-to-pdf"
+     },
+     {
+      "op": "page-image",
+      "page": 3,
+      "dpi": 300,
+      "format": "tiff"
+     }
+    ],
+    "reference": {
+     "sha256": "4b72bc842c0750c7a47879d6f3455af16da64e34394874c1f895e12e5056c22d",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84"
+    }
+   },
+   "twin": {
+    "kind": "wikisource",
+    "source": "d14-wikisource",
+    "pages": [
+     3
+    ]
+   }
+  },
+  {
+   "id": "D29",
+   "title": "Comparison of ergonomic methods for inoculation of microorganisms (Ukrainian)",
+   "role": "Cyrillic scientific text exported by Writer, UTF-8 without a byte order mark",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 8048366, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 5,
+   "language": [
+    "uk",
+    "en"
+   ],
+   "scripts": [
+    "Cyrl",
+    "Latn"
+   ],
+   "expected_encoding": "utf_8",
+   "input": {
+    "source": "d15-docx",
+    "derive": [
+     {
+      "op": "text-export"
+     },
+     {
+      "op": "recode",
+      "encoding": "utf-8",
+      "bom": false
+     }
+    ],
+    "reference": {
+     "sha256": "cdd587097e20dbeb61bb5bf7e453635db6efb10451f760d31705a06fe6afc2b6",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "cdd587097e20dbeb61bb5bf7e453635db6efb10451f760d31705a06fe6afc2b6"
+    }
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d15-docx"
+   }
+  },
+  {
+   "id": "D30",
+   "title": "Comparison of ergonomic methods for inoculation of microorganisms (Ukrainian)",
+   "role": "Cyrillic scientific text exported by Writer, UTF-16 with a byte order mark",
+   "license": "CC BY 4.0",
+   "attribution": "Zenodo record 8048366, its authors",
+   "levels": [
+    "standard"
+   ],
+   "profile": "scientific",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 5,
+   "language": [
+    "uk",
+    "en"
+   ],
+   "scripts": [
+    "Cyrl",
+    "Latn"
+   ],
+   "expected_encoding": "utf_16",
+   "input": {
+    "source": "d15-docx",
+    "derive": [
+     {
+      "op": "text-export"
+     },
+     {
+      "op": "recode",
+      "encoding": "utf-16",
+      "bom": true
+     }
+    ],
+    "reference": {
+     "sha256": "b86797ce8bdb2d44d8e097cee739b89274f8218bcb8c8cdec2bc90a6b3637a59",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "cdd587097e20dbeb61bb5bf7e453635db6efb10451f760d31705a06fe6afc2b6"
+    }
+   },
+   "twin": {
+    "kind": "docx",
+    "source": "d15-docx"
+   }
+  },
+  {
+   "id": "D31",
+   "title": "Le avventure di Pinocchio: Storia di un burattino",
+   "role": "Literary text from Project Gutenberg #52484, recoded to cp1252",
+   "license": "Public domain in the USA; Project Gutenberg eBook",
+   "attribution": "Carlo Collodi; Project Gutenberg eBook #52484",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 92,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "expected_encoding": "cp1252",
+   "input": {
+    "source": "d31-txt",
+    "derive": [
+     {
+      "op": "recode",
+      "encoding": "cp1252",
+      "bom": false
+     }
+    ],
+    "reference": {
+     "sha256": "04e0e3c366d6610046e8c4a82380b3d5f0501714955c8590881b2befdbda13de",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "ba4ab608c700f608068ab9964ef2cef246236d191149c734735ae1bed0975ef4"
+    }
+   },
+   "twin": {
+    "kind": "html",
+    "source": "d31-html"
+   }
+  },
+  {
+   "id": "D32",
+   "title": "R.U.R.",
+   "role": "Literary text from Project Gutenberg #13083, recoded to cp1250",
+   "license": "Public domain in the USA; Project Gutenberg eBook",
+   "attribution": "Karel Čapek; Project Gutenberg eBook #13083",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 46,
+   "language": [
+    "cs"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "expected_encoding": "cp1250",
+   "input": {
+    "source": "d32-txt",
+    "derive": [
+     {
+      "op": "recode",
+      "encoding": "cp1250",
+      "bom": false
+     }
+    ],
+    "reference": {
+     "sha256": "879db963bab9a152afe8dee406d56bc5d26831935ef8ea7554ca0435a0907cf1",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "88b8e0b9d2b8d023f479357fcbac70091a66240dd559f1b957f6de59a390ed2e"
+    }
+   },
+   "twin": {
+    "kind": "html",
+    "source": "d32-html"
+   }
+  },
+  {
+   "id": "D33",
+   "title": "1001 задача для умственного счета",
+   "role": "Arithmetic problems in prose from Project Gutenberg #16527, recoded to cp1251",
+   "license": "Public domain in the USA; Project Gutenberg eBook",
+   "attribution": "Sergei Aleksandrovich Rachinskii; Project Gutenberg eBook #16527",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 56,
+   "language": [
+    "ru"
+   ],
+   "scripts": [
+    "Cyrl"
+   ],
+   "expected_encoding": "cp1251",
+   "input": {
+    "source": "d33-txt",
+    "derive": [
+     {
+      "op": "recode",
+      "encoding": "cp1251",
+      "bom": false
+     }
+    ],
+    "reference": {
+     "sha256": "70fb9edafdfaf48fd8501f8652fb342a1256052c862320e11f7e51824cb5c67e",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "0b4177db5b065835b15dde1a22bf1ac96c3322ea7439029e8aca30a0dc4fbbec"
+    }
+   },
+   "twin": {
+    "kind": "html",
+    "source": "d33-html"
+   }
+  },
+  {
+   "id": "D34",
+   "title": "Ο αρχαιολόγος",
+   "role": "Literary text from Project Gutenberg #31631, recoded to cp1253",
+   "license": "Public domain in the USA; Project Gutenberg eBook",
+   "attribution": "Andreas Karkavitsas; Project Gutenberg eBook #31631",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 98,
+   "language": [
+    "el"
+   ],
+   "scripts": [
+    "Grek"
+   ],
+   "expected_encoding": "cp1253",
+   "input": {
+    "source": "d34-txt",
+    "derive": [
+     {
+      "op": "recode",
+      "encoding": "cp1253",
+      "bom": false
+     }
+    ],
+    "reference": {
+     "sha256": "111cf0abcae8bd6143680296bfcce8e281a3a9cd2d3d73cedb24c65aafa1f741",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "796c2dbfc3003f23899b9e6906bca5fd2a79d5cace9ce6333fa1190a58f810f6"
+    }
+   },
+   "twin": {
+    "kind": "html",
+    "source": "d34-html"
+   }
+  },
+  {
+   "id": "D35",
+   "title": "Le avventure di Pinocchio: Storia di un burattino (excerpt)",
+   "role": "Short text: lines 180-223 of D31 in cp1252, judged on its oracle",
+   "license": "Public domain in the USA; Project Gutenberg eBook",
+   "attribution": "Carlo Collodi; Project Gutenberg eBook #52484",
+   "levels": [
+    "quick",
+    "standard"
+   ],
+   "profile": "office",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 1,
+   "language": [
+    "it"
+   ],
+   "scripts": [
+    "Latn"
+   ],
+   "expected_encoding": "cp1252",
+   "checks": "encoding",
+   "input": {
+    "source": "d31-txt",
+    "derive": [
+     {
+      "op": "excerpt",
+      "first_line": 180,
+      "last_line": 223
+     },
+     {
+      "op": "recode",
+      "encoding": "cp1252",
+      "bom": false
+     }
+    ],
+    "reference": {
+     "sha256": "d5d393f5a25e28be108877980abb22d29aac2225e5ccbcdfedae6e4006c0472a",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "77c689fa2f5b20b4f802f0ecdbcb8f29384c0cbf7be84effd0f72685ab734c61"
+    }
+   },
+   "twin": null
+  },
+  {
+   "id": "D36",
+   "title": "1001 задача для умственного счета (excerpt)",
+   "role": "Short text: lines 177-214 of D33 (arithmetic problems in prose) in cp1251, judged on its oracle",
+   "license": "Public domain in the USA; Project Gutenberg eBook",
+   "attribution": "Sergei Aleksandrovich Rachinskii; Project Gutenberg eBook #16527",
+   "levels": [
+    "standard"
+   ],
+   "profile": "office",
+   "format": "txt",
+   "pages": null,
+   "pages_estimate": 1,
+   "language": [
+    "ru"
+   ],
+   "scripts": [
+    "Cyrl"
+   ],
+   "expected_encoding": "cp1251",
+   "checks": "encoding",
+   "input": {
+    "source": "d33-txt",
+    "derive": [
+     {
+      "op": "excerpt",
+      "first_line": 177,
+      "last_line": 214
+     },
+     {
+      "op": "recode",
+      "encoding": "cp1251",
+      "bom": false
+     }
+    ],
+    "reference": {
+     "sha256": "1e52c5417942696fa36a07abb8be9180388789cf2a659a14c9f5bf12d3ecb5ef",
+     "toolchain": "dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84",
+     "oracle_sha256": "2a9ae8f4916fb08cc44d39af70e90e441449dc460d2242c6e9cb359c2a2a3000"
+    }
+   },
+   "twin": null
   }
  ]
 }

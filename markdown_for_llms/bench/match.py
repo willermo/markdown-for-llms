@@ -6,7 +6,9 @@ each printed item the twin cannot know (`gaps`: LaTeX references and citation ke
 matched span is the tightest one with the same coverage. Twin rules of the manifest only widen
 what a twin token accepts (`text.accepts`); output tokens are never rewritten. Outcomes are
 closed codes; on plain text (a third-party tool without structure) the types it cannot
-represent are `not_applicable`.
+represent are `not_applicable`. The output of a txt input (`txt=True`, plan r2 §9 and delta r3
+Δ10) is read as Markdown, but a plain text cannot carry those types either (`TXT_NOT_APPLICABLE`),
+and its cells are judged as on plain text: one window of 90 % of the tokens, never `split`.
 
 Alignment (calibration M4b): headings are matched in reading order (a repeated heading text,
 like "Methods" in a structured abstract and in the body, takes the first heading after the
@@ -28,11 +30,13 @@ TABLE_FOUND = 0.5
 PLAIN_NOT_APPLICABLE = {"heading", "heading_level", "table", "table_shape", "table_header", "list_item",
                         "note_linked", "emphasis", "html_residue", "hyphenation", "spaced_math", "figure", "noise",
                         "formula", "inline_math"}
+TXT_NOT_APPLICABLE = PLAIN_NOT_APPLICABLE     # the types a plain text input cannot carry
 NUMBER = re.compile(r"-?\d[\d.,]*")
 
 
 class Stream:
     """A bare token stream with an index: the twin's own text, to find units that recur in it."""
+    plain = False
 
     def __init__(self, tokens):
         self.tokens = tokens
@@ -45,8 +49,9 @@ class Stream:
 
 
 class Matcher:
-    def __init__(self, checks, doc, rules=()):
+    def __init__(self, checks, doc, rules=(), txt=False):
         self.doc = doc
+        self.plain = doc.plain or txt       # plain text, or the output of a txt input
         self.accept = accepts(set(rules))
         self.units = {c["id"]: c for c in checks if c["type"] in ("paragraph",)}
         self.found = {}
@@ -170,7 +175,7 @@ class Matcher:
 
     def evaluate(self, check):
         t = check["type"]
-        if self.doc.plain and t in PLAIN_NOT_APPLICABLE:
+        if self.plain and t in PLAIN_NOT_APPLICABLE:
             return "not_applicable"
         return getattr(self, "_" + t)(check)
 
@@ -314,7 +319,7 @@ class Matcher:
         return any(all(cell[p + k] in alts[k] for k in range(n)) for p in range(len(cell) - n + 1))
 
     def _cell(self, c):
-        if self.doc.plain and not c.get("value"):
+        if self.plain and not c.get("value"):
             ratio, _, _ = self.find(c["tokens"])
             return PASS if ratio >= WINDOW_RATIO else "missing"
         for table in self.tables():
@@ -324,7 +329,7 @@ class Matcher:
                         return PASS
         for block in self.doc.blocks:
             if block.kind != "table" and self._cell_match(c["tokens"], c.get("value"), c.get("digits", -1), block.text):
-                return PASS if not self.tables() or self.doc.plain else "split"
+                return PASS if not self.tables() or self.plain else "split"
         return "missing"
 
     def best_table(self, finder):
@@ -402,9 +407,10 @@ def _number_equal(token, value, digits):
     return False
 
 
-def evaluate(checkset, doc):
-    """[{id, class, type, outcome}] for every check, in generation order."""
-    matcher = Matcher(checkset["checks"], doc, checkset.get("rules", ()))
+def evaluate(checkset, doc, txt=False):
+    """[{id, class, type, outcome}] for every check, in generation order; `txt`: the output of a
+    txt input."""
+    matcher = Matcher(checkset["checks"], doc, checkset.get("rules", ()), txt)
     matcher.footnotes = {c["id"]: c["tokens"] for c in checkset["checks"] if c["type"] == "footnote"}
     results = []
     for check in checkset["checks"]:

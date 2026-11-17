@@ -5,6 +5,7 @@ Put `MDF_BENCH_*` variables in the file given to `--env-file`; do not export the
 (`markdown_for_llms.settings`) ignores the `MDF_BENCH_` prefix.
 """
 from dataclasses import dataclass
+from decimal import Decimal, InvalidOperation
 import os
 from pathlib import Path
 
@@ -27,13 +28,21 @@ def default_runs_dir() -> Path:
     return Path(base) / "markdown-for-llms" / "bench" / "runs"
 
 
+def usd(value):
+    """An amount in USD: a finite decimal, 0 or more (`invalid_setting` otherwise)."""
+    amount = Decimal(str(value).strip())
+    if not amount.is_finite() or amount < 0:
+        raise ValueError("an amount in USD, 0 or more")
+    return amount
+
+
 @dataclass(frozen=True)
 class BenchSettings:
     cache_dir: Path
     runs_dir: Path
     relay_port: int = DEFAULT_RELAY_PORT
     inference_port: int = DEFAULT_INFERENCE_PORT
-    cap_datalab_usd: float | None = None
+    cap_datalab_usd: Decimal | None = None          # default of `run --spend-cap-usd` (the ledger of the runs)
     tool_memory_mb: int = DEFAULT_TOOL_MEMORY_MB     # cap of every external tool process (tools.py)
 
     def __post_init__(self):
@@ -42,7 +51,9 @@ class BenchSettings:
                 raise BenchError(Code.PORT_OUTSIDE_BLOCK, name)
         if self.relay_port == self.inference_port:
             raise BenchError(Code.INVALID_SETTING, "relay_port equals inference_port")
-        if self.cap_datalab_usd is not None and not 0 <= self.cap_datalab_usd <= 1000:
+        if self.cap_datalab_usd is not None and not (isinstance(self.cap_datalab_usd, Decimal)
+                                                     and self.cap_datalab_usd.is_finite()
+                                                     and 0 <= self.cap_datalab_usd <= 1000):
             raise BenchError(Code.INVALID_SETTING, "cap_datalab_usd")
         if self.tool_memory_mb not in MEMORY_MB_RANGE:
             raise BenchError(Code.INVALID_SETTING, "tool_memory_mb")
@@ -60,7 +71,7 @@ class BenchSettings:
 
         known = {"MDF_BENCH_CACHE_DIR": ("cache_dir", Path), "MDF_BENCH_RUNS_DIR": ("runs_dir", Path),
                  "MDF_BENCH_RELAY_PORT": ("relay_port", int), "MDF_BENCH_INFERENCE_PORT": ("inference_port", int),
-                 "MDF_BENCH_CAP_DATALAB_USD": ("cap_datalab_usd", float),
+                 "MDF_BENCH_CAP_DATALAB_USD": ("cap_datalab_usd", usd),
                  "MDF_BENCH_TOOL_MEMORY_MB": ("tool_memory_mb", int)}
         sources = []
         if env_file is not None:
@@ -78,7 +89,7 @@ class BenchSettings:
                 name, kind = known[key]
                 try:   # as in the product: the environment wins over the file
                     values[name] = kind(value)
-                except (TypeError, ValueError):
+                except (TypeError, ValueError, InvalidOperation):
                     raise BenchError(Code.INVALID_SETTING, key) from None
         if cache is not None:
             values["cache_dir"] = Path(cache)

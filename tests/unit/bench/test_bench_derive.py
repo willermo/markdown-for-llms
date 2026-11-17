@@ -157,3 +157,123 @@ class CopiedCacheWithoutEngineTests(unittest.TestCase):
                 with self.no_engine(), self.assertRaises(BenchError) as ctx:
                     derive.derive_input(self.doc, self.pdf, self.cache)
                 self.assertEqual(ctx.exception.code, Code.TOOLCHAIN_MISSING)
+
+
+class TextDerivationTests(unittest.TestCase):
+    """Recode and excerpt (manifest schema 2): no container, no replacement, the oracle of the txt input."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.root = Path(tmp.name)
+        self.cache = Cache(self.root / "cache")
+        self.text = "﻿Città di Pinocchio\r\nseconda riga\r\nterza – ultima"
+        self.src = self.root / "pg.txt"
+        self.src.write_bytes(self.text.encode("utf-8"))
+
+    def doc(self, steps, **reference):
+        ref = {"sha256": "0" * 64, "toolchain": toolchain.identity(), "oracle_sha256": "0" * 64, **reference}
+        return {"id": "D99", "pages": None, "input": {"source": "s", "derive": steps, "reference": ref}}
+
+    def test_recode_is_lossless_or_refused_with_a_count(self):
+        self.assertEqual(derive.recode("Città – x", "cp1252", False), "Città – x".encode("cp1252"))
+        self.assertEqual(derive.recode("Пес", "utf-16", True), b"\xff\xfe" + "Пес".encode("utf-16-le"))
+        self.assertEqual(derive.recode("a", "utf-32", True), b"\xff\xfe\x00\x00a\x00\x00\x00")
+        self.assertEqual(derive.recode("a", "utf-8", True), b"\xef\xbb\xbfa")
+        with self.assertRaises(BenchError) as ctx:
+            derive.recode("Městě ěě", "cp1252", False)
+        self.assertEqual(ctx.exception.code, Code.RECODE_LOSSY)
+        self.assertEqual(ctx.exception.detail, "4 code points outside cp1252")      # a count, never the text
+
+    def test_oracle_is_the_text_as_the_engine_writes_it(self):
+        out, warnings, meta = derive.derive_input(self.doc([{"op": "recode", "encoding": "cp1252", "bom": False}]),
+                                                  self.src, self.cache)
+        decoded = derive.oracle_text(out.read_bytes().decode("cp1252"))      # the code page the manifest declares
+        self.assertEqual(sha(decoded.encode("utf-8")), meta["oracle_sha256"])
+        self.assertEqual(derive.oracle_text(self.text), "Città di Pinocchio\nseconda riga\nterza – ultima\n")
+        self.assertEqual(warnings, [Code.DERIVED_DIFFERS])            # the placeholder oracle of the manifest
+
+    def test_excerpt_then_recode(self):
+        steps = [{"op": "excerpt", "first_line": 2, "last_line": 3}, {"op": "recode", "encoding": "utf-8", "bom": False}]
+        out, _, meta = derive.derive_input(self.doc(steps), self.src, self.cache)
+        self.assertEqual(out.read_bytes(), "seconda riga\r\nterza – ultima\n".encode("utf-8"))
+        self.assertEqual(meta["oracle_sha256"], sha("seconda riga\nterza – ultima\n".encode("utf-8")))
+        with self.assertRaises(BenchError) as ctx:
+            derive.derive_input(self.doc([{"op": "excerpt", "first_line": 2, "last_line": 9},
+                                          {"op": "recode", "encoding": "utf-8", "bom": False}]), self.src, self.cache)
+        self.assertEqual(ctx.exception.code, Code.MANIFEST_INVALID)
+
+    def test_warnings_by_reference(self):
+        steps = [{"op": "recode", "encoding": "utf-16", "bom": True}]
+        _, _, meta = derive.derive_input(self.doc(steps), self.src, self.cache)
+        same = self.doc(steps, sha256=meta["sha256"], oracle_sha256=meta["oracle_sha256"])
+        self.assertEqual(derive.derive_input(same, self.src, self.cache)[1], [])
+        other = self.doc(steps, sha256="1" * 64, oracle_sha256=meta["oracle_sha256"])
+        self.assertEqual(derive.derive_input(other, self.src, self.cache)[1], [Code.DERIVED_DIFFERS])
+        other["input"]["reference"]["deterministic"] = False
+        self.assertEqual(derive.derive_input(other, self.src, self.cache)[1], [Code.DERIVED_NONDETERMINISTIC])
+
+
+MINIMAL_DOCX = {
+    "[Content_Types].xml": '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+                           '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+                           '<Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" '
+                           'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>',
+    "_rels/.rels": '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+                   '<Relationship Id="r1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" '
+                   'Target="word/document.xml"/></Relationships>',
+    "word/document.xml": '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+                         '<w:body><w:p><w:r><w:t>Перша строка з числом 12.</w:t></w:r></w:p><w:p><w:r><w:t>Second line.</w:t>'
+                         '</w:r></w:p></w:body></w:document>',
+}
+
+
+class OfficeDerivationTests(unittest.TestCase):
+    """office-convert, text-export and page-image in the reference toolchain."""
+
+    def setUp(self):
+        require_toolchain()
+        import zipfile
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.root = Path(tmp.name)
+        self.docx = self.root / "src.docx"
+        with zipfile.ZipFile(self.docx, "w") as z:
+            for name, data in MINIMAL_DOCX.items():
+                z.writestr(name, data)
+        self.pdf = self.root / "src.pdf"
+        self.pdf.write_bytes(make_pdf(["alpha", "beta"]))
+
+    def doc(self, steps, pages=None, **reference):
+        inp = {"source": "s", "derive": steps}
+        if reference:
+            inp["reference"] = {"sha256": "0" * 64, "toolchain": toolchain.identity(), **reference}
+        return {"id": "D99", "pages": pages, "input": inp}
+
+    def test_office_convert_to_doc_and_rtf(self):
+        from markdown_for_llms.engine.formats import signature
+        for target, fmt in (("doc", "doc"), ("rtf", "rtf")):
+            with self.subTest(target=target):
+                out, _, meta = derive.derive_input(self.doc([{"op": "office-convert", "to": target}]), self.docx,
+                                                   Cache(self.root / target))
+                self.assertEqual((out.suffix, meta["pages"]), ("." + target, None))
+                self.assertIsNotNone(signature(out, fmt))
+
+    def test_text_export_then_recode_utf16(self):
+        from markdown_for_llms.engine import text as etext
+        steps = [{"op": "text-export"}, {"op": "recode", "encoding": "utf-16", "bom": True}]
+        out, _, meta = derive.derive_input(self.doc(steps, oracle_sha256="0" * 64), self.docx, Cache(self.root / "t"))
+        decoded, record = etext.decode(out.read_bytes())
+        self.assertEqual((record["encoding"], decoded), ("utf_16", "Перша строка з числом 12.\nSecond line.\n"))
+        self.assertEqual(sha(decoded.encode("utf-8")), meta["oracle_sha256"])
+
+    def test_page_image_jpeg_and_tiff_deterministic(self):
+        from markdown_for_llms.engine.formats import signature
+        for fmt, suffix in (("jpeg", ".jpg"), ("tiff", ".tif")):
+            with self.subTest(fmt=fmt):
+                steps = [{"op": "page-image", "page": 2, "dpi": 72, "format": fmt}]
+                out, _, meta = derive.derive_input(self.doc(steps, 1), self.pdf, Cache(self.root / ("a" + fmt)))
+                out2, _, _ = derive.derive_input(self.doc(steps, 1), self.pdf, Cache(self.root / ("b" + fmt)))
+                self.assertEqual((out.suffix, meta["pages"]), (suffix, 1))
+                self.assertIsNotNone(signature(out, fmt))
+                self.assertEqual(out.read_bytes(), out2.read_bytes())

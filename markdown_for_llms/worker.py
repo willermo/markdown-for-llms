@@ -204,10 +204,15 @@ def engine_request(options, attempt, fmt=None, cap_usd="0"):
 def summarize(result, inventory):
     """The bounded summary of an engine result that the manifest carries (K9, PB9): every count,
     at most MAX_ISSUES problems (the incomplete ones first, as the engine lists them), the page
-    classes without the per-page records, the corrections counted only."""
+    classes without the per-page records, the corrections counted only, the timings without the
+    seconds of each page (their count, median and maximum stay)."""
     summary = {k: result[k] for k in ("schema", "status", "attempt", "started_at", "source", "options", "limits",
                                       "problem_codes", "problem_counts", "components", "timings", "transit", "cost")
                if k in result}
+    timings = summary.get("timings")
+    if isinstance(timings, dict) and isinstance(timings.get("pages"), dict):
+        # the statistics of the seconds per page, not the value of each page
+        summary["timings"] = dict(timings, pages={k: v for k, v in timings["pages"].items() if k != "values"})
     route = result.get("route") or {}
     summary["route"] = {k: route.get(k) for k in ("converter", "family", "chosen_by", "reason")}
     if isinstance(result.get("pages"), dict):

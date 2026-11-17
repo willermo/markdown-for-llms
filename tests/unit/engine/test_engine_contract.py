@@ -181,7 +181,7 @@ class TextConvertTests(Base):
         self.addCleanup(shutil.rmtree, empty, True)
         with mock.patch.dict(os.environ, {"DATALAB_API_KEY": ""}):
             found = availability(model_root=empty)
-        self.assertEqual(set(found), {"text", "pandoc", "djvutxt", "marker", "datalab"})
+        self.assertEqual(set(found), {"text", "pandoc", "libreoffice", "djvutxt", "marker", "datalab"})
         self.assertEqual(found["marker"], {"available": False, "code": "weights_missing"})
         self.assertEqual(found["datalab"], {"available": False, "code": "datalab_key_missing"})
         self.assertTrue(found["text"]["available"])
@@ -195,6 +195,7 @@ class TextConvertTests(Base):
                 mock.patch.object(isolation, "BWRAP", str(self.root / "no-bwrap")):
             found = availability()
         self.assertEqual(found["pandoc"], {"available": False, "code": "isolation_unavailable"})
+        self.assertEqual(found["libreoffice"], {"available": False, "code": "isolation_unavailable"})
         self.assertEqual(found["djvutxt"], {"available": True, "code": None})
 
 

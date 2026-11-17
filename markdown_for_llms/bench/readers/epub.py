@@ -171,6 +171,28 @@ def _table(table, b):
     b.add("table", cells=tuple(cells), level=header_rows)
 
 
+def spine_documents(path):
+    """[(href, XHTML bytes)] of the spine in reading order, as `read_epub` reads it (navigation and
+    non-linear items left out): the documents the self-check renders with Writer."""
+    z = SafeZip(path)
+    container = parse_xml(z.read("META-INF/container.xml"))
+    rootfile = next(x for x in container.iter(CONTAINER + "rootfile"))
+    opf_path = rootfile.get("full-path")
+    opf = parse_xml(z.read(opf_path))
+    base = posixpath.dirname(opf_path)
+    items = {i.get("id"): i for i in opf.iter(OPF + "item")}
+    out = []
+    for ref in opf.iter(OPF + "itemref"):
+        item = items.get(ref.get("idref"))
+        if item is None or ref.get("linear") == "no" or "nav" in (item.get("properties") or "").split():
+            continue
+        if item.get("media-type") != "application/xhtml+xml":
+            continue
+        href = posixpath.normpath(posixpath.join(base, item.get("href")))
+        out.append((href, z.read(href)))
+    return out
+
+
 def read_epub(path):
     z = SafeZip(path)
     container = parse_xml(z.read("META-INF/container.xml"))

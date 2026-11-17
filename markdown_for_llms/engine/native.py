@@ -24,6 +24,16 @@ preview image was not written `object_not_converted` (both incomplete); furnitur
 media are warnings.
 The child of the audit gets the memory cap of the conversion, at most `AUDIT_MEMORY_MIB`.
 
+`libreoffice` (xlsx and pptx): the package is audited, then LibreOffice writes HTML (Calc for a
+workbook, every sheet; `impress_html_Export` for a presentation, one `h1` per slide and its
+text) and pandoc reads it with the same filter. `source.html` must exist and not be empty
+(soffice exits 0 when an export fails), otherwise `tool_failed`. The images of Calc are files
+beside its HTML, mounted with their list for the filter; the HTML of Impress has none, so the
+audit copies the primary images of the pictures of each slide (`p:sldIdLst` order) and the
+filter places them after the heading of their slide when the headings are as many as the
+slides; otherwise none is placed and each is `media_lost` with `slide_boundaries_unknown`
+(`engine.json`: `images: package`, `grouped: slide`; the layout inside a slide is not rebuilt).
+
 `djvutxt`: the text layer of each page, verbatim, under the page separator of Marker
 (`{N}` and 48 dashes, N counted from 0); a file without any text is `route_invalid`.
 """
@@ -40,6 +50,7 @@ FILTER = Path(__file__).resolve().parent / "filters" / "contract.lua"
 REFERENCES = Path(__file__).resolve().parent / "filters" / "references.lua"
 PACKAGES = ("docx", "pptx", "xlsx", "odt", "epub")
 LIBREOFFICE_TARGET = {"doc": "docx", "ods": "xlsx"}
+LIBREOFFICE_EXPORT = {"xlsx": "html", "pptx": "html:impress_html_Export"}
 AUDIT_MODULE = "markdown_for_llms.engine.pkgaudit"
 AUDIT_MEMORY_MIB = 2048
 PAGE_SEPARATOR = "-" * 48
@@ -62,12 +73,12 @@ def libreoffice(ctx, src, fmt):
     return dest, target
 
 
-def audit(ctx, path, fmt):
+def audit(ctx, path, fmt, flags=()):
     """The package audit in the light child; returns (audit dict, its directory)."""
     scratch = ctx.work / "audit"
     ctx.event("audit")
     try:
-        rc, log = isolation.run(scratch, AUDIT_MODULE, [fmt, "/in/source." + fmt], inputs=[(path, "source." + fmt)],
+        rc, log = isolation.run(scratch, AUDIT_MODULE, [fmt, "/in/source." + fmt, *flags], inputs=[(path, "source." + fmt)],
                                 memory_mib=min(AUDIT_MEMORY_MIB, ctx.memory_mib), output_mib=ctx.output_mib, timeout=min(600, ctx.timeout()),
                                 steps=ctx.steps, observer=ctx.observer)
     except EngineError as exc:
@@ -190,6 +201,54 @@ def pandoc_route(ctx, src, fmt):
         extra = [tools.In(audit_dir / "audit.json", name="package-media.json", argument=False)]
         if reader == "xlsx" and any(s.get("images") for s in package.get("sheets", [])):
             extra.append(tools.In(audit_dir / "media", name="media", directory=True, argument=False))
+    run_pandoc(ctx, path, reader, package, extra, record)
+    return record
+
+
+def libreoffice_route(ctx, src, fmt):
+    """xlsx and pptx through the HTML of LibreOffice, which pandoc reads with the contract filter."""
+    package, audit_dir = audit(ctx, src, fmt, ("slides",) if fmt == "pptx" else ())
+    export = ctx.work / "libreoffice-html"
+    ctx.event("libreoffice")
+    tools.run("soffice", ["-env:UserInstallation=file:///work/profile", "--headless", "--norestore",
+                          "--convert-to", LIBREOFFICE_EXPORT[fmt], "--outdir",
+                          tools.Out(export, arg="out", directory=True), tools.In(src, name="source." + fmt)],
+              ctx.tool_root, timeout=ctx.timeout(), memory_mb=ctx.memory_mib, watch=ctx.watch())
+    html = export / "source.html"
+    if html.is_symlink() or not html.is_file() or html.stat().st_size == 0:
+        raise EngineError(Code.TOOL_FAILED, "soffice wrote no HTML")       # it exits 0 when an export fails
+    record = {"export": LIBREOFFICE_EXPORT[fmt], "reader": "html", "filter_sha256": filter_sha256(),
+              "references_sha256": hashlib.sha256(REFERENCES.read_bytes()).hexdigest()}
+    extra = [tools.In(audit_dir / "audit.json", name="package-media.json", argument=False)]
+    if fmt == "xlsx":
+        names = sorted(p.name for p in export.iterdir() if p.name != html.name and p.is_file() and not p.is_symlink())
+        listing = ctx.work / "lo-media.json"
+        listing.write_text(json.dumps(names), encoding="utf-8")
+        extra.append(tools.In(listing, name="lo-media.json", argument=False))
+        if names:
+            extra.append(tools.In(export, name="lo-media", directory=True, argument=False))
+        record["images"] = "export"
+    else:
+        if (audit_dir / "media").is_dir():
+            extra.append(tools.In(audit_dir / "media", name="media", directory=True, argument=False))
+        record.update(images="package", grouped="slide",
+                      slide_images=sum(len(s["images"]) for s in package.get("slides", [])))
+    report = run_pandoc(ctx, html, "html", package, extra, record)
+    if fmt == "pptx":
+        record["slide_boundaries"] = report.get("slide_boundaries") or "unknown"
+        if record["slide_boundaries"] != "known":
+            # no image is placed: each one is media_lost, and says why
+            members = {img["member"] for s in package.get("slides", []) for img in s["images"]}
+            for p in ctx.problems:
+                if p["code"] == "media_lost" and p.get("path") in members:
+                    p["detail"] = "slide_boundaries_unknown"
+    return record
+
+
+def run_pandoc(ctx, path, reader, package, extra, record):
+    """pandoc on `path` read as `reader`, with the contract filter and the `extra` inputs; then
+    the unreferenced assets and the loss policy of the audit `package` (None: no package). Sets
+    `record["media_extracted"]` and returns the report of the filter."""
     stage, diag = ctx.stage, ctx.stage / "diagnostics"
     report_path = ctx.work / "contract-report.json"
     ctx.event("pandoc")
@@ -231,12 +290,12 @@ def pandoc_route(ctx, src, fmt):
     if package is not None:
         problems, roles = media_problems(package, asset_digests(stage))
         ctx.problems.extend(problems)
-        ctx.package = {"format": reader, "members": package.get("members"), "structure": package.get("structure"),
+        ctx.package = {"format": package.get("format", reader), "members": package.get("members"), "structure": package.get("structure"),
                        "media_roles": roles, "normalized": package.get("normalized", {}),
                        "not_normalized": package.get("not_normalized", {}),
                        "unresolved_references": package.get("unresolved_references", 0),
                        "sheet_images": sum(len(s.get("images", [])) for s in package.get("sheets", []))}
-    return record
+    return report
 
 
 ESCAPES = {ord("n"): b"\n", ord("t"): b"\t", ord("r"): b"\r", ord("b"): b"\b", ord("f"): b"\f", ord("v"): b"\v",

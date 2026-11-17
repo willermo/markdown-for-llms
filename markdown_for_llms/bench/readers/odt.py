@@ -8,6 +8,10 @@ display otherwise; its replacement image is not a figure. A frame with an image 
 a text box holding an image is a figure whose caption is the text of the box, never glued to
 the paragraph or heading that anchors it; a text box without images is text of its own. Images
 inside table cells are figures too.
+
+Formulas inside table cells (generator 5, delta r3 Δ4): each non-empty one is a `formula` with
+role "table-cell", added after every other element of the twin, so the positions of the elements
+of generator 4 do not change.
 """
 import re
 
@@ -124,6 +128,7 @@ def read_odt(path):
     styles = _styles(root)
     b = Builder("odt")
     body = root.find(f"{_q(OFFICE, 'body')}/{_q(OFFICE, 'text')}")
+    cell_math = []
 
     def objects(href):
         """Linear MathML of a formula object ("" when empty), None for any other object."""
@@ -191,6 +196,7 @@ def read_odt(path):
                         inline.walk(p)
                         parts.append(inline.text())
                         figures.extend(inline.figures)
+                        cell_math.extend(m for m in inline.math if m)
                 cells.append(Cell(" ".join(x for x in parts if x), r, c,
                                   int(tc.get(_q(TABLE, "number-rows-spanned"), "1")),
                                   int(tc.get(_q(TABLE, "number-columns-spanned"), "1")), r < header_rows))
@@ -201,4 +207,6 @@ def read_odt(path):
 
     for el in (body if body is not None else []):
         block(el)
+    for m in cell_math:
+        b.add("formula", m, math_kind="mathml", role="table-cell")
     return b.twin

@@ -7,10 +7,16 @@ its family and the signature that matched. An extension outside the matrix is
 read is `input_unreadable` (a damaged file). ZIP packages are recognized from the central
 directory of the whole file (K3 of MFL032: the directory is at the end, so the first bytes are
 not enough) and, for OpenDocument and EPUB, from the `mimetype` member: at most `MAX_MEMBERS`
-members, a `mimetype` of at most 128 bytes, nothing extracted and no XML parsed. Standard
+members, a `mimetype` of at most 128 bytes, nothing extracted and no XML parsed. A txt is text
+when its first 64 KiB hold no NUL byte or, after a UTF-32 or UTF-16 byte order mark (looked for
+in this order, the 4-byte ones first), when they decode strictly (incrementally: a code unit or
+a surrogate pair cut at the end of the probe is no error) into text without C0 control
+characters other than tab, line feed, vertical tab, form feed and carriage return. Standard
 library only: the API process imports this module.
 """
+import codecs
 from pathlib import Path
+import re
 import zipfile
 
 from .codes import Code, EngineError
@@ -52,6 +58,13 @@ ODF_MIMETYPE = {"odt": "application/vnd.oasis.opendocument.text",
                 "ods": "application/vnd.oasis.opendocument.spreadsheet",
                 "epub": "application/epub+zip"}
 OLE2 = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
+# byte order marks of a txt, the 4-byte ones first (FF FE 00 00 starts with the UTF-16 LE mark):
+# (bytes, canonical name of the encoding, Python codec that does not look for a mark itself)
+BOMS = ((b"\xff\xfe\x00\x00", "utf_32", "utf-32-le"), (b"\x00\x00\xfe\xff", "utf_32", "utf-32-be"),
+        (b"\xff\xfe", "utf_16", "utf-16-le"), (b"\xfe\xff", "utf_16", "utf-16-be"),
+        (b"\xef\xbb\xbf", "utf_8", "utf-8"))
+# C0 controls refused in a text after a UTF-16 or UTF-32 mark: all but \t \n \v \f \r
+C0_REFUSED = re.compile("[\x00-\x08\x0e-\x1f]")
 
 
 def family(fmt):
@@ -91,6 +104,26 @@ def _zip_kind(path):
         raise EngineError(Code.INPUT_UNREADABLE, f"ZIP: {type(exc).__name__}") from None
 
 
+def text_bom(head):
+    """(canonical name, codec, length) of the byte order mark that starts `head`, or None."""
+    for bom, name, codec in BOMS:
+        if head.startswith(bom):
+            return name, codec, len(bom)
+    return None
+
+
+def _wide_text(head, found):
+    """The signature of a txt that starts with a UTF-16 or UTF-32 mark, or None."""
+    name, codec, n = found
+    try:
+        sample = codecs.getincrementaldecoder(codec)("strict").decode(head[n:], final=False)
+    except UnicodeDecodeError:
+        return None
+    if C0_REFUSED.search(sample):
+        return None
+    return f"text ({name} BOM)"
+
+
 def signature(path, fmt):
     """The name of the signature of `fmt` found in the file, or None."""
     with open(path, "rb") as stream:
@@ -116,6 +149,9 @@ def signature(path, fmt):
         text = text.lstrip(b" \t\r\n\f").lower()
         return "HTML" if text.startswith((b"<!doctype html", b"<html")) else None
     if fmt == "txt":
+        found = text_bom(head)
+        if found is not None and found[0] != "utf_8":
+            return _wide_text(head, found)
         return "text" if b"\x00" not in head else None
     if fmt in OOXML_MAIN or fmt in ODF_MIMETYPE:
         if not head.startswith(b"PK\x03\x04"):

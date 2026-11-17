@@ -185,6 +185,8 @@ class DocumentFiles:
 
 def twin_sources(doc):
     twin = doc["twin"]
+    if twin is None:
+        return []
     ids = [twin["source"]]
     if "inventory" in twin:
         ids.append(twin["inventory"])
@@ -197,10 +199,12 @@ def resolve_document(doc, m, cache, transport=None, offline=True):
 
     src_id = doc["input"]["source"]
     source_path = fetch_file(src_id, m.sources[src_id], cache, transport, offline)
-    twin, hashes = {}, {"source": m.sources[src_id]["sha256"]}
-    t = doc["twin"]
-    tsrc = m.sources[t["source"]]
-    if tsrc["kind"] == "wikisource":
+    twin, hashes = {}, {"source": m.sources[src_id]["sha256"], "twin": None}
+    t = doc["twin"] or {}
+    tsrc = m.sources[t["source"]] if t else None
+    if tsrc is None:
+        pass                        # an oracle document (`checks: "encoding"`): no twin
+    elif tsrc["kind"] == "wikisource":
         pages = selected_pages(tsrc, t)
         twin["pages"] = fetch_wikisource(t["source"], tsrc, pages, cache, transport, offline)
         twin["quality"] = {p["page"]: p["quality"] for p in pages}

@@ -1,5 +1,9 @@
 """DOCX twin reader (`zipfile` + `xml.etree`): headings by style, paragraphs with emphasis and
 inline OMML, display formulas, lists by numbering level, tables with merged cells, footnotes.
+
+Inline formulas inside table cells (generator 5, delta r3 Δ4): each non-empty one is a `formula`
+with role "table-cell", added after every other element of the twin, so the positions of the
+elements of generator 4 do not change. A display formula of a cell keeps its own branch.
 """
 import re
 
@@ -169,7 +173,7 @@ def read_docx(path):
                 texts.append("".join(para.parts))
             notes[fn.get(W + "id")] = " ".join(t.strip() for t in texts if t.strip())
     b = Builder("docx")
-    pending_notes, table_figures = [], []
+    pending_notes, table_figures, cell_math = [], [], []
 
     def heading_level(ppr):
         if ppr is None:
@@ -201,6 +205,7 @@ def read_docx(path):
         pending_notes.extend(n for n in para.notes if n in notes)
         if in_table:
             table_figures.extend([""] * para.drawings)
+            cell_math.extend(m for m in para.math if m.strip())
             return text
         if not text and not para.math:
             for _ in range(para.drawings):
@@ -273,4 +278,6 @@ def read_docx(path):
     body = doc.find(W + "body")
     walk(body if body is not None else doc)
     flush_notes()
+    for m in cell_math:
+        b.add("formula", m, math_kind="linear", role="table-cell")
     return b.twin

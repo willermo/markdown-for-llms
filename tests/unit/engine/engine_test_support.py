@@ -273,6 +273,67 @@ def make_fodp(path):
     return Path(path)
 
 
+PML = "http://schemas.openxmlformats.org/presentationml/2006/main"
+SVG_MAIN = "http://schemas.microsoft.com/office/drawing/2016/SVG/main"
+RED, GREEN = png(8, 6, (200, 0, 0)), png(8, 6, (0, 200, 0))
+
+
+def slide_title(text):
+    """The title placeholder of a slide (Impress exports it as the `h1` of the slide)."""
+    return (f'<p:sp><p:nvSpPr><p:cNvPr id="2" name="Title"/><p:cNvSpPr/><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr>'
+            '<p:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="5000000" cy="800000"/></a:xfrm></p:spPr>'
+            f'<p:txBody><a:bodyPr/><a:p><a:r><a:t>{text}</a:t></a:r></a:p></p:txBody></p:sp>')
+
+
+def slide_picture(rid, name, svg=None):
+    """A picture of a slide; `svg` the rId of its SVG twin (`asvg:svgBlip`)."""
+    ext = (f'<a:extLst><a:ext uri="{{96DAC541-7B7A-43D3-8B79-37D633B846F1}}"><asvg:svgBlip xmlns:asvg="{SVG_MAIN}" '
+           f'r:embed="{svg}"/></a:ext></a:extLst>' if svg else '')
+    return (f'<p:pic><p:nvPicPr><p:cNvPr id="3" name="{name}" descr="{name}"/><p:cNvPicPr/><p:nvPr/></p:nvPicPr>'
+            f'<p:blipFill><a:blip r:embed="{rid}">{ext}</a:blip><a:stretch><a:fillRect/></a:stretch></p:blipFill>'
+            '<p:spPr><a:xfrm><a:off x="1000000" y="1000000"/><a:ext cx="1000000" cy="800000"/></a:xfrm>'
+            '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>')
+
+
+SLIDE_MEDIA = [("rId1", "image", "../media/a.png"), ("rId2", "image", "../media/b.png"),
+               ("rId3", "image", "../media/c.svg")]
+
+
+def make_pptx(path, slides, order=None):
+    """A minimal pptx that LibreOffice opens: `slides` [inner XML of the shape tree], each slide
+    related to ppt/media/a.png (rId1, red), b.png (rId2, green) and c.svg (rId3); `order` the
+    slide numbers in the order of `p:sldIdLst` (default: the order of the parts)."""
+    def rels(items):
+        return (f'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="{PR}">'
+                + "".join(f'<Relationship Id="{i}" Type="{R}/{t}" Target="{g}"/>' for i, t, g in items) + "</Relationships>")
+    ns = f'xmlns:p="{PML}" xmlns:a="{A}" xmlns:r="{R}"'
+    types = ['<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>',
+             '<Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/>',
+             '<Default Extension="svg" ContentType="image/svg+xml"/>',
+             '<Override PartName="/ppt/presentation.xml" '
+             'ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>']
+    members, main_rels = {}, []
+    for i, body in enumerate(slides, 1):
+        members[f"ppt/slides/slide{i}.xml"] = (
+            f'<?xml version="1.0" encoding="UTF-8"?><p:sld {ns}><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/>'
+            f'<p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/>{body}</p:spTree></p:cSld></p:sld>')
+        members[f"ppt/slides/_rels/slide{i}.xml.rels"] = rels(SLIDE_MEDIA)
+        types.append(f'<Override PartName="/ppt/slides/slide{i}.xml" '
+                     'ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>')
+        main_rels.append((f"rId{i}", "slide", f"slides/slide{i}.xml"))
+    ids = "".join(f'<p:sldId id="{255 + k}" r:id="rId{i}"/>'
+                  for k, i in enumerate(order or range(1, len(slides) + 1), 1))
+    members["ppt/presentation.xml"] = (f'<?xml version="1.0" encoding="UTF-8"?><p:presentation {ns}><p:sldIdLst>{ids}'
+                                       '</p:sldIdLst><p:sldSz cx="9144000" cy="6858000"/><p:notesSz cx="6858000" cy="9144000"/>'
+                                       '</p:presentation>')
+    members["ppt/_rels/presentation.xml.rels"] = rels(main_rels)
+    members["_rels/.rels"] = rels([("rId1", "officeDocument", "ppt/presentation.xml")])
+    members["[Content_Types].xml"] = f'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="{CT}">' + "".join(types) + "</Types>"
+    members["ppt/media/a.png"], members["ppt/media/b.png"] = RED, GREEN
+    members["ppt/media/c.svg"] = b'<svg xmlns="http://www.w3.org/2000/svg" width="8" height="6"/>'
+    return write_zip(path, members)
+
+
 def derive_epub(path, chapter_edit, rename=None, edits=None):
     """C03 (fixture) with `chapter_edit(text) -> text` applied to OEBPS/chapter1.xhtml, `edits`
     {member: edit} to other text members and, with `rename` {old member: new member}, those

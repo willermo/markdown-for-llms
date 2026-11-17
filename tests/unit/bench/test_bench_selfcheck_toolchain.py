@@ -171,7 +171,7 @@ class AtomNormalizationTests(unittest.TestCase):
 class GeneratorVersionTests(unittest.TestCase):
     """The generated checks of synthetic twins are fixed per GENERATOR_VERSION: changing the generator
     without raising the version makes this test fail (E8)."""
-    EXPECTED = {"4": "3621fa56084c7db1cab42f7da7fbe90f2acffdd8fb80cae5b709842a5aae9508"}
+    EXPECTED = {"5": "3021c766200c475f733dc93cdcc854eb32b58f895dd6a635d3ee6419bd0d58a8"}
 
     @staticmethod
     def twins():
@@ -186,6 +186,7 @@ class GeneratorVersionTests(unittest.TestCase):
         b.add("bib_entry", "A. Author, Journal 12, 3 (2020).")
         b.add("table", cells=[Cell("Group", 0, 0, 1, 1, True), Cell("Value", 0, 1, 1, 1, True),
                               Cell("A", 1, 0, 1, 1, False), Cell("1.5", 1, 1, 1, 1, False)], level=1)
+        b.add("formula", "x²+1", math_kind="mathml", role="table-cell")     # generator 5: a formula of a cell
         return [b.twin]
 
     def test_generated_checks_are_fixed_for_the_version(self):

@@ -6,7 +6,10 @@ figure with its caption. Templates follow a closed list; an unknown template dro
 is counted (`unknown_templates`). `{{Pt|a|b}}` yields the whole word `b` once, on the page that
 carries it. `{{Ec|printed|corrected}}` keeps the printed form, which is what the scan shows.
 Block templates (`{{Centrato}}`, `{{Ct}}`, `{{Indent}}`, `{{Smaller block}}`, `{{Rule}}`: a `div` in
-the rendering of MediaWiki) end the paragraph around them.
+the rendering of MediaWiki) end the paragraph around them. An index entry `{{Vi}}` is its section,
+title and page, three paragraphs, as MediaWiki prints them in blocks of their own (M6, D17);
+`<nowiki/>` prints nothing; a table that a page header opens (continued from the previous page) is
+a table of the body.
 """
 import html
 import re
@@ -65,7 +68,8 @@ class _Expander:
             self.figures.append(named.get("caption", ""))
             return f"{MARK}F{len(self.figures) - 1}{MARK}"
         if key == "vi":
-            return f"{named.get('titolo', '')} {named.get('pagina', '')}"
+            fields = [named.get(k, "") for k in ("sezione", "titolo", "pagina")]
+            return "\n\n" + "\n\n".join(f for f in fields if f.strip()) + "\n\n"
         if key in FIRST:
             return pos[0] if pos else ""
         if key in SECOND_OR_FIRST:
@@ -86,6 +90,7 @@ def _strip_tags(text):
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
     text = re.sub(r"<includeonly>.*?</includeonly>", "", text, flags=re.S | re.I)
     text = re.sub(r"<nowiki>(.*?)</nowiki>", r"\1", text, flags=re.S | re.I)
+    text = re.sub(r"<nowiki\s*/>", "", text, flags=re.I)
     text = re.sub(r"<br\s*/?>", " ", text, flags=re.I)
     text = re.sub(r"<(pagequality|section|references)\b[^>]*/?>", "", text, flags=re.I)
     text = re.sub(r"</?(span|div|big|small|sup|sub|center|poem|u|s|font|p|blockquote)\b[^>]*>", "", text, flags=re.I)
@@ -151,6 +156,10 @@ def read_page(wikitext, page, b):
     m = re.match(r"(.*)<noinclude>(.*?)</noinclude>\s*$", body, re.S)
     if m:
         body, foot = m.group(1), m.group(2)
+    # a table continued from the previous page opens in the header: its opening belongs to the body (M6, D17)
+    opened = [mt for mt in re.finditer(r"^\s*\{\|.*$", head, re.M) if "|}" not in head[mt.end():]]
+    if opened:
+        head, body = head[:opened[-1].start()], head[opened[-1].start():] + "\n" + body
     for part in (head, foot):
         part = REF.sub("", part)
         expanded = exp.expand(LINK.sub(lambda x: x.group(2) or x.group(1), part))

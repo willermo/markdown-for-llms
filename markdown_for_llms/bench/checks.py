@@ -36,17 +36,25 @@ KNOWN_COMMANDS = set(GREEK) | set(SYMBOLS) | WORD_COMMANDS | DROPPED | {
     "left", "right", "text", "operatorname", "mathrm", "label", "nonumber", "notag", "quad", "qquad"}
 
 
-def cache_key(doc, hashes):
+def cache_key(doc, hashes, feedback=()):
     """The key of a check set; the toolchain identity comes from `toolchain.json`, without a container
-    (the projection of D06 is read with poppler of the toolchain)."""
+    (the projection of D06 is read with poppler of the toolchain).
+
+    The input enters the key by the SHA-256 of its source, except for a twin that reads the file
+    to convert (`xlsx-projection`, which reads the layout of the PDF): a derivation that LibreOffice
+    does not reproduce byte for byte (D23, D24) must not make a new check set at every fetch."""
     from ..engine import toolchain
     twin = doc["twin"]
-    value = {"document_id": doc["id"], "input_sha256": hashes.get("derived", {}).get("sha256") if isinstance(hashes.get("derived"), dict) else hashes["source"],
+    derived = hashes.get("derived") if isinstance(hashes.get("derived"), dict) else None
+    input_sha = derived["sha256"] if derived and twin["kind"] == "xlsx-projection" else hashes["source"]
+    value = {"document_id": doc["id"], "input_sha256": input_sha,
              "twin_sha256": hashes["twin"], "inventory_sha256": hashes.get("inventory"),
              "projection": twin.get("select") if twin["kind"] == "xlsx-projection" else None,
              "rules": twin.get("rules", []), "discard": twin.get("discard", []),
              "generator_version": GENERATOR_VERSION, "normalizer_version": NORMALIZER_VERSION,
              "toolchain": toolchain.identity()}
+    if feedback:            # only when there is some: the keys of the sets without feedback do not change
+        value["feedback"] = sorted((f["id"], f["generator_version"]) for f in feedback)
     return hashlib.sha256(canonical(value)).hexdigest()
 
 
@@ -131,7 +139,7 @@ def generate(doc, twin):
                 continue
             atoms = formula_atoms(e.text, e.math_kind)
             if atoms:
-                add("formula", e.pos, atoms=atoms)
+                add("formula", e.pos, atoms=atoms, **({"role": e.role} if e.role else {}))
                 words = spaced_words(e.text) if e.math_kind == "tex" else []
                 if words:
                     add("spaced_math", e.pos + ":spaced", ref=e.pos, words=words)
@@ -193,19 +201,43 @@ def _table_checks(e, kind, add):
         add("table_header", e.pos + ":header", table=e.pos, cells=finder, header=header)
 
 
-def checkset(doc, files, twin):
-    key = cache_key(doc, files.hashes)
+def feedback_checks(doc, twin, entries):
+    """The checks `fb:<position>:<type>` of the feedback entries of a document (U5), and the number of
+    entries whose position is gone from the twin or whose element does not give that type of check
+    (`feedback_position_missing`)."""
+    from .model import Twin
+    by_pos = {e.pos: e for e in twin.elements}
+    out, missing = [], 0
+    for f in entries:
+        element = by_pos.get(f["position"])
+        found = None
+        if element is not None:
+            single = generate(doc, Twin(twin.kind, [element]))["checks"]
+            found = next((c for c in single if c["type"] == f["type"]), None)
+        if found is None:
+            missing += 1
+            continue
+        out.append(dict(found, id=f["id"], origin="feedback"))
+    return out, missing
+
+
+def checkset(doc, files, twin, feedback=()):
+    key = cache_key(doc, files.hashes, feedback)
     generated = generate(doc, twin)
+    extra, missing = feedback_checks(doc, twin, feedback)
     body = {"schema": SCHEMA, "key": key, "document": doc["id"], "generator": GENERATOR_VERSION,
             "normalizer": NORMALIZER_VERSION, "twin_kind": twin.kind, "rules": doc["twin"].get("rules", []),
-            "stats": twin.stats, "not_determinable": generated["not_determinable"], "checks": generated["checks"]}
+            "stats": twin.stats, "not_determinable": generated["not_determinable"],
+            "checks": generated["checks"] + extra}
+    if feedback:
+        body["feedback"] = {"entries": len(feedback), "missing": missing}
     body["checks_sha256"] = hashlib.sha256(canonical(body["checks"])).hexdigest()
     return body
 
 
-def load_or_generate(doc, files, cache, read_twin):
+def load_or_generate(doc, files, cache, read_twin, feedback=()):
     """Checks of a document from the cache, or generated and written atomically."""
-    key = cache_key(doc, files.hashes)
+    key = cache_key(doc, files.hashes, feedback)
     path = cache.checks_dir / f"{key}.json"
     if path.is_file():
         try:
@@ -214,6 +246,6 @@ def load_or_generate(doc, files, cache, read_twin):
                 return body
         except ValueError:
             pass
-    body = checkset(doc, files, read_twin())
+    body = checkset(doc, files, read_twin(), feedback)
     write_atomic(path, json.dumps(body, ensure_ascii=False, sort_keys=True).encode("utf-8"))
     return body

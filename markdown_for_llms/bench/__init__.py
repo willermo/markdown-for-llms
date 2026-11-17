@@ -1,8 +1,9 @@
-"""`mdf bench`: prepares the public reference set (MFL026).
+"""`mdf bench`: the public reference set and the measured conversion runs (MFL026).
 
 It builds the reference toolchain image, downloads and verifies the documents and their twins,
-derives the inputs, and generates and self-checks the checks. It converts nothing and measures
-no conversion path yet. Used only by the `mdf bench` command, never by the API or the worker.
+derives the inputs, generates and self-checks the checks, and measures the conversion routes of
+the engine (`mdf bench run`: `run`, `report`; the engine is called only through
+`bench.adapters.engine`). Used only by the `mdf bench` command, never by the API or the worker.
 The modules import lazily and need only the standard library, `requests` and `markdown-it-py`;
 the external tools run only inside the toolchain image, through the runner of the conversion
 engine (`markdown_for_llms.engine.tools` and `.toolchain`, moved there by MFL032).
@@ -20,6 +21,6 @@ toolchain, tools = _toolchain, _tools
 
 BENCH_VERSION = "1.0.0"
 # Versions that enter the identity of a generated set of checks (cache key and report).
-GENERATOR_VERSION = "4"
+GENERATOR_VERSION = "5"
 NORMALIZER_VERSION = "2"
-MATCHER_VERSION = "2"
+MATCHER_VERSION = "3"

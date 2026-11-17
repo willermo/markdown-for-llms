@@ -89,6 +89,34 @@ class ManifestTests(Base):
         self.assertEqual((len(issues), counts), (201, {"warning": 2000}))
 
 
+class TimingsTests(Base):
+    def test_the_manifest_keeps_the_stages_and_the_statistics_of_the_pages(self):        # M5 of MFL026, S17
+        pages = {"unit": "s", "clock": "monotonic, Marker child", "count": 2000, "median": 1.5, "max": 9.25,
+                 "values": [1.5] * 1999 + [9.25]}
+        timings = {"total_seconds": 3100.0, "stages": {"models": 4.5, "pages": 3000.0, "render": 2.0}, "pages": pages}
+        summary = summarize({"status": "complete", "timings": timings}, [])
+        expected = {"total_seconds": 3100.0, "stages": timings["stages"],
+                    "pages": {k: v for k, v in pages.items() if k != "values"}}
+        self.assertEqual(summary["timings"], expected)
+        self.assertEqual(len(timings["pages"]["values"]), 2000)         # the result itself is not changed
+        job, row = self.run_job(fake_convert(timings=timings))
+        self.assertEqual(job['state'], 'completed')
+        result = self.service.storage.root / row['result_path']
+        body = (result / 'manifest.json').read_bytes()
+        self.assertLess(len(body), 20_000)                              # 2000 page values would not fit here
+        self.assertEqual(json.loads(body)['engine']['timings'], expected)
+        self.assertEqual(len(json.loads((result / 'engine-result.json').read_text())['timings']['pages']['values']), 2000)
+        reopened = Service(self.settings)                               # a new process reads the same job
+        self.addCleanup(reopened.storage.close)
+        self.assertEqual(reopened.get(job['id'])['state'], 'completed')
+        again = reopened.storage.get(job['id'])
+        self.assertEqual(json.loads((reopened.storage.root / again['result_path'] / 'manifest.json').read_bytes())
+                         ['engine']['timings'], expected)
+
+    def test_timings_of_a_route_without_pages_pass_unchanged(self):
+        self.assertEqual(summarize({"timings": {"total_seconds": 2.0}}, [])["timings"], {"total_seconds": 2.0})
+
+
 class ReconciliationTests(Base):
     def interrupted_row(self, child):
         job = self.service.submit(io.BytesIO(PDF), 'p.pdf')

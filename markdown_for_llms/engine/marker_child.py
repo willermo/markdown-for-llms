@@ -27,7 +27,8 @@ otherwise). It works at the Indra bridge, the only place where the information s
   blocks is otherwise blank (`page_blank`), or `page_text_lost` for an OCR layer with text.
 
 Progress goes to /scratch/events.jsonl, one JSON object per line: models, provider, every page
-read by Indra, structure, every processor, render, write.
+read by Indra, structure, every processor, render, write; each with the wall clock (`time`) and
+the monotonic clock of the child (`mono`), from which the engine measures stages and pages.
 """
 import json
 from pathlib import Path
@@ -55,7 +56,8 @@ def _audit(event, args):
 
 def emit(event, **fields):
     with open(SCRATCH / "events.jsonl", "a", encoding="utf-8") as stream:
-        stream.write(json.dumps({"event": event, "time": round(time.time(), 3), **fields}) + "\n")
+        stream.write(json.dumps({"event": event, "time": round(time.time(), 3), "mono": round(time.monotonic(), 3),
+                                 **fields}) + "\n")
 
 
 class AdapterMismatch(RuntimeError):

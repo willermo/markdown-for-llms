@@ -4,6 +4,9 @@ A route is named after its converter:
 - `text`: plain text decoded with charset-normalizer in the engine process (txt);
 - `pandoc`: pandoc in the engine toolchain image, with the contract filter (born-digital
   formats; doc and ods are first converted by LibreOffice to docx and xlsx in the same image);
+- `libreoffice`: LibreOffice in the same image writes HTML (Calc for xlsx, `impress_html_Export`
+  for pptx), which pandoc reads (an alternative for spreadsheets and slides; the images of the
+  slides come from the package, after the heading of their slide);
 - `djvutxt`: the text layer of a DjVu file, page by page, in the same image;
 - `marker`: Marker 2.2.0 on the CPU (the pages family, and an alternative for some born-digital
   formats through its own providers);
@@ -18,8 +21,8 @@ import re
 from .codes import Code, EngineError
 from .formats import FORMATS
 
-TEXT, PANDOC, DJVUTXT, MARKER, DATALAB = "text", "pandoc", "djvutxt", "marker", "datalab"
-CONVERTERS = (TEXT, PANDOC, DJVUTXT, MARKER, DATALAB)
+TEXT, PANDOC, LIBREOFFICE, DJVUTXT, MARKER, DATALAB = "text", "pandoc", "libreoffice", "djvutxt", "marker", "datalab"
+CONVERTERS = (TEXT, PANDOC, LIBREOFFICE, DJVUTXT, MARKER, DATALAB)
 REMOTE = frozenset({DATALAB})
 OCR_MODES = ("auto", "force")
 # format -> (default, alternatives)
@@ -30,8 +33,8 @@ MATRIX = {
     "tiff": (MARKER, (DATALAB,)),
     "djvu": (MARKER, (DJVUTXT, DATALAB)),
     "docx": (PANDOC, (MARKER,)),
-    "xlsx": (PANDOC, (MARKER,)),
-    "pptx": (PANDOC, (MARKER,)),
+    "xlsx": (PANDOC, (MARKER, LIBREOFFICE)),
+    "pptx": (PANDOC, (MARKER, LIBREOFFICE)),
     "epub": (PANDOC, (MARKER,)),
     "html": (PANDOC, (MARKER,)),
     "odt": (PANDOC, ()),

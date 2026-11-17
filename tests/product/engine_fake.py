@@ -7,7 +7,7 @@ from markdown_for_llms.files import identify, write, write_json
 
 
 def fake_convert(document=b'converted', assets=None, problems=None, code=None, events=(), calls=None,
-                 before=None, counts=None):
+                 before=None, counts=None, timings=None):
     def convert(source, out, request=None, limits=None, work=None, observer=None, name=None, model_root=None,
                 datalab_key=None):
         if calls is not None:
@@ -21,7 +21,7 @@ def fake_convert(document=b'converted', assets=None, problems=None, code=None, e
         result = {"schema": "mdf-engine-result/1", "attempt": (request or {}).get("attempt"),
                   "route": {"converter": "marker", "family": "pages", "chosen_by": "default", "reason": "matrix-default",
                             "steps": []},
-                  "components": {"marker": {"marker-pdf": "2.2.0"}}, "timings": {"total_seconds": 1.0},
+                  "components": {"marker": {"marker-pdf": "2.2.0"}}, "timings": timings or {"total_seconds": 1.0},
                   "limits": [], "stops": stops}
         failed = code or next((s for s in stops if s), None)
         if failed:

@@ -26,7 +26,8 @@ def scores(checkset, results, exclusions=(), profile=None):
         threshold = limits["profiles"].get(profile, limits["default"])[cls]
         ratio = passed / len(evaluated) if evaluated else None
         table[cls] = {"generated": len(generated), "not_determinable": checkset["not_determinable"][cls],
-                      "excluded_self_check": len(twin_only), "excluded_repo": 0, "feedback": 0,
+                      "excluded_self_check": len(twin_only), "excluded_repo": 0,
+                      "feedback": sum(1 for r in generated if r["id"].startswith("fb:")),
                       "evaluated": len(evaluated), "passed": passed, "ratio": ratio, "threshold": threshold,
                       "provisional": limits["provisional"], "meets": None if ratio is None else ratio >= threshold}
     return table

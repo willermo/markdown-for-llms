@@ -27,12 +27,15 @@ A raster entirely inside another kept crop is part of that figure; one that part
 widens the crop to their union (no pixel cut, FC1 of the review of B).
 
 The child runs in Bubblewrap without network, the model root read-only, under a systemd scope
-with the memory cap of the conversion; the weights are verified before each start.
+with the memory cap of the conversion; the weights are verified before each start. Its events
+carry a monotonic clock (`mono`): `timings.stages` and `timings.pages` of `engine.json` come
+from the events of the child whose result is kept (`marker_timings`).
 """
 import collections
 import json
 import re
 import shutil
+import statistics
 
 from . import contract, isolation, weights
 from .codes import Code, EngineError
@@ -85,6 +88,7 @@ def run_child(ctx, args, inputs, request=None):
     report = weights.verify(ctx.model_root)
     ctx.weights = report
     ctx.child_runs += 1
+    ctx.child_events = []                       # the timings come from the child whose result is kept
     scratch = ctx.work / ("marker-%d" % ctx.child_runs)
     for sub in ("home", "tmp", "out"):
         (scratch / sub).mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -320,6 +324,43 @@ def figures(ctx, pages):
     return page_info, pictures, rasters
 
 
+# stage -> (event that starts it, events that may end it, the first found)
+STAGE_BOUNDS = (("models", "models", ("provider",)), ("pages", "provider", ("structure",)),
+                ("structure", "structure", ("processor", "render")), ("processors", "processor", ("render",)),
+                ("render", "render", ("write",)))
+PAGE_TIMES = {"unit": "s", "clock": "monotonic, Marker child",
+              "method": "interval between consecutive page events, the first from the provider event",
+              "covers": "the reading of the page by Indra (layout, lines, OCR); not structure, processors and render"}
+
+
+def marker_timings(events, max_pages):
+    """`stages` (seconds of models, pages, structure, processors and render) and `pages` (the
+    seconds of each page read by Indra, with median and maximum) from the `mono` clock of the
+    events of the Marker child; a stage whose events are missing is left out, and `pages` is
+    None without a provider event or without page events. The seconds per page of the whole
+    conversion are `total_seconds / pages`, not these values."""
+    marks = [(e.get("event"), e["mono"]) for e in events
+             if isinstance(e, dict) and type(e.get("mono")) in (int, float)]
+    first = {}
+    for name, at in marks:
+        first.setdefault(name, at)
+    stages = {}
+    for stage, start, ends in STAGE_BOUNDS:
+        end = next((first[e] for e in ends if e in first), None)
+        if start in first and end is not None and end >= first[start]:
+            stages[stage] = round(end - first[start], 3)
+    pages = None
+    reads = [at for name, at in marks if name == "page"]
+    if "provider" in first and reads:
+        values, previous = [], first["provider"]
+        for at in reads[:max_pages]:
+            values.append(round(max(0.0, at - previous), 3))
+            previous = at
+        pages = dict(PAGE_TIMES, count=len(values), median=round(statistics.median(values), 3),
+                     max=max(values), values=values)
+    return {"stages": stages, "pages": pages}
+
+
 def marker_route(ctx, src, fmt, request):
     ocr = request.get("ocr") or "auto"
     pdf = source_pdf(ctx, src, fmt)
@@ -390,6 +431,7 @@ def collect(ctx, scratch, result, pages, page_info, rasters, force, reason, stri
         ctx.problems.append(contract.problem("media_lost", detail="%d of %d figures of native pages not rendered by "
                                              "Marker" % (added - len(mapping), added)))
     ctx.pages = {"count": n, "classes": dict(collections.Counter(p["class"] for p in pages)), "pages": records}
+    ctx.timings = marker_timings(ctx.child_events, ctx.max_pages)
     ctx.limits.extend(LIMITS)
     ctx.marker_versions = result["versions"]
     if result.get("network_calls"):

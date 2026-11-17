@@ -6,6 +6,11 @@ scores under 0.50 on the third-party text of the input; it leaves the scores too
 self-check judgement and stays in the scores. Preconditions are re-run at every self-check;
 an exclusion whose precondition no longer holds, or whose position is gone, is `stale` (red).
 `run` reads this file and never writes it.
+
+Feedback (U5, plan r2 §10): an entry `{document, id: "fb:<position>:<type>", class, type, position,
+origin: "feedback", generator_version}`, translated by hand from a note of the maintainer, makes
+the generator add the check of that type for the element of the twin at that position
+(`checks.feedback_checks`); the entries enter the key of the check set.
 """
 from importlib import resources
 import json
@@ -45,14 +50,22 @@ def load(path=None):
     for e in data["exclusions"]:
         if set(e) != {"document", "check", "code", "reason", "origin", "generator_version"} or e["code"] not in CODES:
             raise BenchError(Code.MANIFEST_INVALID, "exclusions: entry")
+    from .checks import CLASS_OF
     for f in data["feedback"]:
-        if set(f) != {"document", "id", "class", "type", "position", "origin", "generator_version"}:
+        if set(f) != {"document", "id", "class", "type", "position", "origin", "generator_version"} \
+                or f["origin"] != "feedback" or f["type"] not in CLASS_OF or f["class"] != CLASS_OF[f["type"]] \
+                or not isinstance(f["position"], str) or f["id"] != f"fb:{f['position']}:{f['type']}":
             raise BenchError(Code.MANIFEST_INVALID, "exclusions: feedback")
     return data
 
 
 def for_document(data, doc_id):
     return [e for e in data["exclusions"] if e["document"] == doc_id]
+
+
+def feedback_for(data, doc_id):
+    """The feedback entries of a document (U5): a defect noted by the maintainer, by position and type."""
+    return [f for f in data["feedback"] if f["document"] == doc_id]
 
 
 def validate(entries, checkset, results, inventory_matched, rendering_ratio):

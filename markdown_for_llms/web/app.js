@@ -8,7 +8,8 @@ async function api(path, init = {}) {
   if (!response.ok) throw new Error((data.error || 'Request failed') + (data.code ? ' (' + data.code + ')' : ''));
   return data;
 }
-const ROUTE_LABELS = {text: 'Text (character set detection)', pandoc: 'pandoc (born-digital documents)', djvutxt: 'DjVu text layer',
+const ROUTE_LABELS = {text: 'Text (character set detection)', pandoc: 'pandoc (born-digital documents)',
+  libreoffice: 'LibreOffice HTML export, read by pandoc (spreadsheets, slides)', djvutxt: 'DjVu text layer',
   marker: 'Marker 2.2.0 on the CPU (pages, OCR)', datalab: 'Datalab (remote service)'};
 function routeLabel(name) { return ROUTE_LABELS[name] || name; }
 function formatOf(name) {

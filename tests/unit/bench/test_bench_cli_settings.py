@@ -94,3 +94,40 @@ class BenchSettingsTests(unittest.TestCase):
             env.write_text("MDF_BENCH_TOOL_MEMORY_MB=3072\n")
             self.assertEqual(cli.main(["bench", "list", "--env-file", str(env)]), 0)
         self.assertEqual(tools.memory_limit(), 3072)
+
+
+class OracleDocumentTests(unittest.TestCase):
+    """A txt judged on its oracle alone (`checks: "encoding"`, no twin): `list` names it and `checks`
+    gives its oracle back from the derivation, without a check set."""
+
+    def test_list_and_checks(self):
+        import copy
+        import hashlib
+        import json
+        from markdown_for_llms.bench import manifest, toolchain
+        from markdown_for_llms.bench.derive import oracle_text
+        text = "Città – prima riga\r\nseconda riga\r\n"
+        source = text.encode("utf-8")
+        oracle = hashlib.sha256(oracle_text(text).encode("utf-8")).hexdigest()
+        data = copy.deepcopy(manifest.load().data)
+        data["sources"]["d99-txt"] = {"kind": "file", "url": "https://example.org/t.txt", "bytes": len(source),
+                                      "sha256": hashlib.sha256(source).hexdigest()}
+        doc = dict(copy.deepcopy(manifest.load().document("D29")), id="D99", expected_encoding="cp1252", checks="encoding",
+                   twin=None, language=["it"], scripts=["Latn"])
+        doc["input"] = {"source": "d99-txt", "derive": [{"op": "recode", "encoding": "cp1252", "bom": False}],
+                        "reference": {"sha256": "0" * 64, "toolchain": toolchain.identity(), "oracle_sha256": oracle}}
+        data["documents"].append(doc)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "m.json"
+            path.write_text(json.dumps(data))
+            cache = Path(tmp) / "cache"
+            (cache / "sources").mkdir(parents=True)
+            (cache / "sources" / data["sources"]["d99-txt"]["sha256"]).write_bytes(source)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(cli.main(["bench", "list", "--manifest", str(path)]), 0)
+                self.assertEqual(cli.main(["bench", "checks", "--docs", "D99", "--self-check", "--manifest", str(path),
+                                           "--cache", str(cache)]), 0)
+        lines = out.getvalue().splitlines()
+        self.assertIn("oracle", next(line for line in lines if line.startswith("D99  ")))
+        self.assertEqual(next(line for line in lines if line.startswith("D99 oracle")), f"D99 oracle {oracle[:12]} OK")
