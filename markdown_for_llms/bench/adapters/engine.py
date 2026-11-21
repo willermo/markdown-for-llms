@@ -11,10 +11,11 @@ import hashlib
 from ...engine.codes import EngineError
 
 
-def convert(source, out, request, limits, work, observer=None, name=None, model_root=None, datalab_key=None):
+def convert(source, out, request, limits, work, observer=None, name=None, model_root=None, datalab_key=None,
+            server_endpoint=None, server_keys=None):
     from ...engine import core
     return core.convert(source, out, request, limits, work, observer=observer, name=name, model_root=model_root,
-                        datalab_key=datalab_key)
+                        datalab_key=datalab_key, server_endpoint=server_endpoint, server_keys=server_keys)
 
 
 def package_identity():

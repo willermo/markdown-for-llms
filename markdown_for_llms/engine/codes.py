@@ -20,6 +20,7 @@ class Code(str, Enum):
     ROUTE_INVALID = "route_invalid"
     ROUTE_UNAVAILABLE = "route_unavailable"
     ROUTE_OPTION_UNSUPPORTED = "route_option_unsupported"
+    ROUTE_NOT_IN_PRODUCT = "route_not_in_product"
     # tools and isolation
     INVALID_SETTING = "invalid_setting"
     TOOLCHAIN_MISSING = "toolchain_missing"
@@ -51,9 +52,25 @@ class Code(str, Enum):
     DATALAB_KEY_MISSING = "datalab_key_missing"
     DATALAB_KEY_UNSAFE = "datalab_key_unsafe"
     DATALAB_CAP = "datalab_cap"
+    DATALAB_LIMIT = "datalab_limit"
     DATALAB_REJECTED = "datalab_rejected"
     DATALAB_UNAVAILABLE = "datalab_unavailable"
     DATALAB_FAILED = "datalab_failed"
+    # inference server of the `marker-server` route (MFL033)
+    SERVER_NOT_CONFIGURED = "server_not_configured"
+    SERVER_KEY_MISSING = "server_key_missing"
+    SERVER_KEY_UNSAFE = "server_key_unsafe"
+    SERVER_NOT_LOOPBACK = "server_not_loopback"
+    SERVER_UNAVAILABLE = "server_unavailable"
+    SERVER_REJECTED = "server_rejected"
+    SERVER_FAILED = "server_failed"
+    SERVER_MISMATCH = "server_mismatch"
+    SERVER_CAP = "server_cap"
+    SERVER_DEADLINE = "server_deadline"
+    SERVER_LEDGER_REQUIRED = "server_ledger_required"
+    SERVER_NOT_ARMED = "server_not_armed"
+    SESSION_ORPHANED = "session_orphaned"
+    SOCKET_PATH_TOO_LONG = "socket_path_too_long"
 
 
 class EngineError(Exception):

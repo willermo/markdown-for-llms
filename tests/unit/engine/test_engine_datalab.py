@@ -152,6 +152,16 @@ class RouteTests(Base):
         result, _ = self.run_route(t, cap_usd="0.01")
         self.assertEqual((result["error"]["code"], t.calls), ("datalab_cap", []))
 
+    def test_over_the_limits_of_datalab_nothing_leaves(self):              # MFL033, before datalab-send
+        for name, value in (("PAGE_LIMIT", 1), ("FILE_LIMIT_BYTES", 100)):
+            with self.subTest(limit=name), mock.patch.object(datalab, name, value, create=True):
+                t = FakeTransport()
+                events = []
+                result, _ = self.run_route(t, observer=lambda e: events.append(e.get("step")))
+                self.assertEqual((result["error"]["code"], t.calls), ("datalab_limit", []))
+                self.assertFalse(result["transit"]["left_machine"])
+                self.assertNotIn("datalab-send", events)
+
     def test_refused_options(self):
         for request, options, code in (({"ocr": "force"}, {}, "route_option_unsupported"),
                                        ({}, {"mode": "premium"}, "route_option_unsupported")):

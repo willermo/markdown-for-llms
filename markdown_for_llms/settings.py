@@ -103,8 +103,10 @@ class Settings:
         sources.append(os.environ if environ is None else environ)
         for source in sources:
             for key, value in source.items():
-                if not key.startswith("MDF_") or key.startswith("MDF_BENCH_"):
-                    continue   # MDF_BENCH_* belong to `mdf bench` (markdown_for_llms/bench/settings.py)
+                if not key.startswith("MDF_") or key.startswith("MDF_BENCH_") or key == "MDF_SESSION_ARM":
+                    # MDF_BENCH_* belong to `mdf bench` (markdown_for_llms/bench/settings.py); MDF_SESSION_ARM
+                    # is the window of a live session of scripts/servers/session.py (MFL033), not a setting
+                    continue
                 if key not in known:
                     raise ConfigurationError("Unknown MDF setting")
                 f = known[key]

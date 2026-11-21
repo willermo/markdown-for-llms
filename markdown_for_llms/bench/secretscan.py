@@ -1,9 +1,12 @@
-"""`mdf bench secret-scan --env-file FILE PATH…`: the Datalab key must appear in no file of the run.
+"""`mdf bench secret-scan --env-file FILE PATH…`: no key of the env file may appear in a file of the run.
 
-The key is read only with `engine.datalab.read_key(FILE, environ={})` (a regular file of the
-user with mode 0600; never the environment, never `BenchSettings`, delta r3 Δ5) and searched,
-as bytes, in every regular file under the paths, without following symbolic links. The search is
-literal: a key encoded (base64, URL or JSON escapes), compressed or split is not found.
+The keys are every variable of FILE whose name ends with `_KEY`, `_SECRET`, `_TOKEN`, `_TOKEN_ID`
+or `_BEARER` and is not an `MDF_` setting, with a value of at least 8 bytes: `DATALAB_API_KEY`,
+and since MFL033 the keys of the inference servers (`RUNPOD_API_KEY`, `MODAL_PROXY_TOKEN_ID`,
+`MODAL_PROXY_TOKEN_SECRET`, ...). FILE is read only as a regular file of the user with mode 0600
+(`engine.envfile`; never the environment, never `BenchSettings`, delta r3 Δ5), and each key is
+searched, as bytes, in every regular file under the paths, without following symbolic links. The
+search is literal: a key encoded (base64, URL or JSON escapes), compressed or split is not found.
 
 Coverage is counted (C-SCAN of the review of the final diff): the files read whole, apart from the
 errors, a path that could not be scanned: a path given that is missing, is a symbolic link or is
@@ -78,6 +81,40 @@ def scan(paths, needle):
     return read, errors, found
 
 
+KEY_SUFFIXES = ("_KEY", "_SECRET", "_TOKEN", "_TOKEN_ID", "_BEARER")
+MIN_KEY_BYTES = 8
+
+
+def keys_bytes(env_file):
+    """The keys of `env_file` as bytes (see the module docstring): `datalab_key_unsafe` for a file
+    that is not a private regular file, `datalab_key_missing` without any key."""
+    from ..engine import envfile
+    from .codes import BenchError, Code
+    try:
+        values = envfile.read(env_file, None)
+    except envfile.Unsafe as exc:
+        raise BenchError(Code.DATALAB_KEY_UNSAFE, str(exc)) from None
+    keys = sorted({v.encode("utf-8") for k, v in values.items() if not k.startswith("MDF_")
+                   and k.endswith(KEY_SUFFIXES) and len(v.encode("utf-8")) >= MIN_KEY_BYTES})
+    if not keys:
+        raise BenchError(Code.DATALAB_KEY_MISSING, "no key in the env file")
+    return keys
+
+
 def key_bytes(env_file):
-    from ..engine.datalab import read_key
-    return read_key(env_file, environ={}).header()["X-API-Key"].encode("utf-8")
+    return keys_bytes(env_file)[0]
+
+
+def scan_all(paths, needles):
+    """`scan` for several keys: (files read, [paths not read], [(path, occurrences of any key)])."""
+    read, errors, found = 0, [], []
+    for path in _files(paths, errors):
+        try:
+            n = sum(_count(path, needle) for needle in needles)
+        except OSError:
+            errors.append(str(path))
+            continue
+        read += 1
+        if n:
+            found.append((str(path), n))
+    return read, errors, found

@@ -100,7 +100,7 @@ def _num(value):
 
 def _known_limits():
     from ..engine import pages
-    return set(pages.LIMITS)
+    return set(pages.LIMITS) | set(pages.SERVER_LIMITS) | set(pages.BALANCED_SERVER_LIMITS) | set(pages.FORMER_LIMITS)
 
 
 def _dict(value):
@@ -125,6 +125,29 @@ def _datalab_record(r):
     return {"pages": _num(cost.get("pages")), "estimated_cents": _decimal(cost.get("estimated_cents")),
             "billed_cents": _decimal(cost.get("billed_cents")), "cap_usd": _decimal(cost.get("cap_usd")),
             "left_machine": transit.get("left_machine") is True, "deleted": deleted if isinstance(deleted, bool) else None}
+
+
+def _server_record(r):
+    """The server of a marker-server attempt (numbers and closed values only, MFL033): provider,
+    kind and GPU of the endpoint, mode, readiness, requests answered 2xx and not, retried and
+    uncertain requests, clean close, reservation and measured bound."""
+    comp = _dict(_dict(r.get("components")).get("server"))
+    ep = _dict(comp.get("endpoint"))
+    relay, cost = _dict(r.get("marker_server")), _dict(r.get("cost"))
+    route = _dict(r.get("marker_server_route"))
+    statuses = {k: _num(v) for k, v in _dict(relay.get("by_status")).items() if isinstance(k, str) and k.isdigit()}
+    readiness = _dict(relay.get("readiness"))
+    return {"endpoint": ep.get("name") if isinstance(ep.get("name"), str) else None,
+            "provider": ep.get("provider") if ep.get("provider") in ("runpod", "modal") else None,
+            "kind": ep.get("kind") if ep.get("kind") in ("cpu", "local", "user", "runpod", "modal") else None,
+            "gpu": ep.get("gpu") if isinstance(ep.get("gpu"), str) else None,
+            "mode": comp.get("mode") if comp.get("mode") in ("balanced", "accurate") else None,
+            "readiness_s": _num(readiness.get("wait_seconds")),
+            "requests_2xx": sum(v or 0 for k, v in statuses.items() if k.startswith("2")),
+            "requests_other": sum(v or 0 for k, v in statuses.items() if not k.startswith("2")),
+            "retried": _num(_dict(route.get("server")).get("exceptions")), "uncertain": _num(relay.get("uncertain")),
+            "clean": relay.get("clean") if isinstance(relay.get("clean"), bool) else None,
+            "reserve_cents": _decimal(cost.get("reserve_cents")), "bound_cents": _decimal(cost.get("bound_cents"))}
 
 
 def _list(value):
@@ -201,6 +224,8 @@ def score_attempt(run, doc, a, exclusions):
     record["memory_peak_bytes"] = max(peaks) if peaks else None
     if a["route"] == "datalab":
         record["datalab"] = _datalab_record(r)
+    if a["route"] == "marker-server":
+        record["server"] = _server_record(r)
     if a["status"] == "unresolved":
         # the reservation is in the ledger and there is no result: never sent again (§7.4)
         record.update(status="failed", error=Code.DATALAB_UNRESOLVED.value)
@@ -376,9 +401,10 @@ def _summary(docs, records, selection, costs=None):
             "thresholds": thresholds_summary()}
 
 
-def build(run, identity_changed=False, rebuilt=None):
+def build(run, identity_changed=False, rebuilt=None, out_dir=None):
     """`report.json` of a run; `rebuilt` ({at, package}) when it is written again from the saved
-    outputs by `run.rebuild_report`."""
+    outputs by `run.rebuild_report`. The outcome of the checks of each attempt goes to
+    `<out_dir>/attempts/<id>/results.json`, by default the run directory (MFL044 (d))."""
     from . import exclusions as excl_mod
     from .starmath import VERSION as STARMATH_VERSION
     state = run.state
@@ -419,8 +445,10 @@ def build(run, identity_changed=False, rebuilt=None):
             a = state["attempts"][ids[-1]]
             record, results = score_attempt(run, doc, a, exclusions)
             if results is not None:
-                write_atomic(run.dir / "attempts" / a["id"] / "results.json",
-                             json.dumps(results, sort_keys=True).encode("utf-8"))
+                target = Path(out_dir if out_dir is not None else run.dir) / "attempts" / a["id"]
+                if out_dir is not None:
+                    target.mkdir(parents=True, exist_ok=True, mode=0o700)
+                write_atomic(target / "results.json", json.dumps(results, sort_keys=True).encode("utf-8"))
             attempts.append(record)
         entry["repeats"] = _repeats(attempts)
         if personal:            # numbers only (§13): no hash of the input or the output, no check ids
@@ -465,6 +493,7 @@ def build(run, identity_changed=False, rebuilt=None):
             "exclusions_sha256": state["exclusions"]["sha256"],
             "environment": state["environment"], "toolchain": identity["toolchain"], "weights": identity["weights"],
             "caps": state["caps"], "cost": cost(run, ledger) if datalab else None, "datalab": datalab,
+            "server": state.get("server"),
             "documents": [records[d["id"]] for d in run.docs],
             "summary": _summary(run.docs, records, sel, costs), "warnings": warnings, "notes": notes,
             "rebuilt": rebuilt}
@@ -474,7 +503,7 @@ def _ledger(run):
     """(entries, per attempt, total) of the ledger, or the closed code of why it cannot be read."""
     from . import spend
     try:
-        entries = run.ledger_entries()
+        entries = spend.datalab_rows(run.ledger_entries())
         per_attempt, total = spend.reconcile(entries)
     except BenchError as exc:
         return exc.code.value if exc.code.value in _codes() else UNRECOGNIZED
@@ -623,6 +652,25 @@ def markdown(report):
                       f"{r['billed_unknown']} | {r['counted_cents']} |" for m, r in c.get("by_mode", {}).items()]
             lines += ["", f"Counted for the run: {c.get('run_counted_cents')} cents; for the whole ledger: "
                       f"{c.get('ledger_counted_cents')} cents."]
+    if report.get("server"):
+        srv = report["server"]
+        rec = srv.get("record") or {}
+        lines += ["", "## Inference server", "",
+                  f"Endpoint {srv.get('name')} ({rec.get('kind')}, provider {rec.get('provider') or 'none'}, "
+                  f"GPU {rec.get('gpu') or '—'}), modes {', '.join(srv.get('modes') or [])}; identity "
+                  f"{srv.get('identity_sha256', '')[:12]}. Cents: the reservation before the wake and the measured "
+                  "upper bound of each attempt, not billed amounts.", "",
+                  "| Document | Mode | Readiness s | 2xx | Other | Retried | Uncertain | Clean | s/page | Reserve | Bound |",
+                  "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
+        for d in report["documents"]:
+            for a in d["attempts"]:
+                sv = a.get("server")
+                if not sv:
+                    continue
+                lines.append(f"| {d['id']} | {sv['mode']} | {_fmt(sv['readiness_s'])} | {sv['requests_2xx']} | "
+                             f"{sv['requests_other']} | {sv['retried']} | {sv['uncertain']} | {sv['clean']} | "
+                             f"{_fmt(a['timing'].get('s_per_page'))} | {sv['reserve_cents'] or '—'} | "
+                             f"{sv['bound_cents'] or '—'} |")
     if report.get("notes"):
         lines += ["", "## Notes", ""]
         lines += [f"- {DJVUTXT_NOTE}" for n in report["notes"] if n == "djvutxt_plain_text"]

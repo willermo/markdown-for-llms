@@ -77,6 +77,13 @@ BENCH_ONLY = (
     ("REPORT_IDENTITY_CHANGED", "report_identity_changed"),
     ("REPORT_CHECKS_CHANGED", "report_checks_changed"),
     ("REPORT_RESULT_CHANGED", "report_result_changed"),
+    # a run read where it is now (MFL044 (d))
+    ("RUN_PATH_MISSING", "run_path_missing"),
+    ("REPORT_RUN_CHANGED", "report_run_changed"),
+    # the rented inference servers (MFL033)
+    ("SERVER_REFUSED_PERSONAL", "server_refused_personal"),
+    ("SERVER_BILLED_OVER_BOUND", "server_billed_over_bound"),
+    ("PROVIDER_NOT_IDLE", "provider_not_idle"),
 )
 
 Code = Enum("Code", [(m.name, m.value) for m in EngineCode] + list(BENCH_ONLY), type=str,

@@ -33,15 +33,14 @@ import base64
 import json
 import os
 import re
-import stat
 import time
 
-from . import contract, routes
+from . import contract, envfile, imagerefs, routes
 from .codes import Code, EngineError
 
 API = "https://www.datalab.to/api/v1"
 KEY_NAME = "DATALAB_API_KEY"
-KEY_FILE_LIMIT = 65536
+KEY_FILE_LIMIT = envfile.LIMIT
 # Prices of Convert in USD per 1,000 pages, from https://www.datalab.to/pricing, read on
 # 2026-11-15. The page states them with the 25 % discount for sharing data for training; the
 # estimate uses the list price without the discount (the larger one): discounted / 0.75.
@@ -56,6 +55,10 @@ POLL_SECONDS = 2.0
 WAIT_LIMIT = 1800                     # seconds of polling at most, within the deadline of the conversion
 CONNECT_TIMEOUT, READ_TIMEOUT = 15, 120
 RESPONSE_LIMIT = 256 << 20
+# Limits of a conversion request (https://documentation.datalab.to/docs/common/limits.md, read on
+# 2026-11-17: «200 MB» per file, «7,000» pages): a PDF over them is refused before it is sent.
+FILE_LIMIT_BYTES = 200_000_000
+PAGE_LIMIT = 7000
 IMAGE_TYPES = ((b"\x89PNG\r\n\x1a\n", "png"), (b"\xff\xd8\xff", "jpg"), (b"GIF8", "gif"))
 
 
@@ -76,39 +79,16 @@ class Key:
 
 
 def _parse_env(data):
-    for line in data.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if line.startswith("export "):
-            line = line[7:].lstrip()
-        name, sep, value = line.partition("=")
-        if sep and name.strip() == KEY_NAME:
-            value = value.strip()
-            if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
-                value = value[1:-1]
-            return value
-    return None
+    return envfile.parse(data, {KEY_NAME}).get(KEY_NAME)
 
 
 def read_key(env_file=None, environ=None):
     """The key from `env_file` (checked as the module docstring says) or from the environment."""
     if env_file is not None:
         try:
-            # O_NONBLOCK: a FIFO given by mistake must not block the open; it is refused below
-            fd = os.open(env_file, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK)
-        except OSError as exc:
-            raise EngineError(Code.DATALAB_KEY_UNSAFE, "env file: %s" % type(exc).__name__) from None
-        try:
-            info = os.fstat(fd)
-            if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) != 0o600:
-                raise EngineError(Code.DATALAB_KEY_UNSAFE, "env file: a regular file of the caller with mode 0600")
-            data = os.read(fd, KEY_FILE_LIMIT + 1)
-        finally:
-            os.close(fd)
-        if len(data) > KEY_FILE_LIMIT:
-            raise EngineError(Code.DATALAB_KEY_UNSAFE, "env file too large")
-        value = _parse_env(data.decode("utf-8", "replace"))
+            value = envfile.read(env_file, [KEY_NAME]).get(KEY_NAME)
+        except envfile.Unsafe as exc:
+            raise EngineError(Code.DATALAB_KEY_UNSAFE, str(exc)) from None
         if value:
             return Key(value)
     value = (os.environ if environ is None else environ).get(KEY_NAME)
@@ -218,6 +198,12 @@ def datalab_route(ctx, src, fmt, request, key=None, transport=None, environ=None
     estimate = estimate_cents(n, mode)
     ctx.cost = {"estimated_cents": str(estimate), "billed_cents": None, "cap_usd": str(cap), "pages": n}
     ctx.transit = {"left_machine": False, "service": "datalab", "endpoint": API}
+    size = os.stat(pdf).st_size
+    if size > FILE_LIMIT_BYTES or n > PAGE_LIMIT:
+        # the PDF that would be sent, after the removal of an OCR layer: refused before the
+        # event `datalab-send`, so the bench reserves nothing
+        raise EngineError(Code.DATALAB_LIMIT, "%d bytes and %d pages; Datalab accepts %d bytes and %d pages"
+                          % (size, n, FILE_LIMIT_BYTES, PAGE_LIMIT))
     if estimate > cap * 100:
         raise EngineError(Code.DATALAB_CAP, "estimate %s cents over the cap of %s USD" % (estimate, cap))
     if options.get("transit_confirmed") is not True:
@@ -320,11 +306,14 @@ def _collect(ctx, body, n, mode, record, estimate):
         if ext is None:
             raise EngineError(Code.OUTPUT_INVALID, "an image of the answer of an unknown type")
         data[name], exts[name] = blob, ext
-    unused = [name for name in data if "](" + name + ")" not in text]
-    for name in unused:             # an image of the answer that the Markdown does not use
+    refs = imagerefs.scan(text)             # Markdown images and <img> tags (MFL043)
+    used = refs.used()
+    unused = [name for name in data if name not in used]
+    for name in unused:             # an image of the answer that the document does not use
         ctx.problems.append(contract.problem("media_unused", path=name, detail="image of the Datalab answer"))
         del data[name]
-    text, mapping = pages.rename_images(text, list(data), ext_of=exts)
+    text, mapping, found = imagerefs.rename(text, list(data), ext_of=exts, refs=refs)
+    ctx.problems.extend(found)
     (ctx.stage / "assets").mkdir(exist_ok=True)
     for name, new in mapping.items():
         (ctx.stage / new).write_bytes(data[name])

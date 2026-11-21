@@ -93,10 +93,13 @@ def scope_available():
     return done.returncode == 0
 
 
+# The variables systemd-run and systemctl need to reach the user's manager, nothing else.
+USER_ENV = ("XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS", "HOME", "PATH", "LANG")
+
+
 def _user_env():
-    """The variables systemd-run and systemctl need to reach the user's manager, nothing else."""
-    keep = ("XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS", "HOME", "PATH", "LANG")
-    env = {k: os.environ[k] for k in keep if k in os.environ}
+    """The variables of USER_ENV that are set (the manager of the user), nothing else."""
+    env = {k: os.environ[k] for k in USER_ENV if k in os.environ}
     env.setdefault("XDG_RUNTIME_DIR", "/run/user/%d" % os.getuid())
     env.setdefault("PATH", "/usr/bin:/bin")
     return env
@@ -223,14 +226,19 @@ def scratch_bytes(path):
 
 def run(scratch, module, args=(), inputs=(), memory_mib=1024, output_mib=512, timeout=120, cpu_seconds=None,
         steps=None, observer=None, poll_seconds=0.1, ro_binds=(), env=None, fonts=False, scope=None,
-        process_limit=16, files_limit=64, address_space_mib=None, stall_seconds=None, on_events=None):
+        process_limit=16, files_limit=64, address_space_mib=None, stall_seconds=None, on_events=None, check=None,
+        activity=None):
     """Run the child; returns its exit status and log (stdout and stderr, at most `LOG_LIMIT`
     bytes). `output_limit` when the scratch grows over `output_mib`, `timeout` past `timeout`
     seconds, `memory_limit` when the child reports it (or, in a scope, when the kernel killed a
     process of it for memory), `stalled` when a child in a scope writes no event and uses no CPU
     for `stall_seconds`, `cancelled`/`interrupted` from the observer. `scope` is the unit name
-    of the systemd scope with cap `memory_mib` (the Marker child). The child writes its results
-    into the scratch directory."""
+    of the systemd scope with cap `memory_mib` (the Marker child). `check()`, called at every poll,
+    returns an `EngineError` that stops the child (the relay of the `marker-server` route: its
+    server unavailable, its term reached) or None; `activity()` returns the monotonic time of an
+    activity of the child outside its events and CPU time (its requests through the relay), which
+    keeps it from `stalled`. The child writes its results into the scratch
+    directory."""
     if not available():
         raise EngineError(Code.ISOLATION_UNAVAILABLE, "bubblewrap not found")
     scratch = Path(scratch)
@@ -314,8 +322,14 @@ def run(scratch, module, args=(), inputs=(), memory_mib=1024, output_mib=512, ti
                     group.sample()
                     if group.cpu_usec != last_cpu:
                         last_cpu, last_activity = group.cpu_usec, now
+                if activity is not None:
+                    seen = activity()
+                    if seen is not None and seen > last_activity:
+                        last_activity = seen
                 read_events()
                 reason = over()
+                if reason is None and check is not None:
+                    reason = check()
                 if reason is None and now - started > timeout:
                     reason = EngineError(Code.TIMEOUT, f"{module}: timeout")
                 if reason is None and stall_seconds and now - last_activity > stall_seconds:
@@ -352,3 +366,70 @@ def run(scratch, module, args=(), inputs=(), memory_mib=1024, output_mib=512, ti
 
 def clean(scratch):
     shutil.rmtree(scratch, ignore_errors=True)
+
+
+def program_command(executable, args=(), ro_binds=(), binds=(), env=None):
+    """The bwrap argv of a program of the user's machine, not a Python module of the engine (the
+    local CPU server of the `marker-server` route, MFL033): the same sandbox as the light child
+    (no network, a read-only system, no capability, a new session, dies with its parent), a
+    private /tmp, `ro_binds` and `binds` [(host path, absolute path in the sandbox)]."""
+    argv = [BWRAP, "--unshare-all", "--die-with-parent", "--new-session", "--cap-drop", "ALL", "--clearenv"]
+    for path in ("/usr", "/lib", "/lib64"):
+        if Path(path).exists():
+            argv += ["--ro-bind", path, path]
+    argv += ["--proc", "/proc", "--dev", "/dev", "--tmpfs", "/tmp"]
+    for flag, pairs in (("--ro-bind", ro_binds), ("--bind", binds)):
+        for host, dest in pairs:
+            if not dest.startswith("/") or dest in ("/", "/usr", "/tmp", "/proc", "/dev") or ".." in dest.split("/"):
+                raise ValueError("bind target: " + dest)
+            argv += [flag, os.path.realpath(host), dest]
+    argv += ["--chdir", "/tmp", "--remount-ro", "/"]
+    for key, value in {"PATH": "/usr/bin", "LANG": "C.UTF-8", "HOME": "/tmp", **(env or {})}.items():
+        argv += ["--setenv", key, value]
+    return argv + ["--", executable, *map(str, args)]
+
+
+class Started:
+    """A program started by `start` in its scope: its process, scope, cgroup and log."""
+
+    def __init__(self, proc, scope, group, log, log_path, started):
+        self.proc, self.scope, self.group, self.log, self.log_path, self.started = proc, scope, group, log, log_path, started
+
+
+def start(argv, scope, memory_mib, log_path):
+    """Start `argv` (from `program_command`) in a transient scope with a memory cap and return it
+    running; `stop` ends it. `isolation_unavailable` without Bubblewrap or the user's manager."""
+    if not available() or not os.access(SYSTEMD_RUN, os.X_OK):
+        raise EngineError(Code.ISOLATION_UNAVAILABLE, "bubblewrap or systemd-run not found")
+    log = open(log_path, "wb")
+    try:
+        proc = subprocess.Popen(scope_command(scope, memory_mib, argv), stdin=subprocess.DEVNULL, stdout=log,
+                                stderr=subprocess.STDOUT, env=_user_env(), close_fds=True, start_new_session=True)
+    except BaseException:
+        log.close()
+        raise
+    return Started(proc, scope, Cgroup(proc.pid, scope), log, Path(log_path), time.monotonic())
+
+
+def stop(started):
+    """Kill the program and its scope; returns the step record (exit, seconds, peak, CPU, OOM, the
+    state of the scope after the stop: `absent`, or `unreachable` when the manager does not answer)."""
+    started.group.sample()
+    if started.proc.poll() is None:
+        started.group.kill()
+        try:
+            os.killpg(started.proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    try:
+        started.proc.wait(timeout=30)
+    except subprocess.TimeoutExpired:
+        pass
+    try:
+        state = stop_scope(started.scope)
+    except ScopeUnreachable:
+        state = "unreachable"
+    started.log.close()
+    return {"scope": started.scope + ".scope", "exit": started.proc.returncode, "scope_after": state,
+            "seconds": round(time.monotonic() - started.started, 3), "memory_peak_bytes": started.group.peak or None,
+            "cpu_seconds": round(started.group.cpu_usec / 1e6, 1), "oom_kill": started.group.oom_kill}

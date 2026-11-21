@@ -1,0 +1,26 @@
+{
+  "schema": "mdf-cpu-server/1",
+  "llama_server": {
+    "release": "b12040",
+    "path": "llama-b12040-bin-ubuntu-x64.tar.gz",
+    "url": "https://github.com/ggml-org/llama.cpp/releases/download/b12040/llama-b12040-bin-ubuntu-x64.tar.gz",
+    "bytes": 22891998,
+    "sha256": "0d906e93c5dd584d8e1e70d80eec22180e6a2679f729e9aeb6ca0da888609eef",
+    "source": "https://api.github.com/repos/ggml-org/llama.cpp/releases/tags/b12040 (read 2026-11-17)"
+  },
+  "gguf": {
+    "repository": "datalab-to/surya-ocr-2.5-gguf",
+    "revision": "eb78671ae9af9bdddfac2e25507c55337b6098e2",
+    "files": [
+      {"path": "surya-2.5.gguf", "bytes": 1180178976,
+       "sha256": "45fa3e587cf5a475f06e949fbe40e67b759dbcee1830e7effbcb172445d4b6bf",
+       "url": "https://huggingface.co/datalab-to/surya-ocr-2.5-gguf/resolve/eb78671ae9af9bdddfac2e25507c55337b6098e2/surya-2.5.gguf"},
+      {"path": "surya-2.5-mmproj.gguf", "bytes": 207345920,
+       "sha256": "f245dbf784cf73683a273a37fefae0d0d7983b083a5d2fecf9309476f861f659",
+       "url": "https://huggingface.co/datalab-to/surya-ocr-2.5-gguf/resolve/eb78671ae9af9bdddfac2e25507c55337b6098e2/surya-2.5-mmproj.gguf"}
+    ]
+  },
+  "arguments": ["--jinja", "--special", "--alias", "datalab-to/surya-ocr-2.5", "--parallel", "2",
+                "--ctx-size", "24576", "--threads", "4"],
+  "memory_mib": 8192
+}

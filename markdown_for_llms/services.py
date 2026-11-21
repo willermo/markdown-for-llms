@@ -30,6 +30,7 @@ REFUSALS = {
     "transit_not_confirmed": "The Datalab route sends the document out of this computer: confirm the transit first",
     "invalid_setting": "Invalid job option",
     "route_unavailable": "The route is not available on this machine",
+    "route_not_in_product": "The marker-server route is available in mdf convert and mdf bench only, not in the archive",
 }
 
 

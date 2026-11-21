@@ -43,6 +43,7 @@ PROBLEMS = {
     "media_missing": INCOMPLETE,          # an image whose source is not part of the output
     "object_not_converted": INCOMPLETE,   # a chart, OLE object, SmartArt or inline drawing
     "page_text_lost": INCOMPLETE,
+    "ocr_block_dropped": INCOMPLETE,      # a block Marker dropped after an OCR failure or a repetition loop
     # differences that lose no content of the document
     "media_external": WARNING,            # a remote image, left as a link and never fetched
     "media_furniture": WARNING,           # an image of a layout, master, header or footer (D11)
@@ -52,6 +53,8 @@ PROBLEMS = {
     "pictures_skipped_rotated": WARNING,
     "datalab_delete_failed": WARNING,     # the result stays on Datalab until its one-day lifecycle
     "datalab_cost_unknown": WARNING,      # no billed cost in the answer: the estimate is the bound
+    "server_retried": WARNING,            # inference requests that failed and succeeded when Surya retried them
+    "server_cost_bound": WARNING,         # a rented server: the cost is a measured upper bound, not a billed amount
 }
 MAX_PROBLEMS = 2000
 MAX_CORRECTIONS = 2000

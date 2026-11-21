@@ -36,6 +36,7 @@ import json
 import re
 import shutil
 import statistics
+import time
 
 from . import contract, isolation, weights
 from .codes import Code, EngineError
@@ -49,9 +50,42 @@ MAX_PIXELS = 100_000_000
 LIMITS = ["Marker 2.2.0 fast with indra-ocr v1.1.0 neither extracts nor detects vector figures (also the "
           "vector panels of a composite figure) nor the figures of scanned pages: they are missing from the "
           "output without a problem of the document (D13 of MFL032)."]
+# The limits of the marker-server route (MFL033), in words the user reads in engine.json and in the summary:
+# no internal reference. The second one (N6): on 21/11 D04 of the reference set in balanced differed in 6 lines
+# between two conversions without the cache of torch.compile on the same A10G of Modal (a letter, the case of
+# a word, the cells of a table on several lines), and D06 differed in its bytes between RunPod and Modal
+# (vLLM 0.25.1, bf16); D18 was the same in 22 conversions.
+SERVER_LIMITS = ["The marker-server route runs Marker 2.2.0 balanced or accurate with the OCR of Surya on the "
+                 "inference server the user names: the page images go to that server; the quality of the route is "
+                 "not certified.",
+                 "On a GPU server two conversions of the same document can differ in a few places, also on the same "
+                 "GPU with the same settings, because the reading of the server is not exactly repeatable: a letter, "
+                 "the case of a word, or the part of a table cell written on several lines that is kept, as measured "
+                 "in balanced mode on a scientific article (two conversions on the same GPU) and on a statistical "
+                 "report (two GPU servers). Compare two outputs by their content, not by their bytes; the accurate "
+                 "mode has not been measured for this."]
+# The texts declared by earlier commits of MFL033, still in the engine.json of the outputs made with them: the
+# bench report recognizes them (`bench.report._known_limits`); the engine never declares them again.
+FORMER_LIMITS = ("The marker-server route (MFL033) runs Marker 2.2.0 balanced or accurate with the OCR of Surya on "
+                 "the inference server the user names: the page images go to that server; the quality of the route "
+                 "is not certified.",
+                 "In balanced mode Marker 2.2.0 rebuilds the tables on this machine from the lines that the server "
+                 "reads (reconstruct_table_html): a table cell written on several lines can lose part of its text or "
+                 "have it moved to another cell, as measured on the table of a scientific article with the CPU "
+                 "server and with the GPU servers. For such tables use the accurate mode, where the server reads "
+                 "the whole page; its result on them has not been measured.")
+# R10 of MFL033 (plan r2 §6): D04 of the reference set, measured on the local CPU server and on the GPU
+# servers of RunPod and Modal; `accurate` has no local rebuild of the cells (Marker's table processor
+# returns no rebuilt table in that mode, and the child has no Indra there).
+BALANCED_SERVER_LIMITS = ["In balanced mode Marker 2.2.0 rebuilds the tables on this machine from the lines that the "
+                          "server reads: a table cell written on several lines can lose part of its text or have it "
+                          "moved to another cell, as measured on the table of a scientific article with the CPU server "
+                          "and with the GPU servers. For such tables use the accurate mode, where the server reads the "
+                          "whole page; its result on them has not been measured."]
 SEPARATOR = re.compile(r"^\{\d+\}-{48}$", re.M)
 BAD_LOG = re.compile(rb"falling back|inference error", re.I)
-EXITS = {4: Code.PAGE_FAILED, 6: Code.ENGINE_ADAPTER_MISMATCH, 3: Code.MEMORY_LIMIT}
+EXITS = {4: Code.PAGE_FAILED, 6: Code.ENGINE_ADAPTER_MISMATCH, 3: Code.MEMORY_LIMIT, 7: Code.SERVER_FAILED}
+FALLING_BACK = re.compile(rb"falling back", re.I)
 TO_PDF = {"docx": "docx", "xlsx": "xlsx", "pptx": "pptx", "epub": "epub", "html": "html"}
 
 
@@ -83,8 +117,18 @@ def child_env(model_root, threads):
             "OMP_NUM_THREADS": str(threads), "MKL_NUM_THREADS": str(threads)}
 
 
-def run_child(ctx, args, inputs, request=None):
-    """One Marker child; returns (exit status, scratch). Weights verified before the start."""
+def _relay_stop(check):
+    def stop():
+        code = check()
+        return None if code is None else EngineError(code, "relay")
+    return stop
+
+
+def run_child(ctx, args, inputs, request=None, binds=(), check=None, activity=None):
+    """One Marker child; returns (exit status, scratch). Weights verified before the start. On the
+    `marker-server` route `binds` adds the relay directory on `/relay` and `check` stops the child
+    with the failure of the relay; an `Inference error` line is then a retried request, counted by
+    the child, and only `falling back` fails the log."""
     report = weights.verify(ctx.model_root)
     ctx.weights = report
     ctx.child_runs += 1
@@ -97,17 +141,20 @@ def run_child(ctx, args, inputs, request=None):
     rc, log = isolation.run(
         scratch, CHILD, args, inputs=inputs, memory_mib=ctx.memory_mib, output_mib=ctx.output_mib,
         timeout=ctx.timeout(), steps=ctx.steps, observer=ctx.observer, poll_seconds=ctx.poll_seconds,
-        ro_binds=[(str(ctx.model_root), "/models")], env=child_env(ctx.model_root, ctx.threads), fonts=True,
+        ro_binds=[(str(ctx.model_root), "/models"), *binds], env=child_env(ctx.model_root, ctx.threads), fonts=True,
         scope=_scope(ctx, ctx.child_runs), process_limit=512, files_limit=1024,
         address_space_mib=ctx.memory_mib * 2 + 8192, cpu_seconds=max(60, ctx.timeout()) * max(1, ctx.threads),
-        stall_seconds=ctx.stall_seconds, on_events=ctx.feed_events)
+        stall_seconds=ctx.stall_seconds, on_events=ctx.feed_events,
+        check=None if check is None else _relay_stop(check), activity=activity)
     ctx.diagnostics["marker-%d.log" % ctx.child_runs] = log[-contract.LOG_TAIL:]
     if rc != 0 and rc not in (4, 5):
         err = EngineError(EXITS.get(rc, Code.CONVERTER_FAILED), "marker child exit %s" % rc)
         err.log = log
         raise err
-    if rc == 0 and BAD_LOG.search(log):
-        err = EngineError(Code.CONVERTER_FAILED, "marker reported a fallback or an inference error")
+    server = (request or {}).get("mode") in ("balanced", "accurate")
+    if rc == 0 and (FALLING_BACK if server else BAD_LOG).search(log):
+        err = EngineError(Code.ENGINE_ADAPTER_MISMATCH if server else Code.CONVERTER_FAILED,
+                          "marker reported a fallback" + ("" if server else " or an inference error"))
         err.log = log
         raise err
     return rc, scratch
@@ -270,30 +317,16 @@ def plan(ctx, pdf, pages, ocr):
     return pdf, pages, False, "ocr_layer_kept", report
 
 
-def rename_images(text, names, ext_of=None):
-    """Image names of the converter -> assets/asset-NNNN.<ext>, only in image destinations found
-    by the markdown-it parser, each replacement counted against the parse. `ext_of` {name: ext}
-    (from the bytes); by default the extension of the name, jpg or png. Returns (text, mapping)."""
-    from markdown_it import MarkdownIt
-    md = MarkdownIt("commonmark").enable("table")
-    counts = collections.Counter()
-
-    def walk(tokens):
-        for t in tokens:
-            if t.type == "image":
-                counts[t.attrGet("src")] += 1
-            if t.children:
-                walk(t.children)
-    walk(md.parse(text))
-    mapping = {}
-    for i, name in enumerate(sorted(names, key=lambda n: (text.find("](" + n + ")"), n)), 1):
-        ext = (ext_of or {}).get(name) or ("jpg" if name.lower().endswith((".jpg", ".jpeg")) else "png")
-        new = "assets/asset-%04d.%s" % (i, ext)
-        found = text.count("](" + name + ")")
-        if found != counts.get(name, 0):
-            raise EngineError(Code.OUTPUT_INVALID, "image reference count of a Marker image")
-        text = text.replace("](" + name + ")", "](" + new + ")")
-        mapping[name] = new
+def rename_images(text, names, ext_of=None, problems=None):
+    """Image names of the converter -> assets/asset-NNNN.<ext>, in the Markdown images and the
+    `<img>` tags found by the parser (`imagerefs`, MFL043), each replacement counted against the
+    parse. `ext_of` {name: ext} (from the bytes); by default the extension of the name, jpg or
+    png. The problems of the `<img>` tags without an extracted source go to `problems` when
+    given. Returns (text, mapping)."""
+    from . import imagerefs
+    text, mapping, found = imagerefs.rename(text, names, ext_of=ext_of)
+    if problems is not None:
+        problems.extend(found)
     return text, mapping
 
 
@@ -387,7 +420,13 @@ def marker_route(ctx, src, fmt, request):
     return collect(ctx, scratch, result, pages, page_info, rasters, force, reason, strip_report, retried)
 
 
-def collect(ctx, scratch, result, pages, page_info, rasters, force, reason, strip_report, retried):
+def server_limits(mode):
+    """The declared limits of the marker-server route in `mode` (a new list): those of the route, then the
+    cells on several lines (R10) in `balanced` only."""
+    return SERVER_LIMITS + (BALANCED_SERVER_LIMITS if mode == "balanced" else [])
+
+
+def collect(ctx, scratch, result, pages, page_info, rasters, force, reason, strip_report, retried, limits=LIMITS):
     n = len(pages)
     prov, methods = result["provenance"], result["methods"]
     if result["pages"] != n or len(prov) != n or len(methods) != n:
@@ -419,7 +458,7 @@ def collect(ctx, scratch, result, pages, page_info, rasters, force, reason, stri
     for name, data in ctx.diagnostics.items():
         if name.endswith(".log"):
             (diag / name).write_bytes(data[-contract.LOG_TAIL:])
-    text, mapping = rename_images(text, result["images"])
+    text, mapping = rename_images(text, result["images"], problems=ctx.problems)
     (ctx.stage / "assets").mkdir(exist_ok=True)
     for name, new in mapping.items():
         shutil.copyfile(scratch / "out" / "images" / name, ctx.stage / new)
@@ -432,7 +471,7 @@ def collect(ctx, scratch, result, pages, page_info, rasters, force, reason, stri
                                              "Marker" % (added - len(mapping), added)))
     ctx.pages = {"count": n, "classes": dict(collections.Counter(p["class"] for p in pages)), "pages": records}
     ctx.timings = marker_timings(ctx.child_events, ctx.max_pages)
-    ctx.limits.extend(LIMITS)
+    ctx.limits.extend(limits)
     ctx.marker_versions = result["versions"]
     if result.get("network_calls"):
         raise EngineError(Code.ENGINE_ADAPTER_MISMATCH, "network calls in the Marker child: %d" % result["network_calls"])
@@ -440,3 +479,138 @@ def collect(ctx, scratch, result, pages, page_info, rasters, force, reason, stri
             "strip": strip_report, "images": len(mapping), "seconds": result["seconds"],
             "rasters": dict(sum((collections.Counter(r["rasters"]) for r in records), collections.Counter())),
             "network_calls": result.get("network_calls", 0)}
+
+
+def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None, cpu=None):
+    """Marker `balanced` or `accurate` with Surya on the inference server `ep` (MFL033).
+
+    The pages are prepared as on the Marker route (`accurate` reads every page with OCR, without
+    the plan of the text layers). Before anything wakes the server: the transit of a server
+    outside the loopback (`transit_not_confirmed`), then the term of the attempt and, for an
+    endpoint with a provider, its reservation at the event `server-wake`, which the caller turns
+    into a row of the ledger or a refusal. Then the private socket directory, the relay, its
+    readiness and the child with the relay on `/relay`; the relay closes in a `finally` and its
+    counters and times go to `engine.json` (`marker_server`), with the measured bound of the cost
+    for a provider (`server_cost_bound`). The `cpu` endpoint starts the local CPU server first
+    (`cpuserver`, verified before the wake; `cpu` = {"root", "manifest"} replaces its defaults in
+    the tests), in its own sandbox and scope, on the `llama/` socket of the same directory."""
+    from . import relay as relay_mod, servers, sockets
+    from .codes import Code as C
+    opts = request.get("server") or {}
+    mode = opts.get("mode")
+    cpu = dict(cpu or {})
+    if ep.kind == "cpu":
+        from . import cpuserver
+        cpu["manifest"] = cpu.get("manifest") or cpuserver.manifest()
+        cpu["record"] = cpuserver.verify(cpu.get("root"), cpu["manifest"])
+    pdf = source_pdf(ctx, src, fmt)
+    pages = classify(ctx, pdf)
+    if mode == "accurate":
+        force, reason, strip_report = True, "server_accurate", None
+    else:
+        pdf, pages, force, reason, strip_report = plan(ctx, pdf, pages, request.get("ocr") or "auto")
+    page_info, pictures, rasters = figures(ctx, pages)
+    leaves = ep.leaves_machine()
+    ctx.server = {"endpoint": ep.record(), "mode": mode, "versions": None, "leaves_machine": leaves}
+    if ep.kind == "cpu":
+        ctx.server["cpu"] = dict(cpu["record"])
+    ctx.transit = {"left_machine": False, "service": ep.provider or ep.kind, "endpoint": ep.host()}
+    if leaves and opts.get("transit_confirmed") is not True:
+        raise EngineError(C.TRANSIT_NOT_CONFIRMED, "the page images would leave the machine for %s" % ep.host())
+    session = opts.get("session") or {}
+    term = servers.term(ep, len(pages), budget_cents=opts.get("budget_cents"), until=session.get("armed_until"),
+                        now=time.time())
+    ctx.server["term"] = {k: term[k] for k in ("D", "d_doc", "d_min", "d_budget", "d_session")}
+    if ep.costs:
+        ctx.cost = {"provider": ep.provider, "rate_usd_per_s": ep.rate_usd_per_s, "arm_id": session.get("arm_id"),
+                    "budget_cents": term["budget_cents"], "reserve_cents": term["reserve_cents"], "bound_cents": None,
+                    "billed_cents": None, "clean": False}
+    ctx.event("server-wake", reserve={"provider": ep.provider, "endpoint": ep.name, "identity": ep.identity_sha256(),
+                                      "reserve_cents": term["reserve_cents"], "rate": ep.rate_usd_per_s,
+                                      "tail_idle_s": ep.tail_idle_s, "D": term["D"]})
+    sockets.sweep()
+    private = sockets.Private()
+    relay = started = None
+    done = False
+    try:
+        if ep.kind == "cpu":
+            from . import cpuserver, isolation
+            ctx.event("cpu-server")
+            started = cpuserver.start(cpu["record"]["root"], private.llama_dir, "mdf-eng-%s-llama" % ctx.attempt[:16],
+                                      ctx.work / "llama-server.log", cpu["manifest"])
+        relay = relay_mod.Relay(ep, keys, private.relay_socket, transport_factory=transport_factory,
+                                upstream_socket=private.llama_socket if ep.kind == "cpu" else None)
+        relay.start()
+        if leaves:
+            ctx.transit["left_machine"] = True            # from the first request on
+        relay.set_term(term["D"])
+        relay.ready()
+        child_request = {"threads": ctx.threads, "indra_dir": "/models/" + weights.indra_dir(), "force_ocr": force,
+                         "pages": page_info, "pictures": pictures, "mode": mode,
+                         "server": {"parallel": ep.parallel, "model": ep.model, "timeout": ep.read_timeout,
+                                    **ep.requests()}}
+        binds = [(str(private.relay_dir), "/relay")]
+        ctx.event("marker")
+        rc, scratch = run_child(ctx, ["convert"], [(pdf, "source.pdf")], child_request, binds, relay.check,
+                                relay.activity)
+        retried = None
+        if rc == 5:
+            first = json.loads((scratch / "result.json").read_text())
+            retried = {"page": first.get("page"), "source": first.get("source")}
+            ctx.problems.append(contract.problem("ocr_forced_document", page=first.get("page"),
+                                                 detail="an OCR layer read as %s" % first.get("source")))
+            force, reason = True, "ocr_layer_not_removable"
+            rc, scratch = run_child(ctx, ["convert"], [(pdf, "source.pdf")], dict(child_request, force_ocr=True), binds,
+                                    relay.check, relay.activity)
+            if rc == 5:
+                raise EngineError(C.PAGE_FAILED, "an OCR layer page read from its text layer under force_ocr")
+        result = json.loads((scratch / "result.json").read_text())
+        if rc == 4:
+            raise EngineError(C.PAGE_FAILED, "page %s: %s" % (result.get("page"), result.get("note")))
+        done = True
+    except EngineError as exc:
+        if relay is not None and relay.failure is not None and exc.code != relay.failure:
+            # the child failed because the server went away or the term came: that is the cause
+            err = EngineError(relay.failure, "relay: %s" % exc.code.value)
+            err.log = getattr(exc, "log", None)
+            raise err from None
+        raise
+    finally:
+        if relay is not None:
+            relay.close()
+            record = relay.record()
+            clean = bool(record["clean"] and done)
+            record["clean"] = clean
+            ctx.marker_server = record
+            ctx.server["versions"] = dict(relay.versions)
+            if ep.costs:
+                ctx.cost["bound_cents"] = servers.bound_cents(ep, relay.ready_at is not None, clean, record["t_wake"],
+                                                              record["t_last"], record["t_close"])
+                ctx.cost["clean"] = clean
+                ctx.problems.append(contract.problem("server_cost_bound", detail="%s: a measured upper bound of %s "
+                                                     "cents, not a billed amount" % (ep.provider, ctx.cost["bound_cents"])))
+        if started is not None:
+            from . import isolation
+            step = isolation.stop(started)
+            ctx.steps.append(dict(step, tool="bwrap:llama-server", args=[]))
+            ctx.server["cpu"]["run"] = step
+            try:
+                ctx.diagnostics["llama-server.log"] = started.log_path.read_bytes()[-contract.LOG_TAIL:]
+            except OSError:
+                pass
+        private.close()
+    out = collect(ctx, scratch, result, pages, page_info, rasters, force, reason, strip_report, retried,
+                  limits=server_limits(mode))
+    srv = result.get("server") or {}
+    if srv.get("exceptions"):
+        record = ctx.marker_server or {}
+        failed = {k: v for k, v in (record.get("by_status") or {}).items() if not k.startswith("2")}
+        ctx.problems.append(contract.problem("server_retried", detail="%d requests failed and succeeded when retried; "
+                                             "answers %s, transport errors %d, timeouts %d"
+                                             % (srv["exceptions"], failed or "{}", record.get("transport_errors", 0),
+                                                record.get("timeouts", 0))))
+    if srv.get("dropped_blocks"):
+        ctx.problems.append(contract.problem("ocr_block_dropped", detail="%d blocks dropped by Marker: %s"
+                                             % (srv["dropped_blocks"], "; ".join(srv.get("dropped_examples") or []))))
+    out["server"] = srv
+    return out

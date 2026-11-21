@@ -119,6 +119,7 @@ class FormatsThroughTheProductTests(unittest.TestCase):
                  ('route_option_unsupported', pdf, 'a.pdf', {'transit_confirmed': True}),
                  ('route_option_unsupported', pdf, 'a.pdf', {'route': 'datalab', 'transit_confirmed': True, 'ocr': 'force'}),
                  ('transit_not_confirmed', pdf, 'a.pdf', {'route': 'datalab'}),
+                 ('route_not_in_product', pdf, 'a.pdf', {'route': 'marker-server'}),
                  ('invalid_setting', pdf, 'a.pdf', {'lang': 'it; rm -rf'}),
                  ('invalid_setting', pdf, 'a.pdf', {'force_ocr': True})]
         for code, data, name, options in cases:

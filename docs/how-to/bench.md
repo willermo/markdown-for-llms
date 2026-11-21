@@ -1,6 +1,6 @@
 # Prepare and run the reference bench (`mdf bench`)
 
-`mdf bench` prepares the reference set of documents and the checks that score conversions (it builds the reference toolchain, downloads and verifies the documents, and generates and self-checks the checks), then measures the routes of the conversion engine on it: `mdf bench run` converts each document on each local route of its format through the engine and writes a report with the scores, times, memory and problems of every attempt; with `--route datalab` it also measures the remote, paid Datalab route on the public set, under two spending caps. `compare` and `crosscheck` read the reports, a personal set measures your own documents, and `secret-scan` checks that the Datalab key is in no file. The scores are provisional and do not certify fidelity: the quality of a conversion stays `unverified`.
+`mdf bench` prepares the reference set of documents and the checks that score conversions (it builds the reference toolchain, downloads and verifies the documents, and generates and self-checks the checks), then measures the routes of the conversion engine on it: `mdf bench run` converts each document on each local route of its format through the engine and writes a report with the scores, times, memory and problems of every attempt; with `--route datalab` it also measures the remote, paid Datalab route on the public set, under two spending caps, and with `--route marker-server` the route of Marker with Surya on an inference server: the local CPU server, a server of yours, or an endpoint rented on RunPod or Modal. `compare` and `crosscheck` read the reports, a personal set measures your own documents, and `secret-scan` checks that no key is in a file. The scores are provisional and do not certify fidelity: the quality of a conversion stays `unverified`.
 
 For developers on Linux. The bench is a development tool, separate from the experimental product (`mdf convert`, API and Web UI) and from the a002 helpers of the [local conversion benchmark](fidelity-benchmark.md).
 
@@ -11,11 +11,12 @@ For developers on Linux. The bench is a development tool, separate from the expe
 | `mdf bench fetch` | downloads and verifies the documents, their twins and derived inputs |
 | `mdf bench checks` | generates the checks from the twins, from the cache only |
 | `mdf bench checks --self-check` | also renders each twin with a third-party tool and judges the checks |
-| `mdf bench run` | converts the documents on the local routes of the engine (on Datalab with `--route datalab`), scores the outputs and writes the report; `--resume` resumes an interrupted run |
+| `mdf bench run` | converts the documents on the local routes of the engine (on Datalab with `--route datalab`, on an inference server with `--route marker-server`), scores the outputs and writes the report; `--resume` resumes an interrupted run |
 | `mdf bench report RUN_DIR` | writes the report of a finished run again from its saved outputs, without converting or sending anything |
-| `mdf bench compare A B` | compares two reports attempt by attempt; `--fail-on-regression` exits with 1 on a regression |
+| `mdf bench compare A B` | compares two reports attempt by attempt, or document by document (`--align document`); `--fail-on-regression` exits with 1 on a regression |
 | `mdf bench crosscheck R...` | lists the checks that every route fails in the same way (suspects) |
-| `mdf bench secret-scan` | searches the Datalab key in files, without printing it |
+| `mdf bench spend show`, `mdf bench spend reconcile` | the spend ledger of a runs folder: totals of Datalab and of each rented server, and the bills of the providers in place of the bounds |
+| `mdf bench secret-scan` | searches every key of the key file in files, without printing it |
 
 ## Prerequisites
 
@@ -136,7 +137,7 @@ A document without a twin (D35, D36) prints its oracle instead: `D35 oracle 77c6
 .venv-dev/bin/python -I -B -m markdown_for_llms.cli bench run --level quick --runs-dir ~/bench-runs --out ~/bench-runs/quick-1
 ```
 
-`run` takes `--level` or `--docs D04,D19`, and reads the cache only, like `checks`: run `fetch` first. Without `--route` it converts each document on every local route of its format in the matrix of the engine (for example pandoc, Marker and LibreOffice for a pptx, Marker and djvutxt for a DjVu); `--route marker,pandoc` keeps only those routes. `--ocr force` asks Marker to run OCR on every page (default `auto`); the other routes ignore it. `--repeat N` (at most 10) converts every attempt N times, to measure the spread of the times and whether the output is deterministic. Datalab runs only with `--route datalab` and its own options ([Measure the Datalab route](#measure-the-datalab-route)). The bench converts only through the engine, with the limits of the product (`mdf convert`) and the `limits` of the manifest (more pages for D13, D16, D17 and D21), and with the weights of the Marker route in `~/.cache/markdown-for-llms/models`.
+`run` takes `--level` or `--docs D04,D19`, and reads the cache only, like `checks`: run `fetch` first. Without `--route` it converts each document on every local route of its format in the matrix of the engine (for example pandoc, Marker and LibreOffice for a pptx, Marker and djvutxt for a DjVu); `--route marker,pandoc` keeps only those routes. `--ocr force` asks Marker to run OCR on every page (default `auto`); the other routes ignore it. `--repeat N` (at most 10) converts every attempt N times, to measure the spread of the times and whether the output is deterministic. Datalab runs only with `--route datalab` and its own options ([Measure the Datalab route](#measure-the-datalab-route)), an inference server only with `--route marker-server` ([Measure the marker-server route](#measure-the-marker-server-route)). The bench converts only through the engine, with the limits of the product (`mdf convert`) and the `limits` of the manifest (more pages for D13, D16, D17 and D21), and with the weights of the Marker route in `~/.cache/markdown-for-llms/models`.
 
 Each attempt prints one line with its document, route, variant, repetition, generation, status and seconds, and the command ends with the number of documents unavailable (exit 0 means that every attempt has an outcome: some may have failed, as the report shows):
 
@@ -163,7 +164,7 @@ scripts/run-capped.sh bench-int 24G -- .venv-dev/bin/python -I -B scripts/bench_
 .venv-dev/bin/python -I -B -m markdown_for_llms.cli bench run --resume "$R/standard-int"
 ```
 
-`--resume RUN_DIR` takes every option from the state of the run (selection, routes, repetitions, manifest, exclusions, cache, limits); any other option is `resume_option_not_allowed`. It refuses a run whose package, toolchain image, weights, manifest or exclusions changed (`resume_identity_changed`). An attempt that ended is never converted again; an attempt that was running is adopted when its `engine.json` belongs to it (same attempt, input and options, files as listed) and is complete or failed for a reason other than the interruption, otherwise it is kept and converted again in a new generation (`g2`). Each adopted attempt prints a line, for example `D04 marker 6339a111 k1 g1 adopted complete`. Two processes never work on one run: the second one exits with `run_busy`, and the lock goes away with the process, even after a SIGKILL.
+`--resume RUN_DIR` takes every option from the state of the run (selection, routes, repetitions, manifest, exclusions, cache, limits). It accepts only `--confirm-transit` and `--env-file` (asked again, never kept), `--retry-unaccepted`, and, for a run that moved, `--cache` and `--model-root`, which replace the paths of the state and are verified by what it recorded (the SHA-256 of the check sets and inputs, the identity of the weights); any other option is `resume_option_not_allowed`, and a path of the state that is missing without its option is `run_path_missing`. A run that pays (Datalab, or a server with a provider) is resumed only where it was created, next to the ledger of its runs folder (`run_path_missing` otherwise), because a resumption converts the keys left and pays for them. It refuses a run whose package, toolchain image, weights, manifest or exclusions changed (`resume_identity_changed`). An attempt that ended is never converted again; an attempt that was running is adopted when its `engine.json` belongs to it (same attempt, input and options, files as listed) and is complete or failed for a reason other than the interruption, otherwise it is kept and converted again in a new generation (`g2`). Each adopted attempt prints a line, for example `D04 marker 6339a111 k1 g1 adopted complete`. Two processes never work on one run: the second one exits with `run_busy`, and the lock goes away with the process, even after a SIGKILL.
 
 The bench refuses to start while the full check holds the development venv (`venv_busy`), and while another process runs a program of the venv it runs from (`venv_in_use`: stop the API and the worker first; other bench runs are allowed).
 
@@ -193,7 +194,7 @@ run 5b0c8e1f2a3d4c67: 1 keys, 0 documents unavailable
 | `--spend-cap-usd USD` | the cap of the spend ledger of the runs folder, all runs together (default: `MDF_BENCH_CAP_DATALAB_USD`) |
 | `--env-file FILE` | the file with `DATALAB_API_KEY`: a regular file of yours with mode 0600 (`datalab_key_unsafe` otherwise). `run` reads the key from this file only, never from the environment (`datalab_key_missing`), and reads no settings from it |
 
-The refusals come before the key file is opened and before the run directory exists, in this order: a personal set is `datalab_refused_personal` (its key file is never opened), then the modes, the confirmation and the caps, then a ledger that does not add up (`spend_ledger_inconsistent`), then the key. The key is never printed or written: it is in no argument, state, log or report, and [`secret-scan`](#check-that-the-datalab-key-is-in-no-file) checks it.
+The refusals come before the key file is opened and before the run directory exists, in this order: a personal set is `datalab_refused_personal` (its key file is never opened), then the modes, the confirmation and the caps, then a ledger that does not add up (`spend_ledger_inconsistent`), then the key. The key is never printed or written: it is in no argument, state, log or report, and [`secret-scan`](#check-that-no-key-is-in-a-file) checks it.
 
 **What is sent.** The PDF of each selected document whose format has the Datalab route (pdf, png, jpeg, tiff, djvu), as the engine prepares it, one document at a time, at least 5 seconds apart, the cheapest first: on the standard level D16 in `accurate` mode comes last. D20 is never sent, because it would send the PDF of D14; the report lists `djvu × datalab` as not measured, `datalab_excluded`. The standard level in the four modes is 44 sends (11 documents in 4 modes, 223 pages in each mode) and at most 3.9712 USD at the list price; with the discount for sharing the data, the expected cost is about 2.65 USD.
 
@@ -218,6 +219,102 @@ The resumption reports `datalab_unresolved` and posts nothing. When Datalab comp
 
 In the report each Datalab attempt carries its pages, estimate, billed cost, cap and whether the result was deleted (`datalab`), `cost` sums the ledger lines of the run per mode (sends, pages, estimated, billed, billed unknown, counted), and each Datalab cell of the summary format × route has its `cost` from the same lines: the sends and their estimates, the billed cost known (`billed_cents`, `billed_known`), the uncertain cost, the estimates that stand for a cost never billed (`uncertain_cents`, `uncertain`), and what counts (`counted_cents`); local routes have `cost: null`. `report.md` has a Datalab table and a cost column.
 
+## Measure the marker-server route
+
+The `marker-server` route ([Convert documents](convert-documents.md#the-marker-server-route)) is measured like the other routes, on the server you name, in one or both of its modes:
+
+```bash
+P=".venv-dev/bin/python -I -B -m markdown_for_llms.cli"
+scripts/run-capped.sh bench-cpu 16G -- $P bench run --docs D18,D19 --route marker-server \
+  --server-mode balanced,accurate --server cpu --runs-dir ~/bench-runs --out ~/bench-runs/cpu-1
+```
+
+| Option | Meaning |
+| --- | --- |
+| `--server-mode M[,M]` | `balanced`, `accurate` or both; each mode is a variant of its own |
+| `--server NAME`, `--servers FILE` | the server of `servers.json` (default: its `default`) and the file; one server per run, and no Datalab beside it |
+| `--confirm-transit` | for a server outside the loopback: the page images of the public set leave the machine (`transit_not_confirmed` without it) |
+| `--max-cost-usd USD`, `--spend-cap-usd USD` | for a server with a provider: the cap of the run and of the ledger of the runs folder for that provider |
+| `--env-file FILE` | the file of the keys of the server (and of Datalab), a regular file of yours with mode 0600 |
+
+A personal set is never sent outside the loopback (`server_refused_personal`, before any key is read). On a rented endpoint the run goes inside a session of `scripts/servers/session.py run`, which arms the endpoint, records the window in the same ledger (`<runs folder>/spend.jsonl`) and disarms it at the end; each attempt reserves its term in that window, as `mdf convert` does:
+
+```bash
+R=~/bench-runs
+scripts/run-capped.sh bench-modal 16G -- .venv-dev/bin/python -I -B scripts/servers/session.py run \
+  --provider modal --name mdf-surya --url "https://<workspace>--mdf-surya-serve.<region>.modal.run" \
+  --env-file .env --spend-ledger "$R/spend.jsonl" --spend-cap-usd 15 --cap-usd 6 -- \
+  $P bench run --level standard --route marker-server --server-mode balanced,accurate --server modal-l4 \
+  --confirm-transit --max-cost-usd 6 --spend-cap-usd 15 --env-file .env --runs-dir "$R" --out "$R/modal-standard"
+```
+
+A bench refuses to start while another program of the development venv runs (`venv_in_use`), its own session excepted: start the bench when no other session runs; other sessions may start after it. The report gives each attempt of the route its server (`server`: the endpoint, its provider, kind and GPU, the mode, the readiness, the requests answered and not, the retried ones, whether the relay closed cleanly, the reservation and the measured bound of the cost) and the limits that the route declares. The standard level in both modes on Modal took 21 minutes and 0.98 USD of bound (0.45 USD billed): 21 of its 24 attempts were complete, and 3 failed for errors of the network between the laptop and Modal (`server_unavailable`, `server_mismatch`), each with its code in the report; the quick level on RunPod took 16 minutes and 0.21 USD of bound. The measures per page are over the complete attempts. The exit of `run` is not the outcome of its conversions: it exits with 0 when the run ended with failed attempts, which the report lists, and a key that ended is not converted again by a resumption.
+
+To compare a route with another one document by document (for example `marker-server` in `balanced` against `datalab` in `balanced`), whatever their variants:
+
+```bash
+$P bench compare ~/bench-runs/datalab-1/report.json ~/bench-runs/modal-standard/report.json \
+  --align document --select-a datalab:balanced --select-b marker-server:balanced --json ~/bench-runs/compare.json
+```
+
+The ledger, its totals and the reconciliation with the bills of the providers (`mdf bench spend show` and `mdf bench spend reconcile`) are in [The ledger and the bill](convert-documents.md#the-ledger-and-the-bill).
+
+### The fault test of a rented endpoint
+
+A rented endpoint must stop costing when its server hangs or crashes, even when the converting process is gone. The scripts of `scripts/servers/` check it on an endpoint kept for the test (`mdf-surya-fault`, created like `mdf-surya`), each phase inside a session, and they fail only when a guarantee breaks:
+
+- **G1, the spend stops on the provider's side**: after the fault no worker runs and the container of the worker that ran is stopped, within 215 s of a hang; no worker starts again without requests; after the disarm nothing runs;
+- **G2, no request is lost in silence**: every request sent gets a declared outcome (200, 503 `mdf_tripped` from the watchdog, 500, a timeout or a refusal), and after a session killed with SIGKILL `session.py run` and `mdf convert` refuse with `session_orphaned` until `session.py disarm`;
+- **G3, the bill stays within the bound**: at a closed hour, the bill of each window is not above the amount of the ledger, and no cap is passed.
+
+Everything else is recorded as a fact and stops nothing: extra workers, a replacement before the first answer of vLLM, a restart, other GPUs or times.
+
+```bash
+S=".venv-dev/bin/python -I -B scripts/servers/session.py"
+L="--env-file .env --spend-ledger $R/spend.jsonl --spend-cap-usd 4"
+$S run --provider runpod --name mdf-surya-fault $L --cap-usd 0.45 --fault hang-after-first -- fault-test --phase A
+$S run --provider runpod --name mdf-surya-fault $L --cap-usd 0.70 --fault crash-after-first -- \
+  fault-test --phase B --observe-seconds 1200
+$S run --provider runpod --name mdf-surya-fault $L --cap-usd 0.25 --disarmed -- fault-test --phase D
+.venv-dev/bin/python -I -B scripts/servers/runpod_endpoint.py --env-file .env fault-e --name mdf-surya-fault \
+  --input page.png --spend-ledger "$R/spend.jsonl" --spend-cap-usd 4 --cap-usd 0.30
+.venv-dev/bin/python -I -B scripts/servers/runpod_endpoint.py --env-file .env observe --name mdf-surya-fault \
+  --closed-utc-hours 1 --read-only
+.venv-dev/bin/python -I -B scripts/servers/runpod_endpoint.py --env-file .env read-history --name mdf-surya-fault \
+  --since 2026-11-20T19:33:00Z
+```
+
+- A: vLLM stops after the first answer (`hang-after-first`, SIGSTOP); the watchdog trips, the open request gets 503 `mdf_tripped`, and the endpoint must reach the zero within 215 s.
+- B: vLLM exits after the first answer (`crash-after-first`); the endpoint is then watched for `--observe-seconds`.
+- D: a disarmed endpoint (`--disarmed`) must start nothing for a request.
+- E (`fault-e`): a session killed with SIGKILL after readiness leaves an orphan window; `session.py run` and `mdf convert` must refuse with `session_orphaned`, and `session.py disarm` must reach the zero and close the window.
+- `observe` reads the disarmed endpoint for hours without arming it; `read-history` prints the workers by minute and the bill by hour of the endpoint since a time, for G3.
+
+On Modal `scripts/servers/modal_tasks.py --env-file .env --server modal-l4-fault --servers FILE` has the same phases (`fault-test --app mdf-surya-fault --phase A|B|D`, `fault-e`, `observe`, and `convert-refused` for the refusal of `mdf convert`); its readings come from the pinned SDK. A phase whose fault could not be exercised (no readiness, a first request that failed) is inconclusive (exit 8), not a failure. The worker logs of each session are saved, after a secret scan, in `worker-logs/<arm id>/` next to the ledger.
+
+### Series of starts
+
+`scripts/servers/start_series.py`, inside a session, measures the starts of the endpoint: `--cold N` starts, each after the first waiting until the provider is quiet (no worker running, the container stopped), `--warm M` starts on the running container, and the phases of each start from the log of the session (the image, the import of vLLM, `torch.compile` and whether its graphs came from the cache, the profiling, the graphs and the cache KV, the API):
+
+```bash
+$S run --provider runpod --name mdf-surya $L --cap-usd 0.80 -- \
+  .venv-dev/bin/python -I -B scripts/servers/start_series.py --env-file .env --server runpod-24gb --servers FILE \
+  --input page.png --cold 3 --warm 3 --cap-usd 0.80 --spend-ledger "$R/spend.jsonl" --spend-cap-usd 4
+```
+
+`--via engine` (the default) converts `--input` with `mdf convert` at each start; `--via page` sends one page straight to vLLM; `--via populate` makes the archive of the cache of compilation ([Convert documents](convert-documents.md#the-cache-of-compilation)). `--arm-ahead S` waits S seconds after the arm before the first start, reading the provider every 30 s ([Arm ahead](convert-documents.md#arm-ahead)). `--gpu NAME [--gpu-tries K]` takes only a container on that GPU, as its proxy names it (`NVIDIA A10G`): on another one it sends nothing more, lets it go before vLLM is ready, and tries again after the quiet, at most K times (`gpu_not_assigned`). Exit 0: every start done; 6: a start failed, the provider never quiet, or two workers running at once.
+
+### Concurrency
+
+`concurrency` sends one warm-up page, optionally pages whose client gives up after 5 s while vLLM runs them (`--abandon`), then `--n` pages at once through the edge of the provider, with `/metrics` read every half second in a thread of its own and `/v1/models` probed during the load (`--probe-while-busy`):
+
+```bash
+$S run --provider runpod --name mdf-surya $L --cap-usd 0.45 -- \
+  concurrency --input page.png --warmup 1 --n 32 --abandon 1 --probe-while-busy
+```
+
+The criteria (at least 24 pages running at once in vLLM, every page 200, the load within 4 times the warm page, every probe 200, the abandoned pages abandoned) are a measure in `criteria` and `measure_pass`; the driver fails only on G1 and G2. On RunPod 32 pages took 14.4 s against 8.0 s for one warm page (about 0.45 s of throughput per page). On Modal the same driver is `modal_tasks.py … concurrency --app mdf-surya`.
+
 ## Write the report of a run again
 
 ```bash
@@ -228,7 +325,14 @@ In the report each Datalab attempt carries its pages, estimate, billed cost, cap
 report 3c9d0e5a1b7f4c21: 47 results verified, report.json and report.md written again (nothing converted)
 ```
 
-`report` rewrites `report.json`, `report.md` and the `results.json` of each attempt of a finished run from the outputs it saved, with the scoring of the installed package, for example after a fix of the scoring. It converts nothing, starts no engine, sends nothing to Datalab and reads no key; it writes neither the state nor the outputs. It takes the lock of the run and refuses, with a closed code, whatever does not match: a run that did not end, interrupted or still running (`report_run_not_finished`: resume it instead); a manifest or an exclusions file whose SHA-256 is not the one of the run (`report_identity_changed`); a check set that the cache no longer has with the SHA-256 the run recorded (`report_checks_changed`: it is never generated again); a result whose `engine.json` is not the one the run recorded, or does not belong to its attempt, or whose listed files differ (`report_result_changed`), as an adoption checks it. The report then carries `rebuilt`, the time and the package whose scoring it follows, and `report.md` says so.
+`report` rewrites `report.json`, `report.md` and the `results.json` of each attempt of a finished run from the outputs it saved, with the scoring of the installed package, for example after a fix of the scoring. Unlike a resumption it never converts, sends or pays, so it also runs on a run that paid and on a run that moved:
+
+```bash
+.venv-dev/bin/python -I -B -m markdown_for_llms.cli bench report ~/archive/modal-standard --report-dir ~/reports/modal-standard \
+  --cache ~/archive/bench-cache
+```
+
+With `--report-dir DIR` (a new or empty directory outside the run) the run is only read: no lock and no write in it; DIR receives `report.json`, `report.md` and `attempts/<id>/results.json`. The state is read again before the report is written, and a state that changed meanwhile (a resumption that ran) is `report_run_changed`, with nothing written. `--cache`, `--manifest` and `--exclusions` replace the paths of the state for a run that moved, verified by the SHA-256 the run recorded; a path missing without its option is `run_path_missing`. It converts nothing, starts no engine, sends nothing to Datalab and reads no key; it writes neither the state nor the outputs. It takes the lock of the run and refuses, with a closed code, whatever does not match: a run that did not end, interrupted or still running (`report_run_not_finished`: resume it instead); a manifest or an exclusions file whose SHA-256 is not the one of the run (`report_identity_changed`); a check set that the cache no longer has with the SHA-256 the run recorded (`report_checks_changed`: it is never generated again); a result whose `engine.json` is not the one the run recorded, or does not belong to its attempt, or whose listed files differ (`report_result_changed`), as an adoption checks it. The report then carries `rebuilt`, the time and the package whose scoring it follows, and `report.md` says so.
 
 ## Compare two runs
 
@@ -278,16 +382,16 @@ $P bench run --manifest ~/personal.json --docs P01,P02 --runs-dir ~/bench-runs -
 
 Each file is opened without following symbolic links, must be a regular file of yours, and is copied into `RUN/inputs/` (mode 0600) with its SHA-256 computed while copying; the engine converts the copy. The copy is written to a temporary file next to it and takes its name only once the whole file is read and on disk: a copy cut short (Ctrl-C, a full disk) stays as `RUN/inputs/.partial-<name>-*`, as evidence, and is never converted. A resumption reuses a copy only when the state registered its SHA-256 (`input_sha256`, `twin_sha256`), otherwise it copies again; a registered copy that changed is `resume_identity_changed`. A file that cannot be read so is `unavailable input_unreadable`. The check set of a document with a twin stays in `RUN/checks/`, never in the shared cache. Without a twin a document has only operational measures (status, codes, times, memory, pages) and `scores: null`. The report holds numbers only: no hash of the input or of the output, no ids of the failed checks (their number), no title, language or path; paths and hashes stay in `state.json`.
 
-## Check that the Datalab key is in no file
+## Check that no key is in a file
 
 ```bash
 scripts/run-capped.sh bench-secret-scan 2G -- $P bench secret-scan --env-file .env ~/bench-runs .cache/run-capped
 ```
 
-`secret-scan` reads `DATALAB_API_KEY` only from the file given with `--env-file` (a regular file of yours with mode 0600; never from the environment) and searches it, as bytes, in every regular file under the paths, without following symbolic links. The search is literal: a key encoded (base64, URL or JSON escapes), compressed or split across files is not found. It prints the files where it occurs, the paths it could not read (`not read: PATH`) and a last line with the files read, the errors and the occurrences, never the key:
+`secret-scan` reads the keys only from the file given with `--env-file` (a regular file of yours with mode 0600; never from the environment): every variable whose name ends with `_KEY`, `_SECRET`, `_TOKEN`, `_TOKEN_ID` or `_BEARER`, other than an `MDF_` setting, with a value of at least 8 bytes, so `DATALAB_API_KEY`, `RUNPOD_API_KEY` and the Modal proxy token. It searches each one, as bytes, in every regular file under the paths, without following symbolic links. The search is literal: a key encoded (base64, URL or JSON escapes), compressed or split across files is not found. It prints the files where it occurs, the paths it could not read (`not read: PATH`) and a last line with the files read, the errors and the occurrences, never the key:
 
 ```text
-secret-scan: 18607 files read, 0 errors, 0 occurrences
+secret-scan: N files read, 0 errors, 0 occurrences
 ```
 
 An error is a path that could not be scanned: a path given that is missing, is a symbolic link or is not a regular file or a directory, a directory that cannot be listed, a file that cannot be read. Symbolic links and special files inside a directory are skipped. The command exits with 0 only when everything was read and the key occurs nowhere; with 1 and `secret_found` when it occurs, and with 1 and `secret_scan_incomplete` when something could not be read.
@@ -300,7 +404,7 @@ After `prepare --toolchain` and `fetch`, the bench needs no network: `list`, `fe
 
 The cache defaults to `$XDG_CACHE_HOME/markdown-for-llms/bench` (`~/.cache/markdown-for-llms/bench`); change it with `--cache DIR` or `MDF_BENCH_CACHE_DIR`. It holds `sources/` (files by SHA-256), `quarantine/`, `wikisource/`, `derived/`, `checks/`, `tool-work/` (the private working directory of each tool call, removed after it), `toolchain/` (the build logs of `prepare --toolchain`) and `work/`. It contains document text: keep it local. The runs folder defaults to `$XDG_DATA_HOME/markdown-for-llms/bench/runs` (`~/.local/share/markdown-for-llms/bench/runs`); `run` creates one directory per run there, with document text too.
 
-Put `MDF_BENCH_*` settings in a file and pass it with `--env-file FILE`; do not export them, because [the full check](uv-environment.md#run-the-full-check) stops when any `MDF_` variable is in the environment. A variable in the environment wins over the file, and `--cache` wins over both. `run` and `secret-scan` read no settings file: their `--env-file` is the file of the Datalab key alone, so set their `MDF_BENCH_*` values on their command line only (`MDF_BENCH_CAP_DATALAB_USD=4.00 .venv-dev/bin/python ... bench run ...`) or use the options. An unknown `MDF_BENCH_` name stops the command with `unknown_setting`, a bad value with `invalid_setting`.
+Put `MDF_BENCH_*` settings in a file and pass it with `--env-file FILE`; do not export them, because [the full check](uv-environment.md#run-the-full-check) stops when any `MDF_` variable is in the environment. A variable in the environment wins over the file, and `--cache` wins over both. `run` and `secret-scan` read no settings file: their `--env-file` is a file of keys only (Datalab, RunPod, the Modal proxy token), so set their `MDF_BENCH_*` values on their command line only (`MDF_BENCH_CAP_DATALAB_USD=4.00 .venv-dev/bin/python ... bench run ...`) or use the options. An unknown `MDF_BENCH_` name stops the command with `unknown_setting`, a bad value with `invalid_setting`.
 
 ```bash
 printf 'MDF_BENCH_CACHE_DIR=%s\nMDF_BENCH_TOOL_MEMORY_MB=4096\n' "$HOME/bench-cache" > ~/bench.env
@@ -309,14 +413,14 @@ printf 'MDF_BENCH_CACHE_DIR=%s\nMDF_BENCH_TOOL_MEMORY_MB=4096\n' "$HOME/bench-ca
 
 | Variable | Default | Used today |
 | --- | --- | --- |
-| `MDF_BENCH_CACHE_DIR` | `~/.cache/markdown-for-llms/bench` | yes, by every command that reads the cache |
+| `MDF_BENCH_CACHE_DIR` | `~/.cache/markdown-for-llms/bench` | yes, by every command that reads the cache; `run` and `secret-scan` read it from their command line only (they read no settings file), or take `--cache` |
 | `MDF_BENCH_TOOL_MEMORY_MB` | `8192` | yes: memory cap in MiB of each tool container, 64 to 1048576 |
 | `MDF_BENCH_RUNS_DIR` | `~/.local/share/markdown-for-llms/bench/runs` | yes, by `run` (or `--runs-dir`) |
-| `MDF_BENCH_RELAY_PORT` | `23461` | no, reserved; must lie in 23460-23479 |
-| `MDF_BENCH_INFERENCE_PORT` | `23463` | no, reserved; must lie in 23460-23479 and differ from the relay port |
+| `MDF_BENCH_RELAY_PORT` | `23461` | no, reserved; must lie in 23460-23479 (the relay of the marker-server route listens on a Unix socket) |
+| `MDF_BENCH_INFERENCE_PORT` | `23463` | no, reserved for a server of yours on the loopback (`kind` `local`); must lie in 23460-23479 and differ from the relay port |
 | `MDF_BENCH_CAP_DATALAB_USD` | unset | yes, by `run`: the default of `--spend-cap-usd`, 0 to 1000 |
 
-Ports 23461 and 23463 are only reserved for the measured conversion: no command opens them today. `.env.example` shows the two ports and the memory cap as comments.
+Ports 23461 and 23463 are only reserved: no command opens them today. `.env.example` shows the two ports and the memory cap as comments.
 
 ## The image and the full check
 

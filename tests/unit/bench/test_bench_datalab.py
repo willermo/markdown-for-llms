@@ -477,6 +477,16 @@ class InterruptionTests(DatalabCase):
         self.assertEqual(len(self.posts()), 1)
         self.assertEqual(sorted(a["status"] for a in self.state()["attempts"].values()), ["abandoned", "done"])
 
+    def test_a_moved_run_is_resumed_only_where_its_ledger_is(self):            # MFL044 (d)
+        self.assertEqual(self.start(), 0)
+        moved = self.s["runs"] / "moved"
+        os.rename(self.out, moved)
+        self.out = moved
+        with self.assertRaises(BenchError) as ctx:
+            self.resume_datalab()
+        self.assertEqual(ctx.exception.code, Code.RUN_PATH_MISSING)
+        self.assertEqual(len(self.posts()), 1)
+
     def test_resume_options(self):
         err = io.StringIO()
         with contextlib.redirect_stderr(err):
@@ -504,6 +514,14 @@ class LedgerRuleTests(DatalabCase):
         self.assertEqual(len(self.posts()), 2)
         self.assertEqual(spend.reconcile(self.entries())[1], Decimal("1.05"))      # one estimate in all
         self.assertEqual(sorted(a["g"] for a in self.state()["attempts"].values()), [1, 2])
+
+    def test_over_the_limits_of_datalab_nothing_is_reserved(self):           # MFL033
+        with mock.patch.object(datalab, "PAGE_LIMIT", 0, create=True):
+            self.assertEqual(self.start(), 0)
+        self.assertEqual((self.posts(), self.entries()), ([], []))
+        a = next(iter(self.state()["attempts"].values()))
+        self.assertEqual((a["status"], a["result"]["code"]), ("done", "datalab_limit"))
+        self.assertFalse(self.engine_result(a["id"])["transit"]["left_machine"])
 
     def test_refused_after_the_acceptance_keeps_the_estimate_and_is_not_retried(self):
         self.assertEqual(self.start(transport=FakeDatalab(self.base, post=(200, {"success": False,

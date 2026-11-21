@@ -1,5 +1,8 @@
 """The Datalab spend ledger of the bench, `<runs-dir>/spend.jsonl`: its writes and its reconciliation.
 
+The rows of the rented inference servers of MFL033 share the file and carry `provider`; this
+module reads only the rows without it (`datalab_rows`), `serverspend.py` the others.
+
 One line per event, JSON: `{"kind": "reserve", "run_id", "attempt_id", "estimate_cents", ...}`
 when a document is about to be sent (the event `datalab-send` of the engine, before the POST),
 then at most one `{"kind": "complete", "run_id", "attempt_id", "billed_cents", ...}`. Each attempt
@@ -42,10 +45,17 @@ def _cents(value, what):
     return cents
 
 
+def datalab_rows(entries):
+    """The Datalab rows: those without `provider` (the rows of the rented inference servers carry it
+    and are read by `serverspend.py`; MFL033)."""
+    return [e for e in entries if not (isinstance(e, dict) and "provider" in e)]
+
+
 def reconcile(entries):
-    """{(run_id, attempt_id): cents} and the total, from the parsed lines in their order."""
+    """{(run_id, attempt_id): cents} and the total of the Datalab rows, from the parsed lines in
+    their order."""
     reserved, completed = {}, {}
-    for e in entries:
+    for e in datalab_rows(entries):
         if not isinstance(e, dict) or not isinstance(e.get("run_id"), str) or not isinstance(e.get("attempt_id"), str):
             raise BenchError(Code.SPEND_LEDGER_INCONSISTENT, "line without run and attempt")
         key = (e["run_id"], e["attempt_id"])
@@ -90,6 +100,22 @@ def read(path):
     return parse(path.read_bytes())
 
 
+def read_only(path):
+    """The parsed lines of a ledger file opened read-only, without its lock and without following a
+    link (none when it does not exist): `mdf bench report --report-dir` writes nothing (MFL044 (d))."""
+    try:
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK)
+    except FileNotFoundError:
+        return []
+    except OSError:
+        raise BenchError(Code.SPEND_LEDGER_INCONSISTENT, "ledger cannot be opened") from None
+    with os.fdopen(fd, "rb") as fh:
+        info = os.fstat(fh.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_size > MAX_LEDGER_BYTES:
+            raise BenchError(Code.SPEND_LEDGER_INCONSISTENT, "the ledger is not a regular file within the limit")
+        return parse(fh.read(MAX_LEDGER_BYTES + 1))
+
+
 def totals(entries, run_id):
     """(total of the ledger, total of the run `run_id`) in cents."""
     per_attempt, total = reconcile(entries)
@@ -101,6 +127,7 @@ def billed_over_estimate(entries, run_id):
     reservation (`datalab_billed_over_estimate`), in the order of the ledger; a ledger that does not
     reconcile is `spend_ledger_inconsistent`."""
     reconcile(entries)
+    entries = datalab_rows(entries)
     estimates = {e["attempt_id"]: _cents(e["estimate_cents"], "estimate_cents") for e in entries
                  if e["kind"] == "reserve" and e["run_id"] == run_id}
     return [e["attempt_id"] for e in entries if e["kind"] == "complete" and e["run_id"] == run_id
@@ -108,9 +135,10 @@ def billed_over_estimate(entries, run_id):
             and _cents(e["billed_cents"], "billed_cents") > estimates[e["attempt_id"]]]
 
 
-def has(entries, kind, run_id, attempt_id):
+def has(entries, kind, run_id, attempt_id, provider=None):
+    """A row of `kind` for the attempt; `provider` None: a Datalab row."""
     return any(isinstance(e, dict) and e.get("kind") == kind and e.get("run_id") == run_id
-               and e.get("attempt_id") == attempt_id for e in entries)
+               and e.get("attempt_id") == attempt_id and e.get("provider") == provider for e in entries)
 
 
 def completion_billed(result):
@@ -167,10 +195,16 @@ class Locked:
 
 
 class Ledger:
-    """`<runs-dir>/spend.jsonl`."""
+    """`<runs-dir>/spend.jsonl`, or the file given with `Ledger.file` (`mdf convert --spend-ledger`)."""
 
     def __init__(self, runs_dir):
         self.path = Path(runs_dir) / LEDGER
+
+    @classmethod
+    def file(cls, path):
+        ledger = cls.__new__(cls)
+        ledger.path = Path(path)
+        return ledger
 
     @contextmanager
     def locked(self, create=True):

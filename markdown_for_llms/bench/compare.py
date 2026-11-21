@@ -9,6 +9,12 @@ versions of the bench) and the documents whose effective input differs (D23 and 
 LibreOffice derives differently at every run). A regression is a complete attempt that fails in
 B, or a ratio that falls by more than the tolerance; `--fail-on-regression` exits with 1 then.
 Numbers and closed codes only.
+
+`--align document --select-a ROUTE[:MODE] --select-b ROUTE[:MODE]` (MFL033, P10 of plan r2) pairs
+two different routes, or modes, by document and repetition: one attempt of each side per pair, and
+only when the input and the check set of the document have the same SHA-256 in both reports
+(otherwise `comparable` is false with its reason). It lists by ID the checks passed in A and
+failed in B, and the other way round (R10: `datalab:balanced` against `marker-server:balanced`).
 """
 import json
 from pathlib import Path
@@ -106,3 +112,73 @@ def print_result(result, out=print):
             f"{delta} newly failed {len(p['newly_failed'])} {same}" + (" REGRESSION" if p["regression"] else ""))
     out(f"{len(result['pairs'])} pairs, {result['regressions']} regressions (tolerance {result['tolerance']}), "
         f"{len(result['only_in_a'])} only in A, {len(result['only_in_b'])} only in B")
+
+
+def parse_select(text):
+    """ROUTE[:MODE] -> (route, mode or None)."""
+    from ..engine.routes import CONVERTERS
+    route, _, mode = (text or "").partition(":")
+    if route not in CONVERTERS:
+        raise BenchError(Code.INVALID_SETTING, "--select-a and --select-b: ROUTE[:MODE] of the engine")
+    return route, mode or None
+
+
+def _selected(report, route, mode):
+    """{(document, repeat): [(document entry, attempt)]} of the attempts of `route` (and `mode`)."""
+    out = {}
+    for doc in report["documents"]:
+        for a in doc.get("attempts", []):
+            v = a.get("variant") or {}
+            if a.get("route") != route:
+                continue
+            if mode is not None and mode not in (v.get("datalab_mode"), v.get("server_mode")):
+                continue
+            out.setdefault((doc["id"], a["repeat"]), []).append((doc, a))
+    return out
+
+
+def _failed(attempt):
+    return {f["id"] for f in attempt.get("failed") or [] if isinstance(f, dict) and isinstance(f.get("id"), str)}
+
+
+def compare_documents(a, b, select_a, select_b):
+    """The pairs of `--align document` (see the module docstring)."""
+    sa, sb = _selected(a, *parse_select(select_a)), _selected(b, *parse_select(select_b))
+    pairs = []
+    for key in sorted(set(sa) & set(sb)):
+        reason = None
+        if len(sa[key]) != 1 or len(sb[key]) != 1:
+            reason = "ambiguous selection"
+        else:
+            (da, xa), (db, xb) = sa[key][0], sb[key][0]
+            checks_a, checks_b = (da.get("checks") or {}).get("sha256"), (db.get("checks") or {}).get("sha256")
+            if not da.get("input_sha256") or da.get("input_sha256") != db.get("input_sha256"):
+                reason = "input differs"
+            elif not checks_a or checks_a != checks_b:
+                reason = "checks differ"
+            elif xa.get("status") != "complete" or xb.get("status") != "complete":
+                reason = "not complete"
+        pair = {"document": key[0], "repeat": key[1], "comparable": reason is None, "reason": reason}
+        if len(sa[key]) == 1 and len(sb[key]) == 1:
+            xa, xb = sa[key][0][1], sb[key][0][1]
+            pair.update(status=[xa.get("status"), xb.get("status")], error=[xa.get("error"), xb.get("error")],
+                        delta={cls: None if _ratio(xa, cls) is None or _ratio(xb, cls) is None
+                               else round(_ratio(xb, cls) - _ratio(xa, cls), 6) for cls in CLASSES})
+            if reason is None:
+                fa, fb = _failed(xa), _failed(xb)
+                pair.update(passed_in_a_failed_in_b=sorted(fb - fa), passed_in_b_failed_in_a=sorted(fa - fb))
+        pairs.append(pair)
+    return {"align": "document", "select": [select_a, select_b], "identity_differences": identity_differences(a, b),
+            "pairs": pairs, "only_in_a": [list(k) for k in sorted(set(sa) - set(sb))],
+            "only_in_b": [list(k) for k in sorted(set(sb) - set(sa))]}
+
+
+def print_documents(result, out=print):
+    for p in result["pairs"]:
+        if not p["comparable"]:
+            out(f"{p['document']} k{p['repeat']} not comparable: {p['reason']}")
+            continue
+        out(f"{p['document']} k{p['repeat']} {p['status'][0]}->{p['status'][1]}: passed in A, failed in B "
+            f"{', '.join(p['passed_in_a_failed_in_b']) or '-'}; passed in B, failed in A "
+            f"{', '.join(p['passed_in_b_failed_in_a']) or '-'}")
+    out(f"{len(result['pairs'])} documents, {sum(1 for p in result['pairs'] if p['comparable'])} comparable")

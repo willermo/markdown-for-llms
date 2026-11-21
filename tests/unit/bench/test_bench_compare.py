@@ -280,7 +280,8 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual(ctx.exception.code, Code.INTERRUPTED)
         target = run_dir / "inputs" / "P01.txt"
         self.assertFalse(target.exists())                                    # never published
-        partial = [p for p in (run_dir / "inputs").iterdir() if p.name != "P01.txt"]
+        partial = [p for p in (run_dir / "inputs").iterdir()                  # the run's manifest copy apart (MFL044 (d))
+                   if p.name not in ("P01.txt", "manifest.json")]
         self.assertEqual([(p.name.startswith(".partial-P01.txt"), p.stat().st_size) for p in partial],
                          [(True, personal.CHUNK)])
         self.assertNotIn("P01", json.loads((run_dir / "state.json").read_text())["documents"])
@@ -311,7 +312,8 @@ class PersonalTests(unittest.TestCase):
         state = json.loads((self.s["runs"] / "p5" / "state.json").read_text())
         import hashlib
         self.assertEqual(state["documents"]["P02"]["twin_sha256"], hashlib.sha256(self.twin.read_bytes()).hexdigest())
-        self.assertEqual(sorted(p.name for p in (self.s["runs"] / "p5" / "inputs").iterdir()), ["P02-twin.docx", "P02.txt"])
+        self.assertEqual(sorted(p.name for p in (self.s["runs"] / "p5" / "inputs").iterdir()),
+                         ["P02-twin.docx", "P02.txt", "manifest.json"])                  # with the run's manifest copy
 
     def test_a_symbolic_link_or_a_level_is_refused(self):
         link = self.base / "link.txt"

@@ -38,7 +38,10 @@ is never converted again. A generation that was started or interrupted is adopte
 `engine.json` (read up to 1 MiB) has the same attempt, source SHA-256 and requested options as the
 state, components that agree with the identity, an inventory whose files are regular files of
 `out` with the declared bytes and SHA-256, and status `complete`, or `failed` with a code other
-than `interrupted`; otherwise it is abandoned, kept, and the key is converted in a new generation.
+than `interrupted`, `datalab_cap` and the stops before the wake of a server (`SERVER_STOPS`, MFL033
+G-B2); otherwise it is abandoned, kept, and the key is converted in a new generation. On
+`marker-server` the budget and the session of an attempt are in its request before the state saves
+it, so the state holds the options its `engine.json` records.
 
 Datalab (plan r2 §12, delta r3 Δ5-Δ7). Only with `--route datalab`, the modes, the confirmed
 transit, the two caps and the key file; never on a personal set (`datalab_refused_personal`,
@@ -67,7 +70,21 @@ closes as `datalab_unresolved` prints its line.
 
 Report again (`rebuild_report`, `mdf bench report RUN_DIR`). The report of a finished run is
 written again from its saved outputs, with the scoring of the installed package, after its
-identity, its check sets and its results are verified; nothing is converted or sent.
+identity, its check sets and its results are verified; nothing is converted or sent. With
+`--report-dir DIR` it is read-only on the run (MFL044 (d)): no lock and no write in the run
+directory, the report and the outcome of each check written to DIR (new or empty, outside the
+run), the state read again at the end (`report_run_changed` when it moved).
+
+Paths (MFL044 (d)). The state of schema 2 records the paths of a run so that the run can move: a
+manifest and exclusions given by hand are copied into `RUN/inputs/` (their SHA-256 in the state),
+the runs directory is relative to the run, and the cache and the model root are hints, replaced by
+`--cache` and `--model-root` on a resumption (`--cache`, `--manifest` and `--exclusions` on a
+report) and verified by what the state recorded (the SHA-256 of inputs, check sets, manifest and
+exclusions; the identity of the weights). A path that is missing without its option is
+`run_path_missing`. A state of schema 1 stays readable: its absolute paths are the hints, and its
+runs directory, when gone, is the parent of the run. A run with Datalab is resumed only where it
+was created, next to its ledger (`run_path_missing` otherwise); its report reads the ledger of its
+runs directory.
 """
 from datetime import datetime, timezone
 import errno
@@ -88,8 +105,10 @@ from .adapters import engine as engine_adapter
 from .cache import Cache, canonical, sha256_file, write_atomic
 from .codes import BenchError, Code
 
-STATE_SCHEMA = "mdf-bench-run/1"
+STATE_SCHEMA = "mdf-bench-run/2"
+STATE_SCHEMAS = ("mdf-bench-run/1", STATE_SCHEMA)
 STATE, LOCK = "state.json", "run.lock"
+INPUTS = "inputs"                   # copies of a manifest and exclusions given by hand (schema 2)
 STATE_KEYS = ("run_id", "selection", "manifest", "exclusions", "cache", "runs_dir", "model_root", "caps", "identity",
               "environment", "documents", "keys", "attempts", "generations", "executions")
 MAX_STATE_BYTES = 64 * 1048576
@@ -97,6 +116,9 @@ MAX_RESULT_BYTES = 1048576          # engine.json read for an adoption
 MAX_REPEAT = 10
 AUTO = object()                     # the venv of this interpreter
 DATALAB = "datalab"
+MARKER_SERVER = "marker-server"
+SERVER_STOPS = ("server_cap", "session_orphaned", "server_not_armed", "server_billed_over_bound")
+WEIGHTED_ROUTES = frozenset({"marker", "marker-server"})   # routes whose child reads the weights of the model root
 DATALAB_SPACING = 5.0               # seconds between two Datalab attempts (plan r2 §12)
 # Datalab is never asked for these documents (Davide, 2026-11-16 10:36: D20 sends the PDF of D14)
 DATALAB_EXCLUDED = {"D20": "same_pdf_as_d14"}
@@ -106,7 +128,7 @@ DATALAB_WARNING = ("Datalab: the selected documents of the public set leave this
                    "remove the copy kept for training. Personal documents are never sent.")
 TERMINAL = ("done", "unresolved")   # statuses of a generation whose key is never converted again
 # a stop that a resumption keeps until the maintainer decides (the run is not resumed past it)
-STICKY_STOPS = ("datalab_billed_over_estimate",)
+STICKY_STOPS = ("datalab_billed_over_estimate", "server_billed_over_bound")
 
 
 class Stop(Exception):
@@ -124,9 +146,11 @@ def now():
 # --- selection and identities of the attempts -------------------------------------------------
 
 def local_routes(fmt):
-    from ..engine.routes import DATALAB, MATRIX
+    """The routes of a default selection: the matrix without the routes asked only by name
+    (`routes.EXPLICIT`: Datalab and the inference server)."""
+    from ..engine.routes import EXPLICIT, MATRIX
     default, alternatives = MATRIX[fmt]
-    return [r for r in (default, *alternatives) if r != DATALAB]
+    return [r for r in (default, *alternatives) if r not in EXPLICIT]
 
 
 def parse_routes(text):
@@ -151,6 +175,17 @@ def parse_modes(text):
     return [m for m in DATALAB_MODES if m in wanted]
 
 
+def parse_server_modes(text):
+    """The modes asked with `--server-mode`, in the order of `routes.SERVER_MODES`."""
+    from ..engine.routes import SERVER_MODES
+    wanted = [x.strip() for x in (text or "").split(",") if x.strip()]
+    if not wanted:
+        raise BenchError(Code.INVALID_SETTING, "--server-mode with --route marker-server")
+    if any(m not in SERVER_MODES for m in wanted):
+        raise BenchError(Code.ROUTE_OPTION_UNSUPPORTED, "server mode")
+    return [m for m in SERVER_MODES if m in wanted]
+
+
 def parse_usd(value, what):
     try:
         amount = Decimal(str(value))
@@ -161,10 +196,12 @@ def parse_usd(value, what):
     return amount
 
 
-def variant(route, ocr, mode=None):
+def variant(route, ocr, mode=None, server_mode=None):
     from ..engine.routes import MARKER
     if route == MARKER:
         return {"ocr": ocr}
+    if route == MARKER_SERVER:
+        return {"ocr": ocr, "server_mode": server_mode}
     if route == DATALAB:
         return {"datalab_mode": mode}
     return {}
@@ -188,10 +225,10 @@ def datalab_estimate(doc, mode):
     return estimate_cents(doc["pages"], mode)
 
 
-def plan_keys(docs, routes, ocr, repeat, modes=None):
-    """The keys of a selection: the local ones in order (repetition, document, route), then the
-    Datalab ones, the cheapest first (repetition, estimate, document, mode); refuses colliding
-    variants."""
+def plan_keys(docs, routes, ocr, repeat, modes=None, server_modes=None):
+    """The keys of a selection: the local ones in order (repetition, document, route; with
+    `marker-server` asked, its modes after the local routes of each document), then the Datalab
+    ones, the cheapest first (repetition, estimate, document, mode); refuses colliding variants."""
     from ..engine.routes import DATALAB_MODES, MATRIX
     keys, remote, seen = [], [], {}
 
@@ -206,6 +243,9 @@ def plan_keys(docs, routes, ocr, repeat, modes=None):
                 if routes is not None and route not in routes:
                     continue
                 add(keys, doc, route, variant(route, ocr), k)
+            if routes is not None and MARKER_SERVER in routes and MARKER_SERVER in MATRIX[doc["format"]][1]:
+                for mode in server_modes or ():
+                    add(keys, doc, MARKER_SERVER, variant(MARKER_SERVER, ocr, server_mode=mode), k)
             if routes is not None and DATALAB in routes and DATALAB in MATRIX[doc["format"]][1] \
                     and doc["id"] not in DATALAB_EXCLUDED:
                 for mode in modes:
@@ -215,6 +255,12 @@ def plan_keys(docs, routes, ocr, repeat, modes=None):
     if not keys:
         raise BenchError(Code.INVALID_SETTING, "no route of the selection")
     return keys
+
+
+def selection_keys(docs, sel):
+    """The keys of the saved selection `sel` of a run, for `resume` and `rebuild_report` alike (MFL033
+    G-B1: the report of a run with `marker-server` needs its modes, like the resumption)."""
+    return plan_keys(docs, sel["routes"], sel["ocr"], sel["repeat"], sel.get("datalab_modes"), sel.get("server_modes"))
 
 
 def caps_of(doc):
@@ -234,6 +280,9 @@ def expected_requested(request):
     requested = {k: request.get(k) for k in ("route", "ocr", "lang")}
     if request.get("datalab") is not None:
         requested["datalab"] = {k: request["datalab"].get(k) for k in ("mode", "transit_confirmed", "cap_usd")}
+    if isinstance(request.get("server"), dict):
+        requested["server"] = {k: request["server"].get(k) for k in ("name", "mode", "transit_confirmed", "budget_cents")}
+        requested["server"]["arm_id"] = (request["server"].get("session") or {}).get("arm_id")
     return requested
 
 
@@ -383,10 +432,64 @@ def load_state(run_dir):
         state = json.loads(data)
     except ValueError:
         raise BenchError(Code.RESUME_STATE_INVALID, "state JSON") from None
-    if not isinstance(state, dict) or state.get("schema") != STATE_SCHEMA or not set(STATE_KEYS) <= set(state) \
+    if not isinstance(state, dict) or state.get("schema") not in STATE_SCHEMAS or not set(STATE_KEYS) <= set(state) \
             or not isinstance(state["identity"], dict) or not isinstance(state["attempts"], dict):
         raise BenchError(Code.RESUME_STATE_INVALID, "state schema")
     return state
+
+
+def run_paths(run_dir, state, cache=None, model_root=None, manifest=None, exclusions=None):
+    """The paths of a run where it is now (MFL044 (d), see the module docstring): {manifest,
+    exclusions (None for the packaged files), cache, model_root, runs_dir, in_place}. An option
+    replaces the recorded hint; a recorded or given path that is missing is `run_path_missing`
+    (the cache and the model root are checked when used, `need`)."""
+    run_dir = Path(run_dir).absolute()
+    v2 = state.get("schema") == STATE_SCHEMA
+
+    def recorded(entry):
+        path = entry.get("path") if isinstance(entry, dict) else None
+        if path is None:
+            return None
+        return run_dir / path if v2 else Path(path)
+
+    def file(given, entry, what):
+        path = Path(given).absolute() if given is not None else recorded(entry)
+        if path is not None and not path.is_file():
+            raise BenchError(Code.RUN_PATH_MISSING, what)
+        return path
+
+    if v2:
+        runs_dir = Path(os.path.normpath(run_dir / state["runs_dir"]))
+        in_place = (state.get("origin") or {}).get("run_dir") == str(run_dir)
+    else:
+        recorded_runs = Path(state["runs_dir"])
+        runs_dir = recorded_runs if recorded_runs.is_dir() else run_dir.parent
+        in_place = recorded_runs.is_dir() and run_dir.is_relative_to(recorded_runs)
+    return {"manifest": file(manifest, state["manifest"], "manifest"),
+            "exclusions": file(exclusions, state["exclusions"], "exclusions"),
+            "cache": Path(cache if cache is not None else state["cache"]).absolute(),
+            "model_root": Path(model_root if model_root is not None else state["model_root"]).absolute(),
+            "runs_dir": runs_dir, "in_place": in_place}
+
+
+def need(paths, *names):
+    """The directories `names` of `paths` must exist (`run_path_missing`)."""
+    for name in names:
+        if not Path(paths[name]).is_dir():
+            raise BenchError(Code.RUN_PATH_MISSING, name)
+
+
+def copy_input(run_dir, given, name, sha256):
+    """A manifest or exclusions file given by hand, copied into RUN/inputs/ with the SHA-256 that
+    was read (otherwise the file changed meanwhile: `manifest_invalid`); its path in the state."""
+    if given is None:
+        return None
+    data = Path(given).read_bytes()
+    if hashlib.sha256(data).hexdigest() != sha256:
+        raise BenchError(Code.MANIFEST_INVALID, name + " changed while the run started")
+    (run_dir / INPUTS).mkdir(mode=0o700, exist_ok=True)
+    write_atomic(run_dir / INPUTS / name, data)
+    return INPUTS + "/" + name
 
 
 def _manifest(path):
@@ -493,8 +596,9 @@ def adoptable(attempt, out_dir, identity):
         return components_ok(r.get("components"), identity) and inventory_ok(out_dir, r.get("inventory"))
     if status == "failed":
         code = (r.get("error") or {}).get("code") if isinstance(r.get("error"), dict) else None
-        # an interruption is no outcome; a Datalab cap sent nothing and is converted again
-        if not isinstance(code, str) or code in (Code.INTERRUPTED.value, Code.DATALAB_CAP.value):
+        # an interruption is no outcome; a Datalab cap sent nothing, and a stop of the session or of a cap
+        # came before the server woke (MFL033 G-B2): each is converted again
+        if not isinstance(code, str) or code in (Code.INTERRUPTED.value, Code.DATALAB_CAP.value, *SERVER_STOPS):
             return False
         return r.get("components") is None or components_ok(r.get("components"), identity)
     return False
@@ -641,15 +745,19 @@ class DatalabSend:
 
 
 class Run:
-    def __init__(self, run_dir, state, manifest, exclusions, docs, keys, key=None):
+    def __init__(self, run_dir, state, manifest, exclusions, docs, keys, key=None, paths=None, readonly=False,
+                 server=None):
         self.dir, self.state, self.manifest, self.exclusions = Path(run_dir), state, manifest, exclusions
         self.docs, self.keys = docs, keys
-        self.cache = Cache(state["cache"])
+        self.paths = paths if paths is not None else run_paths(run_dir, state)
+        self.readonly = readonly            # `mdf bench report --report-dir`: the ledger read without its lock
+        self.cache = Cache(self.paths["cache"])
         self.files, self.checksets = {}, {}
         self.current = None
         self.key = key                      # the Datalab key (`datalab.Key`), never in the state
-        self.ledger = spend.Ledger(state["runs_dir"])
+        self.ledger = spend.Ledger(self.paths["runs_dir"])
         self.last_datalab = None            # time.monotonic() at the end of the last Datalab attempt
+        self.server = server                # (endpoint, keys) of the marker-server route, never in the state
 
     @property
     def attempts(self):
@@ -735,6 +843,8 @@ class Run:
     # --- the ledger ---------------------------------------------------------------------------
 
     def ledger_entries(self):
+        if self.readonly:
+            return spend.read_only(self.ledger.path)
         with self.ledger.locked(create=False) as ledger:
             return ledger.entries() if ledger is not None else []
 
@@ -784,7 +894,8 @@ class Run:
     def announce(a, what):
         """The line of an attempt that a resumption closes (R4.1): `adopted` with its status and code,
         or `unresolved datalab_unresolved`; closed codes only."""
-        label = a["route"] + (":" + a["variant"]["datalab_mode"] if a["route"] == DATALAB else "")
+        label = a["route"] + (":" + a["variant"]["datalab_mode"] if a["route"] == DATALAB else
+                              ":" + a["variant"]["server_mode"] if a["route"] == MARKER_SERVER else "")
         if what == "adopted":
             r = a.get("result") or {}
             detail = r.get("status") if r.get("status") in ("complete", "failed") else "unrecognized"
@@ -833,6 +944,8 @@ class Run:
                     entries = None
                 else:
                     a.update(status="done", result=result_record(out))
+                    if a["route"] == MARKER_SERVER:
+                        code = self.server_settle(a, out)
                 if a["status"] == "done":
                     a["adopted"] = True
                     gens["adopted"] += 1
@@ -913,8 +1026,18 @@ class Run:
                 request = {"route": DATALAB, "attempt": aid,
                            "datalab": {"mode": key["variant"]["datalab_mode"], "transit_confirmed": True,
                                        "cap_usd": self.datalab_cap(estimate)}}
+            elif key["route"] == MARKER_SERVER:
+                request = {"route": MARKER_SERVER, "attempt": aid, "ocr": key["variant"]["ocr"],
+                           "server": {"name": self.state["server"]["name"], "mode": key["variant"]["server_mode"],
+                                      "transit_confirmed": True}}
             else:
                 request = {"route": key["route"], "attempt": aid, **key["variant"]}
+            hook, extra = None, {}
+            if key["route"] == MARKER_SERVER:
+                # the budget and the session go into the request before the state saves it (MFL033 G-B2):
+                # the state holds what engine.json will record, so a death during the conversion adopts it
+                hook = self.server_hook(request, aid)
+                extra = {"server_endpoint": self.server[0], "server_keys": self.server[1]}
             self.attempts[aid] = {"id": aid, "document": doc_id, "route": key["route"], "variant": key["variant"],
                                   "v8": key["v8"], "k": key["k"], "g": g, "status": "started",
                                   "input_sha256": self.state["documents"][doc_id]["input_sha256"],
@@ -926,20 +1049,29 @@ class Run:
             self.save()
             out = self.dir / "attempts" / aid / "out"
             out.parent.mkdir(parents=True, mode=0o700)
-            observer = DatalabSend(self, self.attempts[aid], doc["pages"], estimate) if remote else None
+            observer = DatalabSend(self, self.attempts[aid], doc["pages"], estimate) if remote else hook
             self.current = aid
             try:
                 result = engine_adapter.convert(self.files[doc_id].input, out, request, self.state["caps"][doc_id],
                                                 self.dir / "work", observer=observer, name=input_name(doc),
-                                                model_root=self.state["model_root"],
-                                                datalab_key=self.key if remote else None)
+                                                model_root=str(self.paths["model_root"]),
+                                                datalab_key=self.key if remote else None, **extra)
             finally:
                 if remote:
                     self.last_datalab = time.monotonic()
             self.current = None
             code = (result.get("error") or {}).get("code") if isinstance(result.get("error"), dict) else None
             a, stop = self.attempts[aid], None
-            if not remote:
+            if key["route"] == MARKER_SERVER:
+                if observer is not None:
+                    observer.complete(read_result(out) or result)
+                if code in SERVER_STOPS:
+                    # the session or a cap stopped the attempt before the server woke: converted again later
+                    a.update(status="stopped", result=result_record(out))
+                    stop = Code(code)
+                else:
+                    a.update(status="done", result=result_record(out))
+            elif not remote:
                 a.update(status="done", result=result_record(out))
             elif observer.failure is not None or code == Code.DATALAB_CAP.value:
                 # a cap or the ledger stopped the send before the POST: nothing billed, converted again later
@@ -951,11 +1083,51 @@ class Run:
             a["ended_at"] = now()
             self.save()
             seconds = (result.get("timings") or {}).get("total_seconds")
-            route = key["route"] + (":" + key["variant"]["datalab_mode"] if remote else "")
+            route = key["route"] + (":" + key["variant"]["datalab_mode"] if remote else
+                                    ":" + key["variant"]["server_mode"] if key["route"] == MARKER_SERVER else "")
             print(f"{doc_id} {route} {key['v8']} k{key['k']} g{g} {result.get('status')}"
                   + (f" {code}" if code else "") + (f" {seconds} s" if seconds is not None else ""), flush=True)
             if stop is not None:
                 raise Stop(stop)
+
+    def server_settle(self, a, out):
+        """The completion of an adopted attempt on a rented server, when its reservation has none."""
+        from . import serverspend
+        if self.server is None or not self.server[0].costs:
+            return None
+        try:
+            with self.ledger.locked() as ledger:
+                serverspend.complete(ledger, self.server[0].provider, self.state["run_id"], a["id"], read_result(out))
+        except BenchError as exc:
+            return exc.code
+        except OSError:
+            return Code.SPEND_LEDGER_UNWRITABLE
+        return None
+
+    def server_hook(self, request, aid):
+        """For an endpoint with a provider: the session of the command (`MDF_SESSION_ARM`), the
+        budget of the attempt (what the cap of the run and the window leave) in the request, and the
+        reservation hook; None otherwise. A session that is not there stops the run."""
+        from ..engine import servers
+        from . import serverspend
+        ep = self.server[0]
+        if not ep.costs:
+            return None
+        info = self.state["server"]
+        try:
+            entries = self.ledger_entries()
+            session = serverspend.session(self.ledger.path, ep.provider, servers.canonical_url(ep.url), entries=entries,
+                                          rate=ep.rate_usd_per_s)
+            spent = serverspend.run_total(entries, ep.provider, self.state["run_id"])
+        except BenchError as exc:
+            raise Stop(exc.code) from None
+        except OSError:
+            raise Stop(Code.SPEND_LEDGER_UNWRITABLE) from None
+        left = max(Decimal(0), Decimal(info["max_cost_usd"]) * 100 - spent)
+        budget = min(left, Decimal(session["window_left_cents"]))
+        request["server"].update(budget_cents=str(budget),
+                                 session={"arm_id": session["arm_id"], "armed_until": session["armed_until"]})
+        return serverspend.Reservation(self.ledger, ep.provider, session["arm_id"], self.state["run_id"], aid, left)
 
     def interrupted(self):
         if self.current is not None:
@@ -996,6 +1168,50 @@ def datalab_options(m, routes, settings, modes=None, confirm_transit=False, max_
             "spend_cap_usd": str(parse_usd(cap, "--spend-cap-usd"))}
 
 
+def server_options(m, routes, modes=None, server=None, servers_file=None, confirm_transit=False, max_cost_usd=None,
+                   spend_cap_usd=None, key_file=None):
+    """The marker-server options of a new run (MFL033): None without `--route marker-server` (its
+    options are then refused). One endpoint per run and no Datalab beside it; a personal set never
+    goes outside the loopback (`server_refused_personal`, before the keys); a server outside the
+    loopback needs `--confirm-transit`; an endpoint with a provider `--max-cost-usd` and
+    `--spend-cap-usd`. Returns (options for the state, (endpoint, keys))."""
+    from ..engine import servers
+    if routes is None or MARKER_SERVER not in routes:
+        if modes is not None or server is not None or servers_file is not None:
+            raise BenchError(Code.INVALID_SETTING, "server options without --route marker-server")
+        return None, None
+    if DATALAB in routes:
+        raise BenchError(Code.INVALID_SETTING, "marker-server and datalab in one run")
+    modes = parse_server_modes(modes)
+    path = Path(servers_file).absolute() if servers_file is not None else servers.default_path()
+    ep = servers.load(path, server)
+    if m.personal and ep.leaves_machine():
+        raise BenchError(Code.SERVER_REFUSED_PERSONAL, "a personal set never leaves the loopback")
+    if ep.leaves_machine() and not confirm_transit:
+        raise BenchError(Code.TRANSIT_NOT_CONFIRMED, "the page images would leave the machine for " + ep.host())
+    caps = {}
+    if ep.costs:
+        if max_cost_usd is None or spend_cap_usd is None:
+            raise BenchError(Code.SERVER_LEDGER_REQUIRED, "--max-cost-usd and --spend-cap-usd with " + ep.provider)
+        caps = {"max_cost_usd": str(parse_usd(max_cost_usd, "--max-cost-usd")),
+                "spend_cap_usd": str(parse_usd(spend_cap_usd, "--spend-cap-usd"))}
+    elif max_cost_usd is not None or spend_cap_usd is not None:
+        raise BenchError(Code.INVALID_SETTING, "spending caps for an endpoint without a provider")
+    keys = servers.read_keys(ep, key_file, environ=None)
+    return ({"name": ep.name, "servers_file": str(path), "identity_sha256": ep.identity_sha256(),
+             "record": ep.record(), "modes": modes, **caps}, (ep, keys))
+
+
+def load_server(state, key_file):
+    """The endpoint of a run on resumption, from its file and name, with the same identity, and its keys."""
+    from ..engine import servers
+    info = state["server"]
+    ep = servers.load(info["servers_file"], info["name"])
+    if ep.identity_sha256() != info["identity_sha256"]:
+        raise BenchError(Code.RESUME_IDENTITY_CHANGED, "the endpoint " + info["name"])
+    return ep, servers.read_keys(ep, key_file, environ=None)
+
+
 def read_datalab_key(key_file):
     """The Datalab key, from the key file only (never the environment, never a setting; Δ5)."""
     from ..engine.datalab import read_key
@@ -1010,7 +1226,7 @@ def check_ledger(runs_dir):
 
 def start(settings, *, level=None, docs=None, routes=None, ocr=None, repeat=None, out=None, manifest=None,
           exclusions=None, datalab_modes=None, confirm_transit=False, max_cost_usd=None, spend_cap_usd=None,
-          key_file=None, retry_unaccepted=False, venv=AUTO):
+          key_file=None, retry_unaccepted=False, venv=AUTO, server_modes=None, server=None, servers_file=None):
     """A new run: validations and refusals first (manifest and selection, the personal set on Datalab,
     transit and caps, the ledger, the key), then the directory, its lock and the first state."""
     venv = venv_root() if venv is AUTO else venv
@@ -1023,14 +1239,19 @@ def start(settings, *, level=None, docs=None, routes=None, ocr=None, repeat=None
             raise BenchError(Code.INVALID_SETTING, "--level or --docs (--docs for a personal set)")
         selected = m.select(level=level, ids=ids)
         wanted = parse_routes(routes)
-        dl = datalab_options(m, wanted, settings, datalab_modes, confirm_transit, max_cost_usd, spend_cap_usd,
-                             key_file, retry_unaccepted)
+        srv, endpoint = server_options(m, wanted, server_modes, server, servers_file, confirm_transit, max_cost_usd,
+                                       spend_cap_usd, key_file)
+        if srv is None:
+            dl = datalab_options(m, wanted, settings, datalab_modes, confirm_transit, max_cost_usd, spend_cap_usd,
+                                 key_file, retry_unaccepted)
+        else:
+            dl = datalab_options(m, wanted, settings, datalab_modes, retry_unaccepted=retry_unaccepted)
         excl_data, excl_sha = _exclusions(exclusions)
         ocr = ocr or "auto"
         repeat = 1 if repeat is None else repeat
         if not 1 <= repeat <= MAX_REPEAT:
             raise BenchError(Code.INVALID_SETTING, "--repeat")
-        keys = plan_keys(selected, wanted, ocr, repeat, dl["modes"] if dl else None)
+        keys = plan_keys(selected, wanted, ocr, repeat, dl["modes"] if dl else None, srv["modes"] if srv else None)
         run_id = secrets.token_hex(8)
         runs_dir = Path(settings.runs_dir)
         run_dir = _check_out(out if out is not None else runs_dir / run_id, runs_dir)
@@ -1038,8 +1259,9 @@ def start(settings, *, level=None, docs=None, routes=None, ocr=None, repeat=None
         model_root = str(Path(Settings().model_root).absolute())
         identity = engine_adapter.identity(model_root)
         key = None
-        if dl is not None:
+        if dl is not None or (srv is not None and endpoint[0].costs):
             check_ledger(runs_dir)
+        if dl is not None:
             key = read_datalab_key(key_file)
         runs_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
         run_dir.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -1049,20 +1271,29 @@ def start(settings, *, level=None, docs=None, routes=None, ocr=None, repeat=None
             raise BenchError(Code.RUN_EXISTS, "the run directory exists") from None
         lock_fd = lock_new(run_dir)
         try:
+            run_dir = run_dir.absolute()
+            manifest_copy = copy_input(run_dir, manifest, "manifest.json", m.sha256)
+            exclusions_copy = copy_input(run_dir, exclusions, "exclusions.json", excl_sha)
+            cache_dir = Path(settings.cache_dir).absolute()
             state = {"schema": STATE_SCHEMA, "run_id": run_id, "created_at": now(), "status": "running",
                      "selection": {"level": level, "docs": [d["id"] for d in selected], "routes": wanted, "ocr": ocr,
                                    "repeat": repeat, "set": m.data["set"],
-                                   "datalab_modes": dl["modes"] if dl else None},
-                     "manifest": {"path": None if manifest is None else str(Path(manifest).absolute()), "sha256": m.sha256},
-                     "exclusions": {"path": None if exclusions is None else str(Path(exclusions).absolute()),
-                                    "sha256": excl_sha},
-                     "cache": str(settings.cache_dir), "runs_dir": str(runs_dir.absolute()),
+                                   "datalab_modes": dl["modes"] if dl else None,
+                                   "server_modes": srv["modes"] if srv else None},
+                     "manifest": {"path": manifest_copy, "sha256": m.sha256},
+                     "exclusions": {"path": exclusions_copy, "sha256": excl_sha},
+                     "cache": str(cache_dir), "runs_dir": os.path.relpath(runs_dir.absolute(), run_dir),
+                     "origin": {"run_dir": str(run_dir), "runs_dir": str(runs_dir.absolute())},
                      "model_root": model_root, "caps": {d["id"]: caps_of(d) for d in selected},
                      "datalab": None if dl is None else {k: dl[k] for k in ("max_cost_usd", "spend_cap_usd")},
+                     "server": srv,
                      "identity": identity, "environment": environment(identity), "documents": {}, "keys": {},
                      "attempts": {}, "generations": {"adopted": 0, "abandoned": 0}, "executions": []}
             save_state(run_dir, state)
-            return _execute(Run(run_dir, state, m, excl_data, selected, keys, key), resumed=False)
+            paths = {"manifest": manifest, "exclusions": exclusions, "cache": cache_dir, "model_root": Path(model_root),
+                     "runs_dir": runs_dir.absolute(), "in_place": True}
+            return _execute(Run(run_dir, state, m, excl_data, selected, keys, key, paths=paths, server=endpoint),
+                            resumed=False)
         finally:
             os.close(lock_fd)
     finally:
@@ -1070,9 +1301,11 @@ def start(settings, *, level=None, docs=None, routes=None, ocr=None, repeat=None
             os.close(venv_fd)
 
 
-def resume(run_dir, confirm_transit=False, key_file=None, retry_unaccepted=False, venv=AUTO):
+def resume(run_dir, confirm_transit=False, key_file=None, retry_unaccepted=False, venv=AUTO, cache=None,
+           model_root=None):
     """Resume a run: its lock before its state, every option from the state (Δ7). The transit and the
-    key are asked again (they are never kept) when a Datalab key remains to be converted."""
+    key are asked again (they are never kept) when a Datalab key remains to be converted. `cache`
+    and `model_root` replace the hints of the state (MFL044 (d)), verified by what it recorded."""
     venv = venv_root() if venv is AUTO else venv
     venv_fd = lock_venv(venv)
     try:
@@ -1082,26 +1315,47 @@ def resume(run_dir, confirm_transit=False, key_file=None, retry_unaccepted=False
         try:
             state = load_state(run_dir)
             sel = state["selection"]
-            m = _manifest(state["manifest"]["path"])
+            paths = run_paths(run_dir, state, cache=cache, model_root=model_root)
+            need(paths, "cache")
+            m = _manifest(paths["manifest"])
             remote = DATALAB in (sel["routes"] or [])
+            served = MARKER_SERVER in (sel["routes"] or [])
+            if served and not isinstance(state.get("server"), dict):
+                raise BenchError(Code.RESUME_STATE_INVALID, "the endpoint of the run")
+            rented = served and state["server"].get("max_cost_usd") is not None
+            if rented and not paths["in_place"]:
+                raise BenchError(Code.RUN_PATH_MISSING, "a run on a rented server is resumed where it was created, by its ledger")
+            if remote and not paths["in_place"]:
+                raise BenchError(Code.RUN_PATH_MISSING, "a run with Datalab is resumed where it was created, by its ledger")
             if remote and m.personal:
                 raise BenchError(Code.DATALAB_REFUSED_PERSONAL, "a personal set is never sent to Datalab")
-            if not remote and (confirm_transit or key_file is not None or retry_unaccepted):
+            if not remote and (retry_unaccepted or (not served and (confirm_transit or key_file is not None))):
                 raise BenchError(Code.INVALID_SETTING, "Datalab options for a run without Datalab")
             if remote and not (isinstance(state.get("datalab"), dict) and sel.get("datalab_modes")):
                 raise BenchError(Code.RESUME_STATE_INVALID, "Datalab caps or modes")
-            excl_data, excl_sha = _exclusions(state["exclusions"]["path"])
-            identity = engine_adapter.identity(state["model_root"])
-            changed = _identity_differences(state["identity"] or {}, identity)
+            excl_data, excl_sha = _exclusions(paths["exclusions"])
+            changed = []
             if m.sha256 != state["manifest"]["sha256"]:
                 changed.append("manifest")
             if excl_sha != state["exclusions"]["sha256"]:
                 changed.append("exclusions")
+            if not changed:
+                selected = m.select(ids=sel["docs"])
+                keys = selection_keys(selected, sel)
+                if any(k["route"] in WEIGHTED_ROUTES for k in keys):
+                    need(paths, "model_root")        # before the identity, which would only see the weights missing
+            identity = engine_adapter.identity(str(paths["model_root"]))
+            changed = _identity_differences(state["identity"] or {}, identity) + changed
             if changed:
                 raise BenchError(Code.RESUME_IDENTITY_CHANGED, ", ".join(changed))
-            selected = m.select(ids=sel["docs"])
-            keys = plan_keys(selected, sel["routes"], sel["ocr"], sel["repeat"], sel.get("datalab_modes"))
-            run = Run(run_dir, state, m, excl_data, selected, keys)
+            endpoint = None
+            if served:
+                endpoint = load_server(state, key_file)
+                if m.personal and endpoint[0].leaves_machine():
+                    raise BenchError(Code.SERVER_REFUSED_PERSONAL, "a personal set never leaves the loopback")
+                if endpoint[0].leaves_machine() and not confirm_transit:
+                    raise BenchError(Code.TRANSIT_NOT_CONFIRMED, "the page images would leave the machine")
+            run = Run(run_dir, state, m, excl_data, selected, keys, paths=paths, server=endpoint)
             stop = run.reconcile(identity)
             if stop is None and state.get("stop") in STICKY_STOPS:
                 stop = Code(state["stop"])           # the maintainer has not decided yet: nothing is sent
@@ -1114,7 +1368,7 @@ def resume(run_dir, confirm_transit=False, key_file=None, retry_unaccepted=False
             if run.pending_datalab():
                 if not confirm_transit:
                     raise BenchError(Code.TRANSIT_NOT_CONFIRMED, "the documents would leave the machine for Datalab")
-                check_ledger(state["runs_dir"])
+                check_ledger(paths["runs_dir"])
                 run.key = read_datalab_key(key_file)
             state["status"] = "running"
             state["stop"] = None
@@ -1171,7 +1425,7 @@ def _execute(run, resumed, stop=None):
     return code
 
 
-def rebuild_report(run_dir, venv=AUTO):
+def rebuild_report(run_dir, venv=AUTO, report_dir=None, cache=None, manifest=None, exclusions=None):
     """`mdf bench report RUN_DIR`: `report.json` and `report.md` of a finished run written again from
     its saved outputs, with the scoring of this package; nothing is converted or sent (no engine, no
     Datalab, no key) and neither the state nor the outputs are written. Under the lock of the run
@@ -1181,43 +1435,89 @@ def rebuild_report(run_dir, venv=AUTO):
     whose SHA-256 the state recorded, read and never generated (`report_checks_changed`); the result
     of each final generation is the `engine.json` the state recorded, of the same attempt, input and
     options, with components that agree with the identity of the run and, when complete, every file
-    of its inventory (`report_result_changed`), as an adoption checks it."""
+    of its inventory (`report_result_changed`), as an adoption checks it.
+
+    With `report_dir` (MFL044 (d)) the run is only read: no lock and no write in it; `report_dir`
+    is new or empty and outside the run, and receives `report.json`, `report.md` and the outcome
+    of each check (`attempts/<id>/results.json`); the state is read again before the report is
+    written and must have the same SHA-256 (`report_run_changed`, nothing written). `cache`,
+    `manifest` and `exclusions` replace the paths of the state, verified by its SHA-256."""
     from . import report as report_mod
     venv = venv_root() if venv is AUTO else venv
     venv_fd = lock_venv(venv)
     try:
         run_dir = Path(run_dir).absolute()
-        lock_fd = lock_existing(run_dir)
+        target = None
+        if report_dir is not None:
+            target = Path(report_dir).absolute()
+            if target.resolve().is_relative_to(run_dir.resolve()):
+                raise BenchError(Code.INVALID_SETTING, "--report-dir must be outside the run")
+            if target.is_symlink() or (target.exists() and (not target.is_dir() or any(target.iterdir()))):
+                raise BenchError(Code.INVALID_SETTING, "--report-dir must be a new or empty directory")
+        lock_fd = lock_existing(run_dir) if target is None else None
         try:
+            before = _state_sha256(run_dir) if target is not None else None
             state = load_state(run_dir)
             if state.get("status") not in ("complete", "stopped"):
                 raise BenchError(Code.REPORT_RUN_NOT_FINISHED, "the run did not end: resume it")
             sel = state["selection"]
+            paths = run_paths(run_dir, state, cache=cache, manifest=manifest, exclusions=exclusions)
             try:
-                m = _manifest(state["manifest"]["path"])
-                excl_data, excl_sha = _exclusions(state["exclusions"]["path"])
+                m = _manifest(paths["manifest"])
+                excl_data, excl_sha = _exclusions(paths["exclusions"])
             except BenchError:
                 raise BenchError(Code.REPORT_IDENTITY_CHANGED, "manifest or exclusions unreadable") from None
             if m.sha256 != state["manifest"]["sha256"] or excl_sha != state["exclusions"]["sha256"]:
                 raise BenchError(Code.REPORT_IDENTITY_CHANGED, "manifest or exclusions")
             selected = m.select(ids=sel["docs"])
-            keys = plan_keys(selected, sel["routes"], sel["ocr"], sel["repeat"], sel.get("datalab_modes"))
-            run = Run(run_dir, state, m, excl_data, selected, keys)
+            keys = selection_keys(selected, sel)
+            run = Run(run_dir, state, m, excl_data, selected, keys, paths=paths, readonly=target is not None)
+            if any(state["documents"].get(d["id"], {}).get("status") == "available" and d["twin"] is not None
+                   for d in selected) and not m.personal:
+                need(paths, "cache")
             run.load_checksets()
             verified = run.verify_results()
             last = state["executions"][-1] if state["executions"] else {}
             # an execution of an earlier version does not record it: complete with exit 1 means a changed package
             identity_changed = last.get("identity_changed", state["status"] == "complete" and last.get("exit") == 1)
             rebuilt = {"at": now(), "package": engine_adapter.package_identity()}
-            report_mod.write(run_dir, report_mod.build(run, identity_changed=identity_changed, rebuilt=rebuilt))
+            if target is None:
+                report_mod.write(run_dir, report_mod.build(run, identity_changed=identity_changed, rebuilt=rebuilt))
+            else:
+                created = not target.exists()
+                target.mkdir(parents=True, exist_ok=True, mode=0o700)
+                try:
+                    built = report_mod.build(run, identity_changed=identity_changed, rebuilt=rebuilt, out_dir=target)
+                    if _state_sha256(run_dir) != before:
+                        raise BenchError(Code.REPORT_RUN_CHANGED, "the state of the run changed during the report")
+                    report_mod.write(target, built)
+                except BaseException:
+                    import shutil
+                    shutil.rmtree(target / "attempts", ignore_errors=True)
+                    if created:
+                        try:
+                            target.rmdir()
+                        except OSError:
+                            pass
+                    raise
         finally:
-            os.close(lock_fd)
+            if lock_fd is not None:
+                os.close(lock_fd)
     finally:
         if venv_fd is not None:
             os.close(venv_fd)
-    print(f"report {state['run_id']}: {verified} results verified, report.json and report.md written again "
-          "(nothing converted)", flush=True)
+    where = "report.json and report.md written again" if target is None else "report written to the report directory"
+    print(f"report {state['run_id']}: {verified} results verified, {where} (nothing converted)", flush=True)
     return 0
+
+
+def _state_sha256(run_dir):
+    try:
+        fd = os.open(Path(run_dir) / STATE, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    except OSError:
+        raise BenchError(Code.RESUME_STATE_MISSING, "no state of a run") from None
+    with os.fdopen(fd, "rb") as fh:
+        return hashlib.sha256(fh.read(MAX_STATE_BYTES + 1)).hexdigest()
 
 
 def _peak_rss():

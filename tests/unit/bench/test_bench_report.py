@@ -195,6 +195,33 @@ class RunReportTests(unittest.TestCase):
         self.assertIn(SENTINEL, (self.out / "attempts" / tainted["attempt_id"] / "out" / "document.md").read_text())
 
 
+class KnownLimitsTests(unittest.TestCase):
+    def test_the_limits_the_engine_declares_stay_in_the_report(self):
+        """R10 of `balanced` (MFL033 N5a) included; anything else is `unrecognized`."""
+        from markdown_for_llms.engine import pages
+        known = report._known_limits()
+        for limit in pages.LIMITS + pages.server_limits("balanced") + pages.server_limits("accurate"):
+            self.assertIn(limit, known)
+        self.assertNotIn("a declared limitation of the route", known)
+
+    def test_the_former_texts_of_the_route_stay_recognized(self):
+        """MFL033 N6: the text of the route lost its internal reference; the outputs made before keep the
+        former text, which a rebuilt report must not call `unrecognized`."""
+        from markdown_for_llms.engine import pages
+        former = "The marker-server route (MFL033) runs Marker 2.2.0 balanced or accurate with the OCR of Surya " \
+                 "on the inference server the user names: the page images go to that server; the quality of " \
+                 "the route is not certified."
+        self.assertIn(former, pages.FORMER_LIMITS)
+        self.assertNotIn(former, pages.SERVER_LIMITS)
+        self.assertIn(former, report._known_limits())
+        # G-CNB4 of the final review: the limit of balanced lost the name of a function of Marker
+        balanced = [x for x in pages.FORMER_LIMITS if "(reconstruct_table_html)" in x]
+        self.assertEqual(len(balanced), 1)
+        self.assertNotIn(balanced[0], pages.BALANCED_SERVER_LIMITS)
+        self.assertIn(balanced[0], report._known_limits())
+        self.assertEqual(balanced[0].replace(" (reconstruct_table_html)", ""), pages.BALANCED_SERVER_LIMITS[0])
+
+
 class SummaryTests(unittest.TestCase):
     def test_routes_sharing_a_tool_with_the_arbiter_are_not_arbitrated(self):
         m = manifest.load()
@@ -218,7 +245,8 @@ class SummaryTests(unittest.TestCase):
                          {"mean": 0.9, "min": 0.9, "n": 1, "threshold": None, "mean_meets": None, "below_threshold": 0})
         self.assertIsNone(cells[("doc", "pandoc")]["scores"]["content"])
         self.assertEqual(summary["not_arbitrated"][0]["documents"], ["D22"])
-        self.assertEqual(summary["not_measured"], [{"format": "pdf", "route": "datalab", "reason": "not_selected"}])
+        self.assertEqual(summary["not_measured"], [{"format": "pdf", "route": "datalab", "reason": "not_selected"},
+                                                   {"format": "pdf", "route": "marker-server", "reason": "not_selected"}])
         self.assertEqual(cells[("pdf", "marker")]["scores"]["content"]["n"], 1)      # D04 unavailable
         self.assertEqual({s["script"] for s in summary["script_route"]}, {"Latn"})
         self.assertIsNone(cells[("pdf", "marker")]["cost"])                          # a local route costs nothing
@@ -366,10 +394,11 @@ class ReportRebuildTests(unittest.TestCase):
         checks.write_text(json.dumps({**body, "checks": body["checks"][1:]}))    # another check set
         self.assertEqual(self.rebuild()[::2], (1, "error: report_checks_changed"))
         checks.write_text(json.dumps(body))
-        manifest_bytes = self.s["manifest"].read_bytes()
-        self.s["manifest"].write_bytes(manifest_bytes + b"\n")
+        copy = self.out / "inputs" / "manifest.json"             # the manifest of the run (MFL044 (d))
+        manifest_bytes = copy.read_bytes()
+        copy.write_bytes(manifest_bytes + b"\n")
         self.assertEqual(self.rebuild()[::2], (1, "error: report_identity_changed"))
-        self.s["manifest"].write_bytes(manifest_bytes)
+        copy.write_bytes(manifest_bytes)
         state["status"] = "interrupted"
         (self.out / "state.json").write_text(json.dumps(state))
         self.assertEqual(self.rebuild()[::2], (1, "error: report_run_not_finished"))

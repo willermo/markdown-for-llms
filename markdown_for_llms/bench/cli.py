@@ -63,29 +63,49 @@ def build_parser():
     p.add_argument("--runs-dir", help="runs directory (default: MDF_BENCH_RUNS_DIR or the XDG data directory)")
     p.add_argument("--manifest", help="another manifest file (default: the public reference set)")
     p.add_argument("--exclusions", help="exclusions file (development option; default: the packaged file)")
-    p.add_argument("--cache", help="cache directory (default: MDF_BENCH_CACHE_DIR or the XDG cache)")
+    p.add_argument("--cache", help="cache directory (default: MDF_BENCH_CACHE_DIR or the XDG cache; with --resume: "
+                   "the cache of a run that moved, verified by the SHA-256 of its check sets)")
     p.add_argument("--resume", metavar="RUN_DIR", help="resume a run; every other option comes from its state, "
-                   "except --confirm-transit, --env-file and --retry-unaccepted")
+                   "except --confirm-transit, --env-file and --retry-unaccepted, and --cache and --model-root for a "
+                   "run that moved (a run that pays is resumed only where it was created, by its ledger)")
     p.add_argument("--datalab-mode", help="with --route datalab: comma-separated modes (lite, fast, balanced, accurate)")
+    p.add_argument("--server-mode", help="with --route marker-server: comma-separated modes (balanced, accurate)")
+    p.add_argument("--server", help="with --route marker-server: an endpoint of servers.json (default: its default)")
+    p.add_argument("--servers", help="with --route marker-server: the servers.json file (default: "
+                                     "$XDG_CONFIG_HOME/markdown-for-llms/servers.json)")
     p.add_argument("--confirm-transit", action="store_true",
-                   help="with --route datalab: confirm that the documents leave the machine for Datalab")
-    p.add_argument("--max-cost-usd", help="with --route datalab: cap of the run, in USD (estimates until billed)")
-    p.add_argument("--spend-cap-usd", help="with --route datalab: cap of the spend ledger of the runs folder, in USD "
-                   "(default: MDF_BENCH_CAP_DATALAB_USD)")
-    p.add_argument("--env-file", dest="key_file", help="with --route datalab: file with DATALAB_API_KEY (a regular "
-                   "file of yours, mode 0600); it holds the key only, never MDF_BENCH_* settings")
+                   help="with --route datalab: confirm that the documents leave the machine for Datalab; with "
+                        "--route marker-server: that the page images go to a server outside the loopback")
+    p.add_argument("--max-cost-usd", help="with --route datalab, or marker-server on an endpoint with a provider: cap "
+                   "of the run, in USD (estimates or bounds until billed)")
+    p.add_argument("--spend-cap-usd", help="with --route datalab (default: MDF_BENCH_CAP_DATALAB_USD), or marker-server "
+                   "on an endpoint with a provider: cap of the spend ledger of the runs folder, in USD")
+    p.add_argument("--env-file", dest="key_file", help="with --route datalab or marker-server: file with the keys "
+                   "(DATALAB_API_KEY, the keys of the endpoint; a regular file of yours, mode 0600); it holds keys "
+                   "only, never MDF_BENCH_* settings")
     p.add_argument("--retry-unaccepted", action="store_true",
                    help="with --resume: convert again a Datalab attempt refused before its acceptance")
+    p.add_argument("--model-root", help="with --resume: the model root, when the run moved (verified by the "
+                   "identity of its weights)")
 
     p = sub.add_parser("report", help="write report.json and report.md of a finished run again from its saved "
                        "outputs, with the scoring of this version (nothing is converted or sent)")
     p.add_argument("run_dir", metavar="RUN_DIR")
+    p.add_argument("--report-dir", help="write the report here (a new or empty directory outside the run) and "
+                   "only read the run: no lock, no write in it (report_run_changed when its state changes meanwhile)")
+    p.add_argument("--cache", help="the cache of the run, when it moved (verified by the SHA-256 of its check sets)")
+    p.add_argument("--manifest", help="the manifest of the run, when it moved (verified by its SHA-256)")
+    p.add_argument("--exclusions", help="the exclusions of the run, when they moved (verified by their SHA-256)")
 
     p = sub.add_parser("compare", help="compare two reports attempt by attempt")
     p.add_argument("report_a")
     p.add_argument("report_b")
     p.add_argument("--tolerance", type=float, default=0.005, help="fall of a ratio that is a regression (default 0.005)")
     p.add_argument("--fail-on-regression", action="store_true", help="exit with 1 when there is a regression")
+    p.add_argument("--align", choices=("attempt", "document"), default="attempt",
+                   help="attempt: same route and variant (default); document: two selections, by document")
+    p.add_argument("--select-a", help="with --align document: ROUTE[:MODE] of report A")
+    p.add_argument("--select-b", help="with --align document: ROUTE[:MODE] of report B")
     p.add_argument("--json", dest="json_out", help="write the comparison (numbers and codes) to this file")
 
     p = sub.add_parser("crosscheck", help="checks that every route fails in the same way (suspects)")
@@ -95,9 +115,22 @@ def build_parser():
     p.add_argument("--manifest", help="another manifest file (default: the public reference set)")
     p.add_argument("--cache", help="cache directory (default: MDF_BENCH_CACHE_DIR or the XDG cache)")
 
-    p = sub.add_parser("secret-scan", help="search the Datalab key in files (it is never printed)")
+    p = sub.add_parser("spend", help="the spend ledger of a runs folder: totals per provider, manual reconciliations")
+    spend_sub = p.add_subparsers(dest="spend_command", required=True)
+    q = spend_sub.add_parser("show", help="totals of Datalab and of each rented server, windows and orphans (JSON)")
+    q.add_argument("--runs-dir", help="runs directory (default: MDF_BENCH_RUNS_DIR or the XDG data directory)")
+    q = spend_sub.add_parser("reconcile", help="replace amounts of a rented server with the figure of its billing")
+    q.add_argument("--runs-dir", help="runs directory (default: MDF_BENCH_RUNS_DIR or the XDG data directory)")
+    q.add_argument("--provider", required=True, choices=("runpod", "modal"))
+    q.add_argument("--manual-cents", required=True, help="the figure read on the billing of the provider, in cents")
+    q.add_argument("--orphan", action="store_true", help="the orphan windows disarmed by `session.py disarm`")
+    q.add_argument("--arm", action="append", default=[], help="a window (arm id); repeatable")
+    q.add_argument("--activity", action="append", default=[], help="an activity id; repeatable")
+
+    p = sub.add_parser("secret-scan", help="search every key of the env file in files (a key is never printed)")
     p.add_argument("--env-file", dest="key_file", required=True,
-                   help="file with DATALAB_API_KEY (a regular file of yours, mode 0600)")
+                   help="file of the keys to search (DATALAB_API_KEY, RUNPOD_API_KEY, the Modal proxy token and every "
+                        "other *_KEY, *_SECRET, *_TOKEN, *_TOKEN_ID, *_BEARER; a regular file of yours, mode 0600)")
     p.add_argument("paths", nargs="+")
     return parser
 
@@ -225,8 +258,9 @@ def cmd_checks(args, settings):
     return 1 if failed else 2 if unavailable else 0
 
 
-RUN_OPTIONS = ("level", "docs", "route", "ocr", "repeat", "out", "runs_dir", "manifest", "exclusions", "cache",
-               "datalab_mode", "max_cost_usd", "spend_cap_usd")
+# the options a resumption takes from the state; --cache and --model-root replace its hints (MFL044 (d))
+RUN_OPTIONS = ("level", "docs", "route", "ocr", "repeat", "out", "runs_dir", "manifest", "exclusions",
+               "datalab_mode", "max_cost_usd", "spend_cap_usd", "server_mode", "server", "servers")
 
 
 def cmd_run(args, settings):
@@ -235,30 +269,71 @@ def cmd_run(args, settings):
     # a run started in the background by a non-interactive shell inherits SIGINT ignored: the
     # default handler makes the signal a KeyboardInterrupt again, which stops the run cleanly
     signal.signal(signal.SIGINT, signal.default_int_handler)
+    signal.signal(signal.SIGTERM, signal.default_int_handler)   # SIGTERM as SIGINT (MFL033, plan r2 §7)
     if args.resume is not None:
         return run.resume(args.resume, confirm_transit=args.confirm_transit, key_file=args.key_file,
-                          retry_unaccepted=args.retry_unaccepted)
+                          retry_unaccepted=args.retry_unaccepted, cache=args.cache, model_root=args.model_root)
+    if args.model_root is not None:
+        raise BenchError(Code.INVALID_SETTING, "--model-root goes with --resume")
     return run.start(settings, level=args.level, docs=args.docs, routes=args.route, ocr=args.ocr, repeat=args.repeat,
                      out=args.out, manifest=args.manifest, exclusions=args.exclusions,
                      datalab_modes=args.datalab_mode, confirm_transit=args.confirm_transit,
                      max_cost_usd=args.max_cost_usd, spend_cap_usd=args.spend_cap_usd, key_file=args.key_file,
-                     retry_unaccepted=args.retry_unaccepted)
+                     retry_unaccepted=args.retry_unaccepted, server_modes=args.server_mode, server=args.server,
+                     servers_file=args.servers)
+
+
+def cmd_spend(args, settings):
+    """`spend show` and `spend reconcile` (MFL033): the reconciliation is manual (Davide's figure
+    from the billing), under the lock of the ledger; `--orphan` needs the `disarm` with
+    `orphan: true` of every window it covers."""
+    from . import serverspend, spend
+    ledger = spend.Ledger(settings.runs_dir)
+    if args.spend_command == "show":
+        entries = spend.read_only(ledger.path)
+        out = {"ledger": str(ledger.path), "datalab_cents": str(spend.reconcile(entries)[1]),
+               "providers": {p: serverspend.summary(entries, p, ledger.path) for p in serverspend.PROVIDERS}}
+        print(json.dumps(out, indent=1, sort_keys=True))
+        return 0
+    cents = spend._cents(args.manual_cents, "--manual-cents")
+    with ledger.locked(create=False) as locked:
+        if locked is None:
+            raise BenchError(Code.INVALID_SETTING, "no ledger in the runs directory")
+        arms = list(args.arm)
+        if args.orphan and not arms:
+            arms = serverspend.orphan_windows(locked.entries(), args.provider, ledger.path)
+            if not arms:
+                raise BenchError(Code.INVALID_SETTING, "no orphan window disarmed with orphan: true")
+        row, summary = serverspend.reconcile(locked, ledger.path, args.provider, cents, manual=True, arms=arms,
+                                             activities=args.activity, orphan=args.orphan)
+    print(json.dumps({"written": row is not None, "summary": summary}, indent=1, sort_keys=True))
+    return 0
 
 
 def cmd_report(args, settings):
     from . import run
-    return run.rebuild_report(args.run_dir)
+    return run.rebuild_report(args.run_dir, report_dir=args.report_dir, cache=args.cache, manifest=args.manifest,
+                              exclusions=args.exclusions)
 
 
 def cmd_compare(args, settings):
     from . import compare
-    result = compare.compare(compare.load_report(args.report_a), compare.load_report(args.report_b), args.tolerance)
-    compare.print_result(result)
+    a, b = compare.load_report(args.report_a), compare.load_report(args.report_b)
+    if args.align == "document":
+        if not args.select_a or not args.select_b or args.fail_on_regression:
+            raise BenchError(Code.INVALID_SETTING, "--align document takes --select-a and --select-b")
+        result = compare.compare_documents(a, b, args.select_a, args.select_b)
+        compare.print_documents(result)
+    elif args.select_a or args.select_b:
+        raise BenchError(Code.INVALID_SETTING, "--select-a and --select-b go with --align document")
+    else:
+        result = compare.compare(a, b, args.tolerance)
+        compare.print_result(result)
     if args.json_out:
         from pathlib import Path
         Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.json_out).write_text(json.dumps(result, indent=1, sort_keys=True))
-    return 1 if args.fail_on_regression and result["regressions"] else 0
+    return 1 if args.fail_on_regression and result.get("regressions") else 0
 
 
 def cmd_crosscheck(args, settings):
@@ -278,7 +353,7 @@ def cmd_crosscheck(args, settings):
 
 def cmd_secret_scan(args, settings):
     from . import secretscan
-    read, errors, found = secretscan.scan(args.paths, secretscan.key_bytes(args.key_file))
+    read, errors, found = secretscan.scan_all(args.paths, secretscan.keys_bytes(args.key_file))
     for path, n in found:
         print(f"found {n} in {path}")
     for path in errors:
@@ -309,7 +384,8 @@ def cmd_prepare(args, settings):
 
 
 COMMANDS = {"prepare": cmd_prepare, "list": cmd_list, "fetch": cmd_fetch, "checks": cmd_checks, "run": cmd_run,
-            "report": cmd_report, "compare": cmd_compare, "crosscheck": cmd_crosscheck, "secret-scan": cmd_secret_scan}
+            "report": cmd_report, "compare": cmd_compare, "crosscheck": cmd_crosscheck, "secret-scan": cmd_secret_scan,
+            "spend": cmd_spend}
 
 
 def main(argv=None):
@@ -318,7 +394,8 @@ def main(argv=None):
         if args.command == "run" and args.resume is not None and any(getattr(args, k) is not None for k in RUN_OPTIONS):
             raise BenchError(Code.RESUME_OPTION_NOT_ALLOWED, "--resume takes its options from the state of the run")
         # `run` and `secret-scan` read no settings file: their settings come from the environment and the
-        # options; their `--env-file` (`key_file`) is the file of the Datalab key alone, never opened here (Δ5)
+        # options; their `--env-file` (`key_file`) is a file of keys only (Datalab, the endpoints), never opened here
+        # (Δ5)
         settings = BenchSettings.load(getattr(args, "env_file", None), cache=getattr(args, "cache", None),
                                       runs=getattr(args, "runs_dir", None))
         from ..engine import tools

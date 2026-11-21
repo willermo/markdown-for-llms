@@ -22,6 +22,14 @@ The result is the content of `out/engine.json`, also on a failure (see `contract
 Datalab route (`datalab.py`) needs `request["datalab"]` (`mode`, `transit_confirmed`, `cap_usd`)
 and the key: `datalab_key` (a `datalab.Key`, read by the caller) or `DATALAB_API_KEY` in the
 environment of the process; the key is never part of the result.
+
+The `marker-server` route (MFL033, `pages.marker_server_route`) needs `request["server"]`
+(`name`, `mode`, `transit_confirmed`, and for an endpoint with a provider `budget_cents` and the
+`session` {`arm_id`, `armed_until`}), the endpoint `server_endpoint` (`servers.Endpoint`) and its
+keys `server_keys`, both from the caller and never part of the result; `server_transport` is a
+transport factory of the relay and `server_cpu` ({"root", "manifest"}) the local CPU server, both
+for the tests. The result adds `marker_server` (the counters and
+times of the relay), `components.server` and, for a provider, the bound of the cost in `cost`.
 """
 from datetime import datetime, timezone
 from pathlib import Path
@@ -67,6 +75,7 @@ class Context:
         self.unlisted_problems = {}         # problems counted by a converter but not in its list
         self.diagnostics, self.package, self.pages = {}, None, None
         self.cost = self.transit = self.datalab_versions = None
+        self.server = self.marker_server = None    # the marker-server route: endpoint record, relay record
         self.child_events, self.timings = [], {}     # events of the current Marker child; stages and pages
 
     def timeout(self):
@@ -94,11 +103,11 @@ class Context:
         if any([self.progress.feed(e) for e in events]) and self.observer is not None:
             self.observer({"event": "progress", "progress": self.progress.snapshot()})
 
-    def event(self, step):
+    def event(self, step, **fields):
         if step in PREPARING:
             self.feed_events([{"event": "prepare"}])
         if self.observer is not None:
-            stop = self.observer({"event": "step", "step": step})
+            stop = self.observer({"event": "step", "step": step, **fields})
             if stop:
                 raise EngineError(Code.INTERRUPTED if stop == "interrupted" else Code.CANCELLED, step)
 
@@ -161,7 +170,7 @@ def detect(path, name=None):
 
 
 def routes_for(fmt):
-    return routes.routes_for(fmt)
+    return routes.engine_routes_for(fmt)
 
 
 def _source_record(path, name, info):
@@ -183,9 +192,11 @@ def _components(converter, ctx):
                 comp["toolchain"]["versions"][t] = r["versions"].get(VERSION_OF[t])
     if converter == routes.TEXT:
         comp["charset-normalizer"] = _version("charset-normalizer")
-    if converter == routes.MARKER:
+    if converter in (routes.MARKER, routes.MARKER_SERVER):
         comp["marker"] = ctx.marker_versions
         comp["weights"] = ctx.weights
+    if converter == routes.MARKER_SERVER and ctx.server is not None:
+        comp["server"] = ctx.server
     if converter == routes.DATALAB:
         from . import datalab
         comp["datalab"] = {"endpoint": datalab.API, "versions": ctx.datalab_versions}
@@ -193,7 +204,7 @@ def _components(converter, ctx):
 
 
 def convert(source, out, request=None, limits=None, work=None, observer=None, name=None, model_root=None,
-            datalab_key=None):
+            datalab_key=None, server_endpoint=None, server_keys=None, server_transport=None, server_cpu=None):
     request = dict(request or {})
     limits = {**DEFAULT_LIMITS, **(limits or {})}
     attempt = request.get("attempt")
@@ -218,6 +229,9 @@ def convert(source, out, request=None, limits=None, work=None, observer=None, na
     requested = {k: request.get(k) for k in ("route", "ocr", "lang")}
     if request.get("datalab") is not None:
         requested["datalab"] = {k: request["datalab"].get(k) for k in ("mode", "transit_confirmed", "cap_usd")}
+    if isinstance(request.get("server"), dict):
+        requested["server"] = {k: request["server"].get(k) for k in ("name", "mode", "transit_confirmed", "budget_cents")}
+        requested["server"]["arm_id"] = (request["server"].get("session") or {}).get("arm_id")
     result = {"schema": contract.SCHEMA, "attempt": attempt, "started_at": at, "source": None,
               "route": None, "options": {"requested": requested, "effective": None}, "components": None,
               "corrections": None, "problems": [], "limits": [], "transit": {"left_machine": False, "service": None},
@@ -260,6 +274,13 @@ def convert(source, out, request=None, limits=None, work=None, observer=None, na
             from . import datalab
             result["datalab"] = datalab.datalab_route(ctx, src, fmt, request, key=datalab_key)
             result["options"]["effective"]["ocr"] = "auto"
+        elif converter == routes.MARKER_SERVER:
+            from . import pages
+            if server_endpoint is None or server_endpoint.name != request["server"].get("name"):
+                raise EngineError(Code.SERVER_NOT_CONFIGURED, "the endpoint of the request")
+            result["marker_server_route"] = pages.marker_server_route(ctx, src, fmt, request, server_endpoint,
+                                                                      server_keys or {}, server_transport, server_cpu)
+            result["options"]["effective"]["ocr"] = "force" if result["marker_server_route"]["force_ocr"] else "auto"
         else:
             raise EngineError(Code.ROUTE_INVALID, converter)
         _finish(result, ctx, converter, started)
@@ -299,6 +320,8 @@ def _finish(result, ctx, converter, started):
         result["cost"] = ctx.cost
     if ctx.transit is not None:
         result["transit"] = ctx.transit
+    if ctx.marker_server is not None:
+        result["marker_server"] = ctx.marker_server
     result["limits"] = list(ctx.limits)
     result["components"] = _components(converter, ctx) if converter else None
     result["timings"] = {"total_seconds": round(time.monotonic() - started, 3), **ctx.timings}
