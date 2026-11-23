@@ -1184,7 +1184,7 @@ def server_options(m, routes, modes=None, server=None, servers_file=None, confir
         raise BenchError(Code.INVALID_SETTING, "marker-server and datalab in one run")
     modes = parse_server_modes(modes)
     path = Path(servers_file).absolute() if servers_file is not None else servers.default_path()
-    ep = servers.load(path, server)
+    ep = servers.load(path, server, presets=gpu_presets())
     if m.personal and ep.leaves_machine():
         raise BenchError(Code.SERVER_REFUSED_PERSONAL, "a personal set never leaves the loopback")
     if ep.leaves_machine() and not confirm_transit:
@@ -1202,11 +1202,17 @@ def server_options(m, routes, modes=None, server=None, servers_file=None, confir
              "record": ep.record(), "modes": modes, **caps}, (ep, keys))
 
 
+def gpu_presets():
+    """The table of the GPU presets that an endpoint of servers.json may name (MFL023 A3), as the engine reads it."""
+    from ..gpu import presets
+    return presets.endpoint_table()
+
+
 def load_server(state, key_file):
     """The endpoint of a run on resumption, from its file and name, with the same identity, and its keys."""
     from ..engine import servers
     info = state["server"]
-    ep = servers.load(info["servers_file"], info["name"])
+    ep = servers.load(info["servers_file"], info["name"], presets=gpu_presets())
     if ep.identity_sha256() != info["identity_sha256"]:
         raise BenchError(Code.RESUME_IDENTITY_CHANGED, "the endpoint " + info["name"])
     return ep, servers.read_keys(ep, key_file, environ=None)

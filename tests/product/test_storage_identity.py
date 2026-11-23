@@ -18,6 +18,7 @@ from unittest.mock import patch
 import uuid
 import zipfile
 
+from markdown_for_llms import storage
 from markdown_for_llms.cli import main
 from markdown_for_llms.files import identify, write, write_json
 from markdown_for_llms.services import Service
@@ -117,7 +118,7 @@ class StorageIdentityTests(unittest.TestCase):
                          [(v1_identity(self.settings), 'identity-v2'), (v2_identity(self.settings), 'identity-v3')])
         self.assertEqual(identity['history'][1]['model_root'], self.settings.model_root)
         after = self.snapshot()
-        self.assertEqual(after[1], 3)
+        self.assertEqual(after[1], storage.SCHEMA)
         self.assertEqual(after[3], before[3])
         self.assertIn('progress', self.columns('runs'))
         self.assertEqual([c for c in self.columns('runs') if c in ('owner', 'scope_recorded')], ['owner', 'scope_recorded'])
@@ -145,7 +146,7 @@ class StorageIdentityTests(unittest.TestCase):
         self.assertEqual(identity['config'], self.settings.identity())
         self.assertEqual([(e['config'], e['reason']) for e in identity['history']],
                          [(v2_identity(self.settings), 'identity-v3')])
-        self.assertEqual((self.snapshot()[1], self.snapshot()[3]), (3, before[3]))
+        self.assertEqual((self.snapshot()[1], self.snapshot()[3]), (storage.SCHEMA, before[3]))
 
     def test_v1_archive_with_configured_timeout(self):
         self.make_legacy(1, timeout=5400)
@@ -194,7 +195,7 @@ class StorageIdentityTests(unittest.TestCase):
         Service(self.settings).storage.close()
         self.assertEqual(self.identity()['config'], self.settings.identity())
         self.assertNotIn('history', self.identity())
-        self.assertEqual(self.snapshot()[1], 3)
+        self.assertEqual(self.snapshot()[1], storage.SCHEMA)
 
     def test_the_default_model_root_is_the_one_of_the_engine(self):            # D10
         from markdown_for_llms.engine.weights import default_root
@@ -228,7 +229,7 @@ class StorageIdentityTests(unittest.TestCase):
         finally:
             os.close(fd)
         Service(self.settings).storage.close()
-        self.assertEqual(self.snapshot()[1], 3)
+        self.assertEqual(self.snapshot()[1], storage.SCHEMA)
 
     def test_concurrent_new_openers_upgrade_once(self):
         # (b) Racing openers either upgrade, observe the upgrade or are refused; never twice.
@@ -247,7 +248,7 @@ class StorageIdentityTests(unittest.TestCase):
             self.assertIn(outcome, {'opened', 'Storage upgrade needs exclusive access: stop the API, worker and CLI of every version, then restart'})
         self.assertIn('opened', outcomes)
         self.assertEqual([e['reason'] for e in self.identity()['history']], ['identity-v2', 'identity-v3'])
-        self.assertEqual(self.snapshot()[1], 3)
+        self.assertEqual(self.snapshot()[1], storage.SCHEMA)
         Storage(self.settings).close()
         self.assertEqual([e['reason'] for e in self.identity()['history']], ['identity-v2', 'identity-v3'])
 
@@ -264,7 +265,7 @@ class StorageIdentityTests(unittest.TestCase):
                     with self.assertRaises(OSError):
                         Service(self.settings)
                 interrupted = self.snapshot()
-                self.assertEqual((interrupted[0], interrupted[1], interrupted[3]), (before[0], 3, before[3]))
+                self.assertEqual((interrupted[0], interrupted[1], interrupted[3]), (before[0], storage.SCHEMA, before[3]))
                 self.assertEqual(list(self.root.glob('configuration-*.pending')), [])
                 Service(self.settings).storage.close()
                 self.assertEqual(self.identity()['config'], self.settings.identity())
@@ -287,7 +288,7 @@ class StorageIdentityTests(unittest.TestCase):
         history = self.identity()['history']
         self.assertEqual([(e['config'], e.get('reason')) for e in history],
                          [(v2_identity(self.settings), 'identity-v3'), (self.settings.identity(), None)])
-        self.assertEqual(self.snapshot()[1], 3)
+        self.assertEqual(self.snapshot()[1], storage.SCHEMA)
         Service(new).storage.close()
 
     def test_downgrade_round_trip_to_schema_2(self):
@@ -323,7 +324,7 @@ class StorageIdentityTests(unittest.TestCase):
         Storage.downgrade(self.settings, v2_identity(self.settings))
         self.assertEqual(self.snapshot(), after)
         Service(self.settings).storage.close()
-        self.assertEqual(self.snapshot()[1], 3)
+        self.assertEqual(self.snapshot()[1], storage.SCHEMA)
 
     def test_v1_archive_returns_to_schema_2_and_keeps_the_way_back_to_1(self):
         self.make_legacy(1)
@@ -424,11 +425,11 @@ class StorageIdentityTests(unittest.TestCase):
         storage_id = self.identity()['id']
         with sqlite3.connect(self.root / 'archive.sqlite3') as conn:
             conn.execute('UPDATE runs SET options=?', (json.dumps(V2_OPTIONS),))
-            conn.executescript((MIGRATIONS / '003-down.sql').read_text())
+            conn.executescript(''.join((MIGRATIONS / ('%03d-down.sql' % n)).read_text() for n in range(storage.SCHEMA, 2, -1)))
         conn.close()
         (self.root / 'identity.json').write_text(json.dumps({'id': storage_id, 'config': v2_identity(self.settings)}))
         service = Service(self.settings)
-        self.assertEqual(self.snapshot()[1], 3)
+        self.assertEqual(self.snapshot()[1], storage.SCHEMA)
         got = service.get(job['id'])
         self.assertEqual((got['state'], got['download_available']), ('completed', True))
         with zipfile.ZipFile(service.bundle(job['id'])) as archive:

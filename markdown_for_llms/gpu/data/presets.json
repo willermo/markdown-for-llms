@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "presets": {
+    "modal-base": {
+      "status": "supported",
+      "superseded_by": null,
+      "reason": null,
+      "provider": "modal",
+      "mode": "serverless",
+      "data_center": null,
+      "volume": {"type": "network", "class": null, "name": "mdf-surya-weights", "size_gb": null},
+      "gpu": {"group": ["L4", "A10G"], "memory_gb": 24, "observed": ["NVIDIA A10", "NVIDIA A10G"]},
+      "image": "vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268",
+      "model": {"id": "datalab-to/surya-ocr-2.5", "revision": "00c843e9cae45611dca0a6dc2c9bbbf2dadaaed3", "vllm": "0.25.1"},
+      "server": "vllm",
+      "parallel": 32,
+      "rate": {"usd_per_s": "0.00036772", "source": "https://modal.com/pricing (A10G, 2 cores, 16 GiB)", "date": "2026-11-20"},
+      "levers": {
+        "compile_cache": [
+          "29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b",
+          "cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224"
+        ],
+        "arm_ahead_s": null
+      },
+      "seconds": {"ready_within": 900, "read_timeout": 140, "page_seconds": 30, "cold_start_s": 480, "w1_s": 900,
+                  "tail_idle_s": 90, "tail_fault_s": 225, "idle_s": 60},
+      "measures": [
+        {"what": "readiness from the request, cold, with the compile cache", "value": "164-172 s", "date": "2026-11-21",
+         "hardware": "NVIDIA A10", "source": "MFL033 N6"},
+        {"what": "D19 (7 pages) converted, cold", "value": "180 s", "date": "2026-11-21", "hardware": "NVIDIA A10",
+         "source": "MFL033 N6"},
+        {"what": "cost of a start", "value": "about 10 cents", "date": "2026-11-21", "hardware": "NVIDIA A10",
+         "source": "MFL033 N6"}
+      ]
+    },
+    "runpod-serverless-volume-dc": {
+      "status": "supported",
+      "superseded_by": null,
+      "reason": null,
+      "provider": "runpod",
+      "mode": "serverless",
+      "data_center": "CA-MTL-1",
+      "volume": {"type": "network", "class": "HIGH_PERFORMANCE", "name": "mdf-surya-weights", "size_gb": 10},
+      "gpu": {"group": "AMPERE_24", "memory_gb": 24, "observed": ["NVIDIA RTX A5000"]},
+      "image": "vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268",
+      "model": {"id": "datalab-to/surya-ocr-2.5", "revision": "00c843e9cae45611dca0a6dc2c9bbbf2dadaaed3", "vllm": "0.25.1"},
+      "server": "vllm",
+      "parallel": 32,
+      "rate": {"usd_per_s": "0.0002090948", "source": "RunPod serverless price of AMPERE_24 with 20 GB of disk (MFL033 plan r2 C.3)", "date": "2026-11-22"},
+      "levers": {
+        "compile_cache": ["6222ea36b0e660ccbd89b25386a30aab3dbaec14231bd36e7aae4f3b9751e7f4"],
+        "arm_ahead_s": 420
+      },
+      "seconds": {"ready_within": 900, "read_timeout": 300, "page_seconds": 30, "cold_start_s": 480, "w1_s": 900,
+                  "tail_idle_s": 90, "tail_fault_s": 385, "idle_s": 60},
+      "measures": [
+        {"what": "readiness from the request, cold, with the engine (D18)", "value": "349.8-704.8 s", "date": "2026-11-22",
+         "hardware": "NVIDIA RTX A5000", "source": "MFL045, colds in CA-MTL-1"},
+        {"what": "32 concurrent pages (EU-SE-1)", "value": "14.35 s", "date": "2026-11-21", "hardware": "NVIDIA RTX A5000",
+         "source": "MFL033 N5b"}
+      ]
+    },
+    "runpod-serverless-volume-eu-se-1": {
+      "status": "superseded",
+      "superseded_by": "runpod-serverless-volume-dc",
+      "reason": "EU-SE-1 creates no network volume since 22/11; the volume was deleted",
+      "provider": "runpod",
+      "mode": "serverless",
+      "data_center": "EU-SE-1",
+      "volume": {"type": "network", "class": "STANDARD", "name": "mdf-surya-weights", "size_gb": 10},
+      "gpu": {"group": "AMPERE_24", "memory_gb": 24, "observed": ["NVIDIA RTX A5000"]},
+      "image": "vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268",
+      "model": {"id": "datalab-to/surya-ocr-2.5", "revision": "00c843e9cae45611dca0a6dc2c9bbbf2dadaaed3", "vllm": "0.25.1"},
+      "server": "vllm",
+      "parallel": 32,
+      "rate": {"usd_per_s": "0.0002090948", "source": "RunPod serverless price of AMPERE_24 with 20 GB of disk (MFL033 plan r2 C.3)", "date": "2026-11-22"},
+      "levers": {
+        "compile_cache": ["d38180544831bf3c0d1a45712e25f125ff4d18a9929012376f844a2224e0ff73"],
+        "arm_ahead_s": 420
+      },
+      "seconds": {"ready_within": 900, "read_timeout": 300, "page_seconds": 30, "cold_start_s": 480, "w1_s": 900,
+                  "tail_idle_s": 90, "tail_fault_s": 385, "idle_s": 60},
+      "measures": [
+        {"what": "readiness from the first request, armed 420 s ahead", "value": "192-201 s", "date": "2026-11-21",
+         "hardware": "NVIDIA RTX A5000", "source": "MFL033 N5b"},
+        {"what": "D19 (7 pages), invoice of the hour", "value": "3.07 cents", "date": "2026-11-21",
+         "hardware": "NVIDIA RTX A5000", "source": "MFL033 N5b"}
+      ]
+    }
+  }
+}

@@ -6,6 +6,8 @@ import fcntl
 import json
 import math
 import os
+import re
+import sqlite3
 import time
 import uuid
 import zipfile
@@ -13,7 +15,7 @@ import zipfile
 from . import legacy_identity
 from .files import digest, identify, open_file, read_json, relative, rename, sync_directory, corruption, make_directory, write_json, IntegrityError, MetadataError, decode_json, FileSafetyError, json_bytes
 from .engine import routes
-from .engine.codes import EngineError
+from .engine.codes import Code, EngineError
 from .engine.formats import EXTENSIONS, detect, extension_of
 from .engine.progress import STAGES
 from .storage import OWNER, Storage, StorageError, CapacityError
@@ -31,7 +33,22 @@ REFUSALS = {
     "invalid_setting": "Invalid job option",
     "route_unavailable": "The route is not available on this machine",
     "route_not_in_product": "The marker-server route is available in mdf convert and mdf bench only, not in the archive",
+    # the conversion presets (MFL023 A5) and the GPU presets they name
+    "preset_unknown": "No conversion preset of that name",
+    "preset_reserved": "A conversion preset of the instance cannot be changed or removed, and its name is reserved",
+    "preset_exists": "A conversion preset of that name exists already",
+    "preset_invalid": "Invalid conversion preset",
+    "gpu_preset_unknown": "No GPU preset of that name",
+    "gpu_preset_superseded": "The GPU preset is superseded: it is listed for its measures and never used",
+    "gpu_volume_unsupported": "The GPU preset has a global volume, which arrives with a later version",
+    "gpu_preset_not_enabled": "The GPU preset is not enabled on this instance",
 }
+# The conversion presets (MFL023 A5, D7): how a document is converted. Those of the instance come with it
+# (data/conversion-presets.json, provisional until MFL027); a user adds personal ones, in the database with an
+# owner, with the same closed fields; a preset names a GPU preset, never the other way round.
+CONVERSION_PRESETS = Path(__file__).resolve().parent / "data" / "conversion-presets.json"
+PRESET_OPTIONS = ("route", "server_mode", "gpu_preset", "ocr", "datalab_mode")
+PRESET_NAME = re.compile(r"[a-z0-9][a-z0-9-]{0,63}")
 
 
 class Refused(StorageError):
@@ -68,6 +85,80 @@ def stored_options(raw):
     return value
 
 
+def job_options(fmt, options=None):
+    """The normalized options of a job, one function for the API (`Service.upload`, `Service.retry`) and the
+    worker (`worker.engine_request`), so the two processes refuse the same requests (MFL023 A5): those of the
+    routes of the engine, plus `preset`, the name of the conversion preset the options came from, kept only when
+    given (a job without a preset stores no key more, not even null). EngineError with a closed code."""
+    opts = dict(options or {})
+    preset = opts.pop("preset", None)
+    if "preset" in (options or {}) and (not isinstance(preset, str) or not PRESET_NAME.fullmatch(preset)):
+        raise EngineError(Code.INVALID_SETTING, "preset: the name of a conversion preset")
+    result = routes.job_options(fmt, opts)
+    if preset is not None:
+        result["preset"] = preset
+    return result
+
+
+def check_preset_options(value):
+    """The options of a conversion preset, its closed fields (`route`, `server_mode`, `gpu_preset`, `ocr`,
+    `datalab_mode`; a missing one is null, `ocr` auto): `marker-server` with a server mode and a GPU preset that can
+    be used, those two only with it, a Datalab mode only with Datalab. Refused (`preset_invalid` or the code of the
+    GPU preset); the checks of a format are those of the job."""
+    if not isinstance(value, dict) or set(value) - set(PRESET_OPTIONS):
+        raise Refused("preset_invalid")
+    opts = {k: value.get(k) for k in PRESET_OPTIONS}
+    if opts["ocr"] is None:
+        opts["ocr"] = "auto"
+    route = opts["route"]
+    if route is not None and route not in routes.CONVERTERS or opts["ocr"] not in routes.OCR_MODES:
+        raise Refused("preset_invalid")
+    if route == routes.MARKER_SERVER:
+        if opts["server_mode"] not in routes.SERVER_MODES or not isinstance(opts["gpu_preset"], str):
+            raise Refused("preset_invalid")
+        from .gpu import presets as gpu_presets
+        table = gpu_presets.load()
+        if opts["gpu_preset"] not in table:
+            raise Refused("gpu_preset_unknown")
+        code = gpu_presets.refusal(table[opts["gpu_preset"]])
+        if code is not None:
+            raise Refused(code)
+    elif opts["server_mode"] is not None or opts["gpu_preset"] is not None:
+        raise Refused("preset_invalid")
+    if route == routes.DATALAB:
+        if opts["datalab_mode"] is not None and opts["datalab_mode"] not in routes.DATALAB_MODES:
+            raise Refused("preset_invalid")
+    elif opts["datalab_mode"] is not None:
+        raise Refused("preset_invalid")
+    return opts
+
+
+def builtin_presets(path=None):
+    """The conversion presets of the instance, {name: {provisional, label, description, options}}, checked."""
+    try:
+        doc = json.loads(Path(path or CONVERSION_PRESETS).read_bytes())
+        if set(doc) != {"schema", "presets"} or doc["schema"] != 1 or not isinstance(doc["presets"], dict):
+            raise ValueError("schema")
+        out = {}
+        for name, entry in doc["presets"].items():
+            if (not PRESET_NAME.fullmatch(name) or set(entry) != {"provisional", "label", "description", "options"}
+                    or type(entry["provisional"]) is not bool
+                    or not all(isinstance(entry[k], str) and entry[k] for k in ("label", "description"))):
+                raise ValueError("entry")
+            out[name] = dict(entry, options=check_preset_options(entry["options"]))
+        return out
+    except (OSError, ValueError, TypeError, AttributeError, Refused):
+        raise IntegrityError("Malformed conversion presets of the instance") from None
+
+
+def preset_availability(options):
+    """Whether a conversion preset can be used by the archive now, with the code when it cannot: the GPU route is
+    refused by the product until tranche B of MFL023."""
+    if options["route"] in routes.PRODUCT_EXCLUDED:
+        return {"available": False, "code": "route_not_in_product"}
+    return {"available": True, "code": None}
+
+
 class Service:
     def __init__(self, settings):
         self.settings = settings
@@ -93,7 +184,7 @@ class Service:
         if ext not in EXTENSIONS:
             raise Refused('format_unsupported')
         try:
-            opts = routes.job_options(EXTENSIONS[ext], overrides)
+            opts = job_options(EXTENSIONS[ext], overrides)
         except EngineError as exc:
             raise refused(exc) from None
         previous = self.previous(key)
@@ -179,7 +270,7 @@ class Service:
         opts["transit_confirmed"] = False
         opts.update(overrides or {})
         try:
-            opts = routes.job_options(source_format(row["source_path"]), opts)
+            opts = job_options(source_format(row["source_path"]), opts)
         except EngineError as exc:
             raise refused(exc) from None
         new_id, attempt = uuid.uuid4().hex, uuid.uuid4().hex
@@ -187,6 +278,97 @@ class Service:
             now = time.time()
             conn.execute("INSERT INTO runs (id,document_id,retry_of,attempt_id,options,state,created,updated,owner,scope_recorded) VALUES (?,?,?,?,?,'queued',?,?,?,0)", (new_id, row["document_id"], run_id, attempt, json.dumps(opts, allow_nan=False), now, now, OWNER))
         return self.get(new_id)
+
+    # --- conversion presets (MFL023 A5) ---------------------------------------------------------------
+
+    def presets(self):
+        """The conversion presets of the instance and of the user, the default of the user, and the GPU presets with
+        whether this instance enables them; each with its availability (in this version the GPU route is refused)."""
+        from .gpu import presets as gpu_presets
+        with self.storage.connect() as conn:
+            rows = conn.execute("SELECT name, options, created, updated FROM conversion_presets WHERE owner=? "
+                                "ORDER BY name", (OWNER,)).fetchall()
+            default = conn.execute("SELECT default_preset FROM user_settings WHERE owner=?", (OWNER,)).fetchone()
+        items = [dict(entry, name=name, builtin=True, **preset_availability(entry["options"]))
+                 for name, entry in builtin_presets().items()]
+        for row in rows:
+            options = json.loads(row["options"])
+            items.append({"name": row["name"], "builtin": False, "options": options, "created": row["created"],
+                          "updated": row["updated"], **preset_availability(options)})
+        enabled = self.settings.gpu_presets_enabled()
+        gpus = [dict(gpu_presets.public(name, p), enabled=name in enabled, available=False,
+                     code=gpu_presets.refusal(p) or "route_not_in_product")
+                for name, p in gpu_presets.load().items()]
+        return {"presets": items, "default": default["default_preset"] if default else None, "gpu_presets": gpus}
+
+    def preset(self, name):
+        """One conversion preset, of the instance or of the user; `preset_unknown`."""
+        for item in self.presets()["presets"]:
+            if item["name"] == name:
+                return item
+        raise Refused("preset_unknown")
+
+    def add_preset(self, name, options):
+        if not isinstance(name, str) or not PRESET_NAME.fullmatch(name):
+            raise Refused("preset_invalid")
+        if name in builtin_presets():
+            raise Refused("preset_reserved")
+        opts = json.dumps(check_preset_options(options), sort_keys=True)
+        try:
+            with self.storage.reservation('control', 65536), self.storage.connect() as conn:
+                now = time.time()
+                conn.execute("INSERT INTO conversion_presets (id,owner,name,options,created,updated) VALUES (?,?,?,?,?,?)",
+                             (uuid.uuid4().hex, OWNER, name, opts, now, now))
+        except sqlite3.IntegrityError:
+            raise Refused("preset_exists") from None
+        return self.preset(name)
+
+    def replace_preset(self, name, options):
+        if name in builtin_presets():
+            raise Refused("preset_reserved")
+        opts = json.dumps(check_preset_options(options), sort_keys=True)
+        with self.storage.reservation('control', 65536), self.storage.connect() as conn:
+            changed = conn.execute("UPDATE conversion_presets SET options=?, updated=? WHERE owner=? AND name=?",
+                                   (opts, time.time(), OWNER, name)).rowcount
+        if not changed:
+            raise Refused("preset_unknown")
+        return self.preset(name)
+
+    def remove_preset(self, name):
+        """Removes a personal preset; when it was the default of the user, the user has no default any more."""
+        if name in builtin_presets():
+            raise Refused("preset_reserved")
+        with self.storage.connect() as conn:
+            if not conn.execute("DELETE FROM conversion_presets WHERE owner=? AND name=?", (OWNER, name)).rowcount:
+                raise Refused("preset_unknown")
+            conn.execute("UPDATE user_settings SET default_preset=NULL, updated=? WHERE owner=? AND default_preset=?",
+                         (time.time(), OWNER, name))
+        return self.presets()
+
+    def set_default(self, name):
+        """The default conversion preset of the user, or none with `name` None."""
+        if name is not None:
+            self.preset(name)
+        with self.storage.reservation('control', 65536), self.storage.connect() as conn:
+            conn.execute("INSERT INTO user_settings (owner, default_preset, updated) VALUES (?,?,?) ON CONFLICT(owner) "
+                         "DO UPDATE SET default_preset=excluded.default_preset, updated=excluded.updated",
+                         (OWNER, name, time.time()))
+        return {"default": name}
+
+    def preset_options(self, name, extra=None):
+        """The job options of a conversion preset: its route, OCR and Datalab mode, with only `lang` and
+        `transit_confirmed` of the request beside them, and its name (`preset`). The GPU presets are refused in this
+        version (`route_not_in_product`)."""
+        extra = dict(extra or {})
+        if set(extra) - {"lang", "transit_confirmed"}:
+            raise Refused("invalid_setting")
+        item = self.preset(name)
+        if not item["available"]:
+            raise Refused(item["code"])
+        options = {k: item["options"][k] for k in ("route", "ocr", "datalab_mode") if item["options"][k] is not None}
+        options.update(extra)
+        options["preset"] = name
+        return options
 
     def cancel(self, run_id):
         with self.storage.connect() as conn:

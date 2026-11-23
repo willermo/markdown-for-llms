@@ -14,8 +14,14 @@ converting process, never in the child, with `ThreadingMixIn` + `UnixStreamServe
   `User-Agent: markdown-for-llms/<version>`;
 - outbound: one `httpx.Client` (`trust_env=False`, certificates verified, redirects never
   followed, `Limits` on `parallel`): HTTPS, HTTP to a literal loopback address, or the Unix
-  socket of the local CPU server. A response is read up to the same limit (502 and `oversize`
-  over it); a 3xx is never followed and reaches the child as 502;
+  socket of the local CPU server. Every forwarded request asks `Accept-Encoding: identity`
+  (MFL046 d) and its answer is read as received: as it is, or gzip or deflate decoded piece by
+  piece, each piece and each tail left by the decoder within what is left of the same limit (the
+  decoder is never flushed, which is not bounded); over the limit it is 502 and `oversize`;
+  another encoding, a stream that does not end where its encoding ends (truncated) or has bytes
+  after its end is 502 and `encoding`, with the outcome of an answer over the limit. The checks
+  of the credentials read the decoded body, `bytes_out` counts the bytes received. A 3xx is never
+  followed and reaches the child as 502;
 - what reaches the child (MFL033 S-B1): the status of every answer, the body and `Content-Type`
   of a 2xx only, never another header. Any other status reaches it with a reason of the relay in
   place of the remote body. A 2xx whose body or `Content-Type` repeats a credential of the relay
@@ -93,6 +99,50 @@ def _decoded(data, encoding, limit):
         raise ProbeFailed("oversize")
     return out
 REFLECTED = b'{"error": {"message": "relay: the answer repeats a credential of the relay", "type": "relay"}}'
+
+
+class Body:
+    """The body of a forwarded answer from its bytes as received (MFL046 d): identity, or gzip or deflate decoded
+    piece by piece, each input piece and each `unconsumed_tail` with at most what is left of `limit` plus one byte,
+    so that at most `limit + 1` decoded bytes and one piece received are in memory; never `flush()`, whose argument
+    is the size of a buffer, not a limit. `feed` and `finish` raise ProbeFailed: `oversize` past the limit,
+    `encoding` for another encoding, a stream that is not a whole member (truncated) or has bytes after it."""
+
+    def __init__(self, encoding, limit):
+        encoding = (encoding or "identity").strip().lower()
+        if encoding in ("", "identity"):
+            self.decoder = None
+        elif encoding in ("gzip", "x-gzip", "deflate"):
+            self.decoder = zlib.decompressobj(47)         # gzip or zlib, by the header
+        else:
+            raise ProbeFailed("encoding")
+        self.limit, self.parts, self.size = limit, [], 0
+
+    def _add(self, data):
+        self.size += len(data)
+        if self.size > self.limit:
+            raise ProbeFailed("oversize")
+        self.parts.append(data)
+
+    def feed(self, data):
+        if self.decoder is None:
+            self._add(data)
+            return
+        while data:
+            if self.decoder.eof:
+                raise ProbeFailed("encoding")              # bytes after the end of the member
+            try:
+                self._add(self.decoder.decompress(data, self.limit - self.size + 1))
+            except zlib.error:
+                raise ProbeFailed("encoding") from None
+            data = self.decoder.unconsumed_tail
+        if self.decoder.unused_data:
+            raise ProbeFailed("encoding")
+
+    def finish(self):
+        if self.decoder is not None and (not self.decoder.eof or self.decoder.unused_data):
+            raise ProbeFailed("encoding")                  # truncated, or bytes after the end
+        return b"".join(self.parts)
 
 
 def _error_body(status):
@@ -223,7 +273,7 @@ class Relay:
         self.ready_at = None
         self.versions = {}
         self.stats = {"by_status": {}, "requests": {"chat": 0, "read": 0}, "refused_paths": 0, "framing_refused": 0,
-                      "transport_errors": 0, "timeouts": 0, "oversize": 0, "abandoned": 0, "uncertain": 0,
+                      "transport_errors": 0, "timeouts": 0, "oversize": 0, "encoding": 0, "abandoned": 0, "uncertain": 0,
                       "proxy_errors": 0, "unmarked": 0, "redirects": 0, "reflected": 0, "bytes_in": 0, "bytes_out": 0,
                       "seconds": 0.0,
                       "in_flight": 0, "max_in_flight": 0, "in_flight_at_close": 0,
@@ -551,36 +601,46 @@ class Relay:
             self.stats["max_in_flight"] = max(self.stats["max_in_flight"], self.stats["in_flight"])
             self.stats["bytes_in"] += len(body)
         started = self.clock()
-        headers = dict(self._out)
+        headers = dict(self._out, **{"Accept-Encoding": "identity"})
         if body:
             headers["Content-Type"] = "application/json" if not content_type else content_type[:100]
         outcome, status, data, ctype = "uncertain", 502, b'{"error": "relay"}', "application/json"
         try:
             request = self.client.build_request(method, path, content=body or None, headers=headers)
             response = self.client.send(request, stream=True)
+            size, refused, payload = 0, None, b""
             try:
-                chunks, size = [], 0
-                for chunk in response.iter_bytes():
-                    chunks.append(chunk)
-                    size += len(chunk)
+                decoded = Body(response.headers.get("Content-Encoding"), BODY_LIMIT)
+                try:
+                    for chunk in response.iter_raw():
+                        size += len(chunk)
+                        decoded.feed(chunk)
+                    payload = decoded.finish()
+                except self.httpx.StreamConsumed:
+                    # an answer already in memory (a transport of the tests), as for the probes: its content, same limit
+                    payload = response.content
+                    size = len(payload)
                     if size > BODY_LIMIT:
-                        break
+                        raise ProbeFailed("oversize") from None
+            except ProbeFailed as exc:
+                refused = exc.kind
             finally:
                 response.close()
             mark = response.headers.get(PROXY_HEADER)
-            payload = b"".join(chunks)
             remote_type = response.headers.get("Content-Type") or ""
-            reflected = size <= BODY_LIMIT and (self.reflects(payload) or self.reflects(remote_type))
+            reflected = refused is None and (self.reflects(payload) or self.reflects(remote_type))
             if reflected:
                 self._reflected()
             if 300 <= response.status_code < 400:
                 with self.lock:
                     self.stats["redirects"] += 1
                 status, data = 502, b'{"error": "redirect not followed"}'
-            elif size > BODY_LIMIT:
+            elif refused is not None:
                 with self.lock:
-                    self.stats["oversize"] += 1
-                status, data = 502, b'{"error": "response over the limit"}'
+                    self.stats[refused] += 1
+                status = 502
+                data = b'{"error": "response over the limit"}' if refused == "oversize" else \
+                    b'{"error": "response encoding"}'
                 outcome = "complete" if (not self.ep.costs or mark == "forwarded") else "uncertain"
             else:
                 status = response.status_code

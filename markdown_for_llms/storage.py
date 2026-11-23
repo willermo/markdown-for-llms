@@ -23,7 +23,7 @@ class CapacityError(StorageError):
     """A finite space commitment was refused; stored bytes are not corrupt."""
 
 
-SCHEMA = 3
+SCHEMA = 4              # 4: the conversion presets of the users and their default (MFL023)
 OWNER = "local"         # the owner of every document and run until the product has users
 MISMATCH = ("Storage configuration mismatch; for an archive of a previous version (identity schema 1 or 2), "
             "possible causes are an MDF_TIMEOUT_SECONDS, an MDF_PORT or an MDF_MODEL_ROOT different from "
@@ -31,13 +31,18 @@ MISMATCH = ("Storage configuration mismatch; for an archive of a previous versio
             "it in MDF_PORT: 23460, or 8765 for archives created before 2026-11-07; one with the former "
             "default model root needs MDF_MODEL_ROOT set to the absolute path of that mdf-models directory, "
             "or ./mdf-models from the directory the archive was used from). "
-            "Its first opening upgrades it to schema 3, which depends on none of them")
+            "Its first opening upgrades it to schema %d, which depends on none of them" % SCHEMA)
 UPGRADE_BUSY = ("Storage upgrade needs exclusive access: stop the API, worker and CLI "
                 "of every version, then restart")
 
 
 def migration(name):
     return resources.files("markdown_for_llms").joinpath("migrations/" + name + ".sql").read_text()
+
+
+def migrations(after, upto=SCHEMA):
+    """The SQL of the migrations that bring a database from schema `after` to `upto`, in order."""
+    return "".join(migration("%03d" % n) for n in range(after + 1, upto + 1))
 
 
 class Storage:
@@ -97,12 +102,12 @@ class Storage:
             raise StorageError(MISMATCH)
         with self.connect() as conn:
             schema = conn.execute("PRAGMA user_version").fetchone()[0]
-            if schema not in (0, 1, 2, SCHEMA):
+            if schema not in range(SCHEMA + 1):
                 raise StorageError("Unsupported database schema")
             if schema == 0:
                 if conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' LIMIT 1").fetchone():
                     raise StorageError("Unrecognized unversioned database")
-                conn.executescript("BEGIN IMMEDIATE;\n" + migration("001") + migration("002") + migration("003"))
+                conn.executescript("BEGIN IMMEDIATE;\n" + migrations(0))
                 conn.execute("INSERT INTO metadata VALUES ('storage_id',?)", (self.identity["id"],))
                 conn.commit()
                 schema = SCHEMA
@@ -116,13 +121,14 @@ class Storage:
         an interrupted upgrade is completed by the next exclusive opening. An identity of schema 1
         goes through schema 2 as the previous version upgraded it (`identity-v2`, so that version
         can still return it to schema 1), then to schema 3 (`identity-v3`, with the model root its
-        legacy identity was recognized with, for the return to schema 2)."""
+        legacy identity was recognized with, for the return to schema 2). The database takes the
+        migrations it misses in order, in one transaction (schema 4, MFL023: the conversion presets);
+        the identity does not depend on the database schema after 3."""
         with self.lock("schema.lock"):
             schema = self._load()
-            if schema in (1, 2):
+            if 0 < schema < SCHEMA:
                 with self.connect() as conn:
-                    conn.executescript("BEGIN IMMEDIATE;\n" + (migration("002") if schema == 1 else "")
-                                       + migration("003"))
+                    conn.executescript("BEGIN IMMEDIATE;\n" + migrations(schema))
             legacy = legacy_identity.candidates(self.settings).get(self.identity["config"])
             if legacy and legacy[0] == 1:
                 self.replace_identity(legacy_identity.v2(self.settings, legacy[1]), dict(
@@ -250,30 +256,62 @@ class Storage:
             storage.close()
 
     @classmethod
-    def downgrade(cls, settings, expected):
-        """Return an archive upgraded from schema 2 (or 1) to identity and database schema 2 (K5 of
-        MFL032), one level: only while every source is a PDF, every run has the job options of
-        schema 2 and the owner `local`, and no run is running; otherwise an explicit refusal."""
+    def downgrade(cls, settings, expected, to=2):
+        """Return the archive to the database schema `to`, from 2 to SCHEMA - 1 (MFL023, C-B4 of the
+        plan r1): 2 by default, the meaning of the command before schema 4; 3 for the binary of
+        schema 3. The checks of every level crossed run before anything changes, then the down
+        migrations run in one transaction. Only the step from 3 to 2 changes the identity, back to
+        the one recorded by the upgrade from schema 2 (K5 of MFL032: only while every source is a
+        PDF, every run has the job options of schema 2 and the owner `local`); the steps above it
+        leave identity.json as it is, byte for byte. From 4 to 3: no conversion preset of a user, no
+        default preset, no run whose options (read as `stored_options` reads them) have a key outside
+        those of schema 3. No run may be running. A database already at `to` is left as it is (the
+        identity of a step to 2 is completed); one under `to` is refused."""
+        if isinstance(to, bool) or not isinstance(to, int) or not 2 <= to < SCHEMA:
+            raise StorageError('Downgrade target: a database schema from 2 to %d' % (SCHEMA - 1))
         storage = cls(settings, administrative=True)
         try:
             storage.quiesce(expected)
-            target = storage._downgrade_target()
+            target = storage._downgrade_target() if to == 2 else storage.identity['config']
             with storage.connect() as conn:
                 if conn.execute("SELECT 1 FROM runs WHERE state IN ('running','publishing') LIMIT 1").fetchone():
                     raise StorageError('Downgrade unavailable: start the worker once to reconcile running runs')
-                if conn.execute("PRAGMA user_version").fetchone()[0] == SCHEMA:
-                    storage._check_v2_content(conn)
+                version = conn.execute("PRAGMA user_version").fetchone()[0]
+                if version < to:
+                    raise StorageError('Downgrade unavailable: the database is already under schema %d' % to)
+                for level in range(version, to, -1):
+                    storage.DOWN_CHECKS[level](conn)
             with storage.lock('schema.lock'):
                 with storage.connect() as conn:
-                    if conn.execute("PRAGMA user_version").fetchone()[0] == SCHEMA:
-                        conn.executescript("BEGIN IMMEDIATE;\n" + migration("003-down"))
-                if storage.identity['config'] != target:
+                    version = conn.execute("PRAGMA user_version").fetchone()[0]
+                    if version > to:
+                        conn.executescript("BEGIN IMMEDIATE;\n" + "".join(
+                            migration("%03d-down" % level) for level in range(version, to, -1)))
+                if to == 2 and storage.identity['config'] != target:
                     storage.replace_identity(target, dict(config=storage.identity['config'],
                                              settings=settings.public(), changed=time.time(),
                                              reason='downgrade-v2'))
-            return {'previous_config': expected, 'config': target, 'schema': 2}
+            return {'previous_config': expected, 'config': target, 'schema': to}
         finally:
             storage.close()
+
+    @staticmethod
+    def _check_v3_content(conn):
+        """What schema 3 cannot hold refuses the return from 4 (MFL023): the conversion presets of the
+        users, a default preset, a run with job options outside those of schema 3 (a preset's name)."""
+        from .engine.routes import JOB_OPTIONS
+        from .services import stored_options
+        if conn.execute("SELECT 1 FROM conversion_presets LIMIT 1").fetchone():
+            raise StorageError('Downgrade unavailable: the archive holds conversion presets of its users')
+        if conn.execute("SELECT 1 FROM user_settings WHERE default_preset IS NOT NULL LIMIT 1").fetchone():
+            raise StorageError('Downgrade unavailable: a user has a default conversion preset')
+        for (options,) in conn.execute("SELECT options FROM runs"):
+            try:
+                value = stored_options(options)
+            except ValueError:
+                value = None
+            if not isinstance(value, dict) or set(value) - set(JOB_OPTIONS):
+                raise StorageError('Downgrade unavailable: a run has job options of schema 4')
 
     def _downgrade_target(self):
         """The identity of schema 2 this archive returns to: the one recorded by its upgrade."""
@@ -305,3 +343,6 @@ class Storage:
                 shaped = False
             if owner != OWNER or not shaped:
                 raise StorageError('Downgrade unavailable: a run has job options of schema 3 or another owner')
+
+    # The checks of the return from the database schema N to N - 1, by N.
+    DOWN_CHECKS = {3: _check_v2_content, 4: _check_v3_content}

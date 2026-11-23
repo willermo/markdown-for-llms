@@ -32,7 +32,7 @@ import time
 
 from .engine.codes import EngineError
 from .engine.routes import CONVERTERS, DATALAB_MODES, MARKER_SERVER, OCR_MODES, SERVER_MODES
-from .services import Service, TERMINAL
+from .services import Refused as ServiceRefused, Service, TERMINAL
 from .settings import Settings
 from .files import open_file
 
@@ -114,7 +114,8 @@ def prepare_server(args):
     the budget and the reservation hook (MFL033). Refused with a closed code before anything is
     converted."""
     from .engine import servers
-    ep = servers.load(args.servers, args.server)
+    from .gpu import presets
+    ep = servers.load(args.servers, args.server, presets=presets.endpoint_table())
     keys = servers.read_keys(ep, args.env_file, os.environ)
     srv = {"name": ep.name, "mode": args.server_mode, "transit_confirmed": bool(args.confirm_transit)}
     if not ep.costs:
@@ -271,7 +272,11 @@ def main(argv=None):
     admin = sub.add_parser('configure')
     admin.add_argument('--expected-config', required=True)
     admin.add_argument('--storage-mib', type=int)
-    sub.add_parser('downgrade-storage').add_argument('--expected-config', required=True)
+    downgrade = sub.add_parser('downgrade-storage')
+    downgrade.add_argument('--expected-config', required=True)
+    downgrade.add_argument('--to-schema', type=int, default=2,
+                           help='database schema to return to, from 2 (the default) to the one before the current '
+                                'schema; 3 for the binary of schema 3')
     convert = sub.add_parser("convert", help="convert one file with the engine into a directory, without the archive")
     convert.add_argument("file", nargs="+")
     convert.add_argument("--out", required=True, help="output directory, new or empty (with several files: one "
@@ -299,11 +304,29 @@ def main(argv=None):
     submit.add_argument("files", nargs="+")
     submit.add_argument("--wait", action="store_true")
     submit.add_argument("--route", choices=CONVERTERS, help="a route of the matrix other than the default")
-    submit.add_argument("--ocr", choices=OCR_MODES, default="auto")
+    submit.add_argument("--ocr", choices=OCR_MODES, help="OCR of the job (default: auto)")
     submit.add_argument("--lang", help="language of the document (recorded; no converter of this version uses it)")
     submit.add_argument("--datalab-mode", choices=DATALAB_MODES, help="mode of the Datalab route (default: balanced)")
     submit.add_argument("--confirm-transit", action="store_true",
                         help="confirm that the document leaves the machine for Datalab (the worker applies MDF_DATALAB_CAP_USD)")
+    submit.add_argument("--preset", help="a conversion preset (mdf presets list): its route and options, with only "
+                                         "--lang and --confirm-transit beside it")
+    presets = sub.add_parser("presets", help="the conversion presets of the instance and your own")
+    psub = presets.add_subparsers(dest="presets_command", required=True)
+    psub.add_parser("list")
+    psub.add_parser("show").add_argument("name")
+    add = psub.add_parser("add", help="add a conversion preset of your own")
+    add.add_argument("name")
+    add.add_argument("--route", choices=CONVERTERS)
+    add.add_argument("--server-mode", choices=SERVER_MODES)
+    add.add_argument("--gpu-preset")
+    add.add_argument("--ocr", choices=OCR_MODES)
+    add.add_argument("--datalab-mode", choices=DATALAB_MODES)
+    psub.add_parser("remove").add_argument("name")
+    default = psub.add_parser("default", help="set your default conversion preset, or clear it")
+    choice = default.add_mutually_exclusive_group(required=True)
+    choice.add_argument("name", nargs="?")
+    choice.add_argument("--clear", action="store_true")
     for name in ("show", "retry", "cancel", "download"):
         p = sub.add_parser(name)
         p.add_argument("id")
@@ -339,6 +362,15 @@ def main(argv=None):
         except EngineError as exc:
             emit({"status": "refused", "error": exc.code.value, "out": args.out})
             return 1
+    if args.command == "worker" and args.env_file is not None:
+        # the env file of the worker holds the keys of its GPU sessions (MFL023): checked as envfile.read
+        # checks a key file (regular, of the caller, 0600, no link, no blocking) before anything reads it
+        from .engine import envfile
+        try:
+            envfile.read(args.env_file, [])
+        except envfile.Unsafe as exc:
+            emit({"error": str(exc), "code": "server_key_unsafe"})
+            return 1
     try:
         settings = Settings.load(args.env_file, {"data_root": args.data_root, "model_root": args.model_root})
         if args.command == "convert":
@@ -352,7 +384,7 @@ def main(argv=None):
                 return 130
         if args.command == "worker":
             from .worker import Worker
-            worker = Worker(settings)
+            worker = Worker(settings, env_file=args.env_file)
             for sig in (signal.SIGINT, signal.SIGTERM):
                 signal.signal(sig, lambda *_: setattr(worker, "stop", True))
             worker.run(args.once)
@@ -369,11 +401,24 @@ def main(argv=None):
             return 0
         if args.command == 'downgrade-storage':
             from .storage import Storage
-            emit(Storage.downgrade(settings, args.expected_config))
+            emit(Storage.downgrade(settings, args.expected_config, args.to_schema))
             return 0
         service = Service(settings)
         if args.command == "jobs":
             emit(service.list())
+        elif args.command == "presets":
+            name = getattr(args, "name", None)
+            if args.presets_command == "list":
+                emit(service.presets())
+            elif args.presets_command == "show":
+                emit(service.preset(name))
+            elif args.presets_command == "add":
+                emit(service.add_preset(name, {k: getattr(args, k) for k in
+                                               ("route", "server_mode", "gpu_preset", "ocr", "datalab_mode")}))
+            elif args.presets_command == "remove":
+                emit(service.remove_preset(name))
+            else:
+                emit(service.set_default(None if args.clear else name))
         elif args.command == "retry":
             # the same as POST /api/v1/runs/ID/retry?transit_confirmed=true
             emit(service.retry(args.id, {"transit_confirmed": True} if args.confirm_transit else None))
@@ -393,9 +438,15 @@ def main(argv=None):
             failed = False
             for name in args.files:
                 try:
-                    with Path(name).open("rb") as stream:
-                        options = {"route": args.route, "ocr": args.ocr, "lang": args.lang,
+                    if args.preset is not None:
+                        if args.route or args.ocr or args.datalab_mode:
+                            raise ServiceRefused("invalid_setting", "--preset takes only --lang and --confirm-transit")
+                        options = service.preset_options(args.preset, dict(
+                            {"lang": args.lang} if args.lang else {}, transit_confirmed=args.confirm_transit))
+                    else:
+                        options = {"route": args.route, "ocr": args.ocr or "auto", "lang": args.lang,
                                    "datalab_mode": args.datalab_mode, "transit_confirmed": args.confirm_transit}
+                    with Path(name).open("rb") as stream:
                         job = service.submit(stream, Path(name).name, options)
                     if args.wait:
                         line = ProgressLine(sys.stderr)

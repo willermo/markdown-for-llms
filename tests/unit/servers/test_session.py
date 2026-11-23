@@ -324,8 +324,8 @@ class TestWindow(Base):
         import watchdog
         self.assertEqual(watchdog.cache_shas(watchdog.levers(pv.DEFAULT_LEVERS)), [
             "29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b",       # Modal, NVIDIA A10
-            "cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224",       # Modal, NVIDIA A10G
-            "d38180544831bf3c0d1a45712e25f125ff4d18a9929012376f844a2224e0ff73"])      # RunPod, RTX A5000
+            "6222ea36b0e660ccbd89b25386a30aab3dbaec14231bd36e7aae4f3b9751e7f4",       # RunPod, RTX A5000
+            "cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224"])      # Modal, NVIDIA A10G
 
     def test_an_unknown_lever_or_a_disarmed_activity_is_refused(self):
         n = len(self.rows())

@@ -34,14 +34,15 @@ dev = [
 [tool.setuptools]
 packages = [
     "markdown_for_llms", "markdown_for_llms.engine", "markdown_for_llms.engines", "markdown_for_llms.bench",
-    "markdown_for_llms.bench.readers", "markdown_for_llms.bench.adapters",
+    "markdown_for_llms.bench.readers", "markdown_for_llms.bench.adapters", "markdown_for_llms.gpu",
 ]
 include-package-data = false
 
 [tool.setuptools.package-data]
-markdown_for_llms = ["web/*.html", "web/*.css", "web/*.js", "migrations/*.sql"]
+markdown_for_llms = ["web/*.html", "web/*.css", "web/*.js", "migrations/*.sql", "data/*.json"]
 "markdown_for_llms.engine" = ["data/*.json", "filters/*.lua"]
 "markdown_for_llms.bench" = ["data/*.json"]
+"markdown_for_llms.gpu" = ["data/*.json"]
 
 [tool.uv]
 required-version = "==0.13.7"

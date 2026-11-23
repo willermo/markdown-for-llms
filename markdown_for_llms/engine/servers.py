@@ -22,7 +22,20 @@ Fields of an endpoint (a closed set; anything else is `server_not_configured`):
   `tail_idle_s`, `tail_fault_s`, defaults by kind and provider below;
 - `key_env`: the names of the variables of its keys (defaults: `RUNPOD_API_KEY`;
   `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET`; none for `local` and `user` unless named),
-  never an `MDF_` name: the env file also holds the settings, which refuse unknown `MDF_` names.
+  never an `MDF_` name: the env file also holds the settings, which refuse unknown `MDF_` names;
+  each name ends with a suffix of `envfile.KEY_SUFFIXES` (`_KEY`, `_SECRET`, `_TOKEN`, `_TOKEN_ID`,
+  `_BEARER`; MFL046 c), so that `mdf bench secret-scan` searches it.
+
+An endpoint of RunPod or Modal may name a GPU preset (MFL023 A3, `markdown_for_llms/gpu/presets.py`):
+`{"kind": ..., "preset": NAME, "resource": ..., "url": ..., "key_env": [...]}` and nothing else. The
+preset fixes every other value (server, model, revision, pins, parallel, gpu, rate with its source and
+date, the seconds), so a value written by hand next to `preset` is `server_not_configured` (D3 of
+MFL023), as are a preset of another provider, a preset that cannot be used (superseded, a global
+volume) and two endpoints of one file with the same preset. `resource` is the name of the endpoint or
+app at the provider (`mdf-surya`). The engine depends on nothing of the GPU package: `load` and
+`endpoint` receive the table of the presets (`gpu.presets.endpoint_table()`) as a plain dict, and
+without it an endpoint with a preset is `server_not_configured`. The identity of the endpoint is
+computed on the expanded values.
 
 Keys are read from `--env-file` (a private regular file, `envfile.read`) and, for `mdf convert`
 only, from the environment; they are wrapped in `envfile.Secret` and go only into the headers of
@@ -64,6 +77,8 @@ ENV_NAME = re.compile(r"[A-Z_][A-Z0-9_]{0,63}")
 FIELDS = {"kind", "provider", "url", "server", "model", "revision", "pins", "parallel", "gpu", "rate_usd_per_s",
           "rate_source", "rate_date", "ready_within", "read_timeout", "page_seconds", "cold_start_s", "w1_s",
           "tail_idle_s", "tail_fault_s", "key_env"}
+# The fields of an endpoint that names a GPU preset (MFL023 A3): the preset fixes all the others.
+PRESET_FIELDS = {"kind", "preset", "resource", "url", "key_env"}
 SECONDS = ("ready_within", "read_timeout", "page_seconds", "cold_start_s", "w1_s", "tail_idle_s", "tail_fault_s")
 # Defaults (plan r2 §4, §11; r4 §11.4 and C.3): RunPod reads within 5.5 min of its balancer, Modal
 # within the 150 s of a web request; the tails are req_max + tick + provider idle + stop margin.
@@ -164,13 +179,17 @@ class Endpoint:
         return hashlib.sha256(data.encode("ascii")).hexdigest()
 
     def record(self):
-        """What `engine.json` and the bench record of the endpoint: no key, no key name."""
-        return {"name": self.name, "kind": self.kind, "provider": self.provider, "host": self.host(),
-                "server": self.server, "model": self.model, "revision": self.revision, "parallel": self.parallel,
-                "pins": self.pins, "gpu": self.gpu, "rate_usd_per_s": self.rate_usd_per_s,
-                "rate_source": self.rate_source, "rate_date": self.rate_date,
-                "identity_sha256": self.identity_sha256(),
-                "seconds": {k: getattr(self, k) for k in SECONDS if getattr(self, k) is not None}}
+        """What `engine.json` and the bench record of the endpoint: no key, no key name; the GPU preset and the
+        resource only for an endpoint that names a preset."""
+        out = {"name": self.name, "kind": self.kind, "provider": self.provider, "host": self.host(),
+               "server": self.server, "model": self.model, "revision": self.revision, "parallel": self.parallel,
+               "pins": self.pins, "gpu": self.gpu, "rate_usd_per_s": self.rate_usd_per_s,
+               "rate_source": self.rate_source, "rate_date": self.rate_date,
+               "identity_sha256": self.identity_sha256(),
+               "seconds": {k: getattr(self, k) for k in SECONDS if getattr(self, k) is not None}}
+        if self.preset is not None:
+            out.update(preset=self.preset, resource=self.resource)
+        return out
 
 
 def _seconds(value, what):
@@ -179,12 +198,42 @@ def _seconds(value, what):
     return value
 
 
-def endpoint(name, raw):
-    """A validated `Endpoint` from the JSON object `raw` of the entry `name`."""
+def _expand(name, raw, presets):
+    """The fields of the endpoint `name` that names a GPU preset, the values of the preset included (MFL023 A3)."""
+    extra = set(raw) - PRESET_FIELDS
+    if extra:
+        raise _bad("%s: fields fixed by its preset %s" % (name, sorted(extra)))
+    if presets is None:
+        raise _bad(name + ": a GPU preset without the table of the presets")
+    preset = raw["preset"]
+    entry = presets.get(preset) if isinstance(preset, str) else None
+    if entry is None:
+        raise _bad(name + ": unknown GPU preset")
+    if entry["refusal"] is not None:
+        raise _bad("%s: the GPU preset %s cannot be used (%s)" % (name, preset, entry["refusal"]))
+    if raw.get("kind") != entry["provider"]:
+        raise _bad("%s: the GPU preset %s is of %s" % (name, preset, entry["provider"]))
+    resource = raw.get("resource")
+    if not isinstance(resource, str) or not NAME.fullmatch(resource):
+        raise _bad(name + ": resource, the name of the endpoint or app at the provider")
+    if "url" not in raw:
+        raise _bad(name + ": url")
+    fields = dict(entry["fields"], kind=raw["kind"], url=raw["url"])
+    if "key_env" in raw:
+        fields["key_env"] = raw["key_env"]
+    return fields, preset, resource
+
+
+def endpoint(name, raw, presets=None):
+    """A validated `Endpoint` from the JSON object `raw` of the entry `name`; `presets`, the table of the GPU presets
+    (`gpu.presets.endpoint_table()`), for an entry that names one."""
     if not isinstance(name, str) or not NAME.fullmatch(name):
         raise _bad("endpoint name")
     if not isinstance(raw, dict):
         raise _bad(name + ": an object")
+    preset = resource = None
+    if "preset" in raw:
+        raw, preset, resource = _expand(name, raw, presets)
     unknown = set(raw) - FIELDS
     if unknown:
         raise _bad("%s: unknown fields %s" % (name, sorted(unknown)))
@@ -251,20 +300,24 @@ def endpoint(name, raw):
     elif isinstance(names, str):
         names = [names]
     if not isinstance(names, list) or len(names) > 2 or any(not isinstance(n, str) or not ENV_NAME.fullmatch(n)
-                                                             or n.startswith("MDF_") for n in names):
-        raise _bad(name + ": key_env: names of variables, not MDF_ settings")
+                                                             or n.startswith("MDF_") or not n.endswith(envfile.KEY_SUFFIXES)
+                                                             for n in names):
+        raise _bad(name + ": key_env: names of variables ending in " + ", ".join(envfile.KEY_SUFFIXES)
+                   + ", not MDF_ settings")
     if kind == "cpu" and names:
         raise _bad(name + ": a cpu endpoint has no key")
     if kind == "modal" and len(names) != 2 or kind != "modal" and len(names) > 1:
         raise _bad(name + ": key_env: two names for modal, at most one otherwise")
     fields["key_env"] = names
+    fields.update(preset=preset, resource=resource)
     return Endpoint(name, fields)
 
 
-def load(path=None, name=None, environ=None):
+def load(path=None, name=None, environ=None, presets=None):
     """The endpoint `name` (default: the file's `default`) of the file `path` (default:
     `default_path()`); `server_not_configured` when the file, the entry or a field is missing or
-    invalid."""
+    invalid, or when two entries name the same GPU preset. `presets`: the table of the GPU presets
+    (`gpu.presets.endpoint_table()`), for an entry that names one."""
     path = Path(path) if path is not None else default_path(environ)
     try:
         fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NONBLOCK)
@@ -282,10 +335,13 @@ def load(path=None, name=None, environ=None):
         raise _bad("servers file: not JSON") from None
     if not isinstance(doc, dict) or set(doc) - {"default", "servers"} or not isinstance(doc.get("servers"), dict):
         raise _bad("servers file: {\"default\": NAME, \"servers\": {NAME: {...}}}")
+    named = [e.get("preset") for e in doc["servers"].values() if isinstance(e, dict) and "preset" in e]
+    if len(named) != len({json.dumps(p, sort_keys=True) for p in named}):
+        raise _bad("servers file: two endpoints with the same GPU preset")
     name = name if name is not None else doc.get("default")
     if not isinstance(name, str) or name not in doc["servers"]:
         raise _bad("no endpoint %r in the servers file" % (name,))
-    return endpoint(name, doc["servers"][name])
+    return endpoint(name, doc["servers"][name], presets)
 
 
 def read_keys(ep, env_file=None, environ=None):

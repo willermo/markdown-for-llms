@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "presets": {
+    "local-fast": {
+      "provisional": true,
+      "label": "Fast, on this computer",
+      "description": "The route of the conversion matrix for each format: Marker fast on the CPU for pages and images, the native tools for the other formats. Nothing leaves this computer.",
+      "options": {"route": null, "server_mode": null, "gpu_preset": null, "ocr": "auto", "datalab_mode": null}
+    },
+    "quality-now": {
+      "provisional": true,
+      "label": "Quality now (Modal)",
+      "description": "Pages and images only: Marker balanced with the inference of Surya on a GPU rented by the second on Modal. The page images leave this computer.",
+      "options": {"route": "marker-server", "server_mode": "balanced", "gpu_preset": "modal-base", "ocr": "auto", "datalab_mode": null}
+    },
+    "batch": {
+      "provisional": true,
+      "label": "Batch (RunPod)",
+      "description": "Pages and images only: Marker balanced with the inference of Surya on a GPU rented by the second on RunPod, one session for the whole queue; the GPU can be armed ahead. The page images leave this computer.",
+      "options": {"route": "marker-server", "server_mode": "balanced", "gpu_preset": "runpod-serverless-volume-dc", "ocr": "auto", "datalab_mode": null}
+    },
+    "datalab": {
+      "provisional": true,
+      "label": "Datalab",
+      "description": "Pages and images only: the Datalab API in its balanced mode, under the cap of each conversion. The document leaves this computer.",
+      "options": {"route": "datalab", "server_mode": null, "gpu_preset": null, "ocr": "auto", "datalab_mode": "balanced"}
+    }
+  }
+}

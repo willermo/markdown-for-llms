@@ -157,7 +157,29 @@ The servers are named in `servers.json`, a file without secrets: `${XDG_CONFIG_H
                "rate_usd_per_s": "0.00036772", "pins": {"vllm": "0.25.1"}}}}
 ```
 
-The fields are a closed set (anything else is `server_not_configured`): `kind`, `provider` (a `user` server of RunPod or Modal costs like the endpoint, and needs the same session), `url`, `server` (`vllm` or `llamacpp`), `model`, `revision`, `pins` (the versions the server must declare at readiness, `server_mismatch` otherwise), `parallel`, `gpu`, `rate_usd_per_s` (required with a provider, and equal to the rate that the session records at its arm: 0.0002090948 for RunPod, 0.00036772 for Modal, the rate of the dearest GPU of the app; another value is `server_not_configured` before any request, so that a stale file never reserves less than the window costs), `rate_source`, `rate_date`, the seconds `ready_within`, `read_timeout`, `page_seconds`, `cold_start_s`, `w1_s`, `tail_idle_s`, `tail_fault_s`, and `key_env`, the names of the variables of its keys. Without `key_env` a RunPod endpoint takes `RUNPOD_API_KEY` (`Authorization: Bearer`), a Modal endpoint `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET` (`Modal-Key` and `Modal-Secret`), the others none. The keys come from the file given with `--env-file` of `mdf` (a regular file of yours with mode 0600, `server_key_unsafe` otherwise; `server_key_missing` without them) or from the environment; they go only into the headers of the relay and are never written.
+The fields are a closed set (anything else is `server_not_configured`): `kind`, `provider` (a `user` server of RunPod or Modal costs like the endpoint, and needs the same session), `url`, `server` (`vllm` or `llamacpp`), `model`, `revision`, `pins` (the versions the server must declare at readiness, `server_mismatch` otherwise), `parallel`, `gpu`, `rate_usd_per_s` (required with a provider, and equal to the rate that the session records at its arm: 0.0002090948 for RunPod, 0.00036772 for Modal, the rate of the dearest GPU of the app; another value is `server_not_configured` before any request, so that a stale file never reserves less than the window costs), `rate_source`, `rate_date`, the seconds `ready_within`, `read_timeout`, `page_seconds`, `cold_start_s`, `w1_s`, `tail_idle_s`, `tail_fault_s`, and `key_env`, the names of the variables of its keys, each ending in `_KEY`, `_SECRET`, `_TOKEN`, `_TOKEN_ID` or `_BEARER` (the names `mdf bench secret-scan` searches; another name is `server_not_configured`). Without `key_env` a RunPod endpoint takes `RUNPOD_API_KEY` (`Authorization: Bearer`), a Modal endpoint `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET` (`Modal-Key` and `Modal-Secret`), the others none. The keys come from the file given with `--env-file` of `mdf` (a regular file of yours with mode 0600, `server_key_unsafe` otherwise; `server_key_missing` without them) or from the environment; they go only into the headers of the relay and are never written. The relay asks every server for answers without compression (`Accept-Encoding: identity`); an answer compressed anyway (gzip or deflate) is decoded piece by piece within the limit of 30,000,000 bytes, and another encoding, a truncated answer or one with bytes after its end reaches Marker as an error (502).
+
+### GPU presets
+
+A GPU preset fixes where and how the inference runs on a rented GPU: provider, data center, volume (type, class and size), GPUs, image by digest, model with its revision and version of vLLM, rate with its source and date, the archives of the cache of compilation, whether the GPU can be armed ahead, the seconds of the terms, and the measures shown before a conversion with their date, hardware and source. The presets are in `markdown_for_llms/gpu/data/presets.json`, with a closed schema; another data center, volume or GPU is a new preset of that file, never a value written by hand:
+
+| Preset | Status | Provider and place | Volume | GPU |
+| --- | --- | --- | --- | --- |
+| `modal-base` | supported | Modal, the region Modal chooses | the Volume `mdf-surya-weights` | L4, else A10G (A10 or A10G seen) |
+| `runpod-serverless-volume-dc` | supported | RunPod serverless, CA-MTL-1 | network volume `HIGH_PERFORMANCE`, 10 GB | `AMPERE_24` (RTX A5000 seen) |
+| `runpod-serverless-volume-eu-se-1` | superseded by `runpod-serverless-volume-dc` | RunPod serverless, EU-SE-1 | network volume `STANDARD`, 10 GB, deleted | `AMPERE_24` |
+
+A superseded preset is listed for its measures and never used; a preset on a global volume is refused (`gpu_volume_unsupported`). An endpoint of `servers.json` names its preset with only five fields:
+
+```json
+{"default": "batch-gpu", "servers": {
+  "batch-gpu": {"kind": "runpod", "preset": "runpod-serverless-volume-dc", "resource": "mdf-surya",
+                "url": "https://<endpoint id>.api.runpod.ai"},
+  "modal-gpu": {"kind": "modal", "preset": "modal-base", "resource": "mdf-surya",
+                "url": "https://<workspace>--mdf-surya-serve.<region>.modal.run"}}}
+```
+
+`kind` is the provider of the preset, `resource` the name of the endpoint or app at the provider, `url` its address and `key_env`, optional, the names of its keys. The preset gives every other field (server, model, revision, pins, parallel, gpu, rate, seconds): one of them written next to `preset`, a preset of another provider or a superseded one, and two endpoints of one file with the same preset are `server_not_configured`. `mdf convert` and `mdf bench run` read such an endpoint as any other. For Modal the preset takes `ready_within` 900 and `cold_start_s` 480, lower than the defaults of a Modal endpoint written by hand (1200 and 1100).
 
 ### Convert on the local CPU server
 
@@ -299,7 +321,7 @@ A use reads the archive within the limits of its populate: a regular file of at 
     --spend-ledger ~/bench-runs/spend.jsonl --spend-cap-usd 15
 ```
 
-The last line of `start_series.py` gives the SHA-256 of the archive (`sha256`). An archive serves only the GPU of its manifest: on another GPU vLLM compiles as without it. On Modal, which assigns an A10 or an A10G as it likes, `--gpu "NVIDIA A10G"` takes only a container on that GPU and lets the others go before vLLM is ready. Without `--levers` every session takes the archives adopted in `scripts/servers/providers.py` (`DEFAULT_LEVERS`), one per GPU: today the A10 and the A10G of Modal and the RTX A5000 of RunPod (an L4 has none); `--levers none` arms without them. An archive lives on the volume of its endpoint: an endpoint on another volume, for example after a move to another data center, has none until a populate of its own, and `DEFAULT_LEVERS` names only the archives above, so name the new one with `--levers`. The RunPod endpoint of these measures moved to CA-MTL-1 on 22 November 2026, and its archive there, `compile-cache:6222ea36…`, is not yet among `DEFAULT_LEVERS`: without `--levers` vLLM compiles there. A new image, another version of vLLM or other arguments of vLLM need a new populate: vLLM then does not find its graphs and compiles. With the cache, a start was ready 25 to 30 s earlier (`torch.compile` took 2.4 to 3.3 s), and every conversion of a one-page scan on 21 November 2026, more than 20 on the three GPUs, gave the same output with and without it.
+The last line of `start_series.py` gives the SHA-256 of the archive (`sha256`). An archive serves only the GPU of its manifest: on another GPU vLLM compiles as without it. On Modal, which assigns an A10 or an A10G as it likes, `--gpu "NVIDIA A10G"` takes only a container on that GPU and lets the others go before vLLM is ready. Without `--levers` every session takes the archives adopted (`DEFAULT_LEVERS` of `markdown_for_llms/gpu/providers.py`), one per GPU: the A10 and the A10G of Modal and the RTX A5000 of RunPod in CA-MTL-1, `compile-cache:6222ea36…` (an L4 has none); `--levers none` arms without them. They are the archives of the supported GPU presets ([GPU presets](#gpu-presets)), `levers.compile_cache` of `markdown_for_llms/gpu/data/presets.json`. An archive lives on the volume of its endpoint: an endpoint on another volume, for example after a move to another data center, has none until a populate of its own, and `DEFAULT_LEVERS` names only the archives above, so name the new one with `--levers`. The archive of the volume of EU-SE-1, `compile-cache:d3818054…`, was deleted with that volume on 22 November 2026; it stays only in the superseded preset. A new image, another version of vLLM or other arguments of vLLM need a new populate: vLLM then does not find its graphs and compiles. With the cache, a start was ready 25 to 30 s earlier (`torch.compile` took 2.4 to 3.3 s), and every conversion of a one-page scan on 21 November 2026, more than 20 on the three GPUs, gave the same output with and without it.
 
 ### Arm ahead
 
@@ -332,7 +354,7 @@ Modal can keep a snapshot of the memory and of the GPU of a container and start 
 The lever runs only on Modal and only on an app named `*-snap` (`*-snap-fault` for the fault test), which takes exactly the levers of `providers.SNAPSHOT_LEVERS`: `snapshot` and the archives of `DEFAULT_LEVERS`. Another set, the lever on another app, `--allow-download`, `--disarmed` or `--cpu-activity` is refused before anything is read (`invalid_setting`). The app has a URL of its own: a first session with the command `true` prints it in its `armed` event, for `servers.json` (a `modal` server like `modal-l4`, here `modal-snap`) and for `--url`:
 
 ```bash
-CC=compile-cache:29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b,compile-cache:cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224,compile-cache:d38180544831bf3c0d1a45712e25f125ff4d18a9929012376f844a2224e0ff73
+CC=compile-cache:29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b,compile-cache:6222ea36b0e660ccbd89b25386a30aab3dbaec14231bd36e7aae4f3b9751e7f4,compile-cache:cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224
 L=~/bench-runs/spend.jsonl
 .venv-dev/bin/python -I -B scripts/servers/session.py run --provider modal --name mdf-surya-snap \
     --levers "snapshot,$CC" --env-file .env --spend-ledger "$L" --spend-cap-usd 15 --cap-usd 0.10 -- true
@@ -417,11 +439,38 @@ The archive keeps every source, every attempt and every result under `MDF_DATA_R
 
 Open `http://127.0.0.1:23465` in a browser on the same machine, choose files under "Choose one or more files" and press "Convert"; a conversion shows its progress, then the extracted Markdown, the images, "Download source" and "Download Markdown and assets (ZIP)". From the command line, `mdf submit FILE… [--wait] [--route R] [--ocr force] [--lang L] [--datalab-mode M] [--confirm-transit]` sends files to the same archive, and `mdf jobs`, `mdf show ID`, `mdf retry ID [--confirm-transit]`, `mdf cancel ID`, `mdf download ID --output FILE` follow them. A refusal prints its code next to the text (`{"error": …, "code": "transit_not_confirmed"}`) and exits 1.
 
+The settings file of the product holds no key: `mdf serve` and `mdf worker` read from it only the lines of the `MDF_` settings. A file given to `mdf worker --env-file` must be a regular file of yours with mode 0600, not a link (`server_key_unsafe` otherwise, before anything reads it), because it may also hold the keys of the GPU sessions; the worker takes the keys of the rented GPUs (`RUNPOD_API_KEY`, the Modal proxy token, the `key_env` of `servers.json`) out of its environment when it starts.
+
+### Conversion presets
+
+A conversion preset says how a document is converted: route, mode of the GPU route, GPU preset, OCR, mode of Datalab. The archive comes with four, provisional until their values are measured:
+
+| Preset | What it does |
+| --- | --- |
+| `local-fast` | the route of the matrix for each format on this computer: Marker `fast` for pages and images |
+| `quality-now` | pages and images on a GPU of Modal (`marker-server`, `balanced`, `modal-base`) |
+| `batch` | pages and images on a GPU of RunPod (`marker-server`, `balanced`, `runpod-serverless-volume-dc`) |
+| `datalab` | pages and images with Datalab, `balanced` |
+
+In this version the archive lists `quality-now` and `batch` and refuses them (`route_not_in_product`), like every GPU preset. You add presets of your own with the same fields and choose your default:
+
+```bash
+.venv-dev/bin/mdf --env-file mdf.env presets list
+.venv-dev/bin/mdf --env-file mdf.env presets add scans --route marker --ocr force
+.venv-dev/bin/mdf --env-file mdf.env presets default scans      # or: presets default --clear
+.venv-dev/bin/mdf --env-file mdf.env submit page.png --preset scans --lang it
+.venv-dev/bin/mdf --env-file mdf.env presets remove scans
+```
+
+The names of the presets of the archive are reserved (`preset_reserved`); a name is lowercase letters, digits and hyphens (`preset_invalid` otherwise, as for options outside their form), once per user (`preset_exists`). With `--preset` only `--lang` and `--confirm-transit` go beside it; the job records the name of the preset in its options (`preset`). The API has the same operations: `GET /api/v1/presets` (the presets, the default and the GPU presets with whether this instance enables them), `POST /api/v1/presets` with `{"name": …, "options": {…}}`, `PUT` and `DELETE /api/v1/presets/NAME`, `PUT /api/v1/settings/default-preset` with `{"name": …}` or `null`, and `POST /api/v1/runs?preset=NAME`, with only `lang` and `transit_confirmed` beside it.
+
+The GPU presets an instance offers are its settings (in `.env.example`): `MDF_GPU_PRESETS` names them (only supported presets on a network volume), `MDF_SERVERS` is the `servers.json` of the instance, `MDF_GPU_LEDGER_DIR` the folder of its spend ledger, outside the archive, `MDF_GPU_CAP_USD_MODAL`, `MDF_GPU_CAP_USD_RUNPOD` and `MDF_GPU_SESSION_CAP_USD` the caps. None of them is part of the identity of the archive. In this version they are read and checked, and the GPU route is still refused in the archive.
+
 ### Formats and routes
 
 The archive accepts every format of the conversion matrix, recognized by the extension of the file name and confirmed by the signature of the whole file: a `.docx` that is not a Word package is refused with `format_mismatch`, an extension outside the matrix with `format_unsupported`, a damaged package with `input_unreadable`. The source is kept with its extension (`sources/<id>.docx`), and the ZIP and "Download source" give it back as `source/document.<ext>` with its media type.
 
-The route is the default of the format unless you choose one of its alternatives (the table in [Choose a route](#choose-a-route)), except `marker-server`, which the API and the worker refuse with `route_not_in_product` in this version; the Web UI preselects "Default of the format (recommended)" and lists only the routes every chosen file has. The API takes the options as query parameters of `POST /api/v1/runs` (`route`, `ocr`, `lang`, `datalab_mode`, `transit_confirmed`); the API and the worker both validate them, and a refusal carries its code next to the text (for example `{"error": "This format has no such route", "code": "route_invalid"}`). `GET /api/v1/session` lists the formats with their routes and `GET /api/v1/readiness` the availability of each route as the worker last checked it. A route that cannot run on this machine (for example Marker without its weights, `weights_missing`) fails its job with `route_unavailable` and the next jobs go on.
+The route is the default of the format unless you choose one of its alternatives (the table in [Choose a route](#choose-a-route)), except `marker-server`, which the API and the worker refuse with `route_not_in_product` in this version, also through a conversion preset; the Web UI preselects "Default of the format (recommended)" and lists only the routes every chosen file has. The API takes the options as query parameters of `POST /api/v1/runs` (`route`, `ocr`, `lang`, `datalab_mode`, `transit_confirmed`); the API and the worker both validate them, and a refusal carries its code next to the text (for example `{"error": "This format has no such route", "code": "route_invalid"}`). `GET /api/v1/session` lists the formats with their routes and `GET /api/v1/readiness` the availability of each route as the worker last checked it. A route that cannot run on this machine (for example Marker without its weights, `weights_missing`) fails its job with `route_unavailable` and the next jobs go on.
 
 The detail of a completed conversion lists its problems with their page under "Problems" and the limits of its route under "Limits of this conversion" (the limit of Marker on vector and scanned figures is one of them). A run of a previous version keeps its options: `force_ocr` counts as `--ocr force`.
 
@@ -442,15 +491,17 @@ Before sending, the Web UI shows what happens to the document under "Datalab: th
 
 ### The archive identity and the return to a previous version
 
-The archive records the identity of the settings it depends on (identity schema 3, profile `engine-v1`): the port, the model root, the time limits and the Datalab cap are not part of it, the quotas and the limits of a conversion are (`mdf configure` changes the storage quota). An archive of a previous version (identity schema 1 or 2) is upgraded by its first opening, which needs every API, worker and CLI of every version stopped; the upgrade is recorded in the `history` of `identity.json`. If it was created with a former default port, open it once with `MDF_PORT=23460` (or `8765` before 2026-11-07); with the former default model root (`./mdf-models` of the directory it was used from), once with `MDF_MODEL_ROOT` set to the absolute path of that `mdf-models` directory, from any directory, or with `MDF_MODEL_ROOT=./mdf-models` from the directory it was used from; the mismatch message names them.
+The archive records the identity of the settings it depends on (identity schema 3, profile `engine-v1`): the port, the model root, the time limits, the Datalab cap and the settings of the GPUs are not part of it, the quotas and the limits of a conversion are (`mdf configure` changes the storage quota). An archive of a previous version (identity schema 1 or 2) is upgraded by its first opening, which needs every API, worker and CLI of every version stopped; the upgrade is recorded in the `history` of `identity.json`. If it was created with a former default port, open it once with `MDF_PORT=23460` (or `8765` before 2026-11-07); with the former default model root (`./mdf-models` of the directory it was used from), once with `MDF_MODEL_ROOT` set to the absolute path of that `mdf-models` directory, from any directory, or with `MDF_MODEL_ROOT=./mdf-models` from the directory it was used from; the mismatch message names them.
 
-To use the archive again with the previous version (schema 2), stop every process and run:
+Its database is at schema 4 (the conversion presets of the users and their default), which an archive of schema 3 reaches at its first opening, with the same identity. The binary of schema 3 refuses a database of schema 4 (`Unsupported database schema`): to use the archive again with it, stop every process and add `--to-schema 3` to the command below. That return leaves `identity.json` as it is, and it is refused, without changes, while a user has a conversion preset or a default, or a run was submitted with a preset (its options hold `preset`).
+
+To use the archive again with the version of schema 2, stop every process and run:
 
 ```bash
 .venv-dev/bin/mdf --env-file mdf.env downgrade-storage --expected-config "$(python3 -c 'import json; print(json.load(open("mdf-data/identity.json"))["config"])')"
 ```
 
-The return is refused, without changes, unless the archive was upgraded from schema 2 (or 1) with the same settings, no run is running, every source is a PDF, every run has the options of the previous version and the owner `local`: once a file of another format or a run with the options of this version is in the archive, it stays at schema 3.
+The return is refused, without changes, unless the archive was upgraded from schema 2 (or 1) with the same settings, no run is running, every source is a PDF, every run has the options of that version and the owner `local`, plus the conditions of the return to schema 3: once a file of another format or a run with the options of schema 3 is in the archive, it can return to schema 3 at most. The checks of every schema crossed run before anything changes.
 
 ## Limits
 

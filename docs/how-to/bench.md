@@ -313,7 +313,7 @@ Two levers of the start were measured on 22 and 23 November 2026 and not adopted
 The containers of a deploy start from a snapshot of the memory and of the GPU, taken once vLLM is ready with a synthetic page and before any request ([how it works](convert-documents.md#the-memory-snapshot-of-modal-experimental)). Not active by default. It runs only on an app named `*-snap` or `*-snap-fault`, with exactly `snapshot` and the archives of `DEFAULT_LEVERS`:
 
 ```bash
-CC=compile-cache:29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b,compile-cache:cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224,compile-cache:d38180544831bf3c0d1a45712e25f125ff4d18a9929012376f844a2224e0ff73
+CC=compile-cache:29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b,compile-cache:6222ea36b0e660ccbd89b25386a30aab3dbaec14231bd36e7aae4f3b9751e7f4,compile-cache:cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224
 M="--env-file .env --spend-ledger $R/spend.jsonl --spend-cap-usd 15"
 $S run --provider modal --name mdf-surya-snap $M --cap-usd 0.90 --levers "snapshot,$CC" \
   --url "https://<workspace>--mdf-surya-snap-serve-web.<region>.modal.run" -- \

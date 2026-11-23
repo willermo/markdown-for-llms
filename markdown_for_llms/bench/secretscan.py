@@ -20,6 +20,8 @@ import os
 from pathlib import Path
 import stat
 
+from ..engine.envfile import KEY_SUFFIXES   # the suffixes of the names of keys (MFL046 c)
+
 CHUNK = 1 << 20
 
 
@@ -81,7 +83,6 @@ def scan(paths, needle):
     return read, errors, found
 
 
-KEY_SUFFIXES = ("_KEY", "_SECRET", "_TOKEN", "_TOKEN_ID", "_BEARER")
 MIN_KEY_BYTES = 8
 
 

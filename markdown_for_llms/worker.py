@@ -2,7 +2,7 @@
 
 Every file of the archive goes through the conversion engine (`engine.convert`) on the route of
 its job: the default of the conversion matrix or the one the user chose, with the options
-validated again by `engine.routes.job_options` (MFL032 C3). A route that cannot run on this
+validated again by `services.job_options`, the function of the API (MFL032 C3, MFL023 A5). A route that cannot run on this
 machine fails its job with `route_unavailable` and the queue goes on. The Datalab route runs only
 with the transit confirmed in the job, under the cap `MDF_DATALAB_CAP_USD` of each conversion,
 with the key `DATALAB_API_KEY` that the worker takes out of its own environment when it starts
@@ -37,7 +37,7 @@ from .engine.formats import extension_of
 from .engine.progress import finishing
 from .files import identify, make_directory, open_file, read_json, rename, sync_directory, write_json, sync_tree, corruption, relative, IntegrityError, MetadataError, decode_json, publication_barrier, directory, FileSafetyError, json_bytes
 from .references import inspect
-from .services import Service, ReadUnavailable, source_format, stored_manifest, stored_options, publication_budget
+from .services import Service, ReadUnavailable, job_options, source_format, stored_manifest, stored_options, publication_budget
 from .storage import StorageError, CapacityError
 
 MAX_ISSUES = 200                 # engine problems listed in the manifest; all of them are counted
@@ -159,6 +159,29 @@ class Observer:
         return "interrupted" if stop == "interrupted" else "cancelled" if stop else None
 
 
+def take_gpu_keys(settings, environ=None):
+    """The keys of the rented GPUs taken out of the environment of the worker (MFL023, C-NB2 of the
+    plan r1): the names of `gpu.providers.KEYS` and the `key_env` of the endpoints of the instance's
+    servers.json, so that no child inherits them; the worker reads its keys only from its env file.
+    A file that cannot be read, or entries of another type, are skipped (C-DA-NB3 of the review of A); of
+    `key_env` only the names of keys leave, by the rule of `engine.servers`: ending in one of
+    `envfile.KEY_SUFFIXES`, never an `MDF_` setting. Returns the names taken, never a value."""
+    from .engine.envfile import KEY_SUFFIXES
+    from .gpu.providers import KEYS
+    environ = os.environ if environ is None else environ
+    names = set(KEYS)
+    try:
+        doc = json.loads(Path(settings.servers).read_bytes())
+        entries = doc.get("servers") if isinstance(doc, dict) else None
+    except (OSError, ValueError):
+        entries = None
+    for entry in (entries.values() if isinstance(entries, dict) else ()):
+        given = entry.get("key_env") if isinstance(entry, dict) else None
+        given = [given] if isinstance(given, str) else given if isinstance(given, list) else []
+        names.update(n for n in given if isinstance(n, str) and not n.startswith("MDF_") and n.endswith(KEY_SUFFIXES))
+    return sorted(n for n in names if environ.pop(n, None) is not None)
+
+
 def take_datalab_key(environ=None):
     """The Datalab key of the worker: `DATALAB_API_KEY` taken out of the environment of the
     process (so no child can inherit it), or None."""
@@ -193,7 +216,7 @@ def engine_request(options, attempt, fmt=None, cap_usd="0"):
     Datalab route gets the confirmed transit of the job and the cap of the settings."""
     opts = stored_options(options)
     if fmt is not None:
-        opts = routes.job_options(fmt, opts)
+        opts = job_options(fmt, opts)
     request = {"route": opts.get("route"), "ocr": opts.get("ocr", "auto"), "lang": opts.get("lang"), "attempt": attempt}
     if fmt is not None and routes.resolve(fmt, opts["route"])[0] == routes.DATALAB:
         request["datalab"] = {"mode": opts["datalab_mode"], "transit_confirmed": opts["transit_confirmed"],
@@ -255,8 +278,11 @@ def engine_issues(engine):
 
 
 class Worker:
-    def __init__(self, settings):
+    def __init__(self, settings, env_file=None):
         self.settings = settings
+        # the env file of `mdf worker --env-file`, checked by the CLI before Settings.load: the keys
+        # of the GPU sessions are read from it by name, never from the environment (MFL023)
+        self.env_file = None if env_file is None else str(Path(env_file).absolute())
         self.service = Service(settings)
         self.storage = self.service.storage
         self.token = uuid.uuid4().hex
@@ -267,6 +293,7 @@ class Worker:
         self.converters = None           # availability per converter, from `ready`
         self.readiness = {"ready": False, "message": "Worker starting", "converters": None}
         self.datalab_key = take_datalab_key()
+        take_gpu_keys(settings)
 
     def datalab_state(self):
         """Datalab can run here with the key of the worker and a cap above 0."""

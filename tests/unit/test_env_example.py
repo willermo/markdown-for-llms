@@ -59,7 +59,9 @@ EXCLUDED = {
     "HF_HOME": "the container of the endpoint: the weights on the volume",
     "VLLM_CACHE_ROOT": "the container of the endpoint: the cache of vLLM and of torch.compile",
     # the identity of a Modal container, set by Modal and read by the watchdog around a memory snapshot (MFL045 c2,
-    # plan r2 E.2 and E.7); MODAL_IDENTITY_TOKEN, an OIDC token of the same list, is never read
+    # plan r2 E.2 and E.7); MODAL_IDENTITY_TOKEN, an OIDC token of the same list, is never read for its value
+    "MODAL_IDENTITY_TOKEN": "the container of a Modal app: an OIDC token of its runtime, taken out of the environment "
+                            "of vLLM and of the download by watchdog.vllm_env (MFL049 c), never read for its value",
     "MODAL_TASK_ID": "the container of a Modal app: its task, which a restore of a snapshot changes",
     "MODAL_ENABLE_SNAP_RESTORE": "the container of a Modal app: 1 in a task of a memory snapshot",
     "MODAL_REGION": "the container of a Modal app: its region",
@@ -125,6 +127,19 @@ DYNAMIC = {
                                         "self.environ.get(serverspend.SESSION_ENV)": SESSION},
     "scripts/servers/watchdog.py": {"env.get('MDF_' + key.upper())": _watchdog_names,
                                     "env['MDF_' + key.upper()]": _watchdog_names},
+    # the keys of the rented GPUs that the worker takes out of its environment (MFL023 A4): those of
+    # gpu.providers.KEYS and the key_env of the endpoints, whose default names are those of servers.KEY_ENV
+    "markdown_for_llms/worker.py": {"environ.pop(n, None)": lambda: sorted(
+        set(_constant("markdown_for_llms.gpu.providers", "KEYS")()) | set(_key_names_of_endpoints()))},
+    # the same modules at their place in the package (MFL023 A1): scripts/servers holds links to them
+    "markdown_for_llms/gpu/modal_tasks.py": {"self.environ.get(wl.LOG_ENV)": WORKER_LOG,
+                                             "self.environ.get(serverspend.SESSION_ENV)": SESSION},
+    "markdown_for_llms/gpu/runpod_endpoint.py": {"self.environ.get(wl.LOG_ENV)": WORKER_LOG,
+                                                 "self.environ.get(serverspend.SESSION_ENV)": SESSION},
+    "markdown_for_llms/gpu/start_series.py": {"self.environ.get(wl.LOG_ENV)": WORKER_LOG,
+                                              "self.environ.get(serverspend.SESSION_ENV)": SESSION},
+    "markdown_for_llms/gpu/watchdog.py": {"env.get('MDF_' + key.upper())": _watchdog_names,
+                                          "env['MDF_' + key.upper()]": _watchdog_names},
 }
 
 
@@ -269,6 +284,19 @@ class TestEnvExample(unittest.TestCase):
                 commented, value = lines.get(name, (None, None))
                 self.assertIs(commented, True)
                 self.assertEqual(value.strip(), "")
+
+    def test_the_bench_commands_that_take_a_settings_file(self):
+        """C-DA-NB1 of the review of A: the commands `.env.example` names as reading MDF_BENCH_CACHE_DIR from the
+        settings file are those of `mdf bench` with an `--env-file`."""
+        import argparse
+        from markdown_for_llms.bench import cli as bench_cli
+        sub = next(a for a in bench_cli.build_parser()._actions if isinstance(a, argparse._SubParsersAction))
+        taking = sorted(name for name, p in sub.choices.items() if any(a.dest == "env_file" for a in p._actions))
+        text = " ".join(line.lstrip("# ").strip() for line in
+                        (ROOT / ".env.example").read_text(encoding="utf-8").splitlines())
+        found = re.search(r"by the commands that take a settings file \(([^)]*)\)", text)
+        self.assertIsNotNone(found)
+        self.assertEqual(sorted(n.strip() for n in found.group(1).split(",")), taking)
 
     def test_the_scan_finds_the_forms_of_a_read(self):
         tree = ast.parse("import os\n"

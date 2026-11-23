@@ -11,6 +11,9 @@ import os
 import stat
 
 LIMIT = 65536
+# The suffixes of the names of keys (MFL046 c): the names of `key_env` of servers.json end with one, so that
+# `mdf bench secret-scan`, which searches every variable of the env file with one of them, finds every key.
+KEY_SUFFIXES = ("_KEY", "_SECRET", "_TOKEN", "_TOKEN_ID", "_BEARER")
 
 
 class Unsafe(Exception):

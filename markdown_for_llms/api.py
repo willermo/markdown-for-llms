@@ -57,6 +57,29 @@ def job_request(query, allowed=routes.JOB_OPTIONS):
     return options
 
 
+PRESET_BODY_BYTES = 16384
+
+
+async def json_body(request, keys):
+    """The JSON object of a small request body with exactly the fields `keys` (the conversion presets, MFL023 A5).
+    The body is read piece by piece and refused as soon as it passes PRESET_BODY_BYTES, without receiving the
+    pieces after that one (SOL-A-B1 of the review of A)."""
+    parts, size = [], 0
+    async for piece in request.stream():
+        size += len(piece)
+        if size > PRESET_BODY_BYTES:
+            raise Refused('preset_invalid')
+        parts.append(piece)
+    data = b''.join(parts)
+    try:
+        value = json.loads(data)
+    except ValueError:
+        raise Refused('preset_invalid') from None
+    if not isinstance(value, dict) or set(value) != set(keys):
+        raise Refused('preset_invalid')
+    return value
+
+
 def create_app(settings):
     service = Service(settings)
     token = secrets.token_urlsafe(32)
@@ -145,11 +168,17 @@ def create_app(settings):
     def get(run_id: str):
         return service.get(run_id)
 
+    def preset_request(query):
+        """`?preset=NAME`: the options of a conversion preset, with only `lang` and `transit_confirmed` beside it."""
+        extra = job_request({k: v for k, v in query.items() if k != 'preset'}, allowed=('lang', 'transit_confirmed'))
+        return service.preset_options(query['preset'], extra)
+
     @app.post('/api/v1/runs', status_code=202)
     async def submit(request: Request):
         name = unquote(request.headers.get('x-filename', 'document.pdf'), errors='strict')
         key = request.headers.get('idempotency-key')
-        options = job_request(request.query_params)
+        query = request.query_params
+        options = await run_in_threadpool(preset_request, query) if 'preset' in query else job_request(query)
         # Hold only this upload's lease while receiving, never an admission/DB lock.
         context = service.upload(name, options, key=key)
         receiver = await run_in_threadpool(context.__enter__)
@@ -164,6 +193,30 @@ def create_app(settings):
     def retry(run_id: str, request: Request):
         # the route and the options of the run; a Datalab run confirms its transit again
         return service.retry(run_id, job_request(request.query_params, allowed=('transit_confirmed',)))
+
+    @app.get('/api/v1/presets')
+    def presets():
+        """The conversion presets of the instance and of the user, the default of the user and the GPU presets."""
+        return service.presets()
+
+    @app.post('/api/v1/presets', status_code=201)
+    async def add_preset(request: Request):
+        body = await json_body(request, ('name', 'options'))
+        return await run_in_threadpool(service.add_preset, body['name'], body['options'])
+
+    @app.put('/api/v1/presets/{name}')
+    async def replace_preset(name: str, request: Request):
+        body = await json_body(request, ('options',))
+        return await run_in_threadpool(service.replace_preset, name, body['options'])
+
+    @app.delete('/api/v1/presets/{name}')
+    def remove_preset(name: str):
+        return service.remove_preset(name)
+
+    @app.put('/api/v1/settings/default-preset')
+    async def default_preset(request: Request):
+        body = await json_body(request, ('name',))
+        return await run_in_threadpool(service.set_default, body['name'])
 
     @app.post('/api/v1/runs/{run_id}/cancel')
     def cancel(run_id: str):
