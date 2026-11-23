@@ -356,7 +356,13 @@ class Watch:
     waits for the zero Z1 of an armed endpoint (Davide, 20/11 19:44): no worker RUNNING, and each
     worker that ran no longer listed, or settled by `settled(listed)` (the driver: the log of the
     session, its "stop container"). A reading that fails with one of `tolerate` is recorded
-    (`read_errors`) and the wait goes on; its deadline stays."""
+    (`read_errors`) and the wait goes on; its deadline stays.
+
+    MFL045 c3 (plan r2 §6, A6; prescription P-6): the intervals of quiet. `until_zero` opens one at the zero
+    (`zero_t`); `open_window` reads once more (a worker RUNNING then is a violation of the open interval), then
+    closes it into `quiet` and leaves `zero_t` None: a declared window, in which a request may make a worker RUNNING
+    (`A-FB`); the next `until_zero` opens the next interval. The driver judges the log on the closed intervals too.
+    Two workers RUNNING at once are always a violation."""
 
     def __init__(self, prov, clock=time.time, sleep=time.sleep, max_total=1, data_centers=None, after_read=None,
                  extra_ok=False, judge=None, on_fact=None, tolerate=()):
@@ -369,6 +375,7 @@ class Watch:
         self.running_ids, self.seen, self.replacements = [], {}, []
         self.facts, self._fact_keys, self.on_fact = [], set(), on_fact
         self.zero_t = None                         # c7.20: the zero Z1 of the phase (clock)
+        self.quiet = []                            # MFL045 c3: the closed intervals of quiet, (from, to) of the clock
         self.tolerate, self.read_errors = tuple(tolerate), []
         self.why_not_zero = None
 
@@ -484,7 +491,8 @@ class Watch:
         running, n_running = running_of(s)
         if n_running:
             return "RUNNING in the reading: %s" % (running or n_running)
-        listed = {w.get("id") for w in s.get("workers") or []}
+        # the workers listed and their states in this reading (MFL045 c3: a paused worker with the lever flashboot)
+        listed = {w.get("id"): str(w.get("status") or "").upper() for w in s.get("workers") or []}
         if settled is not None:
             return settled(listed)
         left = [x for x in self.running_ids if x in listed]
@@ -514,6 +522,17 @@ class Watch:
                     why += " (the last reading failed; %d failed)" % len(self.read_errors)
                 raise Violation("no zero within %s s%s" % (round(within, 1), why), "G1" if self.extra_ok else None)
             self.sleep(every)
+
+    def open_window(self, **criteria):
+        """MFL045 c3 (P-6): a final reading of the open interval of quiet (its violations raise as always), then the
+        interval closed into `quiet` and `zero_t` None: the declared window of a request. Returns the interval."""
+        if self.zero_t is None:
+            raise Violation("a window without a zero before it")
+        self.read(**criteria)
+        interval = (self.zero_t, self.clock())
+        self.quiet.append(interval)
+        self.zero_t = None
+        return interval
 
     def for_seconds(self, seconds, every=10.0, **criteria):
         t0 = self.clock()

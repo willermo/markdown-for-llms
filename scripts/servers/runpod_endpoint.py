@@ -6,13 +6,14 @@
     runpod_endpoint.py --env-file F align --name N
     runpod_endpoint.py --env-file F verify-pins --name N
     runpod_endpoint.py --env-file F {populate,probe-negative,probe-valid} --name N      (inside session.py)
-    runpod_endpoint.py --env-file F fault-test --name N --phase {A,B,D} [--observe-seconds S]  (inside session.py)
+    runpod_endpoint.py --env-file F fault-test --name N --phase {A,B,D,A-FB} [--observe-seconds S]  (inside session.py)
     runpod_endpoint.py --env-file F concurrency --name N --input PNG [--n 32] [--warmup 1] [--abandon 1]
                        [--probe-while-busy]                                             (inside session.py)
     runpod_endpoint.py --env-file F observe --name N --closed-utc-hours H (--read-only | --spend-ledger L
                        --spend-cap-usd C --cap-usd X)
     runpod_endpoint.py --env-file F fault-e --name N --input FILE --spend-ledger L --spend-cap-usd C --cap-usd X
     runpod_endpoint.py --env-file F read-history --name N --since ISO
+    runpod_endpoint.py --env-file F releases --name N
     runpod_endpoint.py --env-file F delete --name N
 
 REST v2 only (https://api.runpod.io/v2), GraphQL only for the balance; the key (`RUNPOD_API_KEY`)
@@ -77,6 +78,17 @@ readiness, the first request failed, the session of E ended before its request) 
 exit 8. A worker on a disarmed endpoint no longer deletes it (deleting is irreversible: Davide's
 decision); the driver disarms again and stops.
 
+MFL045 c3 (plan r2 §6, A6, A7, A13; prescription P-6), FlashBoot. `align` puts `flashboot` back to OFF, its value
+at rest, and `verify-pins` wants it OFF (an alignable pin). With the lever `flashboot` in the arm row, the zero Z1
+also admits the worker that ran listed IDLE or THROTTLED in the current reading and not RUNNING in the log (the
+fact `paused_listed`: FlashBoot froze it; the bill at closed hours corroborates it). `fault-test --phase A-FB` (only
+with the lever) is phase A, then: Z1 and 60 s; a declared window (`drivers.Watch.open_window`: a final reading, the
+interval of quiet closed); a request that must get 503 `mdf_inert` from the proxy (the resume of the same
+container; any other outcome, declared, is the fact `resume_missed` and `resumed_inert` false, never a violation);
+the second zero within A_ZERO_S of its answer (READY_WITHIN_S + A_ZERO_S after a missed resume); 60 s without a
+worker RUNNING. A worker RUNNING in a closed interval of quiet (read late in the log too) or in the open one, and
+two RUNNING at once, break G1. `releases` reads `/v2/serverless/{id}/releases` (the history of the configuration).
+
 `concurrency` (MFL033 N5b, prompt §4.4) is the driver of Modal (`modal_tasks.Tasks.concurrency`, c7.16)
 on RunPod: readiness with the workers and the log as `probe-valid`, `--warmup` pages one after the other,
 the `--abandon` pages first (their client gives up after ABANDON_AFTER_S while vLLM runs them), then `--n`
@@ -118,6 +130,9 @@ D_SECONDS = 120
 UNKNOWN_S = 15.0                # c7.19: a worker RUNNING in the readings, not in the log of the session after so long
 REPLACEMENTS = ("a", "outside_a", "after_readiness")   # c7.20: the kinds of replacement, all facts
 HOLD_STEP_S = 5.0               # c7.19: phase B judges the log so often while its requests are held
+# MFL045 c3, A-FB: the second zero read from so long after the answer of the resume (two listings of the follower,
+# so that RunPod lists the worker that answered); after a missed resume a worker INITIALIZING is not the zero
+RESUME_SETTLE_S = 2 * wl.LIST_EVERY_S
 # concurrency (MFL033 N5b), the values of modal_tasks.py (c7.16)
 PAGE_TIMEOUT_S = 150.0          # one page: the `read_timeout` of RunPod's endpoints is 300 s, vLLM answers in seconds
 ABANDON_AFTER_S = 5.0
@@ -154,6 +169,8 @@ class Driver:
         self.outside = {}                       # c7.20: (old, new) -> why a replacement is outside rule (a)
         self.extras = []                        # the extra workers declared from the log
         self.facts, self._fact_keys = [], set()  # c7.20: what stops nothing, in the order it came
+        arm = self.arm_row()                    # MFL045 c3: the lever flashboot of the arm
+        self.flashboot = arm is not None and "flashboot" in str(arm.get("levers") or "").split(",")
         if self.workers_log is not None:
             self.live.extra["workers_log"] = self.workers_out
 
@@ -228,12 +245,15 @@ class Driver:
             body["workers"] = pv.workers_block(0)
         if ep.get("env") != pv.base_env():
             body["env"] = pv.base_env()
+        if ep.get("flashboot") != "OFF":                  # MFL045 c3: its value at rest (A7)
+            body["flashboot"] = "OFF"
         if body:
             self.rp.patch(body)
         ep = self.rp.endpoint(refresh=True)
-        ok = pv.gpu_ok(ep.get("gpu")) and ep.get("workers") == pv.workers_block(0) and ep.get("env") == pv.base_env()
+        ok = (pv.gpu_ok(ep.get("gpu")) and ep.get("workers") == pv.workers_block(0) and ep.get("env") == pv.base_env()
+              and ep.get("flashboot") == "OFF")
         out({"align": self.a.name, "patched": sorted(body), "gpu": ep.get("gpu"), "workers": ep.get("workers"),
-             "env_bytes": len(json.dumps(ep.get("env") or {})), "ok": ok})
+             "flashboot": ep.get("flashboot"), "env_bytes": len(json.dumps(ep.get("env") or {})), "ok": ok})
         return 0 if ok else 6
 
     def delete(self):
@@ -416,7 +436,9 @@ class Driver:
         """The zero Z1 of an armed RunPod endpoint (Davide, 20/11 19:44), the part of the log: no worker
         RUNNING in the log of the session, and each worker that ran (in the log or in the readings) has
         its container stopped: a "stop container" line after it was first RUNNING, a GONE, or it is no
-        longer listed (`listed`, the ids of the reading). None when settled, else the reason."""
+        longer listed (`listed`, the ids of the reading, with their states since MFL045 c3). With the lever
+        flashboot (A13) the worker listed IDLE or THROTTLED in this reading and not RUNNING in the log is
+        settled too, the fact `paused_listed`. None when settled, else the reason."""
         w = self.live.watch
         ran = set(w.running_ids) if w is not None else set()
         if self.workers_log is None:
@@ -434,6 +456,10 @@ class Driver:
                 continue
             if life is not None and life["stop"] is not None and (life["running"] is None
                                                                   or life["stop"] >= life["running"]):
+                continue
+            status = listed.get(x) if isinstance(listed, dict) else None
+            if self.flashboot and status in ("IDLE", "THROTTLED"):           # MFL045 c3: paused by FlashBoot
+                self.fact("paused_listed", (x, status), worker=x, status=status, t=round(self.clock(), 3))
                 continue
             open_.append(x)
         if open_:
@@ -495,6 +521,15 @@ class Driver:
                 if late:
                     raise dv.Violation("a worker RUNNING after the zero of the phase, without requests: %s listed "
                                        "RUNNING at +%.1f s, the zero at +%.1f s" % (x, late[0], zero_s), "G1")
+        if w is not None and base is not None:                   # MFL045 c3, P-6: the closed intervals of quiet
+            for a, b in w.quiet:
+                for x in lv.order:
+                    inside = [t for t, st in lv.by[x]["states"] if st == "RUNNING" and t is not None
+                              and a - base < t <= b - base]
+                    if inside:
+                        raise dv.Violation("a worker RUNNING in an interval of quiet, without requests: %s listed "
+                                           "RUNNING at +%.1f s, the quiet from +%.1f s to +%.1f s"
+                                           % (x, inside[0], a - base, b - base), "G1")
         first = self.first_running()
         order = sorted(first, key=lambda x: first[x])
         now = None if base is None else self.clock() - base
@@ -795,7 +830,7 @@ class Driver:
 
     def fault_test(self):
         phase = self.a.phase
-        return {"A": self.phase_a, "B": self.phase_b, "D": self.phase_d}[phase]()
+        return {"A": self.phase_a, "B": self.phase_b, "D": self.phase_d, "A-FB": self.phase_a_fb}[phase]()
 
     def phase_a(self):
         """hang-after-first (c7.20, G1 and G2): the open request and the abandoned one have an outcome
@@ -845,6 +880,93 @@ class Driver:
         out(dict(res, readings=w.readings, restarts=w.restarts, restarts_at_readiness=restarts_ready,
                  read_errors=w.read_errors, **{"pass": ok}, **self.workers_out()))
         return code
+
+    def phase_a_fb(self):
+        """`A-FB` (MFL045 c3, module docstring): phase A with the lever flashboot, then a declared window, the resume
+        of the inert container, and the second zero. G1 and G2 as phase A; `resume_missed` is a fact."""
+        if not self.flashboot:
+            out({"code": "invalid_setting", "detail": "A-FB needs the lever flashboot in the arm of the session"})
+            return 2
+        inf, w = self.inference(), self.watch(s1=True)
+        res = self.live.res = {"phase": "A-FB"}
+        ok, code = False, 6
+        try:
+            res["ready"] = self.ready(inf, w)
+            self.not_ready(res["ready"])
+            res["first"] = inf.chat()
+            t_hang = self.clock()
+            if res["first"].get("status") != 200:
+                raise dv.Inconclusive("the first request failed: %s" % {k: res["first"].get(k)
+                                                                         for k in ("status", "proxy", "error")})
+            self.fault = ("A", t_hang)
+            held, box = inf.hold(timeout=400.0)
+            abandoned = inf.abandon(5.0)
+            while held.is_alive():
+                self.read_quiet(w, no_unhealthy=True, no_restart=True)
+                held.join(10.0)
+            abandoned.join(20.0)
+            res["held"] = box.get("result")
+            res["abandoned"] = (getattr(abandoned, "box", None) or {}).get("result")
+            self.outcomes(("the open request", res["held"]), ("the abandoned request", res["abandoned"]))
+            body = res["held"].get("body") or {}
+            if not (res["held"].get("status") == 503 and res["held"].get("proxy") == "error"
+                    and isinstance(body, dict) and body.get("error") == "mdf_tripped"):
+                self.fact("open_request_not_tripped", None, held={k: res["held"].get(k) for k in ("status", "proxy",
+                                                                                                 "error")})
+            w.until_zero(A_ZERO_S + 10 - (self.clock() - t_hang), settled=self.settled, no_unhealthy=True,
+                         no_restart=True)
+            res["zero_since_hang_s"] = round(self.clock() - t_hang, 1)
+            w.for_seconds(60, no_unhealthy=True, no_restart=True)
+            self.window(w)
+            third = inf.chat()
+            t_answer = self.clock()
+            res["resume"] = {k: third.get(k) for k in ("status", "proxy", "error", "body")}
+            self.outcomes(("the request of the resume", third))
+            tbody = third.get("body") or {}
+            res["resumed_inert"] = (third.get("status") == 503 and third.get("proxy") == "error"
+                                    and isinstance(tbody, dict) and tbody.get("error") == "mdf_inert")
+            if not res["resumed_inert"]:
+                self.fact("resume_missed", None, outcome={k: third.get(k) for k in ("status", "proxy", "error")})
+            within = A_ZERO_S if res["resumed_inert"] else READY_WITHIN_S + A_ZERO_S
+            self.sleep(RESUME_SETTLE_S)
+            settled = self.settled if res["resumed_inert"] else self.settled_after_miss
+            w.until_zero(within + 10 - RESUME_SETTLE_S, settled=settled, no_unhealthy=True, no_restart=True)
+            res["second_zero_since_answer_s"] = round(self.clock() - t_answer, 1)
+            w.for_seconds(60, no_unhealthy=True, no_restart=True)
+            self.log_check()
+            self.zero_since_arm(res)
+            ok, code = True, 0
+        except dv.Violation as exc:
+            res["violation"], res["guarantee"] = str(exc), exc.guarantee
+        except dv.Inconclusive as exc:
+            res["inconclusive"], code = str(exc), dv.INCONCLUSIVE_EXIT
+        base = self.t_arm() or 0.0
+        out(dict(res, readings=w.readings, restarts=w.restarts, read_errors=w.read_errors,
+                 quiet=[[round(a - base, 1), round(b - base, 1)] for a, b in w.quiet], **{"pass": ok},
+                 **self.workers_out()))
+        return code
+
+    def settled_after_miss(self, listed):
+        """The second zero of A-FB after a missed resume: a worker the request started, still INITIALIZING, is not
+        the zero yet (it is about to run); otherwise `settled`."""
+        starting = sorted(x for x, st in (listed.items() if isinstance(listed, dict) else []) if st == "INITIALIZING")
+        if starting:
+            return "a worker INITIALIZING after the missed resume: %s" % starting
+        return self.settled(listed)
+
+    def window(self, w, tries=3):
+        """The declared window of A-FB (P-6): a final reading of the open interval of quiet and of the log, then the
+        interval closed; a reading that fails is tried again, and without one the phase is inconclusive."""
+        for i in range(tries):
+            try:
+                w.open_window(no_unhealthy=True, no_restart=True)
+                self.log_check()
+                return
+            except pv.ProviderError as exc:
+                w.read_errors.append(str(exc)[:200])
+                self.fact("read_error", len(w.read_errors), detail=str(exc)[:200], t=round(self.clock(), 3))
+                self.sleep(10)
+        raise dv.Inconclusive("no final reading before the window of A-FB")
 
     def zero_since_arm(self, res):
         base = self.t_arm()
@@ -1089,6 +1211,13 @@ class Driver:
         return {"exit": r.returncode, "refused": dv.orphan_refused(r.returncode, r.stdout),
                 "out": (r.stdout + r.stderr)[-1500:]}
 
+    def releases(self):
+        """MFL045 c3: the releases of the endpoint (`GET /v2/serverless/{id}/releases`, REST v2), read only."""
+        ep = self.rp.endpoint()
+        out({"releases_of": self.a.name, "version": ep.get("version"), "flashboot": ep.get("flashboot"),
+             "releases": self.rp.call("GET", "/serverless/%s/releases" % ep["id"])})
+        return 0
+
     def read_history(self):
         a = self.a
         ep = self.rp.endpoint()
@@ -1132,7 +1261,7 @@ def parser():
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("catalog")
     for name in ("create", "align", "verify-pins", "populate", "probe-negative", "probe-valid", "fault-test", "observe",
-                 "fault-e", "read-history", "delete", "hold", "concurrency"):
+                 "fault-e", "read-history", "delete", "hold", "concurrency", "releases"):
         q = sub.add_parser(name)
         q.add_argument("--name", required=True)
         if name in ("populate", "probe-negative", "probe-valid", "fault-test", "concurrency"):
@@ -1147,7 +1276,7 @@ def parser():
             q.add_argument("--data-center", required=True)
             q.add_argument("--dry-run", action="store_true")
         if name == "fault-test":
-            q.add_argument("--phase", required=True, choices=("A", "B", "D"))
+            q.add_argument("--phase", required=True, choices=("A", "B", "D", "A-FB"))
             q.add_argument("--observe-seconds", type=int, default=1200)
         if name in ("observe", "fault-e"):
             q.add_argument("--spend-ledger")
@@ -1178,7 +1307,7 @@ def main(argv=None, **inject):
         fn = {"catalog": d.catalog, "create": d.create, "align": d.align, "verify-pins": d.verify, "populate": d.populate,
               "probe-negative": d.probe_negative, "probe-valid": d.probe_valid, "fault-test": d.fault_test,
               "observe": d.observe, "fault-e": d.fault_e, "read-history": d.read_history, "delete": d.delete,
-              "hold": d.hold_command, "concurrency": d.concurrency}[a.cmd]
+              "hold": d.hold_command, "concurrency": d.concurrency, "releases": d.releases}[a.cmd]
         return dv.run_driver(fn, d.live, out)                 # SIGINT and SIGTERM: the result so far (c7.13)
     except pv.ProviderError as exc:
         out({"code": "provider_error", "detail": str(exc)})

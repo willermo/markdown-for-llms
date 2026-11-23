@@ -6,7 +6,7 @@
     modal_tasks.py --env-file F --server S --servers SV concurrency --app A --input PNG [--n 32] [--warmup 1]
                    [--abandon 1] [--probe-while-busy] [--spend-ledger L]    (in session.py; --abandon: pages, c7.16)
     modal_tasks.py --env-file F --server S --servers SV fault-test --app A --phase {A,B,D}
-                   [--observe-seconds S] [--spend-ledger L]                                       (in session.py)
+                   [--observe-seconds S] [--after-restore] [--spend-ledger L]                     (in session.py)
     modal_tasks.py --env-file F --server S --servers SV observe --app A --hours H (--read-only | --spend-ledger L
                    --spend-cap-usd C --cap-usd X)
     modal_tasks.py --env-file F --server S --servers SV fault-e --app A --input FILE --spend-ledger L
@@ -17,7 +17,15 @@
 The URL comes from the endpoint `S` of `servers.json`; the proxy token (`Modal-Key`,
 `Modal-Secret`) from the env file; the state of the app from the pinned SDK (`modal app list`,
 `modal container list`). Exit 0: passed; 4: a provider error; 6: a criterion violated; 7: no
-capacity (`modal_no_capacity`: Modal's scheduler placed no container, c7.14).
+capacity (`modal_no_capacity`: Modal's scheduler placed no container, c7.14); 8: inconclusive (MFL045 c2).
+
+MFL045 c2 (plan r2 §7): on an app of the snapshot (the lever `snapshot` in the arm row) the readiness reads the
+log with `worker_logs.StartRules(snapshot=True)` (prescription P-7: an error of the adopted vLLM during the wake
+held until the declared fallback or readiness) and names the snapshot of the container that served it (kind,
+generation, fallback, wake). `fault-test --after-restore` (phases A and B) first wakes a container (try 1),
+waits for the quiet of the app (no container, at most AFTER_RESTORE_QUIET_S), then wakes another (try 2): the
+phase runs on try 2 only when it is a `restore`, else it is inconclusive (exit 8). The container of try 1 is
+not a replacement of rule (a): a declared quiet lies between the two (`next_try`, a fact).
 
 The lessons of RunPod (MFL033 c7.8, prompt N4g §4.1): every readiness wait reads the log of the
 session (`SESSION_WORKER_LOG`, `worker_logs.ModalFollower`) before each GET of 30 s and the
@@ -108,6 +116,7 @@ LOG_LINES_KEPT = 40
 RESOLVE_S = 15.0                # a container came while the one before is still listed: three listings, then judged
 UNKNOWN_S = 15.0                # a container of the readings not yet in the log: as long, then a restart unjudged
 HOLD_STEP_S = 5.0               # phase B: the log judged so often while its requests are held
+AFTER_RESTORE_QUIET_S = 300     # MFL045 c2: the quiet of the app between the two tries of --after-restore
 
 
 def out(obj):
@@ -139,7 +148,9 @@ class Tasks:
             raise pv.ProviderError("the endpoint %s is not a Modal endpoint" % a.server)
         keys = servers.read_keys(self.ep, a.env_file)
         self.headers = servers.headers(self.ep, keys)
-        self.modal = modal or (pv.Modal(a.app) if getattr(a, "app", None) else None)
+        arm = self.arm_row()                    # MFL045 c2: the app of the snapshot, from the levers of the arm
+        self.snapshot = arm is not None and "snapshot" in str(arm.get("levers") or "").split(",")
+        self.modal = modal or (pv.Modal(a.app, snapshot=self.snapshot) if getattr(a, "app", None) else None)
         self.live = dv.Live()                   # the result so far, printed on a signal (c7.13)
         self.no_capacity = None                 # the scheduler's summary when it stopped a wait (c7.14)
         # c7.17: the containers of the log of the session and rule (a)
@@ -151,6 +162,7 @@ class Tasks:
         self.served = None                      # the container alive at readiness
         self.require_alive = None               # concurrency: that container lives on (c7.16, from the log too)
         self.judged = {}                        # (old, new) -> "a" (rule (a)) or "restart" (after the fault of B)
+        self.boundary = None                    # MFL045 c2: the declared quiet before try 2 of --after-restore
         if self.lives is not None:
             self.live.extra["containers_log"] = self.lives_out
 
@@ -214,6 +226,13 @@ class Tasks:
             if base is None:
                 raise dv.Violation("%s after %s, and no time of the arm: rule (a) cannot judge it" % (new, old))
             o, n = lv.by[old], lv.by[new]
+            b = self.boundary
+            if b is not None and old in b["ids"] and new not in b["ids"] and o["gone"] is not None \
+                    and n["seen"] >= b["since_arm"]:
+                self.judged[(old, new)] = "next_try"            # MFL045 c2: a declared quiet lies between them
+                out(dict({"next_try": sum(1 for k in self.judged.values() if k == "next_try")},
+                         **self.pair_row(old, new)))
+                continue
             if o["gone"] is None:
                 if now - n["seen"] < RESOLVE_S:
                     continue                           # the next listing says GONE, or holds both
@@ -278,10 +297,13 @@ class Tasks:
         after the declaration is in)."""
         if self.lives is None:
             return {}
-        rows = {"a": [], "restart": []}
+        rows = {"a": [], "restart": [], "next_try": []}
         for (old, new), kind in self.judged.items():
             rows[kind].append(self.pair_row(old, new))
-        return {"containers_log": self.lives.summary(), "replacements": rows["a"], "restarts_after_fault": rows["restart"]}
+        res = {"containers_log": self.lives.summary(), "replacements": rows["a"], "restarts_after_fault": rows["restart"]}
+        if rows["next_try"]:
+            res["next_tries"] = rows["next_try"]                        # MFL045 c2, --after-restore
+        return res
 
     def join_watching(self, thread, timeout):
         """Join `thread` within `timeout` s, judging the log every HOLD_STEP_S (c7.17, phase B)."""
@@ -310,7 +332,9 @@ class Tasks:
         without a log of the session it stops the wait, as before. The result names the container
         that served readiness (`served`), the replacements of rule (a) and the containers of the log."""
         path = self.environ.get(wl.LOG_ENV)
-        rules = wl.StartRules() if path else None
+        # MFL045 c8 (S-C1): with the snapshot, the clock and the arm of the window, so that its holds expire without lines
+        timing = {"clock": self.clock, "t_arm": self.t_arm()} if self.snapshot else {}
+        rules = wl.StartRules(snapshot=self.snapshot, **timing) if path else None
         w = self.watch() if w is None else w
         no_restart = self.lives is None
         last, fresh, read_errors = [None], [None], []
@@ -355,6 +379,10 @@ class Tasks:
 
         t_send = self.clock()
         r = inf.ready(READY_WITHIN_S, check=check, timeout=get_timeout)
+        if r["ready"] and rules is not None and self.snapshot:   # MFL045 c2, P-7: the outcome of the wake
+            reason = rules.feed(path) or rules.at_readiness()
+            if reason:
+                r.update(ready=False, stopped=reason)
         if r["ready"]:
             self.t_ready = self.clock()
             try:
@@ -367,6 +395,10 @@ class Tasks:
                 answered = [c for c in alive if self.lives.by[c]["vllm"] is not None]
                 self.served = (answered or alive or [None])[-1]
             r["served"] = None if self.served is None else wl.short(self.served)
+            self.lives.feed(self.log_path)
+            snap = None if self.served is None else self.lives.snapshot_of(self.served)
+            if snap is not None or self.snapshot:                       # MFL045 c2: the start of a snapshot
+                r["snapshot"] = snap
             r["replacements"] = self.lives_out()["replacements"]
             r["containers_log"] = self.lives.summary()["containers"]
         r["t_first_send"] = round(t_send, 3)
@@ -376,11 +408,49 @@ class Tasks:
         if rules is not None:
             r["proxy_events"] = rules.events
             r["gpu"] = (rules.events.get("mdf_gpu") or {}).get("names")
+            if self.snapshot:
+                r["exempt"] = rules.exempt
         r["scheduler"] = sched.summary()
         if self.no_capacity is not None:
             r["code"] = wl.NO_CAPACITY
         r.update(readings=len(w.readings), workers=list(w.ids), read_errors=read_errors)
         return r
+
+    def after_restore(self, inf, w):
+        """`--after-restore` (MFL045 c2, module docstring): (the readiness to run the phase on, the tries); raises
+        `dv.Inconclusive` when neither try is a restore, or when the app is not quiet before try 2."""
+        tries = self.live.res.setdefault("after_restore", [])
+        r = None
+        for i in (1, 2):
+            row = {"try": i}
+            if i == 2:
+                t0 = self.clock()
+                try:
+                    w.until_zero(AFTER_RESTORE_QUIET_S)
+                except dv.Violation as exc:
+                    if not str(exc).startswith("no zero within"):
+                        raise                               # two containers at once, or the log: a violation
+                    raise dv.Inconclusive("no quiet of the app before try 2: %s" % exc) from None
+                row["quiet_s"] = round(self.clock() - t0, 1)
+                self.next_try()
+            r = self.ready(inf, w)
+            row.update(ready=r["ready"], kind=(r.get("snapshot") or {}).get("kind"), served=r.get("served"),
+                       since_arm_s=r.get("since_arm_s"), stopped=r.get("stopped"))
+            tries.append(row)
+            out({"after_restore_try": row})
+            if not r["ready"] or row["kind"] == "restore":
+                return r, tries
+        raise dv.Inconclusive("no restore in 2 tries: %s" % [x["kind"] for x in tries])
+
+    def next_try(self):
+        """The declared quiet before try 2: the containers seen so far, the moment; readiness judged anew."""
+        lv = self.lives.feed(self.log_path) if self.lives is not None else None
+        base = self.t_arm()
+        self.boundary = {"ids": set(lv.order) if lv is not None else set(),
+                         "since_arm": None if base is None else round(self.clock() - base, 1)}
+        if self.boundary["since_arm"] is None:
+            self.boundary = None
+        self.t_ready = self.served = None
 
     def code(self, ok):
         """The exit of a driver: 0 passed, 7 no capacity on Modal (c7.14), 6 a criterion violated."""
@@ -659,7 +729,10 @@ class Tasks:
                 t.join(40.0)
                 res["request"] = {k: (box.get("result") or {}).get(k) for k in ("status", "proxy", "error")}
             else:
-                res["ready"] = self.ready(inf, w)
+                if getattr(self.a, "after_restore", False):         # MFL045 c2
+                    res["ready"], res["after_restore"] = self.after_restore(inf, w)
+                else:
+                    res["ready"] = self.ready(inf, w)
                 if not res["ready"]["ready"]:
                     raise dv.Violation(res["ready"].get("stopped") or "not ready")
                 restarts_ready = w.restarts             # a replacement of rule (a) during readiness is not one (c7.17)
@@ -696,6 +769,10 @@ class Tasks:
             ok = True
         except dv.Violation as exc:
             res["violation"], ok = str(exc), False
+        except dv.Inconclusive as exc:                              # MFL045 c2: --after-restore without a restore
+            res["inconclusive"] = str(exc)
+            out(dict(res, readings=w.readings, restarts=w.restarts, **{"pass": False}, **self.lives_out()))
+            return dv.INCONCLUSIVE_EXIT
         out(dict(res, readings=w.readings, restarts=w.restarts, **{"pass": ok}, **self.lives_out()))
         return self.code(ok)
 
@@ -846,6 +923,7 @@ def parser():
         if name == "fault-test":
             q.add_argument("--phase", required=True, choices=("A", "B", "D"))
             q.add_argument("--observe-seconds", type=int, default=1300)
+            q.add_argument("--after-restore", action="store_true")        # MFL045 c2
         if name in ("observe", "fault-e", "convert-refused"):
             q.add_argument("--spend-cap-usd")
         if name in ("observe", "fault-e"):

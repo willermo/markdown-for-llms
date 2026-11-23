@@ -52,6 +52,28 @@ unknown one is refused before the row (`invalid_setting`), and a disarmed activi
 `--levers` an arm takes the levers adopted (`providers.DEFAULT_LEVERS`, step 8 of N5b: the cache of
 torch.compile); `--levers none` arms without levers.
 
+The lever `snapshot` (MFL045 c2, plan r2 §4: the memory and GPU snapshot of Modal, `modal_snap.py`) is only for
+Modal and only for an app named `*-snap` or `*-snap-fault`, and such an app takes exactly
+`providers.SNAPSHOT_LEVERS` (a deploy changed in anything makes its snapshots obsolete); a fault only on its
+`-fault` app; no `--allow-download`, `--disarmed` or `--cpu-activity` there; the fault `wake-fail` (a declared
+fallback after a restore) only with the lever. Refused before any reading of the provider (`invalid_setting`).
+
+The lever `flashboot` (MFL045 c3, plan r2 §6: FlashBoot of RunPod) is only for RunPod: the arm puts `flashboot`
+FLASHBOOT in its PATCH and reads it back; after the zero, in the `finally` of the session (also after a failed or
+interrupted command), a PATCH of its own puts it back to OFF and reads it back (prescription P-6): the outcome is
+`flashboot_restored` in the `disarm` row, written anyway; a failure is exit 4, which comes before the 130 of a
+signal. The disarm itself is unchanged (the PATCH of the workers of N4). `disarm`, the recovery of a session that died
+before its `finally`, does the same after its zero (MFL045 c8, S-B1 of the review of the diff) when a window it closes
+armed the lever or the endpoint read at the zero is not OFF: `flashboot_restored` in each `disarm` row it writes and in
+its output, a failure exit 4 after the rows; otherwise the calls are those of a disarm without the lever. The zero
+itself does not depend on the levers (`providers.RunPod.zero`: no worker listed), in the session as in the recovery.
+
+The levers `snapshot` and `flashboot` are experimental (MFL045 F5, Davide's decision of 23/11/2026: measured, not
+adopted; `providers.EXPERIMENTAL_LEVERS`): never among the levers adopted, armed only when `--levers` names them. A
+session that arms one declares it, before the arm row, in a line of its own (`experimental_levers`, `adopted` false,
+`guide`: the section of `docs/how-to/convert-documents.md` on each), and again as `experimental_levers` in the `arm`
+row and in the report of the window. Informative only: no refusal and no other behaviour comes with it.
+
 After `--`, `populate`, `probe-negative`, `probe-valid`, `fault-test` and `concurrency` (MFL033 N5b) run
 that subcommand of `runpod_endpoint.py` on the endpoint of the session. `--disarmed` arms nothing: the provider must
 be disarmed and idle, and the cap is reserved as an activity; `--cpu-activity` is the same at the
@@ -60,7 +82,7 @@ only with a reserve that covers the timeout of that Function at the CPU rate (MF
 is not a cap that stops a remote job, the timeout of the Function is). `status` reads, writes nothing, and prints the commands to disarm and reconcile; exit 3
 when the provider is not idle or a window is open or orphan. `disarm` disarms, waits for the zero
 and closes the orphan windows of the endpoint with `orphan: true` (only a manual reconciliation
-releases them).
+releases them); on RunPod it also puts FlashBoot back to OFF when the lever or the endpoint asks for it (above).
 """
 import argparse
 import ctypes
@@ -234,9 +256,11 @@ class Session:
         elif disarmed:
             raise Refusal("invalid_setting", "--levers needs an arm")
         try:
-            self.levers = pv.levers_text(named)
+            self.levers = pv.levers_text(named, a.provider)
         except pv.ProviderError as exc:
             raise Refusal("invalid_setting", str(exc)) from None
+        self.snapshot_rules(disarmed)
+        self.experimental = pv.experimental_levers(self.levers)       # MFL045 F5: declared, informative only
         p, s, state = check_start(entries, a.provider, a.name, self.ledger.path, self.prov)
         self.note("start", state=state)
         refusal = None if disarmed else getattr(self.prov, "pin_refusal", None)
@@ -258,6 +282,10 @@ class Session:
         if w <= 0:
             raise Refusal("server_cap", "the window W = %d s: nothing to arm" % w)
         url = self.url()
+        if self.experimental:                  # MFL045 F5: before the arm row, so before anything is armed
+            self.emit({"experimental_levers": self.experimental, "adopted": False,
+                       "guide": {x.partition(":")[0]: pv.EXPERIMENTAL_LEVERS[x.partition(":")[0]]
+                                 for x in self.experimental}})
         self.signals()                         # before the arm row: a signal now only stops the command
         arm_id = serverspend.new_arm_id()
         fd, lock = take_lock(self.ledger.path, arm_id)
@@ -274,7 +302,9 @@ class Session:
                                       self.rate(), t_arm, fault=a.fault or None, arm_id=arm_id,
                                       extra=dict({"window_s": w, "z_s": z, "tail_s": tail,
                                                   "allow_download": bool(a.allow_download)},
-                                                 **({"levers": self.levers} if self.levers else {})))
+                                                 **({"levers": self.levers} if self.levers else {}),
+                                                 **({"experimental_levers": self.experimental}
+                                                    if self.experimental else {})))
             self.note("arm-row", arm_id=arm_id, a_cents=str(a_cents), window_s=w, until=row["until"])
             code = self.armed(cmd, row)
         except BenchError as exc:
@@ -287,6 +317,26 @@ class Session:
                     pass
             os.close(fd)
         return code
+
+    SNAP_APP = re.compile(r".+-snap(-fault)?")
+
+    def snapshot_rules(self, disarmed):
+        """MFL045 c2 (module docstring): the app of the snapshot and its lever, before any reading."""
+        a = self.a
+        snap = "snapshot" in (self.levers or "").split(",")
+        if a.fault == "wake-fail" and not snap:
+            raise Refusal("invalid_setting", "--fault wake-fail needs the lever snapshot")
+        snap_app = bool(self.SNAP_APP.fullmatch(a.name))
+        if not (snap or snap_app):
+            return
+        if a.provider != "modal" or not snap_app:
+            raise Refusal("invalid_setting", "the lever snapshot only on a Modal app named *-snap or *-snap-fault")
+        if self.levers != pv.levers_text(pv.SNAPSHOT_LEVERS, "modal"):
+            raise Refusal("invalid_setting", "an app of the snapshot takes exactly the levers %s" % pv.SNAPSHOT_LEVERS)
+        if disarmed or a.allow_download:
+            raise Refusal("invalid_setting", "an app of the snapshot: no --disarmed, --cpu-activity or --allow-download")
+        if a.fault and not a.name.endswith("-fault"):
+            raise Refusal("invalid_setting", "a fault only on the -fault app of the snapshot")
 
     def url(self):
         if self.a.provider == "runpod":
@@ -342,6 +392,7 @@ class Session:
                 rc = child.returncode
             t_disarm = self.clock()
             zero, readings = self.disarm_and_zero()
+            flashboot_restored = self.restore_flashboot()       # MFL045 c3, P-6: after the zero, always
         log_info = self.keep_log(follower, row)
         ok = zero is not None
         latency = None if not ok else round(zero - t_disarm, 3)
@@ -357,6 +408,8 @@ class Session:
             extra.update(self.bound_extra(row, zero, readings, log_info))
         if log_info is not None:
             extra["worker_log"] = {k: log_info.get(k) for k in ("saved", "sha256", "lines", "workers", "gpus")}
+        if flashboot_restored is not None:
+            extra["flashboot_restored"] = flashboot_restored
         with self.ledger.locked() as locked:
             serverspend.disarm(locked, a.provider, row["arm_id"], round(zero, 3), clean, extra=extra)
         try:
@@ -366,6 +419,8 @@ class Session:
         self.report(row, latency, rc, readings, log_info)
         if log_info is not None and not log_info.get("saved"):
             return 4                              # a key in the worker log, or a scan not complete: stop
+        if flashboot_restored is False:
+            return 4                              # MFL045 P-6: FlashBoot not back to OFF, before the 130 of a signal
         if self.stop_signal is not None:
             return 130
         if self.timed_out:
@@ -375,6 +430,27 @@ class Session:
         return 128 - rc if rc is not None and rc < 0 else rc
 
     timed_out = False
+    experimental = ()                          # MFL045 F5: set by run(); a disarm alone has none
+
+    def restore_flashboot(self, wanted=None):
+        """MFL045 c3 (P-6): with the lever `flashboot` on RunPod, FlashBoot back to OFF after the zero and read back
+        (`providers.RunPod.restore_flashboot`): True, or False on a ProviderError (caught: the `disarm` row comes
+        after it); None without the lever. `wanted`: the decision of the recovery (`disarm`, MFL045 c8), in place of
+        the levers of the session."""
+        if wanted is None:
+            wanted = "flashboot" in (getattr(self, "levers", "") or "").split(",")
+        if self.a.provider != "runpod" or not wanted:
+            return None
+        restore = getattr(self.prov, "restore_flashboot", None)
+        if restore is None:
+            return None
+        try:
+            restore()
+        except pv.ProviderError as exc:
+            self.note("flashboot-error", detail=str(exc))
+            return False
+        self.note("flashboot", restored="OFF")
+        return True
 
     @staticmethod
     def bound_extra(row, zero, readings, log_info):
@@ -571,7 +647,8 @@ class Session:
     def report(self, row, latency, rc, readings, log_info=None):
         self.emit({"session": "window", "arm_id": row["arm_id"], "provider": self.a.provider, "endpoint": self.a.name,
                    "exit": rc, "zero_latency_s": latency, "readings": len(readings), "worker_log": log_info,
-                   "events": self.events})
+                   "events": self.events,
+                   **({"experimental_levers": self.experimental} if self.experimental else {})})
 
     def emit(self, obj):
         pv.emit(obj, self.out)
@@ -613,15 +690,29 @@ def disarm(a, prov, clock=time.time, sleep=time.sleep, out=None):
     closed = []
     with ledger.locked() as locked:
         p, _ = windows_of(locked.entries(), a.provider, ledger.path)
-        for arm_id, w in p.windows.items():
-            if w["disarm"] is None and w["arm"].get("endpoint") == a.name and not serverspend.alive(ledger.path, arm_id):
-                serverspend.disarm(locked, a.provider, arm_id, round(zero, 3), False, orphan=True,
-                                   extra={"t_disarm": round(t_disarm, 3), "zero_latency_s": round(zero - t_disarm, 3),
-                                          "readings": readings[-60:]})
-                closed.append(arm_id)
-    pv.emit({"disarm": a.name, "zero": True, "zero_latency_s": round(zero - t_disarm, 3), "orphan_closed": closed,
-             "commands": commands(a.provider, a.name, a.spend_ledger)[1:]}, out)
-    return 0
+        orphans = [arm_id for arm_id, w in p.windows.items() if w["disarm"] is None and w["arm"].get("endpoint") == a.name
+                   and not serverspend.alive(ledger.path, arm_id)]
+        # MFL045 c8 (S-B1 of the review of the diff): FlashBoot back to OFF, as the `finally` of the session does,
+        # when a window closed here armed the lever or the endpoint read at the zero is not OFF (the reading of the
+        # zero holds `flashboot`: no other call); under the lock, so the windows closed are those judged
+        wanted = (any("flashboot" in str(p.windows[x]["arm"].get("levers") or "").split(",") for x in orphans)
+                  or (readings[-1]["state"] or {}).get("flashboot") != "OFF")
+        restored = ses.restore_flashboot(wanted=wanted)
+        for arm_id in orphans:
+            extra = {"t_disarm": round(t_disarm, 3), "zero_latency_s": round(zero - t_disarm, 3),
+                     "readings": readings[-60:]}
+            if restored is not None:
+                extra["flashboot_restored"] = restored
+            serverspend.disarm(locked, a.provider, arm_id, round(zero, 3), False, orphan=True, extra=extra)
+            closed.append(arm_id)
+    report = {"disarm": a.name, "zero": True, "zero_latency_s": round(zero - t_disarm, 3), "orphan_closed": closed,
+              "commands": commands(a.provider, a.name, a.spend_ledger)[1:]}
+    if restored is not None:
+        report["flashboot_restored"] = restored
+        if restored is False:
+            report["flashboot_error"] = [e["detail"] for e in ses.events if e["event"] == "flashboot-error"][-1]
+    pv.emit(report, out)
+    return 4 if restored is False else 0                  # MFL045 c8: FlashBoot not back to OFF, after the rows
 
 
 # --- command line ------------------------------------------------------------------------------------
@@ -638,7 +729,7 @@ def parser():
         if name == "run":
             q.add_argument("--cap-usd", required=True)
             q.add_argument("--spend-cap-usd", required=True)
-            q.add_argument("--fault", choices=("hang-after-first", "crash-after-first"))
+            q.add_argument("--fault", choices=("hang-after-first", "crash-after-first", "wake-fail"))
             q.add_argument("--allow-download", action="store_true")
             mode = q.add_mutually_exclusive_group()
             mode.add_argument("--disarmed", action="store_true")

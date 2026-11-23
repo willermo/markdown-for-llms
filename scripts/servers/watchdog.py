@@ -10,7 +10,14 @@ and forwards every request but the health checks of the platform. vLLM's answers
 with `health`: 204 until vLLM is ready, then 200 for ever, inert mode included, so the provider sees
 a healthy idle worker and stops it (MFL033 c7.7).
 
-Every 5 s it reads vLLM's /health and /metrics (5 s each) and trips on W1 (never healthy within
+The proxy forwards only a closed list (MFL045 c1, plan r1 §7, in every mode): GET and HEAD of
+/v1/models, GET of /version and /metrics, POST of /v1/chat/completions and /v1/completions; any other
+method and path gets 404 `mdf_not_forwarded` and never reaches vLLM (its dev mode opens 16 routes, among
+them /sleep, /update_weights and /collective_rpc, which would change what it serves).
+
+Every 5 s it reads vLLM's /health and /metrics (MFL045 P-2: each operation of a probe at most 5 s, as
+before, and the whole probe at most PROBE_S, 15 s, an absolute deadline over the connection, the
+headers and the body, which cuts a body that comes drop by drop) and trips on W1 (never healthy within
 900 s of the start of the proxy, 1500 s with MDF_ALLOW_DOWNLOAD=1: the populate), W2 (unhealthy for
 60 s after readiness), W3 (work in flight and no token for 120 s), W4 (no inference and no token for
 600 s), W5 (life over 2 h on RunPod, 4 h on Modal). The loop runs from the start, through the check
@@ -39,10 +46,28 @@ default. MDF_LEVERS (MFL033 N5b) names levers of the start from the closed set L
 LEVERS, with its `mdf_compile_cache` lines); another name gives the inert mode `mdf_levers_invalid`.
 `mdf_start` and `mdf_vllm_args` name the levers.
 
+The lever `snapshot` (MFL045 c2) is the memory and GPU snapshot of Modal: its code is in `snapshot.py`, only in
+the image of `modal_snap.py` (RunPod receives this file in the env of its endpoint, within RunPod's limit of a
+request). The proxy only knows its `waking` mode: the vLLM of a snapshot adopted and not awake yet (503
+`mdf_waking` to all but the health checks, /health 204, no readiness).
+
+The lever `flashboot` (MFL045 c3; plan r2 §6, A3; prescriptions P-1, P-3, P-9) is FlashBoot of RunPod: a worker
+idle past its idle timeout, with no job, is frozen on its host and resumes with the monotonic clock ahead by the
+pause. Every blocking step of the supervisor has its bound: its sleep tick_s, a probe PROBE_S. A step that overran
+its bound by PAUSE_GAP_S or more, judged from the instants before and after it only, is a suspension: the round
+drops its readings and starts again at once, `mdf_pause` (with the `boot_id`) says it, and only without work
+before the step (`inflight` sampled just before it, or the busy of the last step) the references of W2-W4 move by
+the overrun, never W1 nor W5; the requests keep their real terms. Without the lever nothing is compensated. With
+the lever vLLM runs in its dev mode (`VLLM_SERVER_DEV_MODE=1`, its routes closed at the edge by the closed list)
+and, at each passage to idle after work, a thread of the proxy resets its prefix, multimodal and encoder caches
+on the loopback (`mdf_cache_reset`, statuses only), never holding a request.
+
 Log (stderr, one JSON object a line, with `t` wall clock and `mono` monotonic seconds; events and
-times only, never a document): `mdf_start`, `mdf_gpu` (the names of the GPUs of the container, from
-`nvidia-smi --query-gpu=name --format=csv,noheader` or else /proc/driver/nvidia/gpus, MFL033 c7.14:
-Modal may place the function on an L4 or an A10G), `mdf_weights_check`, `mdf_download_start`, a
+times only, never a document): `mdf_start` (with `boot_id`, 16 random hex digits of this start of the
+proxy, MFL045 c1: the same id in a later session proves that the process lived through the disarm),
+`mdf_gpu` (the names and UUIDs of the GPUs of the container, from `nvidia-smi
+--query-gpu=name,uuid --format=csv,noheader` or else /proc/driver/nvidia/gpus, MFL033 c7.14: Modal may
+place the function on an L4 or an A10G; MFL045 c1: the UUID tells the card, so the host of a resume), `mdf_weights_check`, `mdf_download_start`, a
 `mdf_download_progress` every 10 s (bytes under HF_HOME, bytes received by the container),
 `mdf_download_end` (exit, bytes, seconds), `mdf_vllm_args` (the MTP choice, the config fields read,
 the names of the arguments, and the runtime of vLLM: the entries of PYTHONPATH by name, the `vllm`
@@ -62,6 +87,7 @@ import http.server
 import json
 import os
 from pathlib import Path
+import secrets
 import shutil
 import signal
 import socket
@@ -86,12 +112,28 @@ HOP = {"connection", "keep-alive", "transfer-encoding", "te", "trailer", "traile
        "host"}
 INFERENCE = ("/v1/chat/completions", "/v1/completions")
 LOGGED_PATHS = ("/v1/models", "/version", "/metrics") + INFERENCE      # the paths an `mdf_request` names
+# MFL045 c1 (plan r1 §7, r2 §7): what the proxy forwards to vLLM, method and path without the query, in every
+# mode: what the relay of the engine and the drivers ask. Anything else is 404 `mdf_not_forwarded`.
+FORWARD = frozenset({("GET", "/v1/models"), ("HEAD", "/v1/models"), ("GET", "/version"), ("GET", "/metrics"),
+                     ("POST", "/v1/chat/completions"), ("POST", "/v1/completions")})
 # The health checks of the platform, served here and never forwarded (MFL033 c7.7). RunPod's load
 # balancer polls `/ping` by default, or the HEALTH_CHECK_PATH of the env (/health here); on 19/11 it
 # polled /ping although the env says /health (docs.runpod.io/serverless/load-balancing/overview,
 # read on 19/11/2026: 200 healthy, 204 initializing, any other code unhealthy).
 HEALTH_PATHS = ("/health", "/ping")
 HEALTH_SUMMARY_S = 30           # a summary of the checks at most this often, when they changed
+# MFL045 P-2: a probe of the supervisor (/health, /v1/models, /metrics): each operation on its socket (the
+# connection, the request, the headers, every read of the body) at most PROBE_OP_S, as before; the whole probe
+# at most PROBE_S, an absolute deadline, the worst of before (three operations of 5 s) without its drip of a body.
+PROBE_OP_S = 5.0
+PROBE_S = 15.0
+PROBE_BODY = 4 << 20
+# MFL045 c3 (A3): a step of the supervisor over its bound by so much is a suspension (FlashBoot froze the worker)
+PAUSE_GAP_S = 15.0
+# MFL045 P-9: the caches of vLLM reset at each passage to idle after work, with the lever flashboot (vLLM's dev mode)
+RESET_ROUTES = ("/reset_prefix_cache", "/reset_mm_cache", "/reset_encoder_cache")
+RESET_S = 30.0
+UPSTREAM_CALL_S = 60.0          # a call of `upstream_call` without its own timeout
 DEFAULTS = {"runpod": {"req_max_s": 290, "w5_s": 7200}, "modal": {"req_max_s": 130, "w5_s": 14400}}
 RULES = {"w1_s": 900, "w2_s": 60, "w3_s": 120, "w4_s": 600, "tick_s": 5}
 POPULATE_W1_S = 1500            # W1 of the populate (MDF_ALLOW_DOWNLOAD=1), from the start (MFL033 c7.4)
@@ -111,7 +153,7 @@ MTP_TOKENS = 2
 # and refuses every inference meanwhile (503 `mdf_populating`): no document reaches the container. A use
 # finds `torch-compile-<sha256>.tar`, checks its SHA-256 and its GPU before vLLM starts, and extracts it
 # with the `data` filter of tarfile; anything else, and vLLM compiles as without the lever.
-LEVERS = ("skip-mm-profiling", "compile-cache", "compile-cache-populate")
+LEVERS = ("skip-mm-profiling", "compile-cache", "compile-cache-populate", "snapshot", "flashboot")
 VALUED = ("compile-cache",)                      # these take `:<sha256>`, the others no value
 GPU_MEMORY = "0.85"
 GPU_MEMORY_SKIP_MM = "0.80"
@@ -151,6 +193,10 @@ def levers(text):
     names = {x.partition(":")[0] for x in items}
     if {"compile-cache", "compile-cache-populate"} <= names:
         raise LeversInvalid("unknown levers: compile-cache with compile-cache-populate")
+    if {"snapshot", "compile-cache-populate"} <= names:                 # MFL045 c2: the populate refuses inference
+        raise LeversInvalid("unknown levers: snapshot with compile-cache-populate")
+    if {"snapshot", "flashboot"} <= names:                              # MFL045: one provider each
+        raise LeversInvalid("unknown levers: snapshot with flashboot")
     return tuple(x for n in LEVERS for x in items if x.partition(":")[0] == n)
 
 
@@ -246,6 +292,11 @@ def request_path(path):
     return p if p in LOGGED_PATHS else "other"
 
 
+def forwarded(method, path):
+    """MFL045 c1: True when the closed list FORWARD pairs `method` with `path` (without its query)."""
+    return (method, (path or "").split("?", 1)[0]) in FORWARD
+
+
 def health_path(path):
     """The health path of the platform that `path` asks, without the query; None for any other."""
     p = (path or "").split("?", 1)[0]
@@ -304,37 +355,47 @@ def runtime(exe, env):
 
 # --- the GPU of the container (c7.14) ----------------------------------------------------------------
 
-GPU_QUERY = ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"]
+GPU_QUERY = ["nvidia-smi", "--query-gpu=name,uuid", "--format=csv,noheader"]
 GPU_QUERY_S = 10                # nvidia-smi may wait for the driver: never longer than this
 GPU_PROC = "/proc/driver/nvidia/gpus"
 GPU_NAMES = 8
 
 
 def gpu_names(run=subprocess.run, proc=GPU_PROC):
-    """The GPUs of the container for the `mdf_gpu` line (MFL033 c7.14, prompt N4m §3.3): the names given
-    by `nvidia-smi --query-gpu=name --format=csv,noheader`, else the `Model:` lines of the driver's
-    /proc/driver/nvidia/gpus/*/information (standard library). {"names", "source" (`nvidia-smi`, `proc`
-    or None), "error" (why nvidia-smi gave none)}. Never raises: the start goes on without a name."""
-    out = {"names": [], "source": None, "error": None}
+    """The GPUs of the container for the `mdf_gpu` line (MFL033 c7.14, prompt N4m §3.3): the names and
+    UUIDs given by `nvidia-smi --query-gpu=name,uuid --format=csv,noheader` (MFL045 c1: the UUID tells the
+    card, so the host of a FlashBoot resume and the card of a restore), else the `Model:` and `GPU UUID:`
+    lines of the driver's /proc/driver/nvidia/gpus/*/information (standard library). {"names", "uuids"
+    (None where a line has none), "source" (`nvidia-smi`, `proc` or None), "error" (why nvidia-smi gave
+    none)}. Never raises: the start goes on without a name."""
+    out = {"names": [], "uuids": [], "source": None, "error": None}
     try:
         r = run(GPU_QUERY, capture_output=True, text=True, timeout=GPU_QUERY_S, stdin=subprocess.DEVNULL)
-        names = [n.strip()[:RUNTIME_TEXT] for n in (r.stdout or "").splitlines() if n.strip()]
-        if r.returncode == 0 and names:
-            out.update(names=names[:GPU_NAMES], source="nvidia-smi")
+        rows = [n.strip() for n in (r.stdout or "").splitlines() if n.strip()]
+        if r.returncode == 0 and rows:
+            pairs = [row.rsplit(",", 1) if "," in row else (row, "") for row in rows[:GPU_NAMES]]
+            out.update(names=[n.strip()[:RUNTIME_TEXT] for n, _ in pairs],
+                       uuids=[u.strip()[:RUNTIME_TEXT] or None for _, u in pairs], source="nvidia-smi")
             return out
         out["error"] = "nvidia-smi: exit %s" % r.returncode
     except (OSError, subprocess.SubprocessError, ValueError) as exc:
         out["error"] = "nvidia-smi: " + type(exc).__name__
-    names = []
+    names, uuids = [], []
     try:
         for info in sorted(Path(proc).glob("*/information")):
+            name = uuid = None
             for line in info.read_text(encoding="utf-8", errors="replace").splitlines():
                 if line.startswith("Model:"):
-                    names.append(line.split(":", 1)[1].strip()[:RUNTIME_TEXT])
+                    name = line.split(":", 1)[1].strip()[:RUNTIME_TEXT]
+                elif line.startswith("GPU UUID:"):
+                    uuid = line.split(":", 1)[1].strip()[:RUNTIME_TEXT] or None
+            if name is not None:
+                names.append(name)
+                uuids.append(uuid)
     except OSError:
         pass
     if names:
-        out.update(names=names[:GPU_NAMES], source="proc")
+        out.update(names=names[:GPU_NAMES], uuids=uuids[:GPU_NAMES], source="proc")
     return out
 
 
@@ -646,6 +707,15 @@ class Rules:
         self.cfg, self.t0 = cfg, t0
         self.ready_at = self.bad_since = self.tokens = None
         self.progress_at = self.activity_at = t0
+        self.last_busy = False                 # MFL045 c3: the busy of the last step
+
+    def shift(self, seconds):
+        """MFL045 c3 (A3): a suspension without work moves the references of W2-W4 by its seconds, never W1 nor W5
+        (`t0`), and never erases the evidence of W2 (`bad_since`)."""
+        self.progress_at += seconds
+        self.activity_at += seconds
+        if self.bad_since is not None:
+            self.bad_since += seconds
 
     def step(self, now, health_ok, m, inflight):
         c = self.cfg
@@ -667,6 +737,7 @@ class Rules:
                 self.activity_at = now
             self.tokens, self.progress_at = m["tokens"], now
         busy = inflight > 0 or m.get("running", 0) > 0 or m.get("waiting", 0) > 0
+        self.last_busy = busy
         if busy:
             self.activity_at = now
             if now - self.progress_at >= c["w3_s"]:
@@ -706,6 +777,15 @@ class Watchdog:
         self.checks = {}                       # the health checks answered: {path: {status: count}}
         self.checks_logged, self.checks_at = {}, self.t_start
         self.populating = "compile-cache-populate" in (cfg.get("levers") or ())   # c8.4: no inference
+        self.boot_id = secrets.token_hex(8)    # MFL045 c1: this start of the proxy, in `mdf_start` and `mdf_pause`
+        self.waking = False                    # MFL045 c2: the vLLM of a snapshot, adopted and not awake yet
+        self.restore_kind = None               # MFL045 c2: create, restore or boot (`snap_wake`)
+        # MFL045 c3: FlashBoot (module docstring): the rule of the pause and the reset of the caches
+        self.flashboot = self.pausing = "flashboot" in (cfg.get("levers") or ())
+        self.sleep = time.sleep
+        self.suspended, self.round_paused = [], False
+        self.reset_wanted, self._reset_stop = threading.Event(), threading.Event()
+        self.probe_op_s, self.probe_s = PROBE_OP_S, PROBE_S      # MFL045 P-2 (attributes for the tests)
 
     def since_start(self):
         return round(self.clock() - self.t_start, 1)
@@ -783,31 +863,101 @@ class Watchdog:
 
     # supervisor: one tick of the 5 s loop
     def probe(self, path):
-        conn = http.client.HTTPConnection("127.0.0.1", self.cfg["upstream"], timeout=5)
+        """GET `path` of vLLM: (status, text), or (None, "") on any failure. MFL045 P-2: each operation on
+        the socket (the connection, the request, the headers, every read of the body) waits at most
+        `probe_op_s`, as before MFL045; the whole probe at most `probe_s`, an absolute deadline on the
+        monotonic clock, which cuts a body that comes drop by drop (before, each read of 5 s could go on)."""
+        end = time.monotonic() + self.probe_s
+
+        def left():
+            rest = end - time.monotonic()
+            if rest <= 0:
+                raise socket.timeout("the deadline of the probe")
+            return min(self.probe_op_s, rest)
+        conn = http.client.HTTPConnection("127.0.0.1", self.cfg["upstream"], timeout=left())
         try:
+            conn.connect()
+            sock = conn.sock                      # kept: the response may take the connection over
             conn.request("GET", path)
+            sock.settimeout(left())
             r = conn.getresponse()
-            return r.status, r.read(4 << 20).decode("utf-8", "replace")
+            body = bytearray()
+            while len(body) < PROBE_BODY:
+                sock.settimeout(left())
+                block = r.read1(min(CHUNK, PROBE_BODY - len(body)))
+                if not block:
+                    break
+                body += block
+            return r.status, bytes(body).decode("utf-8", "replace")
         except (OSError, http.client.HTTPException):
             return None, ""
         finally:
             conn.close()
 
+    def timed(self, step, limit, fn):
+        """One blocking step of the supervisor (MFL045 c3, A3; P-1, P-3): its value. With the lever a step that overran
+        its bound `limit` by PAUSE_GAP_S or more, judged from the instants before and after it only, is a suspension,
+        kept with the work sampled just before the step (`inflight`, or the busy of the last step)."""
+        busy = self.inflight > 0 or self.rules.last_busy
+        t0 = self.clock()
+        value = fn()
+        over = self.clock() - t0 - limit
+        if self.pausing and over >= PAUSE_GAP_S:
+            self.suspended.append({"during": step, "seconds": round(over, 3), "busy_before": busy})
+        return value
+
+    def pause(self):
+        """The suspensions of a step (MFL045 c3): `mdf_pause` for each; without work before the step the references of
+        W2-W4 move by its seconds (`Rules.shift`)."""
+        for x in self.suspended:
+            applied = not x["busy_before"]
+            if applied:
+                self.rules.shift(x["seconds"])
+            log("mdf_pause", boot_id=self.boot_id, seconds=x["seconds"], during=x["during"],
+                busy_before=x["busy_before"], applied=applied, since_start=self.since_start())
+        self.suspended = []
+
+    def round(self):
+        """One round of the supervisor: `tick`, then the sleep, unless a suspension in a probe made the round start
+        again at once (MFL045 c3). The rule that tripped, or None."""
+        rule = self.tick()
+        if not self.round_paused:
+            self.nap()
+        return rule
+
+    def nap(self):
+        """The sleep between two rounds; with the lever it is a step of its own, timed (MFL045 c3)."""
+        tick_s = self.cfg["tick_s"]
+        if self.inert is not None or not self.pausing:
+            self.sleep(tick_s)
+            return
+        self.suspended = []
+        self.timed("sleep", tick_s, lambda: self.sleep(tick_s))
+        if self.suspended:
+            self.pause()
+
     def tick(self):
+        self.round_paused = False
         if self.inert is not None:
             return None
-        status, _ = self.probe("/health")
+        self.suspended = []
+        status, _ = self.timed("health", self.probe_s, lambda: self.probe("/health"))
         self.first_answers(status)
         m = None
         if status == 200:
-            ms, text = self.probe("/metrics")
+            ms, text = self.timed("metrics", self.probe_s, lambda: self.probe("/metrics"))
             m = metrics(text) if ms == 200 else None
-        if status == 200 and not self.ready:
+        if self.suspended:                                # MFL045 c3: the readings of this round are dropped
+            self.pause()
+            self.round_paused = True
+            return None
+        healthy = status == 200 and not self.waking       # MFL045 c2: no readiness while vLLM is waking
+        if healthy and not self.ready:
             self.ready = True
             log("mdf_ready", since_start=self.since_start())
             if self.populating:                    # c8.4: the compiled graphs, before any inference
                 threading.Thread(target=populate_cache, args=(self.cfg,), name="mdf-cache", daemon=True).start()
-        rule = self.rules.step(self.clock(), status == 200, m, self.inflight)
+        rule = self.rules.step(self.clock(), healthy, m, self.inflight)
         if rule:
             self.trip(rule)
         return rule
@@ -819,7 +969,7 @@ class Watchdog:
             self.seen["health"] = True
             log("mdf_vllm_first_health", status=status, since_start=self.since_start())
         if self.seen["health"] and not self.seen["models_200"]:
-            ms, text = self.probe("/v1/models")
+            ms, text = self.timed("models", self.probe_s, lambda: self.probe("/v1/models"))
             if ms is not None:
                 try:
                     ids = [x.get("id") for x in json.loads(text).get("data", [])]
@@ -832,16 +982,64 @@ class Watchdog:
                     self.seen["models_200"] = True
                     log("mdf_vllm_models_200", models=ids, since_start=self.since_start())
         poll = getattr(self.process, "poll", None)
-        code = poll() if poll is not None and not self.seen["exit"] else None
+        # MFL045 c2: while waking the exit of the adopted vLLM is the wake's to tell (its fallback)
+        code = poll() if poll is not None and not self.seen["exit"] and not self.waking else None
         if code is not None:
             self.seen["exit"] = True
             log("mdf_vllm_exit", code=code, since_start=self.since_start())
 
     def refusal(self, path):
-        """The code of a request refused before vLLM (c8.4): every inference while the cache is populated."""
+        """The code of a request refused before vLLM: every request while the vLLM of a snapshot is waking
+        (MFL045 c2, `mdf_waking`), every inference while the cache is populated (c8.4)."""
+        if self.waking:
+            return "mdf_waking"
         if self.populating and request_path(path) in INFERENCE:
             return "mdf_populating"
         return None
+
+    # MFL045 P-9: the passage to idle after work, and the reset of vLLM's caches with the lever flashboot
+    def request_done(self, inference):
+        """The end of a forwarded request: `inflight` down for an inference; with the lever the passage to idle after
+        work asks the reset of the caches."""
+        with self.lock:
+            if inference:
+                self.inflight -= 1
+            idle = inference and self.inflight == 0
+        if idle and self.flashboot:
+            self.reset_wanted.set()
+
+    def reset_caches(self, call=None):
+        """POST of the three routes of RESET_ROUTES to vLLM on the loopback; one `mdf_cache_reset` line with the
+        statuses (no contents); never raises. True when all answered 200."""
+        call = call or upstream_call(self.cfg["upstream"])
+        t0, routes = self.clock(), {}
+        for path in RESET_ROUTES:
+            try:
+                routes[path] = call("POST", path, None, RESET_S)[0]
+            except Exception as exc:
+                routes[path] = type(exc).__name__
+        ok = all(x == 200 for x in routes.values())
+        log("mdf_cache_reset", ok=ok, routes=routes, boot_id=self.boot_id, seconds=round(self.clock() - t0, 1),
+            since_start=self.since_start())
+        return ok
+
+    def start_resetter(self, call=None):
+        """The thread of the resets: it waits for a passage to idle after work, then resets; it never holds a
+        request (the proxy forwards meanwhile). Returns the thread."""
+        def loop():
+            while not self._reset_stop.is_set():
+                if not self.reset_wanted.wait(1.0) or self._reset_stop.is_set():
+                    continue
+                self.reset_wanted.clear()
+                if self.inert is None:
+                    self.reset_caches(call)
+        t = threading.Thread(target=loop, name="mdf-reset", daemon=True)
+        t.start()
+        return t
+
+    def stop_resetter(self):
+        self._reset_stop.set()
+        self.reset_wanted.set()
 
     def after_success(self):
         fault = self.cfg.get("fault")
@@ -879,11 +1077,12 @@ class Watchdog:
 
         def supervisor():
             while True:
-                self.tick()
-                time.sleep(self.cfg["tick_s"])
+                self.round()
 
         threading.Thread(target=controller, daemon=True).start()
         threading.Thread(target=supervisor, daemon=True).start()
+        if self.flashboot:                                # MFL045 P-9
+            self.start_resetter()
 
 
 class ProxyHandler(http.server.BaseHTTPRequestHandler):
@@ -948,6 +1147,8 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             status = 200 if wd.ready or wd.inert is not None else 204
             wd.count_check(health, status)
             return self._send(status, "health")
+        if not forwarded(self.command, self.path):   # MFL045 c1: the closed list, in every mode
+            return self._error(404, "mdf_not_forwarded")
         if wd.inert is not None:
             return self._error(503, wd.inert)
         refused = wd.refusal(self.path)
@@ -981,7 +1182,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         finally:
             with wd.lock:
                 wd.pending.discard(p)
-                wd.inflight -= 1 if inference else 0
+            wd.request_done(inference)                    # MFL045 P-9: the passage to idle after work
 
     def _exchange(self, wd, p, n, inference):
         drop = HOP | {h.strip().lower() for v in self.headers.get_all("Connection") or [] for h in v.split(",")}
@@ -1104,14 +1305,20 @@ def start(cfg, argv=None, download_argv=None):
     returns the watchdog. Nothing here exits: an error gives the inert mode."""
     wd = Watchdog(cfg)
     wd.serve()
-    log("mdf_start", provider=cfg["provider"], req_max_s=cfg["req_max_s"], fault=cfg["fault"],
-        allow_download=cfg["allow_download"], rules={k: cfg[k] for k in RULES}, levers=list(cfg.get("levers") or ()))
+    start_line(wd, cfg)
     wd.loops()
     gpu = gpu_names()
     cfg["gpu_names"] = gpu["names"]                                  # the GPU of the cache (c8.4)
     log("mdf_gpu", **gpu, since_start=wd.since_start())              # the GPU Modal or RunPod gave (c7.14)
     boot(wd, cfg, argv, download_argv)
     return wd
+
+
+def start_line(wd, cfg, **extra):
+    """The `mdf_start` line of a start of the proxy (with its `boot_id`, MFL045 c1)."""
+    log("mdf_start", provider=cfg["provider"], req_max_s=cfg["req_max_s"], fault=cfg["fault"],
+        allow_download=cfg["allow_download"], rules={k: cfg[k] for k in RULES}, levers=list(cfg.get("levers") or ()),
+        boot_id=wd.boot_id, **extra)
 
 
 def boot(wd, cfg, argv=None, download_argv=None):
@@ -1145,6 +1352,8 @@ def prepare(wd, cfg, argv=None, download_argv=None):
         return
     argv = argv or vllm_argv(cfg, mtp)
     env = dict(os.environ, HF_HOME=cfg["hf_home"], HF_HUB_OFFLINE="1")
+    if "flashboot" in (cfg.get("levers") or ()):          # MFL045 P-9: the dev mode only with the lever, for the resets
+        env["VLLM_SERVER_DEV_MODE"] = "1"
     log("mdf_vllm_args", ok=True, mtp=mtp, mtp_tokens=MTP_TOKENS if mtp else None, config=fields,
         args=[a for a in argv if a.startswith("--")], levers=list(cfg.get("levers") or ()),
         gpu_memory_utilization=argv[argv.index("--gpu-memory-utilization") + 1]
@@ -1156,6 +1365,47 @@ def prepare(wd, cfg, argv=None, download_argv=None):
         else:
             return
     log("mdf_vllm_start", pid=pid, since_start=wd.since_start())
+
+
+# --- vLLM on the loopback, for the reset of the caches (MFL045 P-9) and the snapshot (snapshot.py) ----------
+
+def upstream_call(port):
+    """A call to vLLM on the loopback, the only place the resets of the caches and the snapshot (`snapshot.py`: its
+    `snap_boot` and the wake) reach: `call(method, path, body=None, timeout)` gives (status, text), or (None, "") on
+    any failure; `timeout` an absolute deadline over the connection, the headers and the body."""
+    def call(method, path, body=None, timeout=UPSTREAM_CALL_S):
+        end = time.monotonic() + timeout
+
+        def left():
+            rest = end - time.monotonic()
+            if rest <= 0:
+                raise socket.timeout("the deadline of the call")
+            return rest
+        conn = None
+        try:
+            conn = http.client.HTTPConnection("127.0.0.1", port, timeout=left())
+            conn.connect()
+            sock = conn.sock
+            data = b"" if body is None else json.dumps(body).encode("utf-8")
+            headers = {"Content-Type": "application/json"} if body is not None else {}
+            conn.request(method, path, body=data if method == "POST" else None, headers=headers)
+            sock.settimeout(left())
+            r = conn.getresponse()
+            out = bytearray()
+            while len(out) < PROBE_BODY:
+                sock.settimeout(left())
+                block = r.read1(min(CHUNK, PROBE_BODY - len(out)))
+                if not block:
+                    break
+                out += block
+            return r.status, bytes(out).decode("utf-8", "replace")
+        except (OSError, http.client.HTTPException):
+            return None, ""
+        finally:
+            if conn is not None:
+                conn.close()
+    return call
+
 
 
 def start_proxy(argv=None, env=None):

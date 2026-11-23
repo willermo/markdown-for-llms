@@ -23,6 +23,12 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[3]
 DRIVER = Path(__file__).resolve().parent / "watchdog_driver.py"
+# vLLM 0.25.1 with VLLM_SERVER_DEV_MODE=1: its 16 routes (`entrypoints/serve/dev/*/api_router.py`, 22/11/2026)
+DEV_PATHS = (("POST", "/reset_prefix_cache"), ("POST", "/reset_mm_cache"), ("POST", "/reset_encoder_cache"),
+             ("POST", "/pause"), ("POST", "/resume"), ("GET", "/is_paused"), ("POST", "/init_weight_transfer_engine"),
+             ("POST", "/start_weight_update"), ("POST", "/update_weights"), ("POST", "/finish_weight_update"),
+             ("GET", "/get_world_size"), ("POST", "/collective_rpc"), ("GET", "/server_info"), ("POST", "/sleep"),
+             ("POST", "/wake_up"), ("GET", "/is_sleeping"))
 
 
 def load():
@@ -935,10 +941,30 @@ class TestGpu(unittest.TestCase):
 
         def run(argv, **kw):
             seen.append((argv, kw.get("timeout")))
-            return types.SimpleNamespace(returncode=0, stdout="NVIDIA L4\n", stderr="")
+            return types.SimpleNamespace(returncode=0, stdout="NVIDIA L4, GPU-1f2e3d4c-0000-1111-2222-333344445555\n",
+                                         stderr="")
         self.assertEqual(wd.gpu_names(run=run, proc=self.proc("NVIDIA A10G")),
-                         {"names": ["NVIDIA L4"], "source": "nvidia-smi", "error": None})
-        self.assertEqual(seen, [(["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], wd.GPU_QUERY_S)])
+                         {"names": ["NVIDIA L4"], "uuids": ["GPU-1f2e3d4c-0000-1111-2222-333344445555"],
+                          "source": "nvidia-smi", "error": None})
+        self.assertEqual(seen, [(["nvidia-smi", "--query-gpu=name,uuid", "--format=csv,noheader"], wd.GPU_QUERY_S)])
+
+    def test_the_uuid_names_the_card_and_a_line_without_it(self):
+        """MFL045 c1: the UUID of each GPU (`nvidia-smi --query-gpu=name,uuid`, or `GPU UUID:` of the driver)
+        tells the host of a FlashBoot resume and the card of a restore; a line without it keeps its name."""
+        def run(argv, **kw):
+            return types.SimpleNamespace(returncode=0, stdout="NVIDIA A10G, GPU-aa\nNVIDIA A10G\n", stderr="")
+        self.assertEqual(wd.gpu_names(run=run, proc=str(self.tmp)),
+                         {"names": ["NVIDIA A10G", "NVIDIA A10G"], "uuids": ["GPU-aa", None], "source": "nvidia-smi",
+                          "error": None})
+        d = self.tmp / "0000:00:1e.0"
+        d.mkdir()
+        (d / "information").write_text("Model: \t\t NVIDIA A10G\nGPU UUID: \t GPU-bb-cc\nIRQ:   \t\t 42\n")
+
+        def missing(argv, **kw):
+            raise FileNotFoundError(argv[0])
+        self.assertEqual(wd.gpu_names(run=missing, proc=str(self.tmp)),
+                         {"names": ["NVIDIA A10G"], "uuids": ["GPU-bb-cc"], "source": "proc",
+                          "error": "nvidia-smi: FileNotFoundError"})
 
     def test_from_the_driver_when_nvidia_smi_gives_none(self):
         def missing(argv, **kw):
@@ -955,9 +981,9 @@ class TestGpu(unittest.TestCase):
                 shutil.rmtree(self.tmp)
                 self.tmp.mkdir()
                 self.assertEqual(wd.gpu_names(run=run, proc=self.proc("NVIDIA A10G")),
-                                 {"names": ["NVIDIA A10G"], "source": "proc", "error": error})
+                                 {"names": ["NVIDIA A10G"], "uuids": [None], "source": "proc", "error": error})
                 self.assertEqual(wd.gpu_names(run=run, proc=str(self.tmp / "none")),
-                                 {"names": [], "source": None, "error": error})
+                                 {"names": [], "uuids": [], "source": None, "error": error})
 
     def test_one_line_after_mdf_start(self):
         import contextlib
@@ -965,14 +991,26 @@ class TestGpu(unittest.TestCase):
         cfg = wd.config({"MDF_PROVIDER": "modal"})
         with mock.patch.object(wd.Watchdog, "serve"), mock.patch.object(wd.Watchdog, "loops"), \
                 mock.patch.object(wd, "boot") as boot, contextlib.redirect_stderr(err), \
-                mock.patch.object(wd, "gpu_names", lambda: {"names": ["NVIDIA A10G"], "source": "nvidia-smi",
-                                                            "error": None}):
-            wd.start(cfg)
+                mock.patch.object(wd, "gpu_names", lambda: {"names": ["NVIDIA A10G"], "uuids": ["GPU-aa"],
+                                                            "source": "nvidia-smi", "error": None}):
+            w = wd.start(cfg)
         ev = events(err.getvalue())
         self.assertEqual([e["event"] for e in ev], ["mdf_start", "mdf_gpu"])
-        self.assertEqual((ev[1]["names"], ev[1]["source"]), (["NVIDIA A10G"], "nvidia-smi"))
+        self.assertEqual((ev[1]["names"], ev[1]["uuids"], ev[1]["source"]), (["NVIDIA A10G"], ["GPU-aa"], "nvidia-smi"))
+        self.assertEqual(ev[0]["boot_id"], w.boot_id)                          # MFL045 c1: the boot of the proxy
         self.assertIn("since_start", ev[1])
         boot.assert_called_once()                                               # the start goes on
+
+
+class TestBootId(unittest.TestCase):
+    def test_each_start_of_the_proxy_has_its_own(self):
+        """MFL045 c1 (plan r2 §5): a random id of 16 hex digits for each start of the proxy, in `mdf_start` (and
+        later in `mdf_pause`): the same id in a later session proves that the process lived through the disarm."""
+        a, b = (wd.Watchdog(wd.config({"MDF_PROVIDER": "runpod"})) for _ in range(2))
+        for w in (a, b):
+            self.assertEqual(len(w.boot_id), 16)
+            self.assertLessEqual(set(w.boot_id), set("0123456789abcdef"))
+        self.assertNotEqual(a.boot_id, b.boot_id)
 
 
 class TestModalPopulate(unittest.TestCase):
@@ -1053,12 +1091,14 @@ class TestProxySockets(unittest.TestCase):
                                                  ("forwarded", "GET", "/metrics", 200, None),
                                                  ("forwarded", "POST", "/v1/chat/completions", 200, None),
                                                  ("forwarded", "HEAD", "/v1/models", 200, None),
-                                                 ("forwarded", "GET", "other", 500, None),
+                                                 ("forwarded", "GET", "/version", 500, None),
                                                  ("error", "GET", "/v1/models", 502, "mdf_upstream"),
                                                  ("error", "POST", "/v1/chat/completions", 411, "mdf_length_required"),
                                                  ("error", "GET", "/v1/models", 503, "mdf_busy"),
-                                                 ("error", "GET", "other", 504, "mdf_request_timeout"),
-                                                 ("error", "GET", "/v1/models", 503, "mdf_weights_missing")):
+                                                 ("error", "GET", "/v1/models", 504, "mdf_request_timeout"),
+                                                 ("error", "GET", "/v1/models", 503, "mdf_weights_missing"),
+                                                 ("error", "GET", "other", 404, "mdf_not_forwarded"),
+                                                 ("error", "POST", "other", 404, "mdf_not_forwarded")):
             with self.subTest(kind=kind, path=path, status=status):
                 found = self.request(kind, method, path, status, code)
                 self.assertTrue(found)
@@ -1157,6 +1197,58 @@ class TestProxySockets(unittest.TestCase):
 
     def test_weights_missing(self):
         self.assertEqual(self.r["weights_missing"][:4], [503, "error", "mdf_weights_missing", 200])
+
+    def test_the_closed_list_of_the_forwarding(self):
+        """MFL045 c1 (plan r1 §7, r2 §7): in every mode the proxy forwards only GET and HEAD of /v1/models,
+        GET of /version and /metrics, POST of the two inferences; vLLM's 16 routes of its dev mode, any other
+        path and a method the list does not pair with its path get 404 `mdf_not_forwarded` and never reach
+        vLLM (`/sleep`, `/update_weights` and `/collective_rpc` would change what it serves)."""
+        self.assertEqual(sorted(wd.FORWARD), [("GET", "/metrics"), ("GET", "/v1/models"), ("GET", "/version"),
+                                              ("HEAD", "/v1/models"), ("POST", "/v1/chat/completions"),
+                                              ("POST", "/v1/completions")])
+        refused = self.r["not_forwarded"]
+        self.assertEqual(len(refused), 16 + 7)
+        for method, path, status, kind, error in refused:
+            with self.subTest(method=method, path=path):
+                self.assertEqual((status, kind), (404, "error"))
+                if method != "HEAD":
+                    self.assertEqual(error, "mdf_not_forwarded")
+        reached = {p.split("?")[0] for p in self.r["upstream_paths"]}
+        dev = {p for _, p in DEV_PATHS}
+        self.assertFalse(reached & (dev | {"/anything", "/", "/sleep"}))
+        self.assertEqual(reached - {"/v1/models", "/version", "/metrics", "/v1/chat/completions", "/v1/completions"},
+                         set())
+        self.assertEqual([s for _, _, s in self.r["forwarded_list"] if s == 404], [])
+
+    def test_the_reset_of_the_caches_on_the_loopback(self):
+        """MFL045 P-9: with the lever flashboot the proxy resets vLLM's prefix, multimodal and encoder caches after the
+        work ends, on the loopback; the same routes from the edge get 404 and never reach vLLM; without the lever
+        nothing is reset."""
+        fb, plain = self.r["resets"]["flashboot"], self.r["resets"]["plain"]
+        self.assertEqual((fb["edge"], plain["edge"]), ([404, "error"], [404, "error"]))
+        self.assertEqual(fb["paths"], ["/v1/chat/completions", "/reset_prefix_cache", "/reset_mm_cache",
+                                       "/reset_encoder_cache"])
+        self.assertEqual(plain["paths"], ["/v1/chat/completions"])
+
+    def test_the_deadline_of_the_probes(self):
+        """MFL045 P-2 (Sol S-C2, Carbon CNB1a): a probe of the supervisor keeps its timeout of each operation
+        (5 s, here 0.5 s), so a stall of the headers or of the body ends as before, and has an absolute
+        deadline (15 s, here 1.5 s) over connection, headers and body, which cuts a body that comes drop by
+        drop; the same bounds on RunPod and on Modal, with or without a lever: no other change."""
+        p = self.r["probes"]
+        self.assertEqual(p["none"][0], 200)
+        self.assertLess(p["none"][2], 0.5)
+        for fake in ("stall_headers", "stall_body"):
+            status, _, seconds = p[fake]
+            self.assertIsNone(status, fake)
+            self.assertGreaterEqual(seconds, 0.45, fake)
+            self.assertLess(seconds, 1.0, fake)                 # the operation's timeout, not the deadline
+        status, _, seconds = p["drip"]
+        self.assertIsNone(status)
+        self.assertGreaterEqual(seconds, 1.45)
+        self.assertLess(seconds, 2.0)                            # cut at the deadline, drop by drop
+        self.assertEqual(self.r["probe_defaults"], {"runpod": [5.0, 15.0], "modal": [5.0, 15.0]})
+        self.assertEqual((wd.PROBE_OP_S, wd.PROBE_S), (5.0, 15.0))
 
 
 if __name__ == "__main__":

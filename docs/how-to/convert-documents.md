@@ -239,7 +239,7 @@ The scripts of `scripts/servers/` run from the root of a clone with the developm
    .venv-dev/bin/python -I -B scripts/servers/runpod_endpoint.py --env-file .env align --name mdf-surya
    ```
 
-   `align` changes only the env map with the watchdog, the `workers` block and the CUDA floor. The other pins (image, entrypoint, type, scaling, FlashBoot, ports, the volume and its data center, the data center in the catalog with every GPU of the pool Secure, the pool and its serverless price up to 0.75 USD per hour) need a new endpoint; `verify-pins` names them in `outside_align`. Every session checks the same pins before its arm and refuses an endpoint outside them (`endpoint_out_of_pins`, exit 3) without changing it, and every arm checks them again on its own reading before its PATCH.
+   `align` changes only the env map with the watchdog, the `workers` block, the CUDA floor and FlashBoot, which it turns off. The other pins (image, entrypoint, type, scaling, ports, the volume and its data center, the data center in the catalog with every GPU of the pool Secure, the pool and its serverless price up to 0.75 USD per hour) need a new endpoint; `verify-pins` names them in `outside_align`. Every session checks the same pins before its arm and refuses an endpoint outside them (`endpoint_out_of_pins`, exit 3) without changing it, and every arm checks them again on its own reading before its PATCH.
 5. Load the weights on the volume once: a session with `--allow-download` runs the subcommand `populate` of `runpod_endpoint.py` (after `--`, the session runs these subcommands on its endpoint), which waits for vLLM to be ready with the pinned revision downloaded and verified:
 
    ```bash
@@ -278,7 +278,7 @@ Each provider needs a key that manages it (the sessions and the scripts of `scri
 
 ### Revoke or restrict the keys when you stop
 
-When you stop using a provider, delete its keys or reduce them, so that a copied file opens nothing: on RunPod delete the API key in the console (a key left with read permissions only still reads the endpoints, their logs and the bill of the account, so delete it unless you need that); on Modal revoke the token of the SDK and delete the proxy token in the settings of the workspace (`modal token new` creates a new one when you need it again); on Datalab rotate the key in the dashboard. First run [`mdf bench secret-scan`](bench.md#check-that-no-key-is-in-a-file) with your key file on the folders you keep, while the file still holds the values it searches; then remove the lines from the key file. Stop or delete what keeps costing: a RunPod network volume costs 0.07 USD per GB and month (10 GB: 0.70 USD), a Modal Volume 0.09 USD per GiB and month beyond what the plan includes; a disarmed endpoint and a stopped app cost nothing.
+When you stop using a provider, delete its keys or reduce them, so that a copied file opens nothing: on RunPod delete the API key in the console (a key left with read permissions only still reads the endpoints, their logs and the bill of the account, so delete it unless you need that); on Modal revoke the token of the SDK and delete the proxy token in the settings of the workspace (`modal token new` creates a new one when you need it again); on Datalab rotate the key in the dashboard. First run [`mdf bench secret-scan`](bench.md#check-that-no-key-is-in-a-file) with your key file on the folders you keep, while the file still holds the values it searches; then remove the lines from the key file. Stop or delete what keeps costing: a RunPod network volume of type `STANDARD` costs 0.07 USD per GB and month (10 GB: 0.70 USD); in a data center that offers only `HIGH_PERFORMANCE` volumes, such as CA-MTL-1, `runpod_endpoint.py create` makes one of that type, which the console priced at 0.14 USD per GB and month on 22 November 2026 (10 GB: 1.40 USD), so check the price in the console before you create the volume; a Modal Volume 0.09 USD per GiB and month beyond what the plan includes; a disarmed endpoint and a stopped app cost nothing.
 
 ### The cache of compilation
 
@@ -299,7 +299,7 @@ A use reads the archive within the limits of its populate: a regular file of at 
     --spend-ledger ~/bench-runs/spend.jsonl --spend-cap-usd 15
 ```
 
-The last line of `start_series.py` gives the SHA-256 of the archive (`sha256`). An archive serves only the GPU of its manifest: on another GPU vLLM compiles as without it. On Modal, which assigns an A10 or an A10G as it likes, `--gpu "NVIDIA A10G"` takes only a container on that GPU and lets the others go before vLLM is ready. Without `--levers` every session takes the archives adopted in `scripts/servers/providers.py` (`DEFAULT_LEVERS`), one per GPU: today the A10 and the A10G of Modal and the RTX A5000 of RunPod (an L4 has none); `--levers none` arms without them. A new image, another version of vLLM or other arguments of vLLM need a new populate: vLLM then does not find its graphs and compiles. With the cache, a start was ready 25 to 30 s earlier (`torch.compile` took 2.4 to 3.3 s), and every conversion of a one-page scan on 21 November 2026, more than 20 on the three GPUs, gave the same output with and without it.
+The last line of `start_series.py` gives the SHA-256 of the archive (`sha256`). An archive serves only the GPU of its manifest: on another GPU vLLM compiles as without it. On Modal, which assigns an A10 or an A10G as it likes, `--gpu "NVIDIA A10G"` takes only a container on that GPU and lets the others go before vLLM is ready. Without `--levers` every session takes the archives adopted in `scripts/servers/providers.py` (`DEFAULT_LEVERS`), one per GPU: today the A10 and the A10G of Modal and the RTX A5000 of RunPod (an L4 has none); `--levers none` arms without them. An archive lives on the volume of its endpoint: an endpoint on another volume, for example after a move to another data center, has none until a populate of its own, and `DEFAULT_LEVERS` names only the archives above, so name the new one with `--levers`. The RunPod endpoint of these measures moved to CA-MTL-1 on 22 November 2026, and its archive there, `compile-cache:6222ea36…`, is not yet among `DEFAULT_LEVERS`: without `--levers` vLLM compiles there. A new image, another version of vLLM or other arguments of vLLM need a new populate: vLLM then does not find its graphs and compiles. With the cache, a start was ready 25 to 30 s earlier (`torch.compile` took 2.4 to 3.3 s), and every conversion of a one-page scan on 21 November 2026, more than 20 on the three GPUs, gave the same output with and without it.
 
 ### Arm ahead
 
@@ -314,6 +314,71 @@ On RunPod the arm alone makes a host load the image of the endpoint, and nothing
 ```
 
 The window must hold the wait and the readiness floor of the attempt: with 0.40 USD it is 1,703 s, and 420 s of wait leave the 900 s of `ready_within` plus the margin of 60 s. The ledger counts such a window from the arm to the zero, because its command is not `mdf convert`; the bill counts only the worker running ([The ledger and the bill](#the-ledger-and-the-bill)). On Modal a container starts only with a request, so arming ahead gains nothing.
+
+### Experimental levers of the start
+
+Two levers of the start were measured on 22 and 23 November 2026 and not adopted: the memory snapshot of Modal (`snapshot`) and FlashBoot of RunPod (`flashboot`). They are not among the levers adopted (`DEFAULT_LEVERS`), and a session arms them only when its `--levers` names them. A session that arms one says so before its arm row, in a line of its own:
+
+```json
+{"adopted": false, "experimental_levers": ["flashboot"], "guide": {"flashboot": "docs/how-to/convert-documents.md#flashboot-of-runpod-experimental"}}
+```
+
+and again as `experimental_levers` in the `arm` row of the ledger and in the report of the window; nothing else changes. `--levers` replaces the levers adopted, so name in it the archives of the cache of compilation too ([The cache of compilation](#the-cache-of-compilation)), else vLLM compiles. With either lever the output was compared only on a one-page scan.
+
+#### The memory snapshot of Modal (experimental)
+
+Modal can keep a snapshot of the memory and of the GPU of a container and start the later containers of the same deploy from it. With the lever the session deploys `scripts/servers/modal_snap.py` in place of `modal_app.py`, with the same image, Volume, GPUs and limits. The first container of a deploy starts vLLM in its sleep mode on the loopback, warms it with a synthetic page made in the process, empties its caches and puts it to sleep, and only then does Modal take the snapshot: before the proxy starts and before any request, so no page of yours is ever in a snapshot. Every container, that one included, then wakes vLLM; a wake that fails or takes more than 120 s, or another type of GPU, falls back to a normal start, declared in the log (`mdf_fallback`). A snapshot serves one type of GPU, and a deploy changed in anything (code, image, levers, a fault) makes it obsolete. The snapshot of the GPU is an alpha feature of modal 1.6.3.
+
+The lever runs only on Modal and only on an app named `*-snap` (`*-snap-fault` for the fault test), which takes exactly the levers of `providers.SNAPSHOT_LEVERS`: `snapshot` and the archives of `DEFAULT_LEVERS`. Another set, the lever on another app, `--allow-download`, `--disarmed` or `--cpu-activity` is refused before anything is read (`invalid_setting`). The app has a URL of its own: a first session with the command `true` prints it in its `armed` event, for `servers.json` (a `modal` server like `modal-l4`, here `modal-snap`) and for `--url`:
+
+```bash
+CC=compile-cache:29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b,compile-cache:cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224,compile-cache:d38180544831bf3c0d1a45712e25f125ff4d18a9929012376f844a2224e0ff73
+L=~/bench-runs/spend.jsonl
+.venv-dev/bin/python -I -B scripts/servers/session.py run --provider modal --name mdf-surya-snap \
+    --levers "snapshot,$CC" --env-file .env --spend-ledger "$L" --spend-cap-usd 15 --cap-usd 0.10 -- true
+.venv-dev/bin/python -I -B scripts/servers/session.py run --provider modal --name mdf-surya-snap \
+    --levers "snapshot,$CC" --url "https://<workspace>--mdf-surya-snap-serve-web.<region>.modal.run" \
+    --env-file .env --spend-ledger "$L" --spend-cap-usd 15 --cap-usd 1.00 -- \
+  .venv-dev/bin/mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
+    --server modal-snap --confirm-transit --server-cap-usd 1.00 --spend-ledger "$L" --spend-cap-usd 15 --out out/report
+```
+
+Measured on 23 November 2026, in three sessions of three or four cold starts each (NVIDIA A10 and A10G, vLLM 0.25.1, a one-page scan converted by `mdf convert` at each start):
+
+- inside a session, a start from the snapshot was ready 8.0 to 10.0 s after its request (median 8.9 s; 6 restores of 6, no fallback), and `mdf convert` had its first answer after a median of 25.6 s. A normal start with the cache of compilation is ready in about 168 s on an A10;
+- the first start of each deploy creates the snapshot and is slower than a normal start: ready 204 to 238 s after its request on an A10, 304 s on an A10G (each type of GPU creates its own);
+- no reuse between sessions: a session deploys the app at its arm and stops it at its disarm, and after a stop and an identical deploy, less than a minute and 61 minutes later, Modal always created a new snapshot. Every `mdf convert` runs in a session of its own, so each one pays the creation;
+- the output of the scan was identical byte for byte in the 10 conversions, from a snapshot or not.
+
+The lever would serve an app kept up between several documents, which the product does not do: the first start would pay the creation (36 to 70 s more than a normal start on an A10), and the later ones would take about 9 s instead of about 168 s. The fault tests of a restored container (phases A and B with `--after-restore`, [the bench guide](bench.md#the-memory-snapshot-of-modal)) have not been run.
+
+#### FlashBoot of RunPod (experimental)
+
+With FlashBoot, RunPod does not stop a worker that stays idle past its idle timeout (60 s): it freezes its container at the level of the operating system, with its memory and the memory of its GPU, and resumes it for a later request instead of starting a new container. With the lever the arm turns FlashBoot on in its PATCH of the endpoint and reads it back; after the zero, also after a failed or interrupted command, the session turns it off with a PATCH of its own and reads it back (`flashboot_restored` in the `disarm` row; a failure is exit 4). After a session that died before that step (SIGKILL, a laptop that stopped), `session.py disarm` turns it off the same way after its zero, when the window it closes armed the lever or the endpoint still has FlashBoot on. At rest the endpoint keeps FlashBoot off: `verify-pins` wants it off and `align` turns it off. The watchdog tells a pause from a hang (a step of its own that overran its bound is a suspension, which it does not count against the container when no work was running), runs vLLM in its development mode with those routes closed at the edge, and at each passage to idle after work resets the prefix, multimodal and encoder caches of vLLM.
+
+The lever runs only on RunPod. Name it beside the archive of the cache of compilation of the endpoint:
+
+```bash
+L=~/bench-runs/spend.jsonl
+.venv-dev/bin/python -I -B scripts/servers/session.py run --provider runpod --name mdf-surya \
+    --levers "compile-cache:<SHA-256 of the archive of the endpoint>,flashboot" --env-file .env \
+    --spend-ledger "$L" --spend-cap-usd 4 --cap-usd 0.60 -- \
+  .venv-dev/bin/mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
+    --server runpod-24gb --confirm-transit --server-cap-usd 0.60 --spend-ledger "$L" --spend-cap-usd 4 --out out/report
+```
+
+A resume can only happen inside one session, for a request that comes after the worker went idle: a command that sends documents with pauses of more than 60 s between them. The endpoint of the measures below, in CA-MTL-1, had the archive `compile-cache:6222ea36b0e660ccbd89b25386a30aab3dbaec14231bd36e7aae4f3b9751e7f4`.
+
+Measured on 22 and 23 November 2026, in three sessions on `mdf-surya` and the fault test on `mdf-surya-fault` (RTX A5000 in CA-MTL-1, vLLM 0.25.1, a one-page scan):
+
+- a resume was ready 13.8 to 22.8 s after its request (4 resumes, each 120 s after the request before), against 350 to 705 s for a cold start in that data center, where each session had a new host that loaded the image. The process thawed about 1 s after the request; the request reached it about 15 s later, a delay of RunPod's balancer;
+- 2 resumes of 6 were missed: 660 s after the request before, RunPod had already stopped and removed the paused container (about 136 s into its pause); 120 s after, one request went to another worker that RunPod held ready, which started a container of its own;
+- a paused worker is listed `IDLE` and is not billed: at closed hours the GPU seconds billed stayed within the seconds `RUNNING` in the log plus 30 s for each stop;
+- no retention seen between sessions: no container of a session (its `boot_id`) came back in the next one, each session had another worker and another host, and each ran on a new version of the endpoint;
+- a container frozen after a hang of vLLM resumed in the same state (the fault test `A-FB`: 503 `mdf_inert` from its proxy), and the endpoint reached the zero again;
+- the output of the scan was identical byte for byte in the 4 conversions, cold or resumed.
+
+**The risk.** A paused container keeps the state of its processes, the data of the documents it converted included (the page images and the text that vLLM and the proxy held in memory), frozen on a host of RunPod. RunPod describes the resume as starting "from exactly the state it was paused in" and releases paused containers after a timeout (its blog on FlashBoot, read on 21 November 2026); no page of RunPod documents that this state is wiped, nor when. The proxy resets the caches of vLLM at each passage to idle after work, which empties what vLLM keeps for reuse, not the memory of the processes; neither FlashBoot turned off, nor the disarm, nor the zero of the spend certifies that the state is gone. Keep sensitive documents on this machine (the `cpu` server or a `local` one), and arm the lever only with your explicit consent to this risk, for documents you accept to leave in a paused container.
 
 ### The ledger and the bill
 

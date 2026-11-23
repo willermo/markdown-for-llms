@@ -146,17 +146,42 @@ DEFAULT_LEVERS = ("compile-cache:29012f5b05f56b51698c99f6d5f573d3511ae06191946be
                   "compile-cache:cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224,"   # Modal, A10G
                   "compile-cache:d38180544831bf3c0d1a45712e25f125ff4d18a9929012376f844a2224e0ff73")   # RunPod, A5000
 NO_LEVERS = "none"                               # session.py run --levers none: an arm without levers
+# MFL045 c2 (plan r2 §4): the levers of an app of the snapshot (`*-snap`, `*-snap-fault`), exactly: `snapshot` and
+# the archives of the cache, which only the fallback uses (vLLM in sleep mode compiles to another hash). A deploy
+# changed in anything makes its snapshots obsolete, so the session refuses any other set there.
+SNAPSHOT_LEVERS = "snapshot," + DEFAULT_LEVERS
+# MFL045: the levers of one provider only (`snapshot`: Modal's memory snapshot; `flashboot`: RunPod's FlashBoot).
+PROVIDER_LEVERS = {"snapshot": "modal", "flashboot": "runpod"}
+# MFL045 F5 (Davide, 23/11/2026): the two levers measured in MFL045 and not adopted stay as experimental levers, each
+# with the section of the guide that gives its measures and its risks: never among DEFAULT_LEVERS, armed only when
+# `--levers` names them; a session that arms one declares it (session.py), informative only.
+EXPERIMENTAL_LEVERS = {"snapshot": "docs/how-to/convert-documents.md#the-memory-snapshot-of-modal-experimental",
+                       "flashboot": "docs/how-to/convert-documents.md#flashboot-of-runpod-experimental"}
 
 
-def levers_text(text):
+def experimental_levers(text):
+    """The experimental levers among the levers of `text`, in their order, each stripped as `watchdog.levers` strips
+    it (MFL045 c8: the session passes the text of `levers_text`, which has no spaces)."""
+    levers = [x.strip() for x in (text or "").split(",")]
+    return [x for x in levers if x.partition(":")[0] in EXPERIMENTAL_LEVERS]
+
+
+def levers_text(text, provider=None):
     """MDF_LEVERS of an arm (MFL033 N5b): the levers of `text` checked against the watchdog's closed set
-    and written in its order, or "" for none; ProviderError on another name."""
+    and written in its order, or "" for none; ProviderError on another name, or (with `provider`) on a lever
+    of another provider (MFL045)."""
     sys.path.insert(0, str(HERE))
     import watchdog
     try:
-        return ",".join(watchdog.levers(text))
+        lev = watchdog.levers(text)
     except watchdog.LeversInvalid as exc:
         raise ProviderError(str(exc)) from None
+    if provider is not None:
+        for x in lev:
+            owner = PROVIDER_LEVERS.get(x.partition(":")[0])
+            if owner is not None and owner != provider:
+                raise ProviderError("the lever %s is only for %s, not %s" % (x, owner, provider))
+    return ",".join(lev)
 
 
 def base_env(fault="", allow_download=False, levers=""):
@@ -175,12 +200,18 @@ def base_env(fault="", allow_download=False, levers=""):
            "MDF_WATCHDOG_SHA256": hashlib.sha256(data).hexdigest()}
     if fault:
         env["MDF_FAULT"] = fault
-    lev = levers_text(levers)
+    lev = levers_text(levers, "runpod")
     if lev:
         env["MDF_LEVERS"] = lev
     return env
 
 
+# RunPod refuses a request whose expanded body exceeds 102,400 bytes (HTTP 413, "Expanded upstream request exceeds the
+# 102400 byte limit. Reduce environment, command, or template values", F0 of MFL045, 22/11): the env carries the
+# watchdog base64, so the largest PATCH of an arm stays under the limit less a margin for the rest of the template
+# (the code of the snapshot of Modal is not in it: `snapshot.py`, only in the image of Modal).
+RUNPOD_REQUEST_MAX = 102_400
+RUNPOD_REQUEST_MARGIN = 8_192
 ENTRYPOINT = ["/bin/sh", "-c", "printf %s \"$MDF_WATCHDOG_B64\" | base64 -d > /tmp/mdf-watchdog.py && "
               "echo \"$MDF_WATCHDOG_SHA256  /tmp/mdf-watchdog.py\" | sha256sum -c - && exec python3 /tmp/mdf-watchdog.py"]
 # The time a worker may take to become ready before RunPod replaces it: W1 (900 s) plus a margin.
@@ -213,8 +244,9 @@ def gpu_ok(gpu):
 
 
 # The pins that change in place (`runpod_endpoint.py align`; the arm sets them too): the env map with the
-# watchdog, the `workers` block and the CUDA floor of `gpu`. Every other pin is invariant (MFL033 S-B2).
-PIN_ALIGNABLE = ("watchdog_sha256", "watchdog_b64", "env", "workers", "gpu")
+# watchdog, the `workers` block and the CUDA floor of `gpu`; since MFL045 c3 (plan r2 §6, A7) `flashboot`, OFF at
+# rest, FLASHBOOT only during a session with the lever. Every other pin is invariant (MFL033 S-B2).
+PIN_ALIGNABLE = ("watchdog_sha256", "watchdog_b64", "env", "workers", "gpu", "flashboot")
 
 
 def pin_checks(ep, volumes, gpus, data_centers):
@@ -381,15 +413,19 @@ class RunPod:
 
     # the face of the session
     def state(self):
+        """The reading of the session and the drivers; since MFL045 c3 also FlashBoot and the configuration version
+        of the endpoint and of each worker (`version`, `isStale`: a fact, never a criterion)."""
         ep = self.endpoint(refresh=True)
         w = self.workers()
         summary, workers = w.get("summary") or {}, w.get("workers") or []
         armed = (ep.get("workers") or {}).get("max", 0) > 0
         busy = summary.get("total", 0) > 0 or len(workers) > 0
         return {"armed": armed, "busy": busy, "workers_max": (ep.get("workers") or {}).get("max"),
+                "flashboot": ep.get("flashboot"), "version": ep.get("version"),
                 "summary": summary, "workers": [{"id": x.get("id"), "status": x.get("status"),
                                                  "uptime": x.get("uptimeSeconds"), "gpu": x.get("gpuTypeId"),
-                                                 "data_center": x.get("dataCenterId")} for x in workers]}
+                                                 "data_center": x.get("dataCenterId"), "version": x.get("version"),
+                                                 "stale": x.get("isStale")} for x in workers]}
 
     def arm(self, fault="", allow_download=False, levers="", deadline=None):
         """`workers.max = 1` with the env map when it changes (MFL033 S-B2): only on an endpoint whose
@@ -415,12 +451,24 @@ class RunPod:
             body["env"] = env                       # the complete map, only when it changes (r4 §5.2)
         if not gpu_ok(ep.get("gpu")):
             body["gpu"] = {"minCudaVersion": CUDA_MIN}   # no `pools`: pool and exclusions stay (schema 19/11)
+        # MFL045 c3 (plan r2 §6): FlashBoot on only with the lever, OFF otherwise; in the PATCH when it differs
+        flash = "FLASHBOOT" if "flashboot" in (env.get("MDF_LEVERS") or "").split(",") else "OFF"
+        if ep.get("flashboot") != flash:
+            body["flashboot"] = flash
         self.patch(body)
         ep = self.endpoint(refresh=True)
         if (ep.get("workers") != workers or ep.get("env") != env or not gpu_ok(ep.get("gpu"))
-                or invariant_failures(pin_checks(ep, *facts))):
+                or ep.get("flashboot") != flash or invariant_failures(pin_checks(ep, *facts))):
             raise ProviderError("RunPod: the endpoint read back differs from the arm")
-        return {"env_changed": "env" in body, "gpu_changed": "gpu" in body}
+        return {"env_changed": "env" in body, "gpu_changed": "gpu" in body, "flashboot": flash,
+                "flashboot_changed": "flashboot" in body}
+
+    def restore_flashboot(self):
+        """MFL045 c3 (plan r2 §6, A7): FlashBoot back to OFF, its value at rest, with a PATCH of its own (the disarm
+        of N4 stays a PATCH of the workers only), read back; ProviderError when it is not OFF."""
+        self.patch({"flashboot": "OFF"})
+        if self.endpoint(refresh=True).get("flashboot") != "OFF":
+            raise ProviderError("RunPod: flashboot is not OFF after its PATCH")
 
     def disarm(self):
         self.patch({"workers": workers_block(0)})
@@ -479,11 +527,14 @@ class Modal:
 
     provider = "modal"
 
-    def __init__(self, name, runner=subprocess.run, clock=time.time, sleep=time.sleep, environ=None, env_file=None):
+    def __init__(self, name, runner=subprocess.run, clock=time.time, sleep=time.sleep, environ=None, env_file=None,
+                 snapshot=False):
         self.name, self.runner, self.clock, self.sleep = name, runner, clock, sleep
         self.environ = child_env(environ if environ is not None else __import__("os").environ)
         self.env_file = env_file
         self._url = None
+        # MFL045 c2: the function of the inputs, `serve` of modal_app.py or `Serve.*` of the class of modal_snap.py
+        self.function = "Serve.*" if snapshot else "serve"
         self._deadline = None                  # the term T of the session during an arm (S-B4)
 
     def _left(self, default, what):
@@ -564,7 +615,8 @@ class Modal:
             self._deadline = None
 
     def _arm(self, fault, allow_download, levers):
-        lev = levers_text(levers)
+        lev = levers_text(levers, "modal")
+        snapshot = "snapshot" in lev.split(",")             # MFL045 c2: the app of the snapshot, modal_snap.py
         if not self.volume_ok():
             raise ProviderError("modal: the Volume %s is missing: run the populate first" % VOLUME)
         token = self.proxy_token()
@@ -579,18 +631,41 @@ class Modal:
         if lev:
             env["MDF_LEVERS"] = lev
         try:
-            code, out, err = run_modal(["deploy", str(HERE / "modal_app.py")], env=env, timeout=self._left(1200, "deploy"),
+            app_file = HERE / ("modal_snap.py" if snapshot else "modal_app.py")
+            code, out, err = run_modal(["deploy", str(app_file)], env=env, timeout=self._left(1200, "deploy"),
                                        runner=self.runner)
         finally:
             if self._deadline is not None and self.clock() >= self._deadline:
                 raise TermReached("modal deploy: the term of the session came during the deploy") from None
         if code:
             raise ProviderError("modal deploy: exit %d %s" % (code, cli_error(err)))
-        urls = [w for w in (out + err).split() if w.startswith("https://") and w.endswith(".modal.run")]
+        self.function = "Serve.*" if snapshot else "serve"
+        if snapshot:
+            urls = self.class_urls()
+        else:
+            urls = [w for w in (out + err).split() if w.startswith("https://") and w.endswith(".modal.run")]
         if len(set(urls)) != 1:
             raise ProviderError("modal deploy: the URL of the web function not found")
         self._url = urls[0]
         return {"url": self._url, "volume": VOLUME, "proxy_token": token}
+
+    def class_urls(self):
+        """The web URLs of the methods of `Serve` of modal_snap.py, from `modal function info NAME/Serve.* --json` of
+        1.6.3 (`cli/function.py` info: `method_details`), read while the app is deployed and within the term of the
+        session. MFL045 F1 (S0, 23/11): the deploy of a class prints no URL, because the response of the creation
+        does not set `method_definitions` (`modal/_output/status.py:78-93`); a failed reading gives no URL."""
+        try:
+            info = self._json("function", "info", "%s/%s" % (self.name, self.function))
+        except TermReached:
+            raise
+        except ProviderError:
+            return []
+        details = info.get("method_details") if isinstance(info, dict) else None
+        if not isinstance(details, dict):
+            return []
+        urls = [str((d or {}).get("web_url") or "") for d in details.values() if isinstance(d, dict)]
+        return [u for u in urls if u.startswith("https://") and u.endswith(".modal.run")] \
+            if len([u for u in urls if u]) == 1 else []
 
     def system_logs(self, since):
         """The system lines of the app since `since` (epoch seconds, whole seconds in UTC), fetched once,
@@ -609,12 +684,13 @@ class Modal:
 
     def inputs(self, since):
         """The inputs of the web function enqueued since `since` (epoch seconds, whole seconds in UTC),
-        oldest first (MFL033 c7.16): `modal function calls NAME/serve --since ISO --json` of 1.6.3
+        oldest first (MFL033 c7.16): `modal function calls NAME/serve --since ISO --json` of 1.6.3 (MFL045 c2:
+        `NAME/Serve.*` for the class of the snapshot)
         (`cli/function.py` calls; every HTTP request of a `web_server` is an input), each with
         `enqueued_at`, `started_at`, `container_id`, `execution_time_seconds` and `status`. Read-only
         and free; an error raises."""
         stamp = datetime.fromtimestamp(int(since), timezone.utc).isoformat()
-        rows = self._json("function", "calls", "%s/serve" % self.name, "--since", stamp)
+        rows = self._json("function", "calls", "%s/%s" % (self.name, self.function), "--since", stamp)
         return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
 
     def log_follower(self, path, t_arm, clock=time.time):

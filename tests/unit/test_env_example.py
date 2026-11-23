@@ -58,6 +58,13 @@ EXCLUDED = {
     "PORT": "the container of the endpoint: the port of the watchdog's proxy",
     "HF_HOME": "the container of the endpoint: the weights on the volume",
     "VLLM_CACHE_ROOT": "the container of the endpoint: the cache of vLLM and of torch.compile",
+    # the identity of a Modal container, set by Modal and read by the watchdog around a memory snapshot (MFL045 c2,
+    # plan r2 E.2 and E.7); MODAL_IDENTITY_TOKEN, an OIDC token of the same list, is never read
+    "MODAL_TASK_ID": "the container of a Modal app: its task, which a restore of a snapshot changes",
+    "MODAL_ENABLE_SNAP_RESTORE": "the container of a Modal app: 1 in a task of a memory snapshot",
+    "MODAL_REGION": "the container of a Modal app: its region",
+    "MODAL_CLOUD_PROVIDER": "the container of a Modal app: its cloud",
+    "MODAL_IMAGE_ID": "the container of a Modal app: its image",
     # the thresholds of the watchdog in the container (`watchdog.config`, `MDF_<RULE>` read dynamically): internal
     # overrides of a diagnosis of the container, never set by the arm nor by the user on this machine
     **{name: "the container of the endpoint: a threshold of the watchdog (watchdog.RULES, watchdog.DEFAULTS), an "

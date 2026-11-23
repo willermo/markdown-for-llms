@@ -16,11 +16,15 @@ import tempfile
 import time
 import unittest
 
+import httpx
+
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "scripts" / "servers"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import session  # noqa: E402
 import providers as pv  # noqa: E402
 import worker_logs  # noqa: E402
+from test_drivers import FakeRunPod  # noqa: E402
 
 from markdown_for_llms.bench import serverspend, spend  # noqa: E402
 
@@ -796,9 +800,6 @@ class TestRefusalOutput(Base):
         self.assertNotIn("rp-secret-value", text)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class ListingSource:
     """Workers listed as successive answers (the last repeats); each worker's stream gives its own
@@ -886,3 +887,395 @@ class TestBound(Base):
         code, arm, dis, amount = self.window(prov, clock)
         first = dis["readings"][0]["t"]
         self.assertAlmostEqual(dis["double_s"], float(dis["t_zero"]) + 30 - (first - worker_logs.LIST_EVERY_S), places=2)
+
+
+class ModalProv(FakeProv):
+    provider = "modal"
+
+
+class TestSnapshotRefusals(Base):
+    """MFL045 c2 (plan r2 §4): a deploy changed in anything makes the snapshots obsolete, so an app of the snapshot
+    (`*-snap`, `*-snap-fault`) takes exactly `providers.SNAPSHOT_LEVERS`, and the lever only on such an app of
+    Modal; a fault only on its `-fault` app; no `--allow-download`, `--disarmed` or `--cpu-activity`; the fault
+    `wake-fail` only with the lever. Refused before any reading of the provider and before the arm row."""
+
+    def modal(self, name, *extra, levers=..., provider="modal"):
+        levers = pv.SNAPSHOT_LEVERS if levers is ... else levers
+        argv = ["run", "--provider", provider, "--name", name, "--env-file", str(self.env), "--spend-ledger",
+                str(self.ledger), "--spend-cap-usd", "5", "--cap-usd", "0.50"]
+        if levers is not None:
+            argv += ["--levers", levers]
+        return argv + list(extra) + ["--", "true"]
+
+    def test_the_app_of_the_snapshot_with_its_levers_arms(self):
+        for name, extra in (("mdf-surya-snap", ()), ("mdf-surya-snap-fault", ("--fault", "hang-after-first")),
+                            ("mdf-surya-snap-fault", ("--fault", "wake-fail"))):
+            with self.subTest(name=name, extra=extra):
+                self.ledger.unlink(missing_ok=True)
+                prov = ModalProv(zero_after=0)
+                code, lines = self.main(self.modal(name, *extra), prov)
+                self.assertEqual(code, 0, lines)
+                self.assertEqual(prov.calls[0][3], pv.levers_text(pv.SNAPSHOT_LEVERS))
+                self.assertEqual(self.rows("arm")[-1]["levers"], pv.levers_text(pv.SNAPSHOT_LEVERS))
+
+    def test_refusals(self):
+        cases = (("other levers", self.modal("mdf-surya-snap", levers="snapshot")),
+                 ("the levers adopted", self.modal("mdf-surya-snap", levers=None)),
+                 ("no levers", self.modal("mdf-surya-snap", levers="none")),
+                 ("another app", self.modal("mdf-surya")),
+                 ("RunPod", self.modal("mdf-surya-snap", provider="runpod")),
+                 ("a fault outside -fault", self.modal("mdf-surya-snap", "--fault", "hang-after-first")),
+                 ("the download", self.modal("mdf-surya-snap", "--allow-download")),
+                 ("disarmed", self.modal("mdf-surya-snap", "--disarmed", levers=None)),
+                 ("cpu activity", self.modal("mdf-surya-snap", "--cpu-activity", levers=None)),
+                 ("wake-fail without the lever", self.modal("mdf-surya-fault", "--fault", "wake-fail", levers=None)),
+                 ("wake-fail on RunPod", self.modal("mdf-surya-fault", "--fault", "wake-fail", levers=None,
+                                                    provider="runpod")))
+        for name, argv in cases:
+            with self.subTest(name):
+                prov = ModalProv(zero_after=0)
+                code, lines = self.main(argv, prov)
+                self.assertEqual(code, 3, lines)
+                self.assertEqual(lines[-1]["code"], "invalid_setting")
+                self.assertEqual(prov.calls, [])
+                self.assertEqual(self.rows(), [])
+
+
+class FlashProv(FakeProv):
+    """A RunPod endpoint whose FlashBoot the session puts back to OFF after the zero (MFL045 c3)."""
+
+    def __init__(self, restore_error=None, on_arm=None, **kw):
+        super().__init__(**kw)
+        self.restore_error, self.on_arm = restore_error, on_arm
+
+    def arm(self, fault, allow_download, deadline=None, **levers):
+        info = super().arm(fault, allow_download, deadline=deadline, **levers)
+        if self.on_arm:
+            self.on_arm()
+        return info
+
+    def restore_flashboot(self):
+        self.calls.append("flashboot-off")
+        if self.restore_error:
+            raise pv.ProviderError(self.restore_error)
+
+
+class TestFlashBootBackToOff(Base):
+    """MFL045 c3 (plan r2 §6, A7; prescription P-6): with the lever `flashboot` the session, after the zero, puts
+    FlashBoot back to OFF with a PATCH of its own and reads it back, in its `finally`, also after a failed or
+    interrupted command; the outcome is `flashboot_restored` in the `disarm` row, a failure (a ProviderError,
+    caught) is exit 4, before the 130 of a signal, and the `disarm` row is written anyway."""
+
+    LV = pv.DEFAULT_LEVERS + ",flashboot"
+
+    def run_session(self, prov, command=("true",), levers=None):
+        argv = self.args("--levers", levers or self.LV, command=command)
+        a = session.parser().parse_args(argv)
+        a.command = a.command[1:] if a.command and a.command[0] == "--" else a.command
+        clock = Clock()
+        out = io.StringIO()
+        ses = session.Session(a, prov, clock=clock, sleep=clock.sleep, out=out)
+        if prov.on_arm == "signal":
+            prov.on_arm = lambda: setattr(ses, "stop_signal", "SIGTERM")
+        try:
+            code = ses.run()
+        except session.Refusal as exc:
+            return exc.exit_code, None
+        return code, self.rows("disarm")
+
+    def test_restored_after_the_zero(self):
+        prov = FlashProv(zero_after=0)
+        code, rows = self.run_session(prov)
+        self.assertEqual(code, 0)
+        self.assertEqual(prov.calls[-2:], ["disarm", "flashboot-off"])
+        self.assertIs(rows[-1]["flashboot_restored"], True)
+
+    def test_restored_after_a_failed_command_and_after_a_signal(self):
+        prov = FlashProv(zero_after=0)
+        code, rows = self.run_session(prov, command=("false",))
+        self.assertEqual((code, prov.calls[-1], rows[-1]["flashboot_restored"]), (1, "flashboot-off", True))
+        self.ledger.unlink()
+        prov = FlashProv(zero_after=0, on_arm="signal")
+        code, rows = self.run_session(prov, command=("sleep", "30"))
+        self.assertEqual((code, prov.calls[-1], rows[-1]["flashboot_restored"]), (130, "flashboot-off", True))
+
+    def test_a_failed_restore_is_exit_4_before_130_and_the_row_is_written(self):
+        prov = FlashProv(zero_after=0, restore_error="RunPod PATCH /serverless/x: HTTP 500")
+        code, rows = self.run_session(prov)
+        self.assertEqual(code, 4)
+        self.assertIs(rows[-1]["flashboot_restored"], False)
+        self.assertEqual(spend.read(self.ledger)[-1]["kind"], "disarm")       # serverspend.disarm ran
+        self.ledger.unlink()
+        prov = FlashProv(zero_after=0, restore_error="timeout", on_arm="signal")
+        code, rows = self.run_session(prov, command=("sleep", "30"))
+        self.assertEqual(code, 4)                                              # not 130
+        self.assertIs(rows[-1]["flashboot_restored"], False)
+
+    def test_nothing_without_the_lever(self):
+        prov = FlashProv(zero_after=0)
+        code, rows = self.run_session(prov, levers=pv.DEFAULT_LEVERS)
+        self.assertEqual(code, 0)
+        self.assertNotIn("flashboot-off", prov.calls)
+        self.assertNotIn("flashboot_restored", rows[-1])
+
+    def test_the_lever_only_on_runpod(self):
+        argv = ["run", "--provider", "modal", "--name", "mdf-surya", "--env-file", str(self.env), "--spend-ledger",
+                str(self.ledger), "--spend-cap-usd", "5", "--cap-usd", "0.50", "--levers", self.LV, "--", "true"]
+        prov = ModalProv(zero_after=0)
+        code, lines = self.main(argv, prov)
+        self.assertEqual((code, lines[-1]["code"]), (3, "invalid_setting"))
+        self.assertEqual(prov.calls, [])
+
+
+# The REST v2 calls of `session.py disarm` in c7, with the real `providers.RunPod`: the disarm (the endpoint read for its
+# id, the PATCH of the workers of N4, the read-back), then one reading of the zero (the endpoint and its workers).
+C7_RECOVERY = [("GET", "/serverless"), ("GET", "/serverless/ep123"), ("PATCH", "/serverless/ep123"),
+               ("GET", "/serverless"), ("GET", "/serverless/ep123"),
+               ("GET", "/serverless"), ("GET", "/serverless/ep123"), ("GET", "/serverless/ep123/workers")]
+# `providers.RunPod.restore_flashboot`: a PATCH of its own and the read-back
+RESTORE = [("PATCH", "/serverless/ep123"), ("GET", "/serverless"), ("GET", "/serverless/ep123")]
+
+
+class TestTheRecoveryPutsFlashBootBack(Base):
+    """MFL045 c8 (S-B1 of the review of the diff): `session.py disarm`, the recovery of an orphan window (a session
+    killed before its `finally`), puts FlashBoot back to OFF after the zero, with the PATCH and the read-back of the
+    session (`providers.RunPod.restore_flashboot`), when a window it closes armed the lever or the endpoint read at the
+    zero is not OFF. The outcome is `flashboot_restored` in the `disarm` row of each window it closes and in its output;
+    a failure (a ProviderError, caught) is exit 4, the rows written all the same. Otherwise the calls of c7. The real
+    `providers.RunPod` on `httpx.MockTransport`: the calls are those it sends."""
+
+    LV = pv.DEFAULT_LEVERS + ",flashboot"
+
+    def arm_row(self, levers):
+        with spend.Ledger.file(self.ledger).locked() as locked:
+            return serverspend.arm(locked, self.ledger, "runpod", "mdf-surya-fault", "https://ep123.api.runpod.ai",
+                                   "30", 2e9, "400", RATE, 1.7e9, extra={"levers": levers} if levers else None)["arm_id"]
+
+    def recover(self, fake):
+        rp = pv.RunPod(pv.read_key(self.env, "RUNPOD_API_KEY"), "mdf-surya-fault", transport=httpx.MockTransport(fake))
+        code, lines = self.main(["disarm", "--provider", "runpod", "--name", "mdf-surya-fault", "--env-file",
+                                 str(self.env), "--spend-ledger", str(self.ledger)], rp)
+        calls = [(m, url.split("/v2", 1)[1].split("?")[0]) for m, url, _, _ in fake.calls]
+        patches = [body for m, _, body, _ in fake.calls if m == "PATCH"]
+        return code, lines, calls, patches
+
+    @staticmethod
+    def endpoint(flashboot):
+        fake = FakeRunPod()
+        fake.ep["flashboot"] = flashboot
+        fake.ep["workers"] = dict(fake.ep["workers"], max=1)               # left armed by the session that died
+        return fake
+
+    def test_an_orphan_window_with_the_lever(self):
+        arm_id = self.arm_row(self.LV)
+        fake = self.endpoint("FLASHBOOT")
+        code, lines, calls, patches = self.recover(fake)
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(calls, C7_RECOVERY + RESTORE)                     # after the zero, then read back
+        self.assertEqual(patches, [{"workers": pv.workers_block(0)}, {"flashboot": "OFF"}])
+        self.assertEqual((fake.ep["flashboot"], fake.ep["workers"]["max"]), ("OFF", 0))
+        self.assertEqual(lines[-1]["orphan_closed"], [arm_id])
+        self.assertIs(lines[-1]["flashboot_restored"], True)
+        row, = self.rows("disarm")
+        self.assertEqual((row["arm_id"], row["orphan"], row["clean"]), (arm_id, True, False))
+        self.assertIs(row["flashboot_restored"], True)
+
+    def test_the_lever_of_the_window_with_the_endpoint_already_off(self):
+        """The arm row names the lever: the restore runs, even on an endpoint that reads OFF (a PATCH that changes
+        nothing, read back)."""
+        self.arm_row(self.LV)
+        fake = self.endpoint("OFF")
+        code, lines, calls, _ = self.recover(fake)
+        self.assertEqual((code, calls, lines[-1]["flashboot_restored"]), (0, C7_RECOVERY + RESTORE, True))
+
+    def test_a_failed_restore_is_exit_4_and_the_row_is_written(self):
+        class Refuses(FakeRunPod):
+            def __call__(self, request):
+                if request.method == "PATCH" and b"flashboot" in request.content:
+                    self.calls.append((request.method, str(request.url), json.loads(request.content), None))
+                    return httpx.Response(500, json={"error": "internal"})
+                return FakeRunPod.__call__(self, request)
+        arm_id = self.arm_row(self.LV)
+        fake = Refuses()
+        fake.ep["flashboot"] = "FLASHBOOT"
+        code, lines, calls, _ = self.recover(fake)
+        self.assertEqual(code, 4, lines)
+        self.assertEqual(calls, C7_RECOVERY + RESTORE[:1])
+        self.assertEqual(fake.ep["workers"]["max"], 0)                     # the disarm and the zero held
+        self.assertEqual(lines[-1]["orphan_closed"], [arm_id])
+        self.assertIs(lines[-1]["flashboot_restored"], False)
+        self.assertIn("HTTP 500", lines[-1]["flashboot_error"])
+        last = spend.read(self.ledger)[-1]
+        self.assertEqual((last["kind"], last["arm_id"], last["orphan"]), ("disarm", arm_id, True))
+        self.assertIs(last["flashboot_restored"], False)
+
+    def test_an_endpoint_left_on_without_the_lever_in_the_row(self):
+        for rows in ((pv.DEFAULT_LEVERS,), (None,), ()):
+            with self.subTest(rows=rows):
+                self.ledger.unlink(missing_ok=True)
+                ids = [self.arm_row(lv) for lv in rows]
+                fake = self.endpoint("FLASHBOOT")
+                code, lines, calls, _ = self.recover(fake)
+                self.assertEqual(code, 0, lines)
+                self.assertEqual(calls, C7_RECOVERY + RESTORE)
+                self.assertEqual(fake.ep["flashboot"], "OFF")
+                self.assertIs(lines[-1]["flashboot_restored"], True)
+                self.assertEqual(lines[-1]["orphan_closed"], ids)
+                self.assertEqual([r["flashboot_restored"] for r in self.rows("disarm")], [True] * len(ids))
+
+    def test_without_the_lever_and_off_the_calls_of_c7(self):
+        """Neither condition: the calls, the output and the rows of c7 (a guard: it passes on c7 too)."""
+        for rows in ((pv.DEFAULT_LEVERS,), (None,), ("compile-cache:" + "a" * 64,), ()):
+            with self.subTest(rows=rows):
+                self.ledger.unlink(missing_ok=True)
+                ids = [self.arm_row(lv) for lv in rows]
+                fake = self.endpoint("OFF")
+                code, lines, calls, patches = self.recover(fake)
+                self.assertEqual(code, 0, lines)
+                self.assertEqual(calls, C7_RECOVERY)
+                self.assertEqual(patches, [{"workers": pv.workers_block(0)}])
+                self.assertEqual(set(lines[-1]), {"disarm", "zero", "zero_latency_s", "orphan_closed", "commands"})
+                self.assertEqual(lines[-1]["orphan_closed"], ids)
+                self.assertFalse([r for r in self.rows("disarm") if "flashboot_restored" in r])
+
+    def test_the_zero_is_judged_as_in_the_session(self):
+        """The recovery reads the zero with the session's own `disarm_and_zero` and `providers.RunPod.zero`, which do
+        not depend on the levers: a paused worker still listed (`IDLE`) keeps it waiting, and the restore comes after
+        the zero."""
+        self.arm_row(self.LV)
+        fake = self.endpoint("FLASHBOOT")
+        fake.workers = [[{"id": "w1", "status": "IDLE"}], []]
+        code, lines, calls, _ = self.recover(fake)
+        self.assertEqual(code, 0, lines)
+        workers = [i for i, c in enumerate(calls) if c[1].endswith("/workers")]
+        self.assertEqual(len(workers), 2)                                  # busy, then the zero
+        self.assertEqual(calls[workers[-1] + 1:], RESTORE)
+        self.assertIs(lines[-1]["flashboot_restored"], True)
+
+    def test_modal_is_unchanged(self):
+        with spend.Ledger.file(self.ledger).locked() as locked:
+            serverspend.arm(locked, self.ledger, "modal", "mdf-surya-snap", "https://x.modal.run", "30", 2e9, "400",
+                            pv.RATES["modal"], 1.7e9, extra={"levers": pv.levers_text(pv.SNAPSHOT_LEVERS, "modal")})
+        prov = ModalProv(armed=True, busy=True, zero_after=0)
+        code, lines = self.main(["disarm", "--provider", "modal", "--name", "mdf-surya-snap", "--env-file",
+                                 str(self.env), "--spend-ledger", str(self.ledger)], prov)
+        self.assertEqual((code, prov.calls), (0, ["disarm"]))
+        self.assertNotIn("flashboot_restored", lines[-1])
+
+
+class TestExperimentalLevers(Base):
+    """MFL045 F5 (Davide, 23/11/2026): `snapshot` and `flashboot`, measured in MFL045 and not adopted, stay in the
+    product as experimental levers (`providers.EXPERIMENTAL_LEVERS`): never among the levers adopted, armed only when
+    `--levers` names them. A session that arms one declares it: a line of its own before the arm, with `adopted`
+    false and the section of the guide on each, the same `experimental_levers` in its `arm` row and in the report of
+    the window. Informative only: no refusal, and the same arm, disarm and exit as before."""
+
+    FB = pv.DEFAULT_LEVERS + ",flashboot"
+
+    @staticmethod
+    def declared(lines):
+        return [x for x in lines if "experimental_levers" in x and "session" not in x]
+
+    def run_seen(self, argv, prov):
+        """The session, with what its output held when the provider was armed."""
+        a = session.parser().parse_args(argv)
+        a.command = a.command[1:] if a.command and a.command[0] == "--" else a.command
+        out, clock, seen = io.StringIO(), Clock(), []
+        arm = prov.arm
+
+        def seen_arm(*args, **kw):
+            seen.append([json.loads(x) for x in out.getvalue().splitlines() if x.strip()])
+            return arm(*args, **kw)
+        prov.arm = seen_arm
+        code = session.Session(a, prov, clock=clock, sleep=clock.sleep, out=out).run()
+        return code, [json.loads(x) for x in out.getvalue().splitlines() if x.strip()], seen
+
+    def test_the_set_is_never_adopted_and_names_its_guide(self):
+        sys.path.insert(0, str(ROOT / "scripts" / "servers"))
+        import watchdog
+        self.assertEqual(sorted(pv.EXPERIMENTAL_LEVERS), ["flashboot", "snapshot"])
+        adopted = [x.partition(":")[0] for x in watchdog.levers(pv.DEFAULT_LEVERS)]
+        for lever, guide in pv.EXPERIMENTAL_LEVERS.items():
+            with self.subTest(lever=lever):
+                self.assertIn(lever, watchdog.LEVERS)
+                self.assertNotIn(lever, adopted)
+                self.assertTrue(guide.startswith("docs/how-to/convert-documents.md#"), guide)
+        self.assertEqual(pv.experimental_levers(pv.levers_text(self.FB)), ["flashboot"])
+        self.assertEqual(pv.experimental_levers(pv.levers_text(pv.SNAPSHOT_LEVERS)), ["snapshot"])
+        self.assertEqual(pv.experimental_levers(pv.DEFAULT_LEVERS), [])
+        self.assertEqual(pv.experimental_levers(""), [])
+
+    def test_the_marker_takes_a_text_with_spaces(self):
+        """MFL045 c8 (BKL-1 of the review of the diff): `experimental_levers` strips each lever, as `watchdog.levers`
+        does, so a text not yet written by `levers_text` gives the same levers (the session passes the latter)."""
+        sha = "a" * 64
+        self.assertEqual(pv.experimental_levers(" flashboot "), ["flashboot"])
+        self.assertEqual(pv.experimental_levers(" compile-cache:%s , flashboot ,snapshot " % sha), ["flashboot", "snapshot"])
+        self.assertEqual(pv.experimental_levers(" compile-cache:%s , , " % sha), [])
+        for text in (self.FB, pv.SNAPSHOT_LEVERS, pv.DEFAULT_LEVERS, " flashboot , compile-cache:%s" % sha):
+            with self.subTest(text=text):
+                self.assertEqual(pv.experimental_levers(text), pv.experimental_levers(pv.levers_text(text)))
+
+    def test_the_guide_has_the_section_of_each_lever(self):
+        """MFL045 F5 c7: the line of a session points to a section that exists (a heading of the guide, as GitHub
+        writes its anchor)."""
+        import re
+        for lever, guide in pv.EXPERIMENTAL_LEVERS.items():
+            path, _, anchor = guide.partition("#")
+            anchors, fence = set(), False
+            for line in (ROOT / path).read_text(encoding="utf-8").splitlines():
+                if line.startswith("```"):
+                    fence = not fence
+                elif not fence and re.match(r"#{1,6} ", line):
+                    title = line.lstrip("#").strip().lower()
+                    anchors.add(re.sub(r"[^\w\- ]", "", title).replace(" ", "-"))
+            with self.subTest(lever=lever):
+                self.assertIn(anchor, anchors)
+
+    def test_flashboot_is_declared_before_the_arm_in_the_row_and_in_the_report(self):
+        prov = FlashProv(zero_after=0)
+        code, lines, seen = self.run_seen(self.args("--levers", self.FB), prov)
+        self.assertEqual(code, 0, lines)
+        line = {"experimental_levers": ["flashboot"], "adopted": False,
+                "guide": {"flashboot": pv.EXPERIMENTAL_LEVERS["flashboot"]}}
+        self.assertEqual(seen, [[line]])                                  # before the arm, once
+        self.assertEqual(self.declared(lines), [line])
+        self.assertEqual(self.rows("arm")[-1]["experimental_levers"], ["flashboot"])
+        self.assertEqual(lines[-1]["session"], "window")
+        self.assertEqual(lines[-1]["experimental_levers"], ["flashboot"])
+        self.assertEqual(prov.calls, [("arm", "", False, pv.levers_text(self.FB)), "disarm", "flashboot-off"])
+
+    def test_snapshot_is_declared(self):
+        argv = ["run", "--provider", "modal", "--name", "mdf-surya-snap", "--env-file", str(self.env), "--spend-ledger",
+                str(self.ledger), "--spend-cap-usd", "5", "--cap-usd", "0.50", "--levers", pv.SNAPSHOT_LEVERS, "--",
+                "true"]
+        prov = ModalProv(zero_after=0)
+        code, lines, seen = self.run_seen(argv, prov)
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(seen[0], [{"experimental_levers": ["snapshot"], "adopted": False,
+                                    "guide": {"snapshot": pv.EXPERIMENTAL_LEVERS["snapshot"]}}])
+        self.assertEqual(self.rows("arm")[-1]["experimental_levers"], ["snapshot"])
+        self.assertEqual(lines[-1]["experimental_levers"], ["snapshot"])
+
+    def test_nothing_without_an_experimental_lever(self):
+        for extra in ((), ("--levers", "none"), ("--levers", "skip-mm-profiling"), ("--levers", pv.DEFAULT_LEVERS),
+                      ("--disarmed",)):
+            with self.subTest(extra=extra):
+                self.ledger.unlink(missing_ok=True)
+                code, lines = self.main(self.args(*extra), FakeProv())
+                self.assertEqual(code, 0, lines)
+                self.assertEqual(self.declared(lines), [])
+                self.assertFalse([r for r in self.rows() if "experimental_levers" in r])
+                self.assertFalse([x for x in lines if "experimental_levers" in x])
+
+    def test_a_refused_session_declares_nothing(self):
+        argv = ["run", "--provider", "modal", "--name", "mdf-surya", "--env-file", str(self.env), "--spend-ledger",
+                str(self.ledger), "--spend-cap-usd", "5", "--cap-usd", "0.50", "--levers", self.FB, "--", "true"]
+        code, lines = self.main(argv, ModalProv(zero_after=0))
+        self.assertEqual((code, lines[-1]["code"]), (3, "invalid_setting"))
+        self.assertEqual(self.declared(lines), [])
+        self.assertEqual(self.rows(), [])
+
+
+if __name__ == "__main__":
+    unittest.main()

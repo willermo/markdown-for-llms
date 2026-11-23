@@ -25,6 +25,16 @@ stops; if the session dies first they end at their next write, on the closed pip
 readiness wait of the RunPod drivers, since c7.8 of the Modal ones) and names the first reason for
 the fast stop: a download that fails or does not move for 120 s, an error of vLLM (an ERROR or
 CRITICAL line of its logger, or its exit), a trip, the inert mode, an error of the proxy.
+With a snapshot (MFL045 c2, prescription P-7; `StartRules(snapshot=True)`): an error of vLLM from a pid of the
+group adopted by `snap_wake` (the pids of its `mdf_restore`) during the wake of its container is held until the
+explicit outcome: a declared fallback (`mdf_fallback`) lets it go (`exempt`), the wake or readiness without a
+fallback makes it the stop (`at_readiness` too), and no outcome within WAKE_HOLD_S of the restore makes it the
+stop; an error of the same pid after the fallback, of the vLLM of the fallback or of another container is the
+stop as before. A line of a container whose `mdf_restore` is not in the file yet (stdout and stderr come in
+separate streams) waits PENDING_S for it. A failed `snap_boot` (`mdf_snapshot` not ok) is a stop. The two holds run
+from the arm on the latest of the lines read and, when the driver gives its clock and the arm of its window (MFL045 c8,
+`modal_tasks.Tasks.ready`), of that clock: `ModalFollower` writes a container only when its listing changes, so a
+container listed the same while its vLLM is silent adds no line, and the hold still expires.
 `RequestLines` collects the requests the proxy answered (`mdf_request`, `forwarded` or `error`;
 c7.6), for `probe-negative`.
 
@@ -38,7 +48,10 @@ Such a line followed by no container for NO_CAPACITY_S stops the wait with `moda
 (`concurrency-2`) a container lived 11 s between two of their readings, which come every 30 s,
 while the follower listed it every 5 s and its proxy wrote its lines. Each container has the moment
 it was first seen and the one it was listed GONE, its GPU, the first answer of vLLM through its
-proxy and its inference lines; two containers alive at once are an overlap, with its evidence.
+proxy and its inference lines; two containers alive at once are an overlap, with its evidence. With a snapshot
+(MFL045 c2) the access lines of vLLM written by the warm-up of `snap_boot`, before the snapshot, are `internal`:
+no answer through the proxy (which does not exist yet) and no inference; the kind of the start, the fallback and
+the wake of each container are kept.
 
 `Workers` (c7.19) reads the workers of a RunPod window from the same file, for the drivers and the
 session: their states as listed every 10 s, when each was first RUNNING, the first answer of vLLM
@@ -65,6 +78,13 @@ BACKFILL_S = 60
 STALL_S = 120
 STALL_RX = 1 << 20                     # received bytes that count as progress of the download
 VLLM_ERROR = re.compile(r"(?:^|\)\s+)(?:ERROR|CRITICAL)\s+\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}")
+VLLM_PID = re.compile(r"\bpid=(\d+)\)")
+# MFL045 c2, P-7: an error of the adopted vLLM held during the wake (`watchdog.WAKE_S` plus a margin), and a line
+# of a container whose restore is not in the file yet held so long for it
+WAKE_HOLD_S = 180.0
+PENDING_S = 60.0
+# The SDK of Modal when the restore of a GPU snapshot fails (`task_lifecycle_manager.py`, exit 222)
+RESTORE_FAILED = re.compile(r"GPU memory snapshot restore failed")
 
 
 def iso(t, ms=False):
@@ -428,24 +448,44 @@ class StartRules(Tail):
     """The fast stop of a readiness wait from the lines of the file (prompt N4c §4, N4d §5.5). Read
     only until readiness: the trips that phases A and B provoke come after it."""
 
-    def __init__(self, stall_s=STALL_S, stall_rx=STALL_RX):
+    def __init__(self, stall_s=STALL_S, stall_rx=STALL_RX, snapshot=False, clock=None, t_arm=None):
         super().__init__()
         self.stall_s, self.stall_rx = stall_s, stall_rx
         self.mark = None                   # (mono, disk, rx) of the last progress of the download
         self.downloading = False
         self.events = {}                   # the first occurrence of each proxy event, by name
+        self.snapshot = snapshot           # MFL045 c2, P-7 (module docstring)
+        self.gens = {}                     # container -> the generation of its vLLM since its `mdf_restore`
+        self.pending, self.exempt = [], []
+        self.latest = None                 # the latest second since the arm in the file
+        self.clock, self.t_arm = clock, t_arm      # MFL045 c8: the holds on the clock too (`since_arm`)
+
+    def since_arm(self):
+        """The seconds since the arm for the holds of the snapshot: the latest of the lines read and, with a clock and
+        the arm of the window (MFL045 c8, S-C1 of the review of the diff), of the clock, so that a hold expires without
+        new lines (the follower of Modal writes a container only when its listing changes); None without either."""
+        if self.clock is None or self.t_arm is None:
+            return self.latest
+        now = self.clock() - self.t_arm
+        return now if self.latest is None else max(self.latest, now)
 
     def feed(self, path):
-        """Read what is new in `path`; the first reason for a stop, or None."""
+        """Read what is new in `path`; the first reason for a stop, or None. With the snapshot the holds are judged
+        also when nothing is new or the file cannot be read (MFL045 c8)."""
         try:
             lines = self.lines(path)
         except OSError:
-            return None
+            if not self.snapshot:
+                return None
+            lines = []
         for text in lines:
-            reason = self.check(parse(text))
+            e = parse(text)
+            if e is not None and e["since_arm"] is not None:
+                self.latest = e["since_arm"] if self.latest is None else max(self.latest, e["since_arm"])
+            reason = self.check(e)
             if reason:
                 return reason
-        return None
+        return self.expired() if self.snapshot else None
 
     def check(self, e):
         if e is None or e["source"] == "session":
@@ -453,10 +493,16 @@ class StartRules(Tail):
         ev = e["event"]
         if ev is None:
             if e["source"] == "container" and VLLM_ERROR.search(e["line"]):
+                if self.snapshot:
+                    return self.vllm_error(e)
                 return "an error of vLLM: " + e["line"][:300]
             return None
         name = ev["event"]
         self.events.setdefault(name, dict(ev, since_arm=e["since_arm"]))
+        if self.snapshot:
+            reason = self.snap_event(e, ev)
+            if reason:
+                return reason
         if name == "mdf_download_start":
             self.downloading, self.mark = True, (ev.get("mono"), ev.get("disk") or 0, ev.get("rx"))
         elif name == "mdf_download_progress" and self.downloading:
@@ -470,6 +516,79 @@ class StartRules(Tail):
         elif name in ("mdf_trip", "mdf_inert", "mdf_error", "mdf_vllm_exit"):
             return "%s %s" % (name, json.dumps({k: v for k, v in ev.items() if k not in ("t", "mono", "event")},
                                               sort_keys=True))
+        return None
+
+    # --- MFL045 c2, P-7: the wake of the vLLM of a snapshot --------------------------------------------------
+    def snap_event(self, e, ev):
+        name, cid = ev["event"], e["worker"]
+        if name == "mdf_snapshot" and not ev.get("ok"):
+            return "the snapshot failed in %s: %s" % (short(cid), ev.get("reason"))
+        g = self.gens.get(cid)
+        if name == "mdf_restore":
+            self.gens[cid] = {"pids": {int(x) for x in ev.get("pids") or [] if isinstance(x, int)},
+                              "since": e["since_arm"], "t": ev.get("t") or 0.0, "held": [], "state": "waking",
+                              "t_fallback": None}
+            waiting = [x for x in self.pending if x["container"] == cid]
+            self.pending = [x for x in self.pending if x["container"] != cid]
+            for item in waiting:
+                reason = self.judge(item)
+                if reason:
+                    return reason
+        elif g is not None and g["state"] == "waking" and name == "mdf_fallback":
+            g.update(state="fallen", t_fallback=ev.get("t"))
+            self.exempt += [dict(x, why="the fallback declared") for x in g["held"]]
+            g["held"] = []
+        elif g is not None and g["state"] == "waking" and (name == "mdf_ready" or (name == "mdf_wake" and ev.get("ok"))):
+            if g["held"]:
+                return "an error of vLLM during the wake of %s, then %s without a fallback: %s" % (
+                    short(cid), name, g["held"][0]["line"])
+            g["state"] = "awake"
+        return None
+
+    def vllm_error(self, e):
+        pid = VLLM_PID.search(e["line"])
+        item = {"container": e["worker"], "since": e["since_arm"], "line": e["line"][:300],
+                "pid": int(pid.group(1)) if pid else None, "t": epoch(e["ts"])}
+        if e["worker"] not in self.gens:
+            self.pending.append(item)                 # its restore may be behind, in the other stream
+            return None
+        return self.judge(item)
+
+    def judge(self, item):
+        """An error of vLLM in a container whose `mdf_restore` is known: held, exempt or the stop."""
+        g = self.gens[item["container"]]
+        old, t = item["pid"] is not None and item["pid"] in g["pids"], item["t"]
+        if old and t is not None and t < int(g["t"]):
+            return "an error of vLLM: " + item["line"]                 # before the restore: not of the wake
+        if old and g["state"] == "waking":
+            g["held"].append(item)
+            return None
+        if old and g["state"] == "fallen" and t is not None and g["t_fallback"] is not None and t <= g["t_fallback"]:
+            self.exempt.append(dict(item, why="the fallback declared"))
+            return None
+        return "an error of vLLM: " + item["line"]
+
+    def expired(self):
+        now = self.since_arm()
+        if now is None:
+            return None
+        for cid, g in self.gens.items():
+            if g["state"] == "waking" and g["held"] and now - g["since"] >= WAKE_HOLD_S:
+                return "no outcome of the wake of %s within %d s of its restore, after an error of vLLM: %s" % (
+                    short(cid), WAKE_HOLD_S, g["held"][0]["line"])
+        for item in self.pending:
+            if now - item["since"] >= PENDING_S:
+                return "an error of vLLM: " + item["line"]
+        return None
+
+    def at_readiness(self):
+        """At readiness: an error held without a declared fallback, or one still waiting for its restore, is the
+        stop (MFL045 c2, P-7); None otherwise."""
+        for cid, g in self.gens.items():
+            if g["state"] == "waking" and g["held"]:
+                return "an error of vLLM during the wake of %s, and no fallback: %s" % (short(cid), g["held"][0]["line"])
+        if self.pending:
+            return "an error of vLLM: " + self.pending[0]["line"]
         return None
 
     def progress(self, ev):
@@ -649,6 +768,8 @@ class Lives(Tail):
             return self
         for text in lines:
             self.add(parse(text))
+        for life in self.by.values():
+            self.refresh(life)
         return self
 
     def life(self, cid, e, by):
@@ -657,9 +778,33 @@ class Lives(Tail):
             life = self.by[cid] = {"id": cid, "seen": e["since_arm"], "seen_utc": e["recv"], "seen_by": by,
                                    "listed": None, "running": None, "start": None, "gone": None, "gone_utc": None,
                                    "last": e["since_arm"], "gpu": None, "vllm": None, "vllm_by": None, "ready": None,
-                                   "inferences": 0, "first_t": None, "last_t": None, "again": 0}
+                                   "inferences": 0, "first_t": None, "last_t": None, "again": 0,
+                                   # MFL045 c2: the snapshot; the answers and inferences, judged in `refresh`
+                                   "snap": False, "snapshot": None, "snapshot_t": None, "restore": None,
+                                   "restore_t": None, "fallback": None, "wake": None, "restore_failed": None,
+                                   "internal": 0, "access": [], "proxy_answer": None, "inf_lines": 0}
             self.order.append(cid)
         return life
+
+    @staticmethod
+    def refresh(life):
+        """MFL045 c2: the first answer of vLLM and the inferences of a container. An access line of vLLM written
+        by the warm-up of `snap_boot`, before the snapshot (or before the restore when the snapshot line is
+        missing; all of them while neither is known), is internal: not an answer through the proxy."""
+        bound = life["snapshot_t"] if life["snapshot_t"] is not None else life["restore_t"]
+        internal, external = 0, []
+        for t, since, path in life["access"]:
+            if life["snap"] and (bound is None or (t is not None and t <= bound)):
+                internal += 1
+            else:
+                external.append((since, path))
+        found = [life["proxy_answer"]] if life["proxy_answer"] is not None else []
+        if external:
+            found.append((external[0][0], "access " + external[0][1]))
+        first = min(found, key=lambda x: x[0]) if found else (None, None)
+        life["vllm"], life["vllm_by"] = first
+        life["internal"] = internal
+        life["inferences"] = life["inf_lines"] + sum(1 for _, path in external if path == CHAT_PATH)
 
     def add(self, e):
         if e is None:
@@ -690,18 +835,31 @@ class Lives(Tail):
             if name == "mdf_fault":
                 self.faults.append({"container": cid, "since_arm": e["since_arm"], "fault": ev.get("fault")})
             if name == "mdf_request" and ev.get("method") == "POST" and ev.get("path") == CHAT_PATH:
-                life["inferences"] += 1
-            if name in VLLM_ANSWERS or (name == "mdf_request" and ev.get("kind") == "forwarded"):
-                self.answered(life, e, name)
+                life["inf_lines"] += 1
+            if (name in VLLM_ANSWERS or (name == "mdf_request" and ev.get("kind") == "forwarded")) \
+                    and life["proxy_answer"] is None:
+                life["proxy_answer"] = (e["since_arm"], name)
+            if ev.get("snap_boot") or name in ("mdf_snap_boot", "mdf_snapshot"):     # MFL045 c2
+                life["snap"] = True
+            if name == "mdf_snapshot" and life["snapshot"] is None:
+                life["snapshot"] = {k: ev.get(k) for k in ("ok", "gen", "seconds", "ready_s", "reason")}
+                life["snapshot_t"] = ev.get("t")
+            elif name == "mdf_restore" and life["restore"] is None:
+                life["restore"] = {k: ev.get(k) for k in ("kind", "gen", "age_s", "t_snap")}
+                life["restore_t"] = ev.get("t")
+            elif name == "mdf_fallback" and life["fallback"] is None:
+                life["fallback"] = {"reason": ev.get("reason"), "since_arm": e["since_arm"]}
+            elif name == "mdf_wake" and life["wake"] is None:
+                life["wake"] = {"ok": ev.get("ok"), "seconds": ev.get("seconds"), "since_arm": e["since_arm"]}
             return
         if e["source"] == "container":
             m = VLLM_ACCESS.search(e["line"])
             if m:
-                self.answered(life, e, "access " + m.group(1))
-                if m.group(1) == CHAT_PATH:
-                    life["inferences"] += 1
+                life["access"].append((epoch(e["ts"]), e["since_arm"], m.group(1)))
+            elif RESTORE_FAILED.search(e["line"]) and life["restore_failed"] is None:
+                life["restore_failed"] = e["since_arm"]
         elif e["source"] == "system" and SYSTEM_CHAT.search(e["line"]):
-            life["inferences"] += 1
+            life["inf_lines"] += 1
 
     @staticmethod
     def answered(life, e, by):
@@ -759,7 +917,19 @@ class Lives(Tail):
                 "seen_utc": life["seen_utc"], "listed_s": life["listed"], "running_s": life["running"],
                 "start": life["start"], "gone_s": life["gone"], "gone_utc": life["gone_utc"], "last_s": life["last"],
                 "gpu": life["gpu"], "vllm_s": life["vllm"], "vllm_by": life["vllm_by"], "ready_s": life["ready"],
-                "inference_lines": life["inferences"], "listed_again": life["again"]}
+                "inference_lines": life["inferences"], "listed_again": life["again"],
+                "internal_lines": life["internal"], "snapshot": self.snapshot_of(cid)}
+
+    def snapshot_of(self, cid):
+        """MFL045 c2: the snapshot of a container: the kind of its start, its generation and age, the fallback, the
+        wake, the creation of a snapshot, a failed restore; None for a container without any."""
+        life = self.by.get(cid)
+        if life is None or not (life["restore"] or life["snapshot"] or life["restore_failed"] is not None):
+            return None
+        out = dict(life["restore"] or {})
+        out.update(fallback=(life["fallback"] or {}).get("reason"), wake=life["wake"], created=life["snapshot"],
+                   restore_failed_s=life["restore_failed"])
+        return out
 
     def summary(self):
         return {"containers": [self.brief(c) for c in self.order], "overlaps": self.overlaps(), "faults": self.faults,

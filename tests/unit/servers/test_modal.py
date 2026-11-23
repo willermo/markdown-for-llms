@@ -1690,5 +1690,244 @@ class TestParser(unittest.TestCase):
                     mt.parser().parse_args(base + cmd)
 
 
+
+class TestModalSnapApp(unittest.TestCase):
+    """MFL045 c2 (plan r2 §4): `modal_snap.py`, the app of the lever `snapshot`: a `Cls` `Serve` with the image,
+    Volume, GPUs, resources and limits of `modal_app.py`, the memory snapshot and the GPU snapshot (alpha),
+    `enter(snap=True)` that calls `watchdog.snap_boot`, `enter(snap=False)` that calls `watchdog.snap_wake`, and
+    an empty `web_server` method on port 8000 behind the proxy token."""
+
+    def load(self, environ, script="modal_snap.py"):
+        seen = {"registry": [], "enter": []}
+
+        class App:
+            def __init__(self, name):
+                seen["app"] = name
+
+            def cls(self, **kw):
+                seen["cls"] = kw
+                return lambda c: c
+
+            def function(self, **kw):
+                seen["function"] = kw
+                return lambda f: f
+
+        image = mock.Mock()
+        image.entrypoint.return_value = image
+        image.add_local_file.return_value = image
+        fake = types.ModuleType("modal")
+        fake.Image = types.SimpleNamespace(
+            from_registry=lambda ref, **kw: seen["registry"].append((ref, kw)) or image)
+        fake.Volume = types.SimpleNamespace(from_name=lambda name, **kw: seen.setdefault("volume", (name, kw)))
+        fake.App = App
+        fake.concurrent = lambda **kw: (lambda c: seen.__setitem__("concurrent", kw) or c)
+        fake.enter = lambda **kw: (lambda f: seen["enter"].append((f.__name__, kw)) or f)
+        fake.web_server = lambda **kw: (lambda f: seen.__setitem__("web", (f.__name__, kw)) or f)
+        with mock.patch.dict(sys.modules, {"modal": fake}), mock.patch.dict("os.environ", environ, clear=False):
+            for k in ("MDF_FAULT", "MDF_MODAL_APP", "MDF_LEVERS"):
+                if k not in environ:
+                    __import__("os").environ.pop(k, None)
+            spec = importlib.util.spec_from_file_location("mdf_modal_snap_t", ROOT / "scripts" / "servers" / script)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+        seen["chain"] = [c for c in image.mock_calls if c[0] in ("entrypoint", "add_local_file")]
+        return mod, seen
+
+    def test_the_class_and_its_options(self):
+        mod, seen = self.load({"MDF_LEVERS": "snapshot,compile-cache:" + "a" * 64})
+        kw = seen["cls"]
+        self.assertEqual(seen["app"], "mdf-surya-snap")
+        self.assertEqual((kw["enable_memory_snapshot"], kw["experimental_options"]), (True, {"enable_gpu_snapshot": True}))
+        self.assertIs(type(kw["gpu"]), list)
+        self.assertEqual(kw["gpu"], list(pv.MODAL_GPUS))
+        self.assertEqual((kw["cpu"], kw["memory"], kw["timeout"], kw["startup_timeout"]),
+                         ((2.0, 2.0), (16384, 16384), 600, 900))
+        self.assertEqual((kw["scaledown_window"], kw["min_containers"], kw["max_containers"]), (60, 0, 1))
+        self.assertNotIn("retries", kw)
+        self.assertEqual(seen["volume"], ("mdf-surya-weights", {"create_if_missing": False}))
+        self.assertEqual(kw["env"]["MDF_LEVERS"], "snapshot,compile-cache:" + "a" * 64)
+        self.assertNotIn("MDF_FAULT", kw["env"])
+        self.assertEqual(seen["enter"], [("boot", {"snap": True}), ("wake", {"snap": False})])
+        self.assertEqual(seen["web"], ("web", {"port": 8000, "startup_timeout": 900, "requires_proxy_auth": True}))
+        self.assertEqual(seen["concurrent"], {"max_inputs": 36})
+        _, app = TestModalApp.load(self, {})
+        self.assertEqual(seen["registry"], app["registry"])               # the image of modal_app.py
+        self.assertEqual(seen["chain"][:2], app["chain"])                 # and snapshot.py, only here (F0 of MFL045)
+        self.assertEqual(seen["chain"][2], mock.call.add_local_file(str(pv.HERE / "snapshot.py"), "/mdf/snapshot.py"))
+        mod, seen = self.load({"MDF_MODAL_APP": "mdf-surya-snap-fault", "MDF_FAULT": "wake-fail"})
+        self.assertEqual((seen["app"], seen["cls"]["env"]["MDF_FAULT"]), ("mdf-surya-snap-fault", "wake-fail"))
+
+    def test_the_enter_methods_call_the_watchdog(self):
+        mod, _ = self.load({})
+        calls = []
+        fake_sn = types.ModuleType("snapshot")
+        fake_sn.snap_boot = lambda: calls.append("boot") or {"gen": "g"}
+        fake_sn.snap_wake = lambda snap: calls.append(("wake", snap)) or "the proxy"
+        with mock.patch.dict(sys.modules, {"snapshot": fake_sn}):
+            s = mod.Serve()
+            s.boot()
+            s.wake()
+            self.assertIsNone(s.web())
+        self.assertEqual(calls, ["boot", ("wake", {"gen": "g"})])
+        self.assertEqual(s.wd, "the proxy")
+
+
+class TestSnapshotArm(unittest.TestCase):
+    """MFL045 c2: the lever `snapshot` deploys `modal_snap.py` (only on Modal); its inputs are those of
+    `Serve.*`, the function of the class (`modal function calls APP/Serve.*`)."""
+
+    # The output of `modal deploy modal_snap.py` of modal 1.6.3 for the class, as on 23/11 (MFL045 F1, S0): no URL,
+    # because the response of the creation does not set `method_definitions` (`modal/_output/status.py:78-93`).
+    CLASS_OUT = ("✓ Created objects.\n├── ✓ Uploaded %s\n├── ✓ Uploaded %s\n├── ✓ Uploaded %s\n"
+                 "└── ✓ Created Function Serve.*.\n✓ App deployed in 1.728s! 🎉\n\n"
+                 "View Deployment: https://modal.com/apps/ws/main/deployed/mdf-surya-snap\n"
+                 % (pv.HERE / "modal_snap.py", pv.HERE / "snapshot.py", pv.HERE / "watchdog.py"))
+    SNAP_URL = "https://ws--mdf-surya-snap-serve-web.us-east.modal.run"
+
+    @classmethod
+    def class_info(cls, details):
+        """`modal function info APP/Serve.* --json` of 1.6.3 (`cli/function.py` info): the methods and their web URL."""
+        return json.dumps({"name": "Serve.*", "object_id": "fu-1", "app_id": "ap-1", "web_info": None,
+                           "method_names": sorted(details), "method_details": details})
+
+    def answers(self, info):
+        return {"volume list": (0, json.dumps([{"name": pv.VOLUME, "created_at": "x", "created_by": "y"}])),
+                "workspace proxy-tokens": (0, json.dumps([token_row(TOKEN_ID)])),
+                "deploy " + str(pv.HERE / "modal_snap.py"): (0, self.CLASS_OUT),
+                "function info": info}
+
+    def test_the_url_of_the_class_from_function_info(self):
+        """MFL045 F1 (S0, 23/11): the deploy of the class prints no URL; the arm reads the URL of `Serve.web` from
+        `modal function info APP/Serve.* --json` while the app is deployed, within the term of the session."""
+        calls = []
+        info = (0, self.class_info({"web": {"web_url": self.SNAP_URL, "method": None, "unauthenticated": False}}))
+        m = pv.Modal("mdf-surya-snap", runner=runner(self.answers(info), calls), environ={"PATH": "/usr/bin"},
+                     env_file=env_file(self))
+        self.assertEqual(m.arm("", False, pv.SNAPSHOT_LEVERS)["url"], self.SNAP_URL)
+        self.assertEqual(m.url, self.SNAP_URL)
+        self.assertEqual(calls[-2][0], ["deploy", str(pv.HERE / "modal_snap.py")])
+        self.assertEqual(calls[-1][0], ["function", "info", "mdf-surya-snap/Serve.*", "--json"])
+
+    def test_the_class_without_one_web_url_is_an_error(self):
+        for case, info in (("no web method", (0, self.class_info({}))),
+                           ("two web methods", (0, self.class_info({
+                               "web": {"web_url": self.SNAP_URL, "method": None, "unauthenticated": False},
+                               "other": {"web_url": URL, "method": None, "unauthenticated": False}}))),
+                           ("not a modal.run URL", (0, self.class_info({
+                               "web": {"web_url": "http://ws--x.example.com", "method": None,
+                                       "unauthenticated": False}}))),
+                           ("the CLI fails", (1, ""))):
+            with self.subTest(case=case):
+                m = pv.Modal("mdf-surya-snap", runner=runner(self.answers(info), []), environ={"PATH": "/usr/bin"},
+                             env_file=env_file(self))
+                with self.assertRaisesRegex(pv.ProviderError, "the URL of the web function"):
+                    m.arm("", False, pv.SNAPSHOT_LEVERS)
+
+    def test_the_term_during_the_reading_of_the_url(self):
+        """The term T of the session that comes after the deploy, before `function info`: TermReached (S-B4), not a
+        URL not found."""
+        state = {"deployed": False, "reads": 0}
+
+        def clock():
+            if not state["deployed"]:
+                return 1000.0
+            state["reads"] += 1                                # the check after the deploy is before T, the next after
+            return 1040.0 if state["reads"] == 1 else 1100.0
+        answers = self.answers((0, self.class_info({"web": {"web_url": self.SNAP_URL, "method": None,
+                                                                "unauthenticated": False}})))
+        calls = []
+        base = runner(answers, calls)
+
+        def run(argv, **kw):
+            if argv[len(pv.MODAL_SDK)] == "deploy":
+                state["deployed"] = True
+            return base(argv, **kw)
+        m = pv.Modal("mdf-surya-snap", runner=run, clock=clock, environ={"PATH": "/usr/bin"}, env_file=env_file(self))
+        with self.assertRaisesRegex(pv.TermReached, "modal function: the term of the session came during the arm"):
+            m.arm("", False, pv.SNAPSHOT_LEVERS, deadline=1050.0)
+        self.assertEqual(calls[-1][0][0], "deploy")             # no reading of the URL after T
+        m2 = pv.Modal("mdf-surya-snap", runner=runner(answers, []), clock=lambda: 1040.0, environ={"PATH": "/usr/bin"},
+                      env_file=env_file(self))
+        self.assertEqual(m2.arm("", False, pv.SNAPSHOT_LEVERS, deadline=1050.0)["url"], self.SNAP_URL)
+
+    def test_the_file_of_the_deploy_by_lever(self):
+        calls = []
+        out = "✓ Created web function serve.\n└── %s 🔑\n" % URL
+        answers = dict(self.answers((0, self.class_info({"web": {"web_url": self.SNAP_URL, "method": None,
+                                                                    "unauthenticated": False}}))),
+                       **{"deploy " + str(pv.HERE / "modal_app.py"): (0, out)})
+        m = pv.Modal("mdf-surya-snap", runner=runner(answers, calls), environ={"PATH": "/usr/bin"},
+                     env_file=env_file(self))
+        m.arm("", False, pv.SNAPSHOT_LEVERS)
+        argv, env = [c for c in calls if c[0][0] == "deploy"][-1]
+        self.assertEqual(argv, ["deploy", str(pv.HERE / "modal_snap.py")])
+        self.assertEqual(env["MDF_LEVERS"], pv.levers_text(pv.SNAPSHOT_LEVERS))
+        self.assertEqual(m.function, "Serve.*")
+        m = pv.Modal("mdf-surya", runner=runner(answers, calls), environ={"PATH": "/usr/bin"}, env_file=env_file(self))
+        m.arm()
+        self.assertEqual(calls[-1][0], ["deploy", str(pv.HERE / "modal_app.py")])
+        self.assertEqual(m.function, "serve")
+
+    def test_the_inputs_of_the_class(self):
+        calls = []
+        m = pv.Modal("mdf-surya-snap", runner=runner({"function calls": (0, "[]")}, calls),
+                     environ={"PATH": "/usr/bin"}, snapshot=True)
+        m.inputs(1795162037.9)
+        self.assertEqual(calls[0][0][:3], ["function", "calls", "mdf-surya-snap/Serve.*"])
+
+    def test_the_levers_by_provider(self):
+        self.assertEqual(pv.levers_text(pv.SNAPSHOT_LEVERS, "modal"), pv.levers_text(pv.SNAPSHOT_LEVERS))
+        self.assertTrue(pv.levers_text(pv.SNAPSHOT_LEVERS).endswith(",snapshot"))
+        with self.assertRaisesRegex(pv.ProviderError, "snapshot.*modal"):
+            pv.levers_text("snapshot", "runpod")
+
+
+class TestAfterRestore(TestRuleA):
+    """MFL045 c2 (plan r2 §7): `fault-test --after-restore` on the app of the snapshot: try 1 wakes a container
+    (its kind from `mdf_restore`), the driver waits for the quiet of the app (no container), then try 2; the
+    phase runs on try 2 only when it is a `restore`, else the phase is inconclusive (exit 8). The container of
+    try 1 is not a replacement: a declared quiet lies between the two (`next_try`)."""
+
+    def run_after_restore(self, kinds):
+        spans = [(CA, 25.0, 150.0), (CB, 175.0, 380.0)]
+        lines = [proxy(25.2, CA, "mdf_restore", kind=kinds[0], gen="0123456789abcdef", age_s=0.0, pids=[23])]
+        lines += starting(CA, 25.5) + answering(CA, 100.0)
+        lines += [proxy(175.2, CB, "mdf_restore", kind=kinds[1], gen="0123456789abcdef", age_s=150.0, pids=[23])]
+        lines += starting(CB, 175.5) + [proxy(190.0, CB, "mdf_wake", ok=True, seconds=3.1)] + answering(CB, 200.0)
+        script = LogScript(self.log, self.clock, self.t_arm, Scripted.rows(spans) + lines)
+        modal = Scripted(self.clock, self.t_arm, spans, script)
+        routes = self.valid_routes(held=0)
+
+        def models():
+            script.flush()
+            s = self.clock.t - self.t_arm
+            if 100.0 <= s < 150.0 or s >= 200.0:
+                return (200, {"data": [{"id": dv.MODEL}]}, "forwarded")
+            return (503, {"error": "mdf_waking"}, "error")
+        routes[("GET", "/v1/models")] = models
+        chats = iter([(200, {"choices": []}, "forwarded"), (503, {"error": "mdf_tripped"}, "error")])
+        routes[("POST", "/v1/chat/completions")] = lambda: next(chats)
+        t = self.tasks(["fault-test", "--phase", "A", "--after-restore"], [mstate()], routes)
+        t.modal = self.modal = modal
+        with mock.patch.object(dv.Inference, "abandon", lambda self, after_s: None):     # never the network
+            return self.run_quiet(t.fault_test)
+
+    def test_the_phase_on_a_restore_after_a_creation(self):
+        code, lines = self.run_after_restore(("create", "restore"))
+        res = lines[-1]
+        self.assertEqual(code, 0, res.get("violation"))
+        self.assertTrue(res["pass"])
+        self.assertEqual([(x["try"], x["kind"]) for x in res["after_restore"]], [(1, "create"), (2, "restore")])
+        self.assertEqual([x["next_try"] for x in lines if "next_try" in x], [1])
+        self.assertEqual(res["ready"]["snapshot"]["kind"], "restore")
+        self.assertEqual(res["replacements"], [])
+
+    def test_no_restore_in_two_tries_is_inconclusive(self):
+        code, lines = self.run_after_restore(("create", "create"))
+        self.assertEqual(code, 8, lines[-1])
+        self.assertIn("no restore in 2 tries", lines[-1]["inconclusive"])
+        self.assertNotIn("first", lines[-1])                    # the fault was never exercised
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -627,5 +627,175 @@ class TestRefusals(SeriesCase):
         self.assertIn("the session armed modal", lines[-1]["detail"])
 
 
+GEN = "0123456789abcdef"
+
+
+def snap_boot_lines(base, worker, gen=GEN, enabled=True):
+    """The lines of `snap_boot` in a container that creates a snapshot (MFL045 c2), from `base`."""
+    return [proxy(base, worker, "mdf_gpu", names=["NVIDIA A10G"], uuids=["GPU-a"], since_start=0.0),
+            proxy(base + 3.0, worker, "mdf_weights_check", ok=True, phase="snap_boot", seconds=2.9),
+            proxy(base + 3.1, worker, "mdf_vllm_args", ok=True, snap_boot=True, args=["--enable-sleep-mode"]),
+            proxy(base + 3.1, worker, "mdf_vllm_start", pid=23, snap_boot=True),
+            vllm(base + 50.0, worker, "Initializing a V1 LLM engine (v0.25.1) with config: model='/x'"),
+            vllm(base + 80.0, worker, "torch.compile took 28.13 s in total"),
+            proxy(base + 200.0, worker, "mdf_snap_boot", ready_s=196.9),
+            proxy(base + 230.0, worker, "mdf_snapshot", ok=True, gen=gen, seconds=230.0, snap_enabled=enabled,
+                  pids=[23, 57])]
+
+
+def woken(base, worker, kind, gen=GEN, fallback=None, chat=True):
+    """`snap_wake` in a container: the kind, the proxy, the wake (or the fallback), readiness, a chat."""
+    out = [proxy(base, worker, "mdf_restore", kind=kind, gen=gen, age_s=5.0 if kind == "create" else 3600.0,
+                 pids=[23, 57]),
+           proxy(base + 0.1, worker, "mdf_start", provider="modal", snapshot=kind, boot_id="b" * 16),
+           proxy(base + 0.2, worker, "mdf_gpu", names=["NVIDIA A10G"], uuids=["GPU-a"], since_start=0.1)]
+    if fallback:
+        out += [proxy(base + 2.0, worker, "mdf_fallback", reason=fallback, pids=[23, 57], since_start=1.9),
+                proxy(base + 6.0, worker, "mdf_vllm_start", pid=91, since_start=5.9),
+                proxy(base + 170.0, worker, "mdf_ready", since_start=169.9)]
+    else:
+        out += [proxy(base + 4.0, worker, "mdf_wake", ok=True, seconds=3.8, since_start=3.9),
+                proxy(base + 5.0, worker, "mdf_ready", since_start=4.9)]
+    if chat:
+        end = base + (180.0 if fallback else 12.0)
+        out.append(proxy(end, worker, "mdf_request", kind="forwarded", method="POST", path="/v1/chat/completions",
+                         status=200))
+    return out
+
+
+class TestSnapshotPhases(unittest.TestCase):
+    """MFL045 c2 (plan r2 §8 and E.7): the kind of every container start of a window of the snapshot from the
+    log (`create`, `restore`, `boot`, with a declared fallback), the SDK's "GPU memory snapshot restore failed"
+    (exit 222) as `restore_failed`, the creation of the snapshot (its seconds), and the first useful answer
+    (the first `mdf_request` forwarded POST /v1/chat/completions 200 of the container)."""
+
+    def test_the_kinds_of_the_starts(self):
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp, True)
+        log = tmp / "worker-log.partial"
+        rows = (snap_boot_lines(10.0, "ta-A") + woken(240.0, "ta-A", "create")
+                + woken(600.0, "ta-B", "restore")
+                + [row(900.0, "ta-C", "container", "GPU memory snapshot restore failed: CUDA error. Retrying task "
+                                                   "without snapshot", ts=iso(T_ARM + 900.0, ns=True))]
+                + snap_boot_lines(905.0, "ta-D", enabled=False) + woken(1140.0, "ta-D", "boot")
+                + woken(1500.0, "ta-E", "restore", fallback="wake_up 500"))
+        log.write_text("".join(rows))
+        starts = ss.phases(log, T_ARM)
+        kinds = [(s["worker"], s["snapshot"]["kind"]) for s in starts]
+        self.assertEqual(kinds, [("ta-A", "create"), ("ta-B", "restore"), ("ta-C", "restore_failed"),
+                                 ("ta-D", "boot"), ("ta-E", "restore")])
+        a, b, c, d, e = starts
+        self.assertEqual((a["snapshot"]["created"]["seconds"], a["snapshot"]["created"]["ready_s"]), (230.0, 196.9))
+        self.assertEqual(a["snapshot"]["gen"], GEN)
+        self.assertEqual(a["snap_boot"]["compile_s"], 28.13)
+        self.assertEqual((a["start_s"], a["ready_s"], a["first_useful_s"]), (240.1, 245.0, 252.0))
+        self.assertEqual((b["snapshot"]["age_s"], b["snapshot"]["wake"]["seconds"], b["first_useful_s"]),
+                         (3600.0, 3.8, 612.0))
+        self.assertEqual(c["start_s"], 900.0)
+        self.assertIsNone(d["snapshot"].get("fallback"))
+        self.assertEqual((e["snapshot"]["fallback"], e["ready_s"], e["first_useful_s"]), ("wake_up 500", 1670.0, 1680.0))
+
+
+class TestRepeatedInput(SeriesCase):
+    """MFL045 c2 (plan r2 §8, M2): `--input` repeated, one per cold start in order (D04, D16, D18); one input for
+    every start as before; another count is refused."""
+
+    def test_one_input_per_cold_start(self):
+        arm_id = self.arm()
+        inputs = []
+        for name in ("d04.pdf", "d16.pdf", "d18.pdf"):
+            (self.dir / name).write_bytes(b"%PDF-1.4\n")
+            inputs += ["--input", str(self.dir / name)]
+        argv = [x for x in self.argv("--cold", "3", "--cap-usd", "1.00") if x != str(self.png)]
+        argv.remove("--input")
+        conv = FakeConvert(self)
+        code, lines = self.run_main(argv + inputs, {"MDF_SESSION_ARM": arm_id},
+                                    prov=FakeProvider([rp_state("IDLE")]), runner=conv)
+        self.assertEqual(code, 0, lines[-1])
+        self.assertEqual([Path(c["cmd"][c["cmd"].index("convert") + 1]).name for c in conv.calls],
+                         ["d04.pdf", "d16.pdf", "d18.pdf"])
+        self.assertEqual([r["input"] for r in lines[-1]["starts"]], ["d04.pdf", "d16.pdf", "d18.pdf"])
+        code, lines = self.run_main(argv + inputs[:4], {"MDF_SESSION_ARM": arm_id},
+                                    prov=FakeProvider([rp_state("IDLE")]), runner=FakeConvert(self))
+        self.assertEqual((code, lines[-1]["code"]), (2, "invalid_setting"))
+
+
+class TestStartKindInTheRows(SeriesCase):
+    def test_each_cold_start_gets_the_kind_of_its_container(self):
+        self.servers.write_text(json.dumps({"default": "md", "servers": {"md": {
+            "kind": "modal", "url": "https://ws--mdf-surya-snap-serve-web.modal.run", "gpu": "L4,A10G",
+            "rate_usd_per_s": "0.00036772", "pins": {"vllm": "0.25.1"}}}}))
+        self.env.write_text("MODAL_PROXY_TOKEN_ID=wk-test\nMODAL_PROXY_TOKEN_SECRET=ws-test\n")
+        arm_id = self.arm(provider="modal")
+        log = self.dir / "worker-log.partial"
+        log.write_text("".join(snap_boot_lines(10.0, "ta-A") + woken(240.0, "ta-A", "create")
+                               + woken(600.0, "ta-B", "restore")))
+        self.clock.t = T_ARM + 1.0
+        conv = FakeConvert(self, ready=(244.0, 4.0), after=10.0)
+
+        class Quiet(FakeProvider):
+            def state(prov):
+                self.clock.t = max(self.clock.t, T_ARM + 590.0)
+                return FakeProvider.state(prov)
+        argv = [x if x != "rp" else "md" for x in self.argv("--cold", "2", "--cap-usd", "0.90")]
+        code, lines = self.run_main(argv, {"MDF_SESSION_ARM": arm_id, "SESSION_WORKER_LOG": str(log)},
+                                    prov=Quiet([{"armed": True, "busy": False, "workers": [], "containers": []}]),
+                                    runner=conv)
+        self.assertEqual(code, 0, lines[-1])
+        self.assertEqual([r["start_kind"] for r in lines[-1]["starts"]], ["create", "restore"])
+        self.assertEqual(lines[-1]["starts"][1]["container"]["first_useful_s"], 612.0)
+
+
+class TestResumes(SeriesCase):
+    """MFL045 c3 (plan r2 §6; prescription P-4): `--resume N` sends N requests after the cold starts, each after
+    `--idle` seconds without requests from the end of the one before (`--idle-last` for the last one), by the way
+    of `--resume-via` (one per resume: engine or page). A resume is told by the same `boot_id` and an `mdf_pause` of
+    it after the request before; a new `mdf_start` is a missed resume; the same boot without a pause a warm start."""
+
+    fake = TestPageAndArmAhead.fake
+
+    def log(self, rows):
+        path = self.dir / "worker-log.partial"
+        path.write_text("".join(rows))
+        return path
+
+    def test_idle_waits_ways_and_kinds(self):
+        arm_id = self.arm(window=2420)
+        transport, n = self.fake()
+        conv = FakeConvert(self, ready=(170.0, 1.0), after=20.0)
+        self.clock.t = T_ARM + 20.0
+        boot = "b" * 16
+        log = self.log([proxy(25.0, "w1", "mdf_start", provider="runpod", boot_id=boot),
+                        proxy(190.0, "w1", "mdf_ready", since_start=165.0),
+                        proxy(340.0, "w1", "mdf_pause", boot_id=boot, seconds=90.0, applied=True, during="sleep"),
+                        proxy(472.0, "w1", "mdf_pause", boot_id=boot, seconds=95.0, applied=True, during="sleep"),
+                        proxy(1258.0, "w2", "mdf_start", provider="runpod", boot_id="c" * 16)])
+        code, lines = self.run_main(self.argv("--cold", "1", "--resume", "4", "--idle", "120", "--idle-last", "660",
+                                              "--resume-via", "engine,page,page,page", "--cap-usd", "0.55"),
+                                    {"MDF_SESSION_ARM": arm_id, "SESSION_WORKER_LOG": str(log)},
+                                    prov=FakeProvider([rp_state("IDLE")]), runner=conv, transport=transport)
+        self.assertEqual(code, 0, lines[-1])
+        rows = lines[-1]["starts"]
+        self.assertEqual([r["kind"] for r in rows], ["cold", "resume", "resume", "resume", "resume"])
+        self.assertEqual([r["via"] for r in rows], ["engine", "engine", "page", "page", "page"])
+        self.assertEqual(len(conv.calls), 2)
+        for before, row, idle in zip(rows, rows[1:], (120, 120, 120, 660)):
+            self.assertGreaterEqual(round(row["send_s"] - before["end_s"], 1), idle)
+            self.assertLess(row["send_s"] - before["end_s"], idle + 1)
+            self.assertEqual(row["idle_s"], idle)
+        self.assertEqual([r["start_kind"] for r in rows], ["cold", "resume", "resume", "warm", "missed"])
+        self.assertEqual(rows[1]["boot_id"], boot)
+        self.assertEqual(rows[4]["new_container"]["boot_id"], "c" * 16)
+
+    def test_the_options_are_checked(self):
+        arm_id = self.arm(window=2420)
+        for extra in (("--resume", "2"), ("--resume", "2", "--idle", "120", "--resume-via", "page"),
+                      ("--resume", "1", "--idle", "120", "--resume-via", "fax"), ("--idle", "120")):
+            with self.subTest(extra=extra):
+                code, lines = self.run_main(self.argv("--cold", "1", "--via", "page", *extra),
+                                            {"MDF_SESSION_ARM": arm_id}, prov=FakeProvider([rp_state("IDLE")]))
+                self.assertEqual((code, lines[-1]["code"]), (2, "invalid_setting"))
+
+
 if __name__ == "__main__":
     unittest.main()

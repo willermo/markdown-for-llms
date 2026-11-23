@@ -2,12 +2,14 @@
 """A series of starts of a rented server, inside `session.py run` (MFL033 N5b; plan r4 App. D and the
 levers of the start, `n5/leve-avvio.md` §5).
 
-    start_series.py --env-file F --server S --servers SV --input FILE --cold N [--warm M] [--arm-ahead S]
+    start_series.py --env-file F --server S --servers SV --input FILE [--input FILE ...] --cold N [--warm M] [--arm-ahead S]
                     [--via engine|page|populate] [--gpu NAME [--gpu-tries K]] [--cap-usd X]
+                    [--resume N --idle S [--idle-last S] [--resume-via V1,V2,...]]
                     --spend-ledger L --spend-cap-usd C [--out DIR]
 
 The session armed the provider: `MDF_SESSION_ARM` names its `arm` row in L, `SESSION_WORKER_LOG` the log
-of its workers. The series sends N cold starts; after the k-th, `M // N` warm ones (one more after each
+of its workers. `--input` once for every start, or once per cold start in order (MFL045 c2: D04, D16, D18 of
+M2), a warm start with the input of its cold one. The series sends N cold starts; after the k-th, `M // N` warm ones (one more after each
 of the first `M % N`). Every cold start after the first waits for the quiet of the provider: no worker
 RUNNING on RunPod and, with the log of the session, a "stop container" after the last RUNNING of every
 worker that ran (RUNNING absent for STOP_LINE_WAIT_S without that line is quiet too, and a fact); no
@@ -39,12 +41,25 @@ with an NVIDIA A10 or an NVIDIA A10G as it likes (21/11), and an archive of the 
 of its manifest. The start is the try taken (`send_s`); the tries are in `gpu_tries`. With `--via
 populate` the populate must name NAME too.
 
+With `--resume N` (MFL045 c3, plan r2 §6: FlashBoot of RunPod) N requests follow the cold and warm starts, each
+after `--idle` seconds without requests from the end of the one before (`--idle-last` for the last one;
+prescription P-4: 120 s, so that the worker is paused well before the request), each by the way of
+`--resume-via` (`engine` or `page`, one per resume; `--via` by default). A resume is told from the log: the same
+`boot_id` as the container before and an `mdf_pause` of it since the request before (`start_kind` `resume`); a new
+`mdf_start` is a missed resume (`missed`); the same boot without a pause a warm start (`warm`).
+
 After the series the log of the session gives the phases of every container start (`phases`), each
 from the arm: the image (RunPod: from the first listing of the worker to "Loaded image ID" and "create
 container", from the host's cache or not), RUNNING, the proxy's start (`mdf_start`), the check of the
 weights, the import of vLLM up to its engine, the load of the weights, `torch.compile` (and whether its
 graphs came from the cache, and the `mdf_compile_cache` lines of its use or populate), the profiling and
-warm-up, the graphs and the cache KV, the API up to the proxy's readiness (`mdf_ready`). The cold starts carry the container start that followed them. The last
+warm-up, the graphs and the cache KV, the API up to the proxy's readiness (`mdf_ready`), and the first useful
+answer (`first_useful_s`: the first `mdf_request` forwarded POST /v1/chat/completions 200 of the container, MFL045
+c2). With a snapshot (MFL045 c2, plan r2 E.7) each start has its `snapshot`: the kind (`create`, `restore`,
+`boot`) and generation of its `mdf_restore`, the creation of the snapshot when the container took it (its
+seconds, and the stages of vLLM before the snapshot in `snap_boot`), the wake or the declared fallback; the SDK's
+"GPU memory snapshot restore failed" (exit 222) is a start of its own, `restore_failed`. The cold starts carry
+the container start that followed them (and the failed restores before it) and its kind, `start_kind`. The last
 line is the result. Exit 0: every start done; 6: a start failed, the provider not quiet, or a guarantee
 broken (G1: two workers RUNNING at once in a reading); 2: outside a session; 4: a provider error.
 """
@@ -93,6 +108,7 @@ VLLM = {
 }
 # The system lines of a RunPod worker about its image (the logs of N4 and N5a)
 IMAGE_CACHE = re.compile(r"loading container image from cache")
+CHAT_PATH = "/v1/chat/completions"
 IMAGE_LOADED = re.compile(r"^Loaded image ID")
 CREATE = re.compile(r"^create container\b")
 
@@ -117,6 +133,7 @@ def phases(path, t_arm=None):
     `mdf_start`, its times in seconds from the arm (`t_arm`, else the follower's first line)."""
     text = Path(path).read_text(encoding="utf-8", errors="replace")
     workers, starts, current = {}, [], {}
+    pre = {}                    # MFL045 c2: a container's snapshot before its proxy starts (snap_boot, mdf_restore)
     for raw in text.splitlines():
         e = wl.parse(raw)
         if e is None:
@@ -159,12 +176,42 @@ def phases(path, t_arm=None):
             kind, t = ev.get("event"), ev.get("t")
             if kind == "mdf_start":
                 s = {"worker": wl.short(wid), "start_s": _rel(t, t_arm), "_wid": wid, "gpu": None,
-                     "image": w["image"] if w["starts"] == 0 else None, "running_s": None}
+                     "image": w["image"] if w["starts"] == 0 else None, "running_s": None,
+                     "boot_id": ev.get("boot_id")}
                 if s["image"] is not None and s["image"]["loaded_s"] is not None:
                     s["image"] = dict(s["image"], seconds=round(s["image"]["loaded_s"] - s["image"]["listed_s"], 1))
                 w["starts"] += 1
                 current[wid] = s
                 starts.append(s)
+                p = pre.pop(wid, {})
+                r = p.get("restore")
+                if r is not None:                                    # MFL045 c2: a start of the snapshot
+                    s["snapshot"] = {"kind": r.get("kind"), "gen": r.get("gen"), "age_s": r.get("age_s"),
+                                     "restore_s": _rel(r.get("t"), t_arm), "created": p.get("created"),
+                                     "fallback": None, "wake": None}
+                    if p.get("boot") is not None:
+                        s["snap_boot"] = p["boot"]
+            elif kind in ("mdf_snap_boot", "mdf_snapshot", "mdf_restore") or ev.get("snap_boot"):
+                p = pre.setdefault(wid, {})
+                if kind == "mdf_snap_boot":
+                    p.setdefault("created", {})["ready_s"] = ev.get("ready_s")
+                elif kind == "mdf_snapshot":
+                    p.setdefault("created", {}).update({k: ev.get(k) for k in ("ok", "gen", "seconds", "reason")})
+                elif kind == "mdf_restore":
+                    p["restore"] = ev
+                elif kind == "mdf_vllm_start":
+                    p["boot"] = {"_vllm_t": t}
+            elif s is not None and kind == "mdf_pause":           # MFL045 c3: FlashBoot froze the proxy
+                s.setdefault("pauses", []).append({"since_arm": _rel(t, t_arm), "seconds": ev.get("seconds"),
+                                                   "during": ev.get("during"), "applied": ev.get("applied"),
+                                                   "boot_id": ev.get("boot_id")})
+            elif s is not None and kind == "mdf_wake" and s.get("snapshot") is not None:
+                s["snapshot"]["wake"] = {"ok": ev.get("ok"), "seconds": ev.get("seconds")}
+            elif s is not None and kind == "mdf_fallback" and s.get("snapshot") is not None:
+                s["snapshot"]["fallback"] = ev.get("reason")
+            elif s is not None and kind == "mdf_request" and ev.get("kind") == "forwarded" and ev.get("method") == "POST" \
+                    and ev.get("path") == CHAT_PATH and ev.get("status") == 200:
+                s.setdefault("first_useful_s", _rel(t, t_arm))
             elif s is not None and kind == "mdf_gpu":
                 s["gpu"] = ev.get("names")
             elif s is not None and kind == "mdf_weights_check" and ev.get("phase") == "start":
@@ -180,7 +227,12 @@ def phases(path, t_arm=None):
                     ev.get("phase"), "compile_cache_other")
                 s[key] = {k: v for k, v in ev.items() if k not in ("event", "mono", "t", "phase")}
             continue
-        if s is None:
+        if wl.RESTORE_FAILED.search(e["line"]):                     # MFL045 c2: exit 222 of the SDK
+            starts.append({"worker": wl.short(wid), "start_s": e["since_arm"], "_wid": wid, "gpu": None, "image": None,
+                           "running_s": None, "snapshot": {"kind": "restore_failed"}})
+            continue
+        target = s if s is not None else (pre.get(wid) or {}).get("boot")    # the stages of snap_boot too
+        if target is None:
             continue
         t = wl.epoch(e["ts"])
         for key, rx in VLLM.items():
@@ -188,31 +240,38 @@ def phases(path, t_arm=None):
             if not m:
                 continue
             if key == "engine":
-                s.setdefault("_engine_t", t)
+                target.setdefault("_engine_t", t)
             elif key == "compile_cached":
-                s["compile_cached"] = True
+                target["compile_cached"] = True
             elif key == "api":
-                s.setdefault("_api_t", t)
+                target.setdefault("_api_t", t)
             elif key == "init_engine_s":
-                s.setdefault(key, _num(m))
-                s.setdefault("_init_t", t)
+                target.setdefault(key, _num(m))
+                target.setdefault("_init_t", t)
             else:
-                s.setdefault(key, _num(m))
+                target.setdefault(key, _num(m))
     for s in starts:
         # RUNNING: the last listing RUNNING of the worker by 15 s after the start (on Modal it comes after it)
         runs = [r for r in workers[s["_wid"]]["running"] if r is not None and s["start_s"] is not None
                 and r <= s["start_s"] + 15]
         s["running_s"] = runs[-1] if runs else None
-        if s.get("_engine_t") is not None and s.get("_vllm_t") is not None:
-            s["import_s"] = round(s["_engine_t"] - s["_vllm_t"], 1)
-        if None not in (s.get("init_engine_s"), s.get("compile_s"), s.get("profiling_s")):
-            s["graphs_s"] = round(s["init_engine_s"] - s["compile_s"] - s["profiling_s"], 1)
-        if s.get("_ready_t") is not None and s.get("_init_t") is not None:
-            s["api_s"] = round(s["_ready_t"] - s["_init_t"], 1)
-        s.setdefault("compile_cached", False)
-        for k in [k for k in s if k.startswith("_")]:
-            del s[k]
+        _stages(s)
+        if s.get("snap_boot") is not None:
+            _stages(s["snap_boot"])
     return starts
+
+
+def _stages(s):
+    """The stages of a start of vLLM from the times its lines gave; the private times dropped."""
+    if s.get("_engine_t") is not None and s.get("_vllm_t") is not None:
+        s["import_s"] = round(s["_engine_t"] - s["_vllm_t"], 1)
+    if None not in (s.get("init_engine_s"), s.get("compile_s"), s.get("profiling_s")):
+        s["graphs_s"] = round(s["init_engine_s"] - s["compile_s"] - s["profiling_s"], 1)
+    if s.get("_ready_t") is not None and s.get("_init_t") is not None:
+        s["api_s"] = round(s["_ready_t"] - s["_init_t"], 1)
+    s.setdefault("compile_cached", False)
+    for k in [k for k in s if k.startswith("_")]:
+        del s[k]
 
 
 def summary_of(stdout):
@@ -266,6 +325,7 @@ class Series:
         if a.gpu and not self.log_path:
             raise Refused("--gpu reads the GPU in the log of the session (%s)" % wl.LOG_ENV)
         self.watch = dv.Watch(self.prov, clock, sleep, extra_ok=True, tolerate=(pv.ProviderError,))
+        self.inputs = list(a.input)                 # MFL045 c2: one for every start, or one per cold start
         self.out_dir = Path(a.out) if a.out else Path(a.spend_ledger).parent / "starts" / self.arm["arm_id"]
         self.live = dv.Live()
 
@@ -278,7 +338,7 @@ class Series:
         for i in range(a.cold):
             kinds.append("cold")
             kinds += ["warm"] * (a.warm // a.cold + (1 if i < a.warm % a.cold else 0))
-        return kinds
+        return kinds + ["resume"] * a.resume
 
     def read(self):
         """One reading of the provider; a failed one is recorded and gives None. G1 raises."""
@@ -348,8 +408,9 @@ class Series:
         self.sleep(QUIET_MARGIN_S)
         return info
 
-    def convert(self, k, kind):
-        a = self.a
+    def convert(self, k, kind, path):
+        a = argparse.Namespace(**vars(self.a))
+        a.input = path
         out = self.out_dir / ("%02d-%s" % (k, kind))
         out.parent.mkdir(parents=True, exist_ok=True)
         cmd = dv.convert_argv(Path(sys.executable).with_name("mdf"), a, out, a.server, a.servers, a.cap_usd)
@@ -385,7 +446,7 @@ class Series:
         row["ok"] = r.returncode == 0 and row.get("status") == "complete"
         return row
 
-    def page(self):
+    def page(self, path):
         inf = dv.Inference(self.ep.url, self.headers, transport=self.transport, clock=self.clock, sleep=self.sleep)
         try:
             r = inf.ready(READY_WITHIN_S[self.provider], timeout=READY_GET_S)
@@ -394,7 +455,7 @@ class Series:
             if not r["ready"]:
                 row.update(ok=False, stopped=r.get("stopped") or "no readiness", edge=r.get("edge"))
                 return row
-            p = inf.page(dv.page_body(self.a.input), PAGE_TIMEOUT_S)
+            p = inf.page(dv.page_body(path), PAGE_TIMEOUT_S)
             row.update(page=p, pages=1, s_per_page=p.get("s"),
                        ok=p.get("status") == 200 and p.get("proxy") == "forwarded")
             return row
@@ -496,24 +557,36 @@ class Series:
                                "arm_id": self.arm["arm_id"], "via": a.via, "cold": a.cold, "warm": a.warm,
                                "gpu": a.gpu, "gpu_tries": a.gpu_tries if a.gpu else None,
                                "arm_ahead_s": a.arm_ahead, "starts": [], "before_first": []}
-        code = 0
+        code, cold, resumes, last_end = 0, -1, 0, None
         try:
             if a.arm_ahead:
                 self.ahead(res)
             for k, kind in enumerate(self.plan(), 1):
+                cold += 1 if kind == "cold" else 0
+                path = self.inputs[cold % len(self.inputs)]
+                via, idle = a.via, None
+                if kind == "resume":                              # MFL045 c3: after an idle of its own
+                    resumes += 1
+                    idle = a.idle_last if resumes == a.resume and a.idle_last is not None else a.idle
+                    if last_end is not None and idle - (self.clock() - last_end) > 0:
+                        self.sleep(idle - (self.clock() - last_end))
+                    via = a.resume_via[resumes - 1]
                 quiet = self.quiet() if kind == "cold" and k > 1 else {}
                 gpu = self.wake_on_gpu() if a.gpu and kind == "cold" else {}
                 t_send = gpu.pop("send_t", None) or self.clock()
-                row = {"start": k, "kind": kind, "send_s": self.since(t_send),
+                row = {"start": k, "kind": kind, "input": Path(path).name, "via": via, "send_s": self.since(t_send),
                        "left_s": round(float(self.arm["until"]) - t_send, 1)}
+                if idle is not None:
+                    row["idle_s"] = idle
                 row.update(quiet)
                 row.update(gpu)
                 if gpu.get("stopped"):
                     row["pages"] = 0
                 else:
-                    row.update(self.convert(k, kind) if a.via == "engine" else
-                               self.populate(t_send) if a.via == "populate" else self.page())
+                    row.update(self.convert(k, kind, path) if via == "engine" else
+                               self.populate(t_send) if via == "populate" else self.page(path))
                 row["end_s"] = self.since()
+                last_end = self.clock()
                 res["starts"].append(row)
                 emit({"start_row": row})
                 if not row["ok"]:
@@ -539,20 +612,34 @@ class Series:
             found = phases(self.log_path, self.t_arm)
         except OSError as exc:
             return {"error": type(exc).__name__}
-        used = set()
+        used, last, prev_end = set(), None, None
         for row in rows:
             end = row.get("end_s")
-            for i, p in enumerate(found):
-                if i in used or p.get("start_s") is None or p["start_s"] < row["send_s"] - SEND_SLACK_S:
-                    continue
-                if end is not None and p["start_s"] > end:
-                    break
-                used.add(i)
-                if row["kind"] == "cold":
-                    row["container"] = p
+            got = [i for i, p in enumerate(found) if i not in used and p.get("start_s") is not None
+                   and p["start_s"] >= row["send_s"] - SEND_SLACK_S and (end is None or p["start_s"] <= end)]
+            failed = [i for i in got if (found[i].get("snapshot") or {}).get("kind") == "restore_failed"]
+            real = [i for i in got if i not in failed]
+            if failed:                                                  # MFL045 c2: the restores that failed first
+                used.update(failed)
+                row["restore_failed"] = [found[i] for i in failed]
+            if real:
+                used.add(real[0])
+                row["container" if row["kind"] == "cold" else "new_container"] = found[real[0]]
+            container = row.get("container") or row.get("new_container")
+            snap = (container or {}).get("snapshot")
+            row["start_kind"] = snap["kind"] if snap else ("cold" if container else None)
+            if snap and snap.get("fallback"):
+                row["fallback"] = snap["fallback"]
+            if row["kind"] == "resume":                       # MFL045 c3: the same boot with a pause, or a new start
+                if container is not None:
+                    row["start_kind"] = "missed"
                 else:
-                    row["new_container"] = p
-                break
+                    pauses = [x for x in (last or {}).get("pauses") or []
+                              if (prev_end is None or x["since_arm"] >= prev_end)
+                              and (end is None or x["since_arm"] <= end)]
+                    row.update(boot_id=(last or {}).get("boot_id"), pauses=pauses,
+                               start_kind="resume" if pauses else "warm")
+            last, prev_end = container or last, end
         return found
 
 
@@ -561,7 +648,7 @@ def parser():
     ap.add_argument("--env-file", required=True)
     ap.add_argument("--server", required=True)
     ap.add_argument("--servers", required=True)
-    ap.add_argument("--input", required=True)
+    ap.add_argument("--input", required=True, action="append")      # MFL045 c2: repeatable
     ap.add_argument("--cold", type=int, required=True)
     ap.add_argument("--warm", type=int, default=0)
     ap.add_argument("--arm-ahead", type=int, default=0)
@@ -569,6 +656,10 @@ def parser():
     ap.add_argument("--gpu", help="each cold start on a container of this GPU (MFL033 N6), as mdf_gpu names it")
     ap.add_argument("--gpu-tries", type=int)
     ap.add_argument("--cap-usd")
+    ap.add_argument("--resume", type=int, default=0)                  # MFL045 c3: requests after an idle
+    ap.add_argument("--idle", type=float)
+    ap.add_argument("--idle-last", type=float)
+    ap.add_argument("--resume-via")
     ap.add_argument("--spend-ledger", required=True)
     ap.add_argument("--spend-cap-usd", required=True)
     ap.add_argument("--out")
@@ -584,6 +675,16 @@ def main(argv=None, **inject):
         emit({"code": "invalid_setting", "detail": "--gpu names a GPU; --gpu-tries goes with it, at least 1"})
         return 2
     a.gpu_tries = a.gpu_tries or 1
+    if len(a.input) not in (1, a.cold):
+        emit({"code": "invalid_setting", "detail": "--input once, or once per cold start (%d)" % a.cold})
+        return 2
+    vias = a.resume_via.split(",") if a.resume_via else [a.via] * max(a.resume, 0)
+    if (a.resume < 0 or (a.resume and (a.idle is None or a.idle < 0))
+            or (not a.resume and (a.idle is not None or a.idle_last is not None or a.resume_via))
+            or len(vias) != a.resume or any(v not in ("engine", "page") for v in vias)):
+        emit({"code": "invalid_setting", "detail": "--resume N with --idle S, and N ways in --resume-via (engine, page)"})
+        return 2
+    a.resume_via = vias
     try:
         s = Series(a, **inject)
     except Refused as exc:

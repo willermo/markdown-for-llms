@@ -13,6 +13,7 @@ import sys
 import threading
 import time
 import importlib.util
+from urllib.parse import parse_qs
 
 import httpx
 
@@ -23,6 +24,12 @@ spec.loader.exec_module(wdmod)
 
 RELEASE = threading.Event()
 SEEN = {}
+# vLLM 0.25.1 with VLLM_SERVER_DEV_MODE=1 (`entrypoints/serve/dev/*/api_router.py`, read on 22/11/2026)
+DEV_ROUTES = (("POST", "/reset_prefix_cache"), ("POST", "/reset_mm_cache"), ("POST", "/reset_encoder_cache"),
+              ("POST", "/pause"), ("POST", "/resume"), ("GET", "/is_paused"), ("POST", "/init_weight_transfer_engine"),
+              ("POST", "/start_weight_update"), ("POST", "/update_weights"), ("POST", "/finish_weight_update"),
+              ("GET", "/get_world_size"), ("POST", "/collective_rpc"), ("GET", "/server_info"), ("POST", "/sleep"),
+              ("POST", "/wake_up"), ("GET", "/is_sleeping"))
 
 
 class FakeVLLM(http.server.BaseHTTPRequestHandler):
@@ -33,8 +40,9 @@ class FakeVLLM(http.server.BaseHTTPRequestHandler):
 
     def parse_request(self):
         ok = super().parse_request()
-        if ok:
-            SEEN.setdefault("paths", []).append(self.path)          # every path that reaches vLLM
+        if ok:                                    # every path that reaches vLLM, by the fake vLLM it reached
+            label = getattr(self.server, "label", "main")
+            SEEN.setdefault("paths" if label == "main" else label + "_paths", []).append(self.path)
         return ok
 
     def body(self):
@@ -56,8 +64,36 @@ class FakeVLLM(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def fake(self):
+        """The path without the query, and the behaviour that `fake=` asks (the closed list of the proxy
+        forwards only its paths: the behaviours of the tests ride on them, MFL045 c1)."""
+        base, _, query = self.path.partition("?")
+        return base, (parse_qs(query).get("fake") or [""])[0]
+
     def do_GET(self):
-        p = self.path
+        base, fake = self.fake()
+        p = fake and "/" + fake or base
+        if p == "/stall_headers":                       # MFL045 P-2: the probe of the supervisor
+            RELEASE.wait(3)
+            return self.reply(200, b"")
+        if p == "/stall_body":
+            self.send_response(200)
+            self.send_header("Content-Length", "100")
+            self.end_headers()
+            self.wfile.write(b"x" * 10)
+            self.wfile.flush()
+            RELEASE.wait(3)
+            return
+        if p == "/drip":
+            self.send_response(200)
+            self.send_header("Content-Length", "1000")
+            self.end_headers()
+            for _ in range(60):
+                self.wfile.write(b"x")
+                self.wfile.flush()
+                if RELEASE.wait(0.05):
+                    return
+            return
         if p == "/health":
             return self.reply(200, b"")
         if p == "/metrics":
@@ -102,10 +138,13 @@ class FakeVLLM(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         n = self.body()
-        if self.path == "/hang":
+        base, fake = self.fake()
+        if base in ("/reset_prefix_cache", "/reset_mm_cache", "/reset_encoder_cache"):
+            return self.reply(200, b"")
+        if fake == "hang":
             RELEASE.wait(60)
             return self.reply(200, b"{}")
-        if self.path == "/v1/chat/completions":
+        if base in ("/v1/chat/completions", "/v1/completions"):
             return self.reply(200, json.dumps({"choices": [{"message": {"content": "OK"}}], "bytes": n}).encode())
         return self.reply(404, b"{}")
 
@@ -118,16 +157,18 @@ class FakeProcess:
         self.signals.append(signal.Signals(sig).name)
 
 
-def upstream():
+def upstream(label="main"):
     srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), FakeVLLM)
+    srv.label = label
     srv.daemon_threads = True
     srv.handle_error = lambda request, address: None
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     return srv.server_address[1]
 
 
-def proxy(up, req_max=2.0, fault="", ready=True):
-    cfg = wdmod.config({"MDF_PROVIDER": "runpod", "MDF_UPSTREAM_PORT": str(up), "MDF_FAULT": fault})
+def proxy(up, req_max=2.0, fault="", ready=True, levers=""):
+    cfg = wdmod.config({"MDF_PROVIDER": "runpod", "MDF_UPSTREAM_PORT": str(up), "MDF_FAULT": fault,
+                        "MDF_LEVERS": levers})
     cfg["req_max_s"] = req_max
     exits = []
     wd = wdmod.Watchdog(cfg, process=FakeProcess(), on_exit=exits.append)
@@ -193,13 +234,13 @@ def main():
     res["chat"] = [r.status_code, r.headers.get("x-mdf-proxy"), r.headers.get("content-length") is not None]
     r = c.head(url + "/v1/models")
     res["head"] = [r.status_code, r.headers.get("x-mdf-proxy")]
-    r = c.get(url + "/hop", headers={"Connection": "X-Drop", "X-Drop": "1", "Keep-Alive": "5",
+    r = c.get(url + "/version?fake=hop", headers={"Connection": "X-Drop", "X-Drop": "1", "Keep-Alive": "5",
                                      "Proxy-Authorization": "secret", "X-Keep": "ok"})
     res["hop_request_seen"] = sorted(SEEN.get("hop", {}))
     res["hop_response"] = {k: r.headers.get(k) for k in ("x-up", "keep-alive", "x-kept", "x-mdf-proxy", "connection")}
-    r = c.get(url + "/e500")
+    r = c.get(url + "/version?fake=e500")
     res["e500"] = [r.status_code, r.headers.get("x-mdf-proxy")]
-    r = c.get(url + "/chunked")
+    r = c.get(url + "/version?fake=chunked")
     res["chunked"] = [r.status_code, r.headers.get("content-length"), r.headers.get("transfer-encoding"), r.text]
     # framing
     res["post_no_length"] = status_of(raw(port, b"POST /v1/chat/completions HTTP/1.1\r\nHost: x\r\n\r\n"))
@@ -212,12 +253,12 @@ def main():
     res["get_no_length"] = status_of(raw(port, b"GET /v1/models HTTP/1.1\r\nHost: x\r\n\r\n"))
     # timeouts: before the answer (504), a partial answer then a stall, a client that does not read
     t0 = time.monotonic()
-    r = c.get(url + "/hang")
+    r = c.get(url + "/v1/models?fake=hang")
     res["timeout"] = [r.status_code, r.headers.get("x-mdf-proxy"), r.json().get("error"), round(time.monotonic() - t0, 1)]
     t0 = time.monotonic()
-    data = raw(port, b"GET /partial HTTP/1.1\r\nHost: x\r\n\r\n", timeout=20)
+    data = raw(port, b"GET /metrics?fake=partial HTTP/1.1\r\nHost: x\r\n\r\n", timeout=20)
     res["partial"] = [status_of(data), len(data.split(b"\r\n\r\n", 1)[-1]), round(time.monotonic() - t0, 1)]
-    s = raw(port, b"GET /big HTTP/1.1\r\nHost: x\r\n\r\n", read=False)
+    s = raw(port, b"GET /metrics?fake=big HTTP/1.1\r\nHost: x\r\n\r\n", read=False)
     t0 = time.monotonic()
     time.sleep(6)
     got, closed = 0, None
@@ -244,7 +285,7 @@ def main():
     res["ping_upstream_down_starting"] = [r.status_code, r.headers.get("x-mdf-proxy")]
     # 41st handler, then 32 x 30,000,000 B with a trip
     wd3, url3, port3, _ = proxy(up, req_max=60.0)
-    socks = [raw(port3, b"GET /hang HTTP/1.1\r\nHost: x\r\n\r\n", read=False) for _ in range(40)]
+    socks = [raw(port3, b"GET /v1/models?fake=hang HTTP/1.1\r\nHost: x\r\n\r\n", read=False) for _ in range(40)]
     time.sleep(1.0)
     r = c.get(url3 + "/v1/models")
     res["busy_41st"] = [r.status_code, r.headers.get("x-mdf-proxy"), r.json().get("error"), wd3.handlers]
@@ -268,7 +309,7 @@ def main():
                 left -= min(65536, left)
         try:
             with httpx.Client(timeout=60) as cc:
-                rr = cc.post(url4 + "/hang", content=gen(), headers={"Content-Length": "30000000"})
+                rr = cc.post(url4 + "/v1/completions?fake=hang", content=gen(), headers={"Content-Length": "30000000"})
                 results.append([rr.status_code, rr.headers.get("x-mdf-proxy"), rr.json().get("error")])
         except httpx.HTTPError as exc:
             results.append(["error", type(exc).__name__])
@@ -313,6 +354,47 @@ def main():
     r = c.get(url7 + "/v1/models")
     res["weights_missing"] = [r.status_code, r.headers.get("x-mdf-proxy"), r.json().get("error"),
                               c.get(url7 + "/health").status_code, c.get(url7 + "/ping").status_code]
+    # MFL045 c1: the closed list of the forwarding, in every mode: vLLM's 16 routes of its dev mode, a path of
+    # nothing, a method that the list does not pair with its path; none of them reaches vLLM
+    wd8, url8, port8, _ = proxy(up)
+    refused = []
+    for method, path in DEV_ROUTES + (("GET", "/anything"), ("GET", "/"), ("GET", "/v1/chat/completions"),
+                                      ("POST", "/v1/models"), ("DELETE", "/v1/models"), ("POST", "/sleep?level=1"),
+                                      ("GET", "/v1/models/../sleep")):
+        r = c.request(method, url8 + path, content=b"{}" if method == "POST" else None)
+        body = r.json() if r.headers.get("content-type") == "application/json" else None
+        refused.append([method, path, r.status_code, r.headers.get("x-mdf-proxy"), (body or {}).get("error")])
+    res["not_forwarded"] = refused
+    res["forwarded_list"] = [[m, p, c.request(m, url8 + p, json={} if m == "POST" else None).status_code]
+                             for m, p in sorted(wdmod.FORWARD)]
+    # MFL045 P-2: each operation of a probe at most its timeout of the operation, the whole probe at most its
+    # deadline (scaled down here: 0.5 s and 1.5 s for 5 s and 15 s); a drip is cut at the deadline
+    probes = {}
+    for fake in ("stall_headers", "stall_body", "drip", "none"):
+        w = wdmod.Watchdog(dict(wdmod.config({"MDF_PROVIDER": "runpod", "MDF_UPSTREAM_PORT": str(up)})))
+        w.probe_op_s, w.probe_s = 0.5, 1.5
+        t0 = time.monotonic()
+        status, text = w.probe("/metrics?fake=" + fake if fake != "none" else "/metrics")
+        probes[fake] = [status, len(text), round(time.monotonic() - t0, 2)]
+    res["probes"] = probes
+    res["probe_defaults"] = {p: [wdmod.Watchdog(wdmod.config({"MDF_PROVIDER": p})).probe_op_s,
+                                 wdmod.Watchdog(wdmod.config({"MDF_PROVIDER": p})).probe_s] for p in ("runpod", "modal")}
+    # MFL045 P-9: with the lever flashboot, after the work ends the proxy resets vLLM's three caches on the loopback
+    # (its dev mode); the edge still gets 404 for those routes; without the lever no reset
+    resets = {}
+    for label, levers in (("flashboot", "flashboot"), ("plain", "")):
+        upl = upstream(label)
+        wdl, urll, _, _ = proxy(upl, levers=levers)
+        wdl.start_resetter()
+        r = c.post(urll + "/reset_prefix_cache", content=b"{}")
+        edge = [r.status_code, r.headers.get("x-mdf-proxy")]
+        c.post(urll + "/v1/chat/completions", json={"model": wdmod.MODEL, "messages": []})
+        t0 = time.monotonic()
+        while time.monotonic() - t0 < 3 and len(SEEN.get(label + "_paths", [])) < 4:
+            time.sleep(0.05)
+        time.sleep(0.3)
+        resets[label] = {"edge": edge, "paths": SEEN.get(label + "_paths", [])}
+    res["resets"] = resets
     res["upstream_paths"] = sorted(set(SEEN.get("paths", [])))
     RELEASE.set()
     sys.stdout.write(json.dumps(res) + "\n")

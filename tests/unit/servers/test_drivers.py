@@ -172,10 +172,11 @@ class TestRunPod(Base):
     def test_arm_sends_the_env_only_when_it_changes_and_reads_back(self):
         fake = FakeRunPod()
         rp = pv.RunPod(envfile_secret(), "mdf-surya-fault", transport=httpx.MockTransport(fake))
-        self.assertEqual(rp.arm(), {"env_changed": False, "gpu_changed": False})
+        off = {"flashboot": "OFF", "flashboot_changed": False}                  # MFL045 c3: FlashBoot off at the arm
+        self.assertEqual(rp.arm(), dict(off, env_changed=False, gpu_changed=False))
         patch = [c for c in fake.calls if c[0] == "PATCH"][-1][2]
         self.assertEqual(patch, {"workers": {"min": 0, "max": 1, "idleTimeout": 60, "initTimeout": 960}})
-        self.assertEqual(rp.arm("hang-after-first"), {"env_changed": True, "gpu_changed": False})
+        self.assertEqual(rp.arm("hang-after-first"), dict(off, env_changed=True, gpu_changed=False))
         patch = [c for c in fake.calls if c[0] == "PATCH"][-1][2]
         self.assertEqual(patch["env"]["MDF_FAULT"], "hang-after-first")
         rp.disarm()
@@ -284,7 +285,8 @@ class TestRunPod(Base):
         zero, state = rp.zero()
         self.assertEqual(zero, False)
         self.assertEqual(state["workers"], [{"id": "w1", "status": "RUNNING", "uptime": 7, "gpu": "NVIDIA RTX A5000",
-                                             "data_center": "EU-SE-1"}])     # the evidence of each reading
+                                             "data_center": "EU-SE-1", "version": None,
+                                             "stale": None}])     # the evidence of each reading (MFL045 c3: version)
         self.assertEqual(rp.zero()[0], True)
 
     def test_verify_pins(self):
@@ -375,7 +377,7 @@ class TestPinsBeforeTheArm(Base):
             "rate": lambda f: f.gpus[0].update(price={"serverless": 0.76}),
             "pool": lambda f: f.ep["gpu"].update(excludedTypes=["NVIDIA RTX A5000"]),
             "type": lambda f: f.ep.update(type="QUEUE"),
-            "flashboot": lambda f: f.ep.update(flashboot="ON"),
+            # `flashboot` is alignable since MFL045 c3 (plan r2 §6, A7): test_flashboot_runpod.py
             "ports": lambda f: f.ep.update(ports=["8000/http", "22/tcp"]),
             "scaling": lambda f: f.ep.update(scaling={"type": "QUEUE_DELAY", "requestCount": 4}),
         }

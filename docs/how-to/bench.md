@@ -304,6 +304,49 @@ $S run --provider runpod --name mdf-surya $L --cap-usd 0.80 -- \
 
 `--via engine` (the default) converts `--input` with `mdf convert` at each start; `--via page` sends one page straight to vLLM; `--via populate` makes the archive of the cache of compilation ([Convert documents](convert-documents.md#the-cache-of-compilation)). `--arm-ahead S` waits S seconds after the arm before the first start, reading the provider every 30 s ([Arm ahead](convert-documents.md#arm-ahead)). `--gpu NAME [--gpu-tries K]` takes only a container on that GPU, as its proxy names it (`NVIDIA A10G`): on another one it sends nothing more, lets it go before vLLM is ready, and tries again after the quiet, at most K times (`gpu_not_assigned`). Exit 0: every start done; 6: a start failed, the provider never quiet, or two workers running at once.
 
+### Measure the experimental levers
+
+Two levers of the start were measured on 22 and 23 November 2026 and not adopted ([Convert documents](convert-documents.md#experimental-levers-of-the-start)): they are not among the levers adopted (`DEFAULT_LEVERS`) and arm only when `--levers` names them, beside the archives of the cache of compilation. A session that arms one declares it before its arm row (`experimental_levers`, `adopted` false, `guide`), in the arm row and in the report of the window. Both were compared only on a one-page scan.
+
+#### The memory snapshot of Modal
+
+The containers of a deploy start from a snapshot of the memory and of the GPU, taken once vLLM is ready with a synthetic page and before any request ([how it works](convert-documents.md#the-memory-snapshot-of-modal-experimental)). Not active by default. It runs only on an app named `*-snap` or `*-snap-fault`, with exactly `snapshot` and the archives of `DEFAULT_LEVERS`:
+
+```bash
+CC=compile-cache:29012f5b05f56b51698c99f6d5f573d3511ae06191946be983554a8b35a55b2b,compile-cache:cd31ce211155dae8d34230a9988f7fd82e855c54b94dc4e79607a7bc93608224,compile-cache:d38180544831bf3c0d1a45712e25f125ff4d18a9929012376f844a2224e0ff73
+M="--env-file .env --spend-ledger $R/spend.jsonl --spend-cap-usd 15"
+$S run --provider modal --name mdf-surya-snap $M --cap-usd 0.90 --levers "snapshot,$CC" \
+  --url "https://<workspace>--mdf-surya-snap-serve-web.<region>.modal.run" -- \
+  .venv-dev/bin/python -I -B scripts/servers/start_series.py --env-file .env --server modal-snap --servers FILE \
+  --input page.png --cold 3 --cap-usd 0.90 --spend-ledger "$R/spend.jsonl" --spend-cap-usd 15
+```
+
+Each start of the series has its `snapshot`: the kind of its `mdf_restore` (`create` for the container that took the snapshot, `restore` for one started from it, `boot` without one), the generation, the wake or the declared fallback; a restore of a generation taken before the arm of its session would be a reuse between sessions. On `mdf-surya-snap-fault`, `--fault wake-fail` makes a restore fall back to a normal start, declared, and `modal_tasks.py … fault-test --app mdf-surya-snap-fault --phase A|B --after-restore` runs phase A or B on a restored container (inconclusive, exit 8, when the second container is not a restore).
+
+Measured on 23 November 2026 (three sessions, NVIDIA A10 and A10G, vLLM 0.25.1, a one-page scan converted at each start): inside a session a restore was ready 8.0 to 10.0 s after its request (median 8.9 s, 6 of 6, no fallback), against about 168 s for a normal start with the cache on an A10; the creation of each deploy, 204 to 238 s on an A10 and 304 s on an A10G; no reuse between sessions, since Modal created a new snapshot after every stop and identical deploy (less than a minute and 61 minutes later); the output identical byte for byte in 10 conversions of 10. The phases A and B and `wake-fail` have not been run.
+
+#### FlashBoot of RunPod
+
+RunPod freezes a worker idle past its idle timeout (60 s), with its memory and the memory of its GPU, and resumes it for a later request; the session turns FlashBoot on at the arm and off after the zero, and the watchdog tells a pause from a hang ([how it works](convert-documents.md#flashboot-of-runpod-experimental)). Not active by default. It runs only on RunPod, with `flashboot` beside the archive of the endpoint:
+
+```bash
+FB="compile-cache:<SHA-256 of the archive of the endpoint>,flashboot"
+$S run --provider runpod --name mdf-surya $L --cap-usd 0.55 --levers "$FB" -- \
+  .venv-dev/bin/python -I -B scripts/servers/start_series.py --env-file .env --server runpod-24gb --servers FILE \
+  --input page.png --cold 1 --resume 4 --idle 120 --idle-last 660 --resume-via engine,page,page,page \
+  --cap-usd 0.55 --spend-ledger "$R/spend.jsonl" --spend-cap-usd 4
+$S run --provider runpod --name mdf-surya-fault $L --cap-usd 0.45 --levers "$FB" --fault hang-after-first -- \
+  fault-test --phase A-FB
+.venv-dev/bin/python -I -B scripts/servers/runpod_endpoint.py --env-file .env verify-pins --name mdf-surya
+.venv-dev/bin/python -I -B scripts/servers/runpod_endpoint.py --env-file .env verify-pins --name mdf-surya-fault
+```
+
+`--resume N` sends N requests after the starts, each after `--idle` seconds without requests (`--idle-last` for the last one), each by its way in `--resume-via` (`engine` or `page`). A resume keeps the `boot_id` of the container and has an `mdf_pause` since the request before (`start_kind` `resume`); a new start is a missed resume (`missed`), the same boot without a pause a warm start (`warm`). `A-FB` is phase A, then a request to the frozen container that must get 503 `mdf_inert` from its proxy (the same state; otherwise the fact `resume_missed`), then the zero again and 60 s with no worker running. With the lever the zero also admits a worker listed `IDLE` or `THROTTLED` and not `RUNNING` in the log (`paused_listed`), and G3 at closed hours checks that the pause is not billed. `verify-pins` afterwards must find FlashBoot off on both endpoints.
+
+Measured on 22 and 23 November 2026 (RTX A5000 in CA-MTL-1, vLLM 0.25.1, a one-page scan): resumes ready 13.8 to 22.8 s after their request (4, each 120 s after the request before), against 350 to 705 s for a cold start there; 2 resumes of 6 missed (after 660 s RunPod had removed the paused container, about 136 s into its pause; after 120 s one request went to another worker held ready); no billing of the pause at closed hours; no retention seen between sessions (no `boot_id` came back, another worker and host each time, a new version of the endpoint each time); `A-FB` passed; the output identical byte for byte in 4 conversions of 4.
+
+The risk, as in [Convert documents](convert-documents.md#flashboot-of-runpod-experimental): a paused container keeps the state of its processes, the data of the documents it converted included, frozen on a host of RunPod. RunPod documents no guarantee that this state is wiped; the proxy resets the caches of vLLM at each passage to idle, not the memory of the processes, and neither FlashBoot turned off, nor the disarm, nor the zero of the spend certifies that the state is gone. Keep sensitive documents on this machine, and arm the lever only with an explicit consent to this risk. A bench never sends a personal set outside the loopback (`server_refused_personal`).
+
 ### Concurrency
 
 `concurrency` sends one warm-up page, optionally pages whose client gives up after 5 s while vLLM runs them (`--abandon`), then `--n` pages at once through the edge of the provider, with `/metrics` read every half second in a thread of its own and `/v1/models` probed during the load (`--probe-while-busy`):
