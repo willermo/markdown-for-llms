@@ -525,7 +525,10 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
         ctx.cost = {"provider": ep.provider, "rate_usd_per_s": ep.rate_usd_per_s, "arm_id": session.get("arm_id"),
                     "budget_cents": term["budget_cents"], "reserve_cents": term["reserve_cents"], "bound_cents": None,
                     "billed_cents": None, "clean": False}
+    # MFL023 B2 (C-B2 of the plan r1): the canonical URL of the endpoint, which the reservation compares with the URL
+    # of the window it draws from
     ctx.event("server-wake", reserve={"provider": ep.provider, "endpoint": ep.name, "identity": ep.identity_sha256(),
+                                      "url": None if ep.kind == "cpu" else servers.canonical_url(ep.url),
                                       "reserve_cents": term["reserve_cents"], "rate": ep.rate_usd_per_s,
                                       "tail_idle_s": ep.tail_idle_s, "D": term["D"]})
     sockets.sweep()
@@ -543,7 +546,7 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
         relay.start()
         if leaves:
             ctx.transit["left_machine"] = True            # from the first request on
-        relay.set_term(term["D"])
+        relay.set_term(term["D"], until=session.get("armed_until"))
         relay.ready()
         child_request = {"threads": ctx.threads, "indra_dir": "/models/" + weights.indra_dir(), "force_ocr": force,
                          "pages": page_info, "pictures": pictures, "mode": mode,

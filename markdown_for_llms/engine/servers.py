@@ -87,15 +87,22 @@ DEFAULTS = {
     "local": {"server": "vllm", "parallel": 32, "ready_within": 300, "read_timeout": 300, "page_seconds": 30},
     "user": {"server": "vllm", "parallel": 32, "ready_within": 300, "read_timeout": 300, "page_seconds": 30},
     "runpod": {"server": "vllm", "parallel": 32, "ready_within": 900, "read_timeout": 300, "page_seconds": 30},
-    "modal": {"server": "vllm", "parallel": 32, "ready_within": 1200, "read_timeout": 140, "page_seconds": 30},
+    "modal": {"server": "vllm", "parallel": 32, "ready_within": 900, "read_timeout": 140, "page_seconds": 30},
 }
 PROVIDER_DEFAULTS = {
     "runpod": {"cold_start_s": 480, "w1_s": 900, "tail_idle_s": 90, "tail_fault_s": 385},
-    "modal": {"cold_start_s": 1100, "w1_s": 900, "tail_idle_s": 90, "tail_fault_s": 225},
+    "modal": {"cold_start_s": 480, "w1_s": 900, "tail_idle_s": 90, "tail_fault_s": 225},
 }
+# MFL023 B7 (MFL046 (b), point 6 of the plan r1): Modal has `ready_within` 900 (the floor `w1_s`) and `cold_start_s` 480,
+# the values of its GPU preset; with 1200 and 1100 `mdf convert` refused a reserve under about 0.53 USD.
 KEY_ENV = {"runpod": ["RUNPOD_API_KEY"], "modal": ["MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET"]}
 PAGE_FORECAST_S, FORECAST_GAP_S, DOC_OVERHEAD_S = Decimal("9.6"), Decimal(30), Decimal(300)
 CLOCK_MARGIN_S, CLOSE_MARGIN_S = Decimal(60), Decimal(5)
+# MFL023 B2 (SOL2-B1 of the plan r2): the largest drift of the wall clock on the monotonic clock that a window or an
+# attempt accepts as observed. Beyond it the laptop was suspended or its clock stepped (CLOCK_MONOTONIC does not count
+# a suspend on Linux): the relay sends no request more, and a session cannot certify the close of its window
+# (`bench.serverspend.closing`).
+DRIFT_LIMIT_S = 5
 CENT = Decimal("0.01")
 MAX_CONFIG_BYTES = 1 << 20
 
@@ -220,6 +227,11 @@ def _expand(name, raw, presets):
         raise _bad(name + ": url")
     fields = dict(entry["fields"], kind=raw["kind"], url=raw["url"])
     if "key_env" in raw:
+        # MFL023 B10 (C-DB-NB5, a reversible choice of the supervision): next to a preset, only the names the provider of
+        # the preset reads, in their order (the worker, its children, the follower and the relay read those)
+        given = [raw["key_env"]] if isinstance(raw["key_env"], str) else raw["key_env"]
+        if given != KEY_ENV[entry["provider"]]:
+            raise _bad("%s: key_env next to a GPU preset is absent or %s" % (name, ", ".join(KEY_ENV[entry["provider"]])))
         fields["key_env"] = raw["key_env"]
     return fields, preset, resource
 

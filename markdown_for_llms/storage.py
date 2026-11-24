@@ -23,7 +23,10 @@ class CapacityError(StorageError):
     """A finite space commitment was refused; stored bytes are not corrupt."""
 
 
-SCHEMA = 4              # 4: the conversion presets of the users and their default (MFL023)
+SCHEMA = 5              # 4: the conversion presets of the users and their default; 5: the GPU sessions (MFL023)
+# The job options of a run of schema 3 and 4 (MFL032 C2): schema 5 adds `server_mode` and `gpu_preset` on the route
+# marker-server (MFL023 B3).
+V3_OPTIONS = ("route", "ocr", "lang", "datalab_mode", "transit_confirmed")
 OWNER = "local"         # the owner of every document and run until the product has users
 MISMATCH = ("Storage configuration mismatch; for an archive of a previous version (identity schema 1 or 2), "
             "possible causes are an MDF_TIMEOUT_SECONDS, an MDF_PORT or an MDF_MODEL_ROOT different from "
@@ -122,7 +125,8 @@ class Storage:
         goes through schema 2 as the previous version upgraded it (`identity-v2`, so that version
         can still return it to schema 1), then to schema 3 (`identity-v3`, with the model root its
         legacy identity was recognized with, for the return to schema 2). The database takes the
-        migrations it misses in order, in one transaction (schema 4, MFL023: the conversion presets);
+        migrations it misses in order, in one transaction (schema 4, MFL023: the conversion presets; 5: the GPU
+        sessions);
         the identity does not depend on the database schema after 3."""
         with self.lock("schema.lock"):
             schema = self._load()
@@ -177,7 +181,9 @@ class Storage:
             os.close(lock_fd)
 
     @contextmanager
-    def connect(self):
+    def connect(self, timeout=5):
+        """A connection to the database of the archive; `timeout`, the seconds it waits for a lock (a reader
+        that must not wait long gives less: the stop of the children of a GPU opening, MFL023 B10)."""
         with directory(self.root):
             for name in ("archive.sqlite3", "archive.sqlite3-wal", "archive.sqlite3-shm"):
                 path = self.root / name
@@ -193,7 +199,7 @@ class Storage:
                     continue
                 if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
                     raise StorageError("Unsafe database path")
-            conn = sqlite3.connect(self.root / "archive.sqlite3", timeout=5)
+            conn = sqlite3.connect(self.root / "archive.sqlite3", timeout=timeout)
         try:
             conn.row_factory = sqlite3.Row
             conn.execute("PRAGMA foreign_keys=ON")
@@ -265,7 +271,9 @@ class Storage:
         PDF, every run has the job options of schema 2 and the owner `local`); the steps above it
         leave identity.json as it is, byte for byte. From 4 to 3: no conversion preset of a user, no
         default preset, no run whose options (read as `stored_options` reads them) have a key outside
-        those of schema 3. No run may be running. A database already at `to` is left as it is (the
+        those of schema 3. From 5 to 4: no GPU session that is not closed (`uncertain`, `orphan` and
+        `stopped` included), no pending GPU request, no run with `gpu`, no run on the route marker-server
+        or with its options. No run may be running. A database already at `to` is left as it is (the
         identity of a step to 2 is completed); one under `to` is refused."""
         if isinstance(to, bool) or not isinstance(to, int) or not 2 <= to < SCHEMA:
             raise StorageError('Downgrade target: a database schema from 2 to %d' % (SCHEMA - 1))
@@ -296,11 +304,33 @@ class Storage:
             storage.close()
 
     @staticmethod
+    def _check_v4_content(conn):
+        """What schema 4 cannot hold refuses the return from 5 (MFL023 B4): a GPU session not closed, a
+        pending GPU request, the GPU facts of a run, a run on the route marker-server or with its options."""
+        from .services import stored_options
+        if conn.execute("SELECT 1 FROM gpu_sessions WHERE state != 'closed' LIMIT 1").fetchone():
+            raise StorageError('Downgrade unavailable: a GPU session is not closed (uncertain, orphan or stopped '
+                               'included): reconcile it first')
+        if conn.execute("SELECT 1 FROM gpu_requests WHERE state = 'pending' LIMIT 1").fetchone():
+            raise StorageError('Downgrade unavailable: a GPU request is pending')
+        if conn.execute("SELECT 1 FROM runs WHERE gpu IS NOT NULL LIMIT 1").fetchone():
+            raise StorageError('Downgrade unavailable: a run has the facts of a GPU session')
+        for (options,) in conn.execute("SELECT options FROM runs"):
+            try:
+                value = stored_options(options)
+            except ValueError:
+                value = None
+            if (not isinstance(value, dict) or value.get("route") == "marker-server"
+                    or {"server_mode", "gpu_preset"} & set(value)):
+                raise StorageError('Downgrade unavailable: a run is on the route marker-server')
+
+    @staticmethod
     def _check_v3_content(conn):
         """What schema 3 cannot hold refuses the return from 4 (MFL023): the conversion presets of the
-        users, a default preset, a run with job options outside those of schema 3 (a preset's name)."""
-        from .engine.routes import JOB_OPTIONS
+        users, a default preset, a run with job options outside those of schema 3 (a preset's name). The
+        options of schema 3 are `V3_OPTIONS`, not those of the routes of today (B3 added the GPU ones)."""
         from .services import stored_options
+        JOB_OPTIONS = V3_OPTIONS
         if conn.execute("SELECT 1 FROM conversion_presets LIMIT 1").fetchone():
             raise StorageError('Downgrade unavailable: the archive holds conversion presets of its users')
         if conn.execute("SELECT 1 FROM user_settings WHERE default_preset IS NOT NULL LIMIT 1").fetchone():
@@ -345,4 +375,4 @@ class Storage:
                 raise StorageError('Downgrade unavailable: a run has job options of schema 3 or another owner')
 
     # The checks of the return from the database schema N to N - 1, by N.
-    DOWN_CHECKS = {3: _check_v2_content, 4: _check_v3_content}
+    DOWN_CHECKS = {3: _check_v2_content, 4: _check_v3_content, 5: _check_v4_content}

@@ -238,7 +238,10 @@ class Relay:
     def __init__(self, ep, keys, socket_path, upstream_socket=None, clock=time.monotonic, wall=time.time,
                  probe_interval=10.0, probe_deadline=5.0, probe_failures=3, ready_poll=2.0, transport_factory=None):
         import httpx
-        self.httpx, self.ep, self.clock = httpx, ep, clock
+        self.httpx, self.ep, self.clock, self.wall = httpx, ep, clock, wall
+        # the drift is read on a pair of clocks: the real ones, or both given (a test that gives a monotonic clock
+        # alone moves it without the wall clock)
+        self._drift_on = clock is time.monotonic or wall is not time.time
         self.socket_path = socket_path
         sockets.check(socket_path)
         self._anchor = (wall(), clock())
@@ -270,6 +273,7 @@ class Relay:
         self.server = self._thread = self._monitor = None
         self._conns = set()
         self.deadline_at = None
+        self.until = None                        # MFL023 B2: the same term on the wall clock (epoch)
         self.ready_at = None
         self.versions = {}
         self.stats = {"by_status": {}, "requests": {"chat": 0, "read": 0}, "refused_paths": 0, "framing_refused": 0,
@@ -302,10 +306,16 @@ class Relay:
         self._thread.start()
         return self
 
-    def set_term(self, seconds):
-        """The relay closes at `t_wake + seconds - 5 s` (`server_deadline`)."""
+    def set_term(self, seconds, until=None):
+        """The relay closes at `t_wake + seconds - 5 s` (`server_deadline`). The same term holds on the wall clock
+        (MFL023 B2, SOL-R2 of the plan r1): `self.until`, the epoch of that moment, at most `until` (the term T
+        of the session, epoch seconds), is compared with the wall clock before every new request and by `check`,
+        so a suspend of the laptop, which the monotonic clock does not count, never lets a request leave after
+        it."""
         self._woke()
         self.deadline_at = self.t_wake + float(seconds) - CLOSE_MARGIN
+        wall_deadline = self.wall() - (self.clock() - self.deadline_at)
+        self.until = wall_deadline if until is None else min(wall_deadline, float(until))
         if self.clock is time.monotonic:
             # the relay closes at its term by itself, whoever polls `check` (the engine also does)
             timer = threading.Timer(max(0.0, self.deadline_at - self.clock()), self.check)
@@ -323,10 +333,26 @@ class Relay:
             return self.last_request
 
     def check(self):
-        """The failure the engine must stop the child with, or None."""
-        if self.deadline_at is not None and self.failure is None and self.clock() >= self.deadline_at:
+        """The failure the engine must stop the child with, or None: also the term on the wall clock and an
+        interval the relay did not observe (`unobserved`)."""
+        if self.failure is None and ((self.deadline_at is not None and self.clock() >= self.deadline_at)
+                                     or self._past_wall()):
             self._fail(Code.SERVER_DEADLINE)
+        elif self.failure == Code.SERVER_DEADLINE and self.state == "down":
+            self.close()                         # a request refused at the term on the wall clock (`_inbound`)
         return self.failure
+
+    def drift(self):
+        """The drift of the wall clock on the monotonic clock since the relay started (seconds): a suspend of
+        the laptop or a step of its clock."""
+        return (self.wall() - self._anchor[0]) - (self.clock() - self._anchor[1])
+
+    def _past_wall(self):
+        """MFL023 B2: the term on the wall clock is past, or the wall clock drifted from the monotonic one beyond
+        `servers.DRIFT_LIMIT_S` (an interval not observed: the attempt cannot bound what it did not see)."""
+        if self.until is not None and self.wall() >= self.until:
+            return True
+        return self._drift_on and abs(self.drift()) > servers.DRIFT_LIMIT_S
 
     def _fail(self, code):
         with self.lock:
@@ -583,6 +609,14 @@ class Relay:
         body = h.rfile.read(n) if n else b""
         if len(body) != n:
             return self._reply(h, 400, b'{"error": "body cut short"}', close=True)
+        if self._past_wall():
+            # MFL023 B2: the term on the wall clock, or an interval not observed, before this request: it does not
+            # leave; the failure is noted here and the engine stops its child at its next `check`
+            with self.lock:
+                if self.failure is None:
+                    self.failure = Code.SERVER_DEADLINE
+                if self.state == "open":
+                    self.state = "down"
         with self.lock:
             refused = self.state != "open"
         if refused:

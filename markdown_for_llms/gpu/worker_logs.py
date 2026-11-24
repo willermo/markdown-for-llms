@@ -189,7 +189,10 @@ class Follower:
             first = key not in self.errors
             self.errors[key] = self.errors.get(key, 0) + 1
         if first:
-            self.note("-", event="follower_error", where=where, error=type(exc).__name__, detail=str(exc)[:200])
+            # MFL023 B1 (SOL3-N1): the closed fields of `providers.closed`, never str() of the error: a failed
+            # `container list` holds the stderr of the CLI of Modal in its exception (`remote`), in memory only
+            fields = _providers().closed(exc)
+            self.note("-", event="follower_error", where=where, error=fields.pop("class"), **fields)
 
     def start(self):
         self.note("-", event="follow", t_arm=iso(self.t_arm, ms=True))
@@ -281,9 +284,22 @@ MODAL_STOP_GRACE_S = 5
 MODAL_LINE = re.compile(r"^(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[+-]\d{2}:\d{2}|Z)?) (ta-\S+) ?(.*)$")
 
 
+def _providers():
+    """`providers`, the sibling of this module: from the package, else from sys.path (MFL023 A2)."""
+    if __package__:
+        from . import providers
+    else:
+        import providers
+    return providers
+
+
 class ModalLogs:
     """The CLI of the pinned SDK seen by `ModalFollower`: `stream(source)` starts one `modal app logs
-    -f` (stdout a text pipe, stderr into it); `containers()` the containers of the app."""
+    -f`, its stdout a text pipe; `containers()` the containers of the app. Every line of the containers, of
+    each source (`stdout`, `stderr`, `system`), comes on the stdout of the CLI (modal 1.6.3,
+    `_output/rich.py`: `put_streaming_log`, `Console.out`); its stderr holds only the errors and warnings of
+    the CLI, which may repeat text of the service, and goes to /dev/null (MFL023 B1, SOL3-N1): the outcome of
+    a stream is its exit, in `logs_stream_end`."""
 
     def __init__(self, app, environ, containers, popen=subprocess.Popen):
         if __package__:                 # MFL023 A2
@@ -295,7 +311,7 @@ class ModalLogs:
         self.env = dict(environ, COLUMNS=providers.MODAL_COLUMNS)
 
     def stream(self, source):
-        return self.popen(self.argv + [source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        return self.popen(self.argv + [source], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
                           env=self.env, stdin=subprocess.DEVNULL, errors="replace")
 
 

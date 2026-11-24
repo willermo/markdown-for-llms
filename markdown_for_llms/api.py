@@ -33,23 +33,30 @@ TRANSIT_NOTICE = ("With Datalab the document leaves this computer: it is uploade
 
 
 def worker_readiness(text):
-    """{ready, message, converters} from the readiness the worker records: a JSON object since
-    tranche C of MFL032 (availability per converter), a text before it."""
+    """{ready, message, converters, gpu, code, commands} from the readiness the worker records: a JSON object since
+    tranche C of MFL032 (availability per converter), a text before it; since MFL023 B5 also the closed values of the
+    GPU presets and of the ledger, and, for a worker stopped by a window it cannot close, its code and commands."""
     try:
         value = json.loads(text) if text else None
     except ValueError:
         value = None
-    if isinstance(value, dict) and isinstance(value.get('converters'), dict):
+    if isinstance(value, dict):
+        commands = value.get('commands')
         return {'ready': value.get('ready') is True, 'message': str(value.get('message', '')),
-                'converters': value['converters']}
-    return {'ready': text == 'ready', 'message': text or '', 'converters': None}
+                'converters': value['converters'] if isinstance(value.get('converters'), dict) else None,
+                'gpu': value['gpu'] if isinstance(value.get('gpu'), dict) else None,
+                'code': value.get('code') if isinstance(value.get('code'), str) else None,
+                'commands': [c for c in commands if isinstance(c, str)] if isinstance(commands, list) else None}
+    return {'ready': text == 'ready', 'message': text or '', 'converters': None, 'gpu': None, 'code': None,
+            'commands': None}
 
 
 def job_request(query, allowed=routes.JOB_OPTIONS):
     """The job options of a request from its query parameters; the routes validate them."""
     if set(query) - set(allowed):
         raise Refused('invalid_setting')
-    options = {k: query[k] for k in ('route', 'ocr', 'lang', 'datalab_mode') if k in allowed and query.get(k)}
+    options = {k: query[k] for k in ('route', 'ocr', 'lang', 'datalab_mode', 'server_mode', 'gpu_preset')
+               if k in allowed and query.get(k)}
     if 'transit_confirmed' in query:
         if query['transit_confirmed'] not in ('true', 'false'):
             raise Refused('invalid_setting')
@@ -60,7 +67,7 @@ def job_request(query, allowed=routes.JOB_OPTIONS):
 PRESET_BODY_BYTES = 16384
 
 
-async def json_body(request, keys):
+async def json_body(request, keys, code='preset_invalid'):
     """The JSON object of a small request body with exactly the fields `keys` (the conversion presets, MFL023 A5).
     The body is read piece by piece and refused as soon as it passes PRESET_BODY_BYTES, without receiving the
     pieces after that one (SOL-A-B1 of the review of A)."""
@@ -68,15 +75,15 @@ async def json_body(request, keys):
     async for piece in request.stream():
         size += len(piece)
         if size > PRESET_BODY_BYTES:
-            raise Refused('preset_invalid')
+            raise Refused(code)
         parts.append(piece)
     data = b''.join(parts)
     try:
         value = json.loads(data)
     except ValueError:
-        raise Refused('preset_invalid') from None
+        raise Refused(code) from None
     if not isinstance(value, dict) or set(value) != set(keys):
-        raise Refused('preset_invalid')
+        raise Refused(code)
     return value
 
 
@@ -135,9 +142,15 @@ def create_app(settings):
             row = conn.execute('SELECT * FROM worker WHERE id=1').fetchone()
         live = bool(row and time.time() - row['heartbeat'] < settings.lease_seconds)
         state = worker_readiness(row['readiness']) if live else None
-        return {'ready': bool(state and state['ready']),
-                'worker': state['message'] if live else 'Worker absent; archive available',
-                'converters': state['converters'] if live else None}
+        out = {'ready': bool(state and state['ready']),
+               'worker': state['message'] if live else 'Worker absent; archive available',
+               'converters': state['converters'] if live else None}
+        # MFL023 B5: the GPU presets and the ledger of the worker, and the code and the commands of a worker stopped by a
+        # GPU window it cannot close, only when the worker recorded them (the shape of before otherwise)
+        for key in ('gpu', 'code', 'commands'):
+            if live and state[key] is not None:
+                out[key] = state[key]
+        return out
 
     @app.get('/api/v1/readiness')
     def readiness():
@@ -217,6 +230,30 @@ def create_app(settings):
     async def default_preset(request: Request):
         body = await json_body(request, ('name',))
         return await run_in_threadpool(service.set_default, body['name'])
+
+    # --- the GPU session (MFL023 B5): the API writes requests and reads states, the worker alone calls a provider
+
+    @app.get('/api/v1/gpu/session')
+    def gpu_session():
+        """The GPU session (the open one, else the last), the last requests and the ledger of each provider, with the
+        texts and the commands of a window that cannot be certified, orphan or stopped."""
+        return service.gpu_session()
+
+    @app.get('/api/v1/gpu/estimate')
+    def gpu_estimate(preset: str):
+        """Before a job on a GPU preset: the reserve and the window of a session now, its minimum reserve, the cost of a
+        start and of a page, the dated measures, the transit; an upper bound, not a bill."""
+        return service.gpu_estimate(preset)
+
+    @app.post('/api/v1/gpu/arm', status_code=202)
+    async def gpu_arm(request: Request):
+        body = await json_body(request, ('gpu_preset', 'transit_confirmed'), code='invalid_setting')
+        return await run_in_threadpool(service.gpu_arm, body['gpu_preset'], body['transit_confirmed'])
+
+    @app.post('/api/v1/gpu/disarm', status_code=202)
+    async def gpu_disarm(request: Request):
+        body = await json_body(request, ('gpu_preset',), code='invalid_setting')
+        return await run_in_threadpool(service.gpu_disarm, body['gpu_preset'])
 
     @app.post('/api/v1/runs/{run_id}/cancel')
     def cancel(run_id: str):

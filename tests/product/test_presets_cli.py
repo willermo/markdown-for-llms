@@ -44,7 +44,7 @@ class PresetsCliTests(unittest.TestCase):
                          (0, ['batch', 'datalab', 'local-fast', 'quality-now']))
         code, (shown,) = self.mdf('presets', 'show', 'batch')
         self.assertEqual((shown['options']['gpu_preset'], shown['available'], shown['code']),
-                         ('runpod-serverless-volume-dc', False, 'route_not_in_product'))
+                         ('runpod-serverless-volume-dc', False, 'gpu_preset_not_enabled'))
         code, (added,) = self.mdf('presets', 'add', 'scans', '--route', 'marker', '--ocr', 'force')
         self.assertEqual((code, added['options']['ocr'], added['builtin']), (0, 'force', False))
         code, (refused,) = self.mdf('presets', 'add', 'local-fast', '--route', 'marker')
@@ -67,7 +67,7 @@ class PresetsCliTests(unittest.TestCase):
                                                   'transit_confirmed': False, 'preset': 'scans'})
         code, (job,) = self.mdf('submit', str(self.pdf))
         self.assertEqual(sorted(self.stored(job['id'])), ['datalab_mode', 'lang', 'ocr', 'route', 'transit_confirmed'])
-        for extra, error in ((('--preset', 'quality-now'), 'route_not_in_product'),
+        for extra, error in ((('--preset', 'quality-now'), 'gpu_preset_not_enabled'),
                              (('--preset', 'local-fast', '--route', 'marker'), 'invalid_setting'),
                              (('--preset', 'local-fast', '--ocr', 'force'), 'invalid_setting'),
                              (('--preset', 'datalab'), 'transit_not_confirmed'),

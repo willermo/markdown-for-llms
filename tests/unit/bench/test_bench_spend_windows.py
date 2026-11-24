@@ -75,7 +75,7 @@ class Ledger(unittest.TestCase):
         t = servers.term(EP, pages, budget_cents=min(Decimal(s["window_left_cents"]), Decimal(command_left)),
                          until=s["armed_until"], now=self.now[0])
         info = {"reserve_cents": t["reserve_cents"], "rate": RATE, "tail_idle_s": EP.tail_idle_s,
-                "identity": EP.identity_sha256(), "endpoint": "rp", "D": t["D"]}
+                "identity": EP.identity_sha256(), "endpoint": "rp", "url": URL, "D": t["D"]}
         with self.ledger.locked() as locked:
             row = serverspend.reserve(locked, self.ledger.path, "runpod", arm_id, run, aid, info, command_left,
                                       clock=self.clock)
@@ -112,7 +112,8 @@ class TestCaps(Ledger):
 
     def test_the_session_reservation_is_checked_again_under_the_lock(self):
         arm_id = self.arm("0.50")
-        info = {"reserve_cents": "40.00", "rate": RATE, "tail_idle_s": 90, "identity": "x", "endpoint": "rp", "D": 1}
+        info = {"reserve_cents": "40.00", "rate": RATE, "tail_idle_s": 90, "identity": "x", "endpoint": "rp", "url": URL,
+                "D": 1}
         with self.ledger.locked() as locked:
             serverspend.reserve(locked, self.ledger.path, "runpod", arm_id, "r", "a", info, 1000, clock=self.clock)
             with self.assertRaises(BenchError) as caught:
@@ -391,7 +392,7 @@ class TestTheRateOfTheArm(Ledger):
                 t = servers.term(ep, 1, budget_cents=Decimal(s["window_left_cents"]), until=s["armed_until"],
                                  now=self.now[0])
                 info = {"reserve_cents": t["reserve_cents"], "rate": ep.rate_usd_per_s, "tail_idle_s": ep.tail_idle_s,
-                        "identity": ep.identity_sha256(), "endpoint": ep.name, "D": t["D"]}
+                        "identity": ep.identity_sha256(), "endpoint": ep.name, "url": self.MODAL_URL, "D": t["D"]}
                 with self.ledger.locked() as locked:
                     with self.assertRaises(EngineError) as caught:
                         serverspend.reserve(locked, self.ledger.path, "modal", arm_id, "r1", ep.kind, info, 10_000,
@@ -414,7 +415,7 @@ class TestTheRateOfTheArm(Ledger):
                 t = servers.term(ep, 1, budget_cents=Decimal(s["window_left_cents"]), until=s["armed_until"],
                                  now=self.now[0])
                 info = {"reserve_cents": t["reserve_cents"], "rate": ep.rate_usd_per_s, "tail_idle_s": ep.tail_idle_s,
-                        "identity": ep.identity_sha256(), "endpoint": ep.name, "D": t["D"]}
+                        "identity": ep.identity_sha256(), "endpoint": ep.name, "url": self.MODAL_URL, "D": t["D"]}
                 with self.ledger.locked() as locked:
                     row = serverspend.reserve(locked, self.ledger.path, "modal", arm_id, "r1", ep.kind, info, 10_000,
                                               clock=self.clock)

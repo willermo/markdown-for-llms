@@ -35,7 +35,13 @@
    tried again and no `disarm` row is written, so the window stays orphan at the cap. On RunPod the
    `disarm` row also holds `t_stop`, the last "stop container" of the worker log, and `double_s`, the
    seconds counted twice if two workers were ever RUNNING at once (c7.19): the bound of an unclean
-   window runs to the later of the zero and the stop, plus the tail (`serverspend`).
+   window runs to the later of the zero and the stop, plus the tail (`serverspend`). Since MFL023 B7
+   the close follows `serverspend.closing`, with the largest drift of the wall clock on the monotonic
+   one read in every wait (on the real clock only): an interval not observed (a suspend, a step of the
+   clock, over 5 s) or a zero after the bound of the window (`T + 60 s + Z` for a window not shortened)
+   writes the `disarm` row with `orphan: true` and `uncertain`, the event `uncertain` and exit 4 (after
+   130 and 5, which come first: the row holds the block); the provider stays at its cap until
+   `mdf bench spend reconcile --orphan --arm ID --manual-cents N`, and no new window opens on it.
 
 Worker logs (MFL033 c7.4): after a RunPod arm the session follows the logs of the workers
 (`worker_logs.Follower`; after a Modal deploy, since c7.8, the logs and containers of the app:
@@ -64,8 +70,11 @@ interrupted command), a PATCH of its own puts it back to OFF and reads it back (
 `flashboot_restored` in the `disarm` row, written anyway; a failure is exit 4, which comes before the 130 of a
 signal. The disarm itself is unchanged (the PATCH of the workers of N4). `disarm`, the recovery of a session that died
 before its `finally`, does the same after its zero (MFL045 c8, S-B1 of the review of the diff) when a window it closes
-armed the lever or the endpoint read at the zero is not OFF: `flashboot_restored` in each `disarm` row it writes and in
-its output, a failure exit 4 after the rows; otherwise the calls are those of a disarm without the lever. The zero
+armed the lever or the endpoint read at the zero is explicitly not OFF (a reading without `flashboot` asks for nothing:
+MFL049 (a)): outside the lock of the ledger, within RESTORE_LIMIT_S for all its calls (the `_deadline` of each call
+and an alarm, MFL023 B10), then the windows read again under the lock (MFL049 (b)); `flashboot_restored` in each
+`disarm` row it writes and in its output, a failure exit 4 after the rows; otherwise the calls are those of a disarm
+without the lever. The zero
 itself does not depend on the levers (`providers.RunPod.zero`: no worker listed), in the session as in the recovery.
 
 The levers `snapshot` and `flashboot` are experimental (MFL045 F5, Davide's decision of 23/11/2026: measured, not
@@ -73,6 +82,10 @@ adopted; `providers.EXPERIMENTAL_LEVERS`): never among the levers adopted, armed
 session that arms one declares it, before the arm row, in a line of its own (`experimental_levers`, `adopted` false,
 `guide`: the section of `docs/how-to/convert-documents.md` on each), and again as `experimental_levers` in the `arm`
 row and in the report of the window. Informative only: no refusal and no other behaviour comes with it.
+
+Errors of a provider (MFL023 B1, SOL2-B2) reach the events, the report and the output of `main` only as the closed
+fields of `providers.closed` (`class`, `op`, `http`, `detail`: the text of this code): the stderr of the CLI of Modal
+stays in the exception in memory, the body of a RunPod answer is never kept.
 
 After `--`, `populate`, `probe-negative`, `probe-valid`, `fault-test` and `concurrency` (MFL033 N5b) run
 that subcommand of `runpod_endpoint.py` on the endpoint of the session. `--disarmed` arms nothing: the provider must
@@ -97,6 +110,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 
 if __package__:                     # markdown_for_llms.gpu.session: the siblings of the package (MFL023 A2)
@@ -114,6 +128,7 @@ DRIVERS = ("populate", "probe-negative", "probe-valid", "fault-test", "concurren
 PR_SET_PDEATHSIG = 1
 STOP_GRACE_S = 20
 CLOCK_MARGIN_S = 60
+RESTORE_LIMIT_S = 90         # MFL049 (b): the absolute limit of the restore of FlashBoot by `disarm`, as the alarm of an arm
 PREEXEC_DELAY = 0.0          # tests only: widens the window between fork and prctl
 
 
@@ -197,6 +212,11 @@ class Session:
         self.ledger = spend.Ledger.file(args.spend_ledger)
         self.stop_signal = None
         self.events = []
+        # MFL023 B7 (point 1 of the plan r3): the monotonic clock beside the wall clock, for the drift of a window; on the
+        # real clock only, as `alarm()`: with another clock (the tests) the drift is nil unless the test gives `mono`
+        self.mono = time.monotonic if clock is time.time else clock
+        self.mono_arm = None
+        self.max_drift = 0.0
 
     def note(self, event, **fields):
         self.events.append(dict(event=event, t=round(self.clock(), 3), **fields))
@@ -302,6 +322,7 @@ class Session:
                 if any(x["status"] == "open" and x["arm_id"] != arm_id for x in s2["windows"]):
                     raise Refusal("provider_not_idle", "another session armed %s" % a.provider)
                 t_arm = round(self.clock(), 3)
+                self.t_arm_anchor, self.mono_arm = t_arm, self.mono()
                 row = serverspend.arm(locked, self.ledger.path, a.provider, a.name, url, a_cents, t_arm + w, cap,
                                       self.rate(), t_arm, fault=a.fault or None, arm_id=arm_id,
                                       extra=dict({"window_s": w, "z_s": z, "tail_s": tail,
@@ -382,10 +403,10 @@ class Session:
                 rc = self.wait(child, float(row["until"]))
         except pv.TermReached as exc:
             failed = self.timed_out = True
-            self.note("provider-error", detail=str(exc))
+            self.note("provider-error", **pv.closed(exc))      # MFL023 B1: closed fields only
         except pv.ProviderError as exc:
             failed = True
-            self.note("provider-error", detail=str(exc))
+            self.note("provider-error", **pv.closed(exc))
         except Interrupted as exc:
             failed = True
             self.timed_out = self.stop_signal is None
@@ -414,8 +435,18 @@ class Session:
             extra["worker_log"] = {k: log_info.get(k) for k in ("saved", "sha256", "lines", "workers", "gpus")}
         if flashboot_restored is not None:
             extra["flashboot_restored"] = flashboot_restored
+        # MFL023 B7 (point 1 of the plan r3, SOL2-B1): the rule of the close of `serverspend`, with the largest drift
+        # observed (never the last difference): a window not observed or a zero after its bound is an orphan with
+        # `uncertain`, the provider at its cap until a reconciliation with the invoice; never a window cut at A
+        self.sample_drift()
+        uncertain = serverspend.closing(row, round(zero, 3), extra.get("t_stop"), extra.get("double_s") or 0,
+                                        self.max_drift)
+        if uncertain:
+            extra.update(uncertain=uncertain, drift_s=round(self.max_drift, 3))
+            self.note("uncertain", reason=uncertain, drift_s=round(self.max_drift, 3))
         with self.ledger.locked() as locked:
-            serverspend.disarm(locked, a.provider, row["arm_id"], round(zero, 3), clean, extra=extra)
+            serverspend.disarm(locked, a.provider, row["arm_id"], round(zero, 3), clean, orphan=bool(uncertain),
+                               extra=extra)
         try:
             serverspend.lock_path(self.ledger.path, row["arm_id"]).unlink()
         except OSError:
@@ -429,6 +460,8 @@ class Session:
             return 130
         if self.timed_out:
             return 5                              # the term T, also during the arm (S-B4)
+        if uncertain:
+            return 4                              # MFL023 B7: the close is not certified (after 130 and 5: the row holds it)
         if not armed_ok or (failed and child is None):
             return 4
         return 128 - rc if rc is not None and rc < 0 else rc
@@ -436,11 +469,17 @@ class Session:
     timed_out = False
     experimental = ()                          # MFL045 F5: set by run(); a disarm alone has none
 
-    def restore_flashboot(self, wanted=None):
+    def restore_flashboot(self, wanted=None, limit=None):
         """MFL045 c3 (P-6): with the lever `flashboot` on RunPod, FlashBoot back to OFF after the zero and read back
         (`providers.RunPod.restore_flashboot`): True, or False on a ProviderError (caught: the `disarm` row comes
         after it); None without the lever. `wanted`: the decision of the recovery (`disarm`, MFL045 c8), in place of
-        the levers of the session."""
+        the levers of the session.
+
+        `limit` (MFL049 (b), the recovery `disarm`): an absolute limit on the wall clock for all the calls of the
+        restore. Each call gets at most the time left (the `_deadline` of the provider, `TermReached` after it), and,
+        on the real clock in the main thread, an alarm at `limit` interrupts a call still in progress, as for an arm
+        (MFL023 B10, SOL-B-B2 of the review of the diff B: the timeout of HTTPX bounds the wait for each piece of an
+        answer, not the whole answer). The interrupted restore is False, with `TermReached` in its event."""
         if wanted is None:
             wanted = "flashboot" in (getattr(self, "levers", "") or "").split(",")
         if self.a.provider != "runpod" or not wanted:
@@ -448,11 +487,35 @@ class Session:
         restore = getattr(self.prov, "restore_flashboot", None)
         if restore is None:
             return None
+        if limit is not None and hasattr(self.prov, "_deadline"):
+            self.prov._deadline = limit            # MFL049 (b): every call of the restore within the absolute limit
+        alarmed = (limit is not None and self.clock is time.time
+                   and threading.current_thread() is threading.main_thread())
+        previous = None
+        if alarmed:
+            def on_alarm(signum, frame):
+                raise Interrupted("the limit of the restore")
+            previous = signal.signal(signal.SIGALRM, on_alarm)
+            signal.setitimer(signal.ITIMER_REAL, max(0.001, limit - time.time()))
         try:
-            restore()
+            try:
+                restore()
+            finally:
+                if alarmed:
+                    signal.setitimer(signal.ITIMER_REAL, 0)
         except pv.ProviderError as exc:
-            self.note("flashboot-error", detail=str(exc))
+            self.note("flashboot-error", **pv.closed(exc))
             return False
+        except Interrupted:
+            self.note("flashboot-error", **pv.closed(pv.TermReached(
+                "RunPod: the absolute limit of the restore (%s s) came during its calls" % RESTORE_LIMIT_S)))
+            return False
+        finally:
+            if alarmed:
+                signal.setitimer(signal.ITIMER_REAL, 0)
+                signal.signal(signal.SIGALRM, signal.SIG_DFL if previous is None else previous)
+            if limit is not None and hasattr(self.prov, "_deadline"):
+                self.prov._deadline = None
         self.note("flashboot", restored="OFF")
         return True
 
@@ -536,7 +599,17 @@ class Session:
                 self.stop_child(child)
                 break
             self.sleep(1)
+            self.sample_drift()
         return child.returncode
+
+    def sample_drift(self):
+        """MFL023 B7: the largest drift of the wall clock on the monotonic clock since the arm row (by its size; a drift
+        that goes back does not undo an interval not observed), read in every wait of the session."""
+        if self.mono_arm is None:
+            return
+        drift = (self.clock() - self.t_arm_anchor) - (self.mono() - self.mono_arm)
+        if abs(drift) > abs(self.max_drift):
+            self.max_drift = drift
 
     def stop_child(self, child):
         try:
@@ -581,7 +654,7 @@ class Session:
                     disarmed = True
                 except pv.ProviderError as exc:
                     tries += 1
-                    self.note("disarm-error", detail=str(exc), tries=tries)
+                    self.note("disarm-error", tries=tries, **pv.closed(exc))
             if disarmed:
                 try:
                     zero, state = self.prov.zero()
@@ -589,7 +662,7 @@ class Session:
                     if zero:
                         return self.clock(), readings
                 except pv.ProviderError as exc:
-                    self.note("zero-error", detail=str(exc))
+                    self.note("zero-error", **pv.closed(exc))
             if self.clock() - t0 >= pv.ZERO_STOP_S:
                 try:
                     self.prov.disarm()
@@ -597,6 +670,7 @@ class Session:
                     pass
                 return None, readings
             self.sleep(pv.ZERO_POLL_S)
+            self.sample_drift()
 
     @staticmethod
     def populate_command(cmd):
@@ -692,16 +766,22 @@ def disarm(a, prov, clock=time.time, sleep=time.sleep, out=None):
         pv.emit({"disarm": a.name, "zero": False, "readings": readings}, out)
         return 4
     closed = []
+    # MFL045 c8 (S-B1 of the review of the diff): FlashBoot back to OFF, as the `finally` of the session does, when a
+    # window to close armed the lever or the endpoint read at the zero is explicitly not OFF (MFL049 (a), MFL023 B7: a
+    # reading without `flashboot` asks for nothing). MFL049 (b), MFL023 B7: the PATCH and its reading back run outside
+    # the lock of the ledger, under an absolute limit of RESTORE_LIMIT_S for all their calls (the term of the provider
+    # and, MFL023 B10, an alarm, as for an arm); then, under the lock, the windows are read again and only those still
+    # orphan get their row.
+    p, _ = windows_of(spend.read_only(ledger.path), a.provider, ledger.path)
+    judged = [arm_id for arm_id, w in p.windows.items() if w["disarm"] is None and w["arm"].get("endpoint") == a.name
+              and not serverspend.alive(ledger.path, arm_id)]
+    wanted = (any("flashboot" in str(p.windows[x]["arm"].get("levers") or "").split(",") for x in judged)
+              or (readings[-1]["state"] or {}).get("flashboot") not in (None, "OFF"))
+    restored = ses.restore_flashboot(wanted=wanted, limit=clock() + RESTORE_LIMIT_S)
     with ledger.locked() as locked:
         p, _ = windows_of(locked.entries(), a.provider, ledger.path)
         orphans = [arm_id for arm_id, w in p.windows.items() if w["disarm"] is None and w["arm"].get("endpoint") == a.name
                    and not serverspend.alive(ledger.path, arm_id)]
-        # MFL045 c8 (S-B1 of the review of the diff): FlashBoot back to OFF, as the `finally` of the session does,
-        # when a window closed here armed the lever or the endpoint read at the zero is not OFF (the reading of the
-        # zero holds `flashboot`: no other call); under the lock, so the windows closed are those judged
-        wanted = (any("flashboot" in str(p.windows[x]["arm"].get("levers") or "").split(",") for x in orphans)
-                  or (readings[-1]["state"] or {}).get("flashboot") != "OFF")
-        restored = ses.restore_flashboot(wanted=wanted)
         for arm_id in orphans:
             extra = {"t_disarm": round(t_disarm, 3), "zero_latency_s": round(zero - t_disarm, 3),
                      "readings": readings[-60:]}
@@ -767,7 +847,7 @@ def main(argv=None, factory=None, out=None):
         pv.emit({"code": exc.code, "detail": exc.detail, "commands": commands(a.provider, a.name, a.spend_ledger)}, out)
         return exc.exit_code
     except pv.ProviderError as exc:
-        pv.emit({"code": "provider_error", "detail": str(exc)}, out)
+        pv.emit(dict({"code": "provider_error"}, **pv.closed(exc)), out)     # MFL023 B1: never str() of the error
         return 4
     except BenchError as exc:
         pv.emit({"code": exc.code.value, "detail": exc.detail}, out)

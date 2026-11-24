@@ -308,7 +308,9 @@ def main(argv=None):
     submit.add_argument("--lang", help="language of the document (recorded; no converter of this version uses it)")
     submit.add_argument("--datalab-mode", choices=DATALAB_MODES, help="mode of the Datalab route (default: balanced)")
     submit.add_argument("--confirm-transit", action="store_true",
-                        help="confirm that the document leaves the machine for Datalab (the worker applies MDF_DATALAB_CAP_USD)")
+                        help="confirm that the document leaves the machine: for Datalab (the worker applies "
+                             "MDF_DATALAB_CAP_USD), or its page images for the rented GPU of a GPU preset (the worker "
+                             "applies the GPU caps)")
     submit.add_argument("--preset", help="a conversion preset (mdf presets list): its route and options, with only "
                                          "--lang and --confirm-transit beside it")
     presets = sub.add_parser("presets", help="the conversion presets of the instance and your own")
@@ -327,13 +329,23 @@ def main(argv=None):
     choice = default.add_mutually_exclusive_group(required=True)
     choice.add_argument("name", nargs="?")
     choice.add_argument("--clear", action="store_true")
+    gpu = sub.add_parser("gpu", help="the GPU session of the archive: its state, an estimate, arm ahead, disarm")
+    gsub = gpu.add_subparsers(dest="gpu_command", required=True)
+    gsub.add_parser("session")
+    gsub.add_parser("estimate").add_argument("preset")
+    arm = gsub.add_parser("arm", help="arm a GPU preset ahead (RunPod): the worker opens its session between two jobs")
+    arm.add_argument("preset")
+    arm.add_argument("--confirm-transit", action="store_true", help="confirm that the page images leave the machine")
+    gsub.add_parser("disarm", help="stop the GPU session of a preset; its jobs in progress and queued are cancelled"
+                    ).add_argument("preset")
     for name in ("show", "retry", "cancel", "download"):
         p = sub.add_parser(name)
         p.add_argument("id")
         if name == "retry":
-            # a retry of a Datalab run sends the document again: the transit is confirmed again
+            # a retry of a Datalab or GPU run sends the document (or its page images) again: the transit is confirmed again
             p.add_argument("--confirm-transit", action="store_true",
-                           help="confirm that the document leaves the machine for Datalab again")
+                           help="confirm again that the document leaves the machine: for Datalab, or its page images "
+                                "for the rented GPU of a GPU preset")
         if name == "download":
             p.add_argument("--output", required=True)
             p.add_argument("--overwrite", action="store_true")
@@ -419,6 +431,16 @@ def main(argv=None):
                 emit(service.remove_preset(name))
             else:
                 emit(service.set_default(None if args.clear else name))
+        elif args.command == "gpu":
+            # the same services as /api/v1/gpu/* (MFL023 B5)
+            if args.gpu_command == "session":
+                emit(service.gpu_session())
+            elif args.gpu_command == "estimate":
+                emit(service.gpu_estimate(args.preset))
+            elif args.gpu_command == "arm":
+                emit(service.gpu_arm(args.preset, bool(args.confirm_transit)))
+            else:
+                emit(service.gpu_disarm(args.preset))
         elif args.command == "retry":
             # the same as POST /api/v1/runs/ID/retry?transit_confirmed=true
             emit(service.retry(args.id, {"transit_confirmed": True} if args.confirm_transit else None))

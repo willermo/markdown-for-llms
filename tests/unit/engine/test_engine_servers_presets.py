@@ -50,8 +50,23 @@ class ExpansionTests(Base):
         modal = servers.endpoint("md", MODAL, TABLE)
         self.assertEqual((modal.gpu, modal.ready_within, modal.cold_start_s, modal.key_env),
                          ("L4,A10G", 900, 480, ["MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET"]))
-        custom = servers.endpoint("rp", dict(RUNPOD, key_env=["TEAM_RUNPOD_API_KEY"]), TABLE)
-        self.assertEqual(custom.key_env, ["TEAM_RUNPOD_API_KEY"])
+        same = servers.endpoint("rp", dict(RUNPOD, key_env=["RUNPOD_API_KEY"]), TABLE)
+        self.assertEqual(same.key_env, ["RUNPOD_API_KEY"])
+
+    def test_the_keys_of_a_preset_are_those_its_provider_reads(self):
+        """C-DB-NB5 (MFL023 B10, a reversible choice of the supervision): next to `preset`, `key_env` is absent or the
+        names the provider of the preset reads (the worker, its children and the relay read those), in their order;
+        any other is `server_not_configured`."""
+        for raw, names in ((RUNPOD, ["RUNPOD_API_KEY"]), (dict(RUNPOD, key_env="RUNPOD_API_KEY"), ["RUNPOD_API_KEY"]),
+                           (dict(MODAL, key_env=["MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET"]),
+                            ["MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET"])):
+            with self.subTest(raw=raw):
+                self.assertEqual(servers.endpoint("e", raw, TABLE).key_env, names)
+        for raw in (dict(RUNPOD, key_env=["TEAM_RUNPOD_API_KEY"]), dict(RUNPOD, key_env=[]),
+                    dict(MODAL, key_env=["MODAL_PROXY_TOKEN_SECRET", "MODAL_PROXY_TOKEN_ID"]),
+                    dict(MODAL, key_env=["TEAM_MODAL_TOKEN_ID", "TEAM_MODAL_TOKEN_SECRET"])):
+            with self.subTest(raw=raw):
+                self.assertIn("key_env", str(self.refused(lambda: servers.endpoint("e", raw, TABLE))))
 
     def test_the_identity_is_that_of_the_values_written_by_hand(self):
         by_hand = dict(TABLE["modal-base"]["fields"], kind="modal", url=MODAL["url"])

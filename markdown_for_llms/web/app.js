@@ -1,5 +1,6 @@
 'use strict';
 let csrf = '', session = null, selected = location.hash.slice(1), lastDetail = '', busy = false;
+let presets = [], estimates = {}, gpuSignature = '', readyGpu = null;
 const $ = id => document.getElementById(id);
 function node(tag, text, cls) { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; }
 async function api(path, init = {}) {
@@ -10,7 +11,9 @@ async function api(path, init = {}) {
 }
 const ROUTE_LABELS = {text: 'Text (character set detection)', pandoc: 'pandoc (born-digital documents)',
   libreoffice: 'LibreOffice HTML export, read by pandoc (spreadsheets, slides)', djvutxt: 'DjVu text layer',
-  marker: 'Marker 2.2.0 on the CPU (pages, OCR)', datalab: 'Datalab (remote service)'};
+  marker: 'Marker 2.2.0 on the CPU (pages, OCR)', datalab: 'Datalab (remote service)',
+  'marker-server': 'Marker 2.2.0 with Surya on a GPU rented by the second (pages)'};
+const PROVIDERS = {runpod: 'RunPod', modal: 'Modal'};
 function routeLabel(name) { return ROUTE_LABELS[name] || name; }
 function formatOf(name) {
   const dot = name.lastIndexOf('.'); if (dot < 0) return null;
@@ -39,6 +42,41 @@ function routeChoices(formats, datalabConfigured) {
   return common.filter(r => !formats.every(f => f.default === r) && (r !== 'datalab' || datalabConfigured));
 }
 function effectiveConverters(formats, route) { return route === '' ? [...new Set(formats.map(f => f.default))] : [route]; }
+// --- the conversion presets (MFL023 B6): a preset fixes the route and its options; the GPU ones show their transit and
+// estimate, and the transit is confirmed before anything is sent
+function presetOf(name) { return presets.find(p => p.name === name) || null; }
+function setupPresets(data) {
+  presets = data.presets;
+  const select = $('preset'), previous = select.value; select.replaceChildren();
+  const custom = node('option', 'Custom: the route and options below'); custom.value = ''; select.append(custom);
+  for (const p of presets) {
+    const option = node('option', (p.label || p.name) + (p.provisional ? ' (provisional)' : '') + (p.builtin ? '' : ' · yours') +
+      (p.available ? '' : ' — unavailable (' + p.code + ')'));
+    option.value = p.name; option.disabled = !p.available; select.append(option);
+  }
+  const wanted = previous || data.default || '';
+  select.value = [...select.options].some(o => o.value === wanted && !o.disabled) ? wanted : '';
+}
+function cents(value) { return value === null || value === undefined ? 'unknown' : value + ' cents'; }
+function showEstimate(e) {
+  const list = $('gpu-estimate'); list.replaceChildren();
+  $('gpu-notice').textContent = e.notice;
+  const add = text => list.append(node('li', text));
+  add('Provider ' + PROVIDERS[e.provider] + ', region ' + e.region + ', GPU ' + e.gpu.join(' or ') + '.');
+  if (!e.available) add('Unavailable now (' + e.code + '): nothing is armed.');
+  if (e.open_session) add('The open session of this preset hosts the job: no new arm, within what is left of its window.');
+  add('Reserve of a session opened now (A): ' + cents(e.a_cents) + ', window W ' + (e.w_s === null ? 'unknown' : e.w_s + ' s') +
+      '; minimum reserve of a session: ' + cents(e.minimum_reserve_cents) + '. Reserves, never charges; a larger MDF_MAX_PAGES raises the minimum reserve.');
+  add('About ' + e.start_cents + ' cents per start plus ' + e.page_cents + ' cents per page, at ' + e.rate.usd_per_s +
+      ' USD/s (' + e.rate.source + ', ' + e.rate.date + ').');
+  for (const m of e.measures) add(m.what + ': ' + m.value + ' (' + m.date + ', ' + m.hardware + ', ' + m.source + ')');
+  add('Provisional values until the measurement campaign; quality unverified; in balanced mode the table heuristic of Marker (R10) is not verified. ' + e.bound_text + '.');
+}
+async function loadEstimate(name) {
+  try { estimates[name] = await api('/gpu/estimate?preset=' + encodeURIComponent(name)); }
+  catch (e) { estimates[name] = null; $('preset-hint').textContent = e.message; }
+  updateForm();
+}
 function updateForm() {
   if (!session) return;
   const {known, unknown} = chosenFormats();
@@ -60,10 +98,49 @@ function updateForm() {
     unavailable.map(c => routeLabel(c) + ' (' + availabilityOf(c).code + ')').join(', ') + '. The conversion would fail.' : '';
   const marker = converters.length > 0 && converters.every(c => c === 'marker');
   $('ocr').disabled = !marker; if (!marker) $('ocr').checked = false;
-  const datalab = select.value === 'datalab';
+  const preset = presetOf($('preset').value);
+  // a preset fixes the route and its options: only the language stays free
+  for (const id of ['route', 'ocr', 'datalab-mode']) $(id).disabled = !!preset || (id === 'ocr' && !marker);
+  const route = preset ? preset.options.route : select.value;
+  const datalab = route === 'datalab', gpu = route === 'marker-server';
+  $('preset-hint').textContent = preset ? preset.description : '';
   $('datalab-box').hidden = !datalab;
   if (!datalab) $('transit').checked = false;
-  $('convert').disabled = !known.length || unknown.length > 0 || (datalab && !$('transit').checked);
+  $('gpu-box').hidden = !gpu;
+  if (!gpu) $('gpu-transit').checked = false;
+  const estimate = gpu ? estimates[preset.options.gpu_preset] : null;
+  if (gpu && estimate === undefined) loadEstimate(preset.options.gpu_preset);
+  if (estimate) showEstimate(estimate);
+  $('arm-ahead').hidden = !(gpu && estimate && estimate.arm_ahead && estimate.available && $('gpu-transit').checked);
+  $('convert').disabled = !known.length || unknown.length > 0 || (datalab && !$('transit').checked) ||
+    (gpu && (!$('gpu-transit').checked || !estimate || !estimate.available));
+}
+// --- the GPU session: its state, the disarm (confirmed in the page), and a window that cannot be certified
+function showGpuSession(data) {
+  const s = data.session, box = $('gpu-state');
+  const signature = JSON.stringify(data);
+  if (signature === gpuSignature) return;
+  gpuSignature = signature;
+  $('gpu-session').hidden = !s; box.replaceChildren();
+  if (!s) return;
+  const time = t => t ? new Date(t * 1000).toLocaleString() : 'unknown';
+  box.append(node('p', 'State ' + s.state + (s.reason ? ' (' + s.reason + ')' : '') + ' · preset ' + s.gpu_preset + ' on ' +
+    PROVIDERS[s.provider] + ' · reserve of the window ' + cents(s.a_cents) + ' · term ' + time(s.until) +
+    (s.t_zero ? ' · zero seen ' + time(s.t_zero) : '') + (s.ledger_total_cents ? ' · ledger of ' + PROVIDERS[s.provider] + ' ' +
+    s.ledger_total_cents + ' of ' + s.cap_cents + ' cents' : '') + '.', 'status'));
+  if (['opening', 'open', 'linger', 'closing'].includes(s.state)) {
+    const confirm = node('p', 'Disarm: stops the GPU session now; the conversions of this preset in progress and in the queue are cancelled.', 'warning');
+    confirm.hidden = true;
+    const yes = action('Confirm disarm', () => api('/gpu/disarm', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({gpu_preset: s.gpu_preset})}));
+    confirm.append(document.createTextNode(' '), yes);
+    const ask = node('button', 'Disarm'); ask.type = 'button'; ask.onclick = () => { confirm.hidden = false; ask.hidden = true; };
+    box.append(ask, confirm);
+  }
+  if (s.texts) {
+    box.append(node('h3', s.texts.title), node('p', s.texts.reason, 'warning'), node('p', s.texts.block));
+    const pre = node('pre', s.commands.join('\n'), 'commands'); pre.tabIndex = 0; box.append(pre);
+  }
 }
 function setupDatalab() {
   $('transit-notice').textContent = session.datalab.notice;
@@ -85,6 +162,13 @@ function showReadiness(ready) {
     session.converters = ready.converters;
     session.datalab.configured = !!(ready.converters && ready.converters.datalab && ready.converters.datalab.available) && Number(session.datalab.cap_usd) > 0;
     if (JSON.stringify([session.converters, session.datalab.configured]) !== before) updateForm();
+    // MFL023 B10: what the worker read of the GPU presets changed (a window reconciled, a cap reached, another worker):
+    // the presets are read again, the selector keeps a choice still valid, and the estimates are read again
+    const gpu = JSON.stringify(ready.gpu === undefined ? null : ready.gpu);
+    if (gpu !== readyGpu) {
+      readyGpu = gpu; estimates = {};
+      api('/presets').then(setupPresets).then(updateForm).catch(e => { $('preset-hint').textContent = e.message; });
+    }
   }
 }
 
@@ -135,6 +219,14 @@ function showProblems(box, manifest) {
   box.append(node('h3', 'Limits of this conversion'));
   const list = node('ul', undefined, 'limits'); for (const text of limits) list.append(node('li', text)); box.append(list);
 }
+function showGpu(box, job) {
+  const g = job.gpu;
+  if (!g) return;
+  box.append(node('p', 'GPU preset ' + g.preset + (g.provider ? ' on ' + PROVIDERS[g.provider] : '') +
+    (g.arm_id ? ' · window ' + g.arm_id + ', reserve ' + cents(g.a_cents) : '') + ' · reserve of this attempt ' +
+    cents(g.reserve_cents) + ', measured limit ' + cents(g.bound_cents) + ': an upper bound, not a bill.' +
+    (g.error ? ' Refused by its session: ' + (g.error.op || g.error.class) + '.' : ''), 'transit-info'));
+}
 function showTransit(box, job) {
   const engine = job.manifest && job.manifest.engine;
   if (job.options.route !== 'datalab' && !(engine && engine.transit && engine.transit.left_machine)) return;
@@ -149,6 +241,7 @@ async function show(job) {
     (job.options.ocr === 'force' ? ' · OCR forced' : '') + (job.options.lang ? ' · language ' + job.options.lang : '')));
   showProgress(box, job);
   showTransit(box, job);
+  showGpu(box, job);
   if (job.error) box.append(node('p', job.error, 'error'));
   if (job.recovery) box.append(node('p', 'Restore capacity and disk access, then restart the worker: it recovers this run without converting again.', 'warning'));
   download(box, 'Download source', '/api/v1/runs/' + job.id + '/source');
@@ -156,14 +249,16 @@ async function show(job) {
   if (['queued', 'running'].includes(job.state)) box.append(action('Cancel', () => api('/runs/' + job.id + '/cancel', {method: 'POST'})));
   if (['completed', 'failed', 'interrupted', 'cancelled'].includes(job.state)) {
     let query = '';
-    if (job.options.route === 'datalab') {
+    const remote = job.options.route === 'datalab' || job.options.route === 'marker-server';
+    if (remote) {
       // a retry sends the document again: the transit is confirmed again
       const confirm = node('label', undefined, 'confirm'); const check = node('input'); check.type = 'checkbox'; check.id = 'retry-transit';
-      confirm.append(check, document.createTextNode(' Send it to Datalab again (the document leaves this computer)'));
-      box.append(node('p', session.datalab.notice, 'warning'), confirm);
+      confirm.append(check, document.createTextNode(job.options.route === 'datalab' ? ' Send it to Datalab again (the document leaves this computer)'
+        : ' Send its page images to the GPU again (they leave this computer)'));
+      box.append(node('p', job.options.route === 'datalab' ? session.datalab.notice : 'The page images leave this computer for the rented GPU.', 'warning'), confirm);
     }
     box.append(action('Retry', async () => {
-      if (job.options.route === 'datalab') { if (!$('retry-transit').checked) throw new Error('Confirm the transit to Datalab first'); query = '?transit_confirmed=true'; }
+      if (remote) { if (!$('retry-transit').checked) throw new Error('Confirm the transit first'); query = '?transit_confirmed=true'; }
       const next = await api('/runs/' + job.id + '/retry' + query, {method: 'POST'}); selected = next.id; location.hash = selected;
     }));
   }
@@ -190,8 +285,9 @@ async function show(job) {
 async function refresh(force = false) {
   if (busy) return; busy = true;
   try {
-    const [jobs, ready] = await Promise.all([api('/runs'), api('/readiness')]);
+    const [jobs, ready, gpu] = await Promise.all([api('/runs'), api('/readiness'), api('/gpu/session')]);
     showReadiness(ready);
+    showGpuSession(gpu);
     const list = $('jobs'); list.replaceChildren();
     for (const job of jobs) {
       const estimate = job.progress && job.progress.live ? ' — ≈' + Math.floor(job.progress.estimate_percent) + '% (estimate)' : '';
@@ -206,13 +302,34 @@ async function refresh(force = false) {
 $('files').onchange = updateForm;
 $('route').onchange = updateForm;
 $('transit').onchange = updateForm;
+$('preset').onchange = updateForm;
+$('gpu-transit').onchange = updateForm;
+$('arm-ahead').onclick = async () => {
+  const preset = presetOf($('preset').value); const button = $('arm-ahead'); button.disabled = true;
+  try {
+    if (!$('gpu-transit').checked) throw new Error('Confirm the transit first');
+    await api('/gpu/arm', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({gpu_preset: preset.options.gpu_preset, transit_confirmed: true})});
+    $('arm-status').textContent = 'Arm requested: the worker arms the GPU between two conversions; the session closes by itself if nothing arrives.';
+  } catch (e) { $('arm-status').textContent = e.message; } finally { button.disabled = false; await refresh(true); }
+};
 $('upload').onsubmit = async event => {
   event.preventDefault(); const button = $('convert'); button.disabled = true;
-  const route = $('route').value, params = new URLSearchParams();
-  if (route) params.set('route', route);
-  if ($('ocr').checked) params.set('ocr', 'force');
+  const preset = presetOf($('preset').value);
+  const route = preset ? preset.options.route : $('route').value, params = new URLSearchParams();
+  if (preset) params.set('preset', preset.name);
+  else {
+    if (route) params.set('route', route);
+    if ($('ocr').checked) params.set('ocr', 'force');
+  }
   if ($('lang').value.trim()) params.set('lang', $('lang').value.trim());
-  if (route === 'datalab') {
+  if (route === 'marker-server') {
+    if (!$('gpu-transit').checked) { $('upload-status').textContent = 'Confirm the transit to the GPU first'; button.disabled = false; return; }
+    params.set('transit_confirmed', 'true');
+  } else if (route === 'datalab' && preset) {
+    if (!$('transit').checked) { $('upload-status').textContent = 'Confirm the transit to Datalab first'; button.disabled = false; return; }
+    params.set('transit_confirmed', 'true');
+  } else if (route === 'datalab') {
     if (!$('transit').checked) { $('upload-status').textContent = 'Confirm the transit to Datalab first'; button.disabled = false; return; }
     params.set('datalab_mode', $('datalab-mode').value); params.set('transit_confirmed', 'true');
   }
@@ -222,11 +339,13 @@ $('upload').onsubmit = async event => {
     try { const job = await api('/runs' + query, {method: 'POST', headers: {'Content-Type': 'application/octet-stream', 'X-Filename': encodeURIComponent(file.name), 'Idempotency-Key': crypto.randomUUID()}, body: file}); selected = job.id; location.hash = selected; results.push(file.name + ': accepted'); }
     catch (e) { results.push(file.name + ': ' + e.message); }
   }
-  $('transit').checked = false;
+  $('transit').checked = false; $('gpu-transit').checked = false;
   $('upload-status').textContent = results.join('\n'); updateForm(); await refresh(true);
 };
 api('/session').then(data => {
   csrf = data.csrf; session = data;
   $('files').accept = session.formats.flatMap(f => f.extensions.map(e => '.' + e)).join(',');
-  setupDatalab(); updateForm(); refresh(); setInterval(refresh, 1500);
-}).catch(e => { $('upload-status').textContent = e.message; });
+  setupDatalab();
+  return api('/presets').then(setupPresets).catch(e => { $('preset-hint').textContent = e.message; });
+}).then(() => { updateForm(); refresh(); setInterval(refresh, 1500); setInterval(() => { estimates = {}; updateForm(); }, 30000); })
+  .catch(e => { $('upload-status').textContent = e.message; });

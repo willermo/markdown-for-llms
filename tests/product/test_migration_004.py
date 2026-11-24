@@ -37,6 +37,9 @@ def catalog(conn):
     return conn.execute("SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY name").fetchall()
 
 
+CURRENT = tuple("%03d" % n for n in range(1, storage.SCHEMA + 1))     # the migrations of the current schema
+
+
 def fresh(*names):
     conn = sqlite3.connect(":memory:")
     conn.executescript(sql(*names))
@@ -102,8 +105,8 @@ class SchemaFourTests(Base):
     def test_a_new_archive_is_born_at_schema_4(self):
         self.open()
         snap = self.snapshot()
-        self.assertEqual((storage.SCHEMA, snap[1]), (4, 4))
-        self.assertEqual(snap[2], fresh("001", "002", "003", "004"))
+        self.assertEqual((storage.SCHEMA, snap[1]), (5, 5))                # MFL023 B4: the current schema is 5
+        self.assertEqual(snap[2], fresh(*CURRENT))
 
     def test_a_schema_3_archive_goes_up_once_and_back_to_3(self):
         self.make(3)
@@ -123,7 +126,7 @@ class SchemaFourTests(Base):
         self.assertIn("opened", outcomes)
         self.assertLessEqual(set(outcomes), {"opened", storage.UPGRADE_BUSY})
         up = self.snapshot()
-        self.assertEqual((up[0], up[1], up[2], up[3]), (before[0], 4, fresh("001", "002", "003", "004"), before[3]))
+        self.assertEqual((up[0], up[1], up[2], up[3]), (before[0], storage.SCHEMA, fresh(*CURRENT), before[3]))
         self.assertNotIn("history", json.loads(up[0]))
         code, out = self.downgrade_cli("--to-schema", "3")
         self.assertEqual((code, out), (0, {"previous_config": self.settings.identity(),
@@ -133,7 +136,7 @@ class SchemaFourTests(Base):
         # already at 3: nothing changes; under 3 is refused, and so is a target outside 2..SCHEMA-1
         Storage.downgrade(self.settings, self.settings.identity(), 3)
         self.assertEqual(self.snapshot(), down)
-        for to in (1, 4, 5, True, "3"):
+        for to in (1, storage.SCHEMA, storage.SCHEMA + 1, True, "3"):
             with self.subTest(to=to):
                 with self.assertRaisesRegex(StorageError, "Downgrade target"):
                     Storage.downgrade(self.settings, self.settings.identity(), to)
@@ -171,7 +174,7 @@ class SchemaFourTests(Base):
         self.make(2, V2_OPTIONS)
         before = self.snapshot()
         self.open()
-        self.assertEqual(self.snapshot()[1], 4)
+        self.assertEqual(self.snapshot()[1], storage.SCHEMA)
         self.assertEqual(Storage.downgrade(self.settings, self.settings.identity(), 3)["schema"], 3)
         mid = self.snapshot()
         self.assertEqual((mid[1], mid[2], mid[3]), (3, fresh("001", "002", "003"), before[3]))
@@ -208,7 +211,7 @@ class SchemaFourTests(Base):
                 self.open()
         self.assertEqual(self.snapshot(), before)                    # one transaction: nothing of 004 stays
         self.open()
-        self.assertEqual(self.snapshot()[1:3], (4, fresh("001", "002", "003", "004")))
+        self.assertEqual(self.snapshot()[1:3], (storage.SCHEMA, fresh(*CURRENT)))
 
     def test_the_binary_of_schema_3_needs_the_return(self):
         """fe6b952 accepts the database schemas 0-3 only (`Unsupported database schema`); a database of schema 4 is

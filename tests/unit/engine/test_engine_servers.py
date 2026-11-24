@@ -50,7 +50,7 @@ class TestConfiguration(Tmp):
         self.assertEqual((rp.kind, rp.provider, rp.tail_fault_s, rp.ready_within, rp.read_timeout), ("runpod", "runpod", 385, 900, 300))
         self.assertEqual(rp.key_env, ["RUNPOD_API_KEY"])
         md = modal()
-        self.assertEqual((md.tail_fault_s, md.ready_within, md.read_timeout, md.cold_start_s), (225, 1200, 140, 1100))
+        self.assertEqual((md.tail_fault_s, md.ready_within, md.read_timeout, md.cold_start_s), (225, 900, 140, 480))
         for bad in ("nope", None):
             with self.assertRaises(EngineError) as caught:
                 servers.load(path, bad) if bad else servers.load(self.dir / "absent.json")
@@ -146,9 +146,9 @@ class TestTerm(unittest.TestCase):
         self.assertEqual(caught.exception.code, Code.SERVER_NOT_ARMED)
         self.assertEqual(servers.term(runpod(), 1, budget_cents=35, until=960, now=0)["D"], 900)
         with self.assertRaises(EngineError) as caught:
-            servers.term(modal(), 1, budget_cents=60, until=1259, now=0)
+            servers.term(modal(), 1, budget_cents=60, until=959, now=0)
         self.assertEqual(caught.exception.code, Code.SERVER_NOT_ARMED)
-        self.assertEqual(servers.term(modal(), 1, budget_cents=60, until=1260, now=0)["D"], 1200)
+        self.assertEqual(servers.term(modal(), 1, budget_cents=60, until=960, now=0)["D"], 900)
         with self.assertRaises(EngineError) as caught:
             servers.term(runpod(), 1, budget_cents=35)
         self.assertEqual(caught.exception.code, Code.SERVER_NOT_ARMED)

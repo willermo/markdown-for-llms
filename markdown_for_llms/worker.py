@@ -8,6 +8,12 @@ with the transit confirmed in the job, under the cap `MDF_DATALAB_CAP_USD` of ea
 with the key `DATALAB_API_KEY` that the worker takes out of its own environment when it starts
 (never a setting, never passed to a child, never written).
 
+A job on the route marker-server (MFL023 B4) runs on the GPU session of its preset (`gpu.lifecycle`): the
+worker opens it at the first job of the preset (or at a request to arm ahead), serves the jobs of that preset
+first, lingers, then closes it; every call to a provider runs in a child (`gpu.opchild`); a window left by a dead
+worker is closed before the first claim. The reservation of each attempt is chained to the observer, its completion
+written in every outcome, and the facts of the attempt on its session go into `runs.gpu` before the publication.
+
 The observer of the engine renews the lease, records the running child (`runs.child`: the pid
 with its start time, the systemd scope of the Marker child, the container of a tool) and passes
 on cancellation and stop; reconciliation stops what a dead worker left by that record. A scope is
@@ -31,13 +37,14 @@ import uuid
 from decimal import Decimal
 
 from .engine import isolation, routes
+from .gpu import codes as gpu_codes, lifecycle
 from .engine.codes import Code, EngineError
 from .engine.core import availability, convert
 from .engine.formats import extension_of
 from .engine.progress import finishing
 from .files import identify, make_directory, open_file, read_json, rename, sync_directory, write_json, sync_tree, corruption, relative, IntegrityError, MetadataError, decode_json, publication_barrier, directory, FileSafetyError, json_bytes
 from .references import inspect
-from .services import Service, ReadUnavailable, job_options, source_format, stored_manifest, stored_options, publication_budget
+from .services import Refused, Service, ReadUnavailable, job_options, source_format, stored_manifest, stored_options, publication_budget
 from .storage import StorageError, CapacityError
 
 MAX_ISSUES = 200                 # engine problems listed in the manifest; all of them are counted
@@ -119,6 +126,26 @@ def stop_child(child):
         if not remove_container(container):
             raise StorageError('Previous conversion container not removed (Docker unreachable?): %s; '
                                'reservation kept' % container)
+
+
+def chain(*observers):
+    """The observers of one conversion in order: the first stop wins (as `cli.Chain`)."""
+    def observe(event):
+        for observer in observers:
+            if observer is not None:
+                stop = observer(event)
+                if stop:
+                    return stop
+        return None
+    return observe
+
+
+def gpu_message(code):
+    """The error of a run refused or stopped by its GPU session (a closed code)."""
+    text = 'Conversion failed: %s; source kept, retry available' % code
+    if code == gpu_codes.MODAL_NO_CAPACITY:
+        text += '; ' + lifecycle.NO_CAPACITY_TEXT
+    return text
 
 
 class Observer:
@@ -208,19 +235,25 @@ def source_name(name, source_path):
     return name if ok else None
 
 
-def engine_request(options, attempt, fmt=None, cap_usd="0"):
+def engine_request(options, attempt, fmt=None, cap_usd="0", settings=None):
     """The request of the engine for the stored options of a run (`services.stored_options`: a
     run of schema 2 maps `force_ocr` to `ocr: force`; `strip_existing_ocr` has no equivalent and
     is dropped, D3 of MFL032: an existing OCR layer is set aside by the engine itself). With `fmt`
-    the options are validated again by the routes of the engine (EngineError when refused); the
-    Datalab route gets the confirmed transit of the job and the cap of the settings."""
+    the options are validated again by `services.job_options`, the function of the API, with the
+    settings of the instance (EngineError or `Refused` when refused); the Datalab route gets the
+    confirmed transit of the job and the cap of the settings; the GPU route (MFL023 B3) its server
+    mode and the confirmed transit, to which the session of its GPU preset adds the endpoint, the
+    budget and the window."""
     opts = stored_options(options)
     if fmt is not None:
-        opts = job_options(fmt, opts)
+        opts = job_options(fmt, opts, settings)
     request = {"route": opts.get("route"), "ocr": opts.get("ocr", "auto"), "lang": opts.get("lang"), "attempt": attempt}
-    if fmt is not None and routes.resolve(fmt, opts["route"])[0] == routes.DATALAB:
+    converter = routes.resolve(fmt, opts["route"])[0] if fmt is not None else None
+    if converter == routes.DATALAB:
         request["datalab"] = {"mode": opts["datalab_mode"], "transit_confirmed": opts["transit_confirmed"],
                               "cap_usd": cap_usd}
+    elif converter == routes.MARKER_SERVER:
+        request["server"] = {"mode": opts["server_mode"], "transit_confirmed": opts["transit_confirmed"]}
     return request
 
 
@@ -278,7 +311,7 @@ def engine_issues(engine):
 
 
 class Worker:
-    def __init__(self, settings, env_file=None):
+    def __init__(self, settings, env_file=None, gpu=None):
         self.settings = settings
         # the env file of `mdf worker --env-file`, checked by the CLI before Settings.load: the keys
         # of the GPU sessions are read from it by name, never from the environment (MFL023)
@@ -294,6 +327,9 @@ class Worker:
         self.readiness = {"ready": False, "message": "Worker starting", "converters": None}
         self.datalab_key = take_datalab_key()
         take_gpu_keys(settings)
+        # the GPU sessions (MFL023 B4): `gpu` gives the tests the command of the children, the clocks and the follower
+        self.gpu = lifecycle.Manager(self, **(gpu or {}))
+        self._gpu_job = None
 
     def datalab_state(self):
         """Datalab can run here with the key of the worker and a cap above 0."""
@@ -317,6 +353,8 @@ class Worker:
         self.converters, self._ready_at = state, now
         self.readiness = {"ready": True, "converters": state,
                           "message": "Local worker ready" + ("; routes unavailable: " + ", ".join(missing) if missing else "")}
+        if self.settings.gpu_presets_enabled():
+            self.readiness["gpu"] = self.gpu.readiness()      # closed values: availability, minimum reserve, ledger
         return state
 
     @contextmanager
@@ -337,6 +375,13 @@ class Worker:
         value = json.dumps(readiness or self.readiness, allow_nan=False)
         with self.storage.connect() as conn:
             conn.execute("INSERT INTO worker VALUES (1,?,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,heartbeat=excluded.heartbeat,readiness=excluded.readiness", (self.token, time.time(), value))
+
+    def expire_heartbeat(self):
+        """At a clean exit (MFL023 B10, SOL-B-N2 and C-DB-NB2.1 of the review of the diff B): the heartbeat of this
+        worker expires, so the API no longer shows its readiness (GPU presets, caps) for the lease; only while the row
+        is still its own: a worker that ends never touches the heartbeat of the one after it."""
+        with self.storage.connect() as conn:
+            conn.execute("UPDATE worker SET heartbeat=0 WHERE id=1 AND token=?", (self.token,))
 
     def reconcile(self, run_id=None):
         with self.exclusive():
@@ -446,9 +491,15 @@ class Worker:
                              (reason, time.time(), row['id'], row['token'], row['state']))
 
     def claim(self):
+        # with a GPU session open on a preset, its jobs first (MFL023 B4): a local conversion never keeps a GPU armed
+        preset = self.gpu.claim_preset()
         with self.storage.connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
-            row = conn.execute("SELECT id FROM runs WHERE state='queued' ORDER BY created LIMIT 1").fetchone()
+            if preset is None:
+                row = conn.execute("SELECT id FROM runs WHERE state='queued' ORDER BY created LIMIT 1").fetchone()
+            else:
+                row = conn.execute("SELECT id FROM runs WHERE state='queued' ORDER BY "
+                                   "(json_extract(options,'$.gpu_preset') = ?) DESC, created LIMIT 1", (preset,)).fetchone()
             if row is None:
                 return None
             # a queued run never started an attempt: one of a previous version gets the indicator too
@@ -472,6 +523,8 @@ class Worker:
                           bool(child and child.get('scope')), row["id"], self.token))
         if self.stop:
             return 'interrupted'
+        if self._gpu_job == row["id"] and not self.gpu.serving():
+            return 'interrupted'                 # the GPU session closed under the job (MFL023 B4)
         if self.lease:
             self.lease.check(local_only=True)
         return bool(current["cancel"])
@@ -527,9 +580,11 @@ class Worker:
         options = json.loads(row['options'])
         fmt = source_format(row['source_path'])
         try:
-            request = engine_request(options, row['attempt_id'], fmt, self.settings.datalab_cap_usd)
+            request = engine_request(options, row['attempt_id'], fmt, self.settings.datalab_cap_usd, self.settings)
         except EngineError as exc:          # validated by the API too: a job of another version
             raise StorageError('Conversion refused: %s; source kept' % exc.code.value) from None
+        except Refused as exc:              # a GPU preset the instance no longer enables (MFL023 B3)
+            raise StorageError('Conversion refused: %s; source kept, retry available' % exc.code) from None
         converter = routes.resolve(fmt, request['route'])[0]
         state = (self.converters or {}).get(converter)
         if state is not None and not state['available']:
@@ -540,13 +595,38 @@ class Worker:
                    'dropped_options': ['strip_existing_ocr'] if options.get('strip_existing_ocr') else []})
         limits = self.settings.engine_limits()
         observer = Observer(self, row)
-        result = convert(self.storage.root / row['source_path'], scratch / 'engine-out', request, limits,
-                         work=scratch / 'engine-work', observer=observer, name=source_name(row.get('name'), row['source_path']),
-                         model_root=self.settings.model_root, datalab_key=self.datalab_key)
+        extra, hook, gpu = {}, None, converter == routes.MARKER_SERVER
+        if gpu:
+            opts = job_options(fmt, stored_options(options), self.settings)
+            try:
+                ep, keys, srv, hook = self.gpu.prepare(row, opts, request)
+            except lifecycle.Refusal as exc:
+                self.gpu.refused(row, opts['gpu_preset'], exc)
+                raise StorageError(gpu_message(exc.code)) from None
+            request = dict(request, server=srv)
+            extra = {'server_endpoint': ep, 'server_keys': keys}
+            self._gpu_job = row['id']
+        result = None
+        try:
+            result = convert(self.storage.root / row['source_path'], scratch / 'engine-out', request, limits,
+                             work=scratch / 'engine-work', observer=chain(hook, observer) if gpu else observer,
+                             name=source_name(row.get('name'), row['source_path']),
+                             model_root=self.settings.model_root, datalab_key=self.datalab_key, **extra)
+        finally:
+            if gpu:
+                self._gpu_job = None
+                closed = self.gpu.session is not None and not self.gpu.serving()
+                reason = self.gpu.session.state.snapshot()[1] if self.gpu.session is not None else None
+                self.gpu.done(row, hook, result)
         if observer.error is not None:
             raise observer.error
         if result.get('status') != 'complete':
-            raise StorageError(engine_message((result.get('error') or {}).get('code', 'engine_failed'), self.settings))
+            code = (result.get('error') or {}).get('code', 'engine_failed')
+            if gpu and closed and reason in lifecycle.JOB_CODES and code in ('interrupted', 'cancelled'):
+                code = lifecycle.JOB_CODES[reason]
+                if code not in ('interrupted', 'cancelled'):
+                    raise StorageError(gpu_message(code))
+            raise StorageError(engine_message(code, self.settings))
         self.tick(row, None, finishing(observer.progress))
         # inside the private attempt, synchronized with it before the publication (sync_tree)
         out = scratch / 'engine-out'
@@ -685,8 +765,17 @@ class Worker:
 
     def run(self, once=False):
         with self.exclusive():
+            try:
+                # MFL023 B4: the windows left by a dead worker are closed before anything else, the first claim included
+                self.gpu.recover()
+            except lifecycle.Unrecoverable as exc:
+                self.heartbeat({"ready": False, "code": gpu_codes.GPU_UNRECOVERABLE, "commands": exc.commands,
+                                "message": "A GPU window left by a previous worker cannot be closed: " + exc.detail,
+                                "converters": None})
+                raise StorageError(gpu_codes.GPU_UNRECOVERABLE + ": " + exc.detail) from None
             self.reconcile()
             if self.stop:
+                self.expire_heartbeat()
                 return
             probe = self.storage.root / 'staging' / ('worker-' + self.token)
             make_directory(self.storage.root, 'staging/' + probe.name)
@@ -697,23 +786,30 @@ class Worker:
             if receipt['exit'] or receipt['reason']:
                 self.heartbeat({"ready": False, "message": "Isolation unavailable; no fallback", "converters": None})
                 raise StorageError('Isolation readiness failed; diagnostic retained')
-            while not self.stop:
-                try:
-                    self.ready()
-                    self.heartbeat()
-                except (ValueError, OSError, ImportError) as exc:
-                    self.heartbeat({"ready": False, "message": "Conversion engine unavailable: " + str(exc)[:120],
-                                    "converters": None})
+            try:
+                while not self.stop:
+                    try:
+                        self.ready()
+                        self.heartbeat()
+                    except (ValueError, OSError, ImportError) as exc:
+                        self.heartbeat({"ready": False, "message": "Conversion engine unavailable: " + str(exc)[:120],
+                                        "converters": None})
+                        if once:
+                            raise StorageError("Conversion engine unavailable: " + str(exc)[:120]) from None
+                        time.sleep(self.settings.poll_seconds)
+                        continue
+                    self.gpu.poll()
+                    row = self.claim()
+                    if row:
+                        self.process(row)
                     if once:
-                        raise StorageError("Conversion engine unavailable: " + str(exc)[:120]) from None
+                        break
                     time.sleep(self.settings.poll_seconds)
-                    continue
-                row = self.claim()
-                if row:
-                    self.process(row)
-                if once:
-                    break
-                time.sleep(self.settings.poll_seconds)
+            finally:
+                self.gpu.shutdown()          # a session open: CLOSING to a final state, then the exit
+            # a clean exit (--once, SIGINT, SIGTERM): the heartbeat expires; a worker stopped by an error keeps it,
+            # with its message (a GPU window it cannot close, the isolation)
+            self.expire_heartbeat()
 
 
 def validate_engine(engine):

@@ -654,7 +654,7 @@ class TestModalFollower(unittest.TestCase):
         argv, kw = seen[0]
         self.assertEqual(argv, pv.MODAL_SDK + ["app", "logs", "mdf-surya", "-f", "--timestamps", "--show-container-id",
                                                "-s", "stderr"])
-        self.assertEqual((kw["env"]["COLUMNS"], kw["stderr"]), (pv.MODAL_COLUMNS, __import__("subprocess").STDOUT))
+        self.assertEqual((kw["env"]["COLUMNS"], kw["stderr"]), (pv.MODAL_COLUMNS, __import__("subprocess").DEVNULL))
 
 
 class StateOnly:
@@ -1084,7 +1084,7 @@ class TestAbandon(Tasks):
             return "2026-11-20T09:29:10.048Z\t+30.0\tta-1\t%s\t2026-11-20 10:29:10+01:00\t%s\n" % (source, line)
         chat = {"event": "mdf_request", "kind": "forwarded", "method": "POST", "path": "/v1/chat/completions",
                 "status": 200, "t": 1795166950.0}
-        access = '(APIServer pid=9) INFO:     2.231.198.124:0 - "POST /v1/chat/completions HTTP/1.1" 200 OK'
+        access = '(APIServer pid=9) INFO:     203.0.113.7:0 - "POST /v1/chat/completions HTTP/1.1" 200 OK'
         log_text = "".join([
             row("container", json.dumps(chat)), row("container", json.dumps(dict(chat, t=1795166951.0))),
             row("container", json.dumps(dict(chat, kind="error", status=502, code="mdf_upstream"))),
@@ -1653,7 +1653,7 @@ class TestLives(unittest.TestCase):
         tmp = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, tmp, True)
         path = tmp / "worker-log.partial"
-        access = '(APIServer pid=9) INFO:     2.231.198.124:0 - "POST /v1/chat/completions HTTP/1.1" 200 OK'
+        access = '(APIServer pid=9) INFO:     203.0.113.7:0 - "POST /v1/chat/completions HTTP/1.1" 200 OK'
         LogScript(path, clock, t_arm, starting(CA, 10.8) + [
             listed(10.8, CA), listed(16.5, CA, "RUNNING", "2026-11-20 11:15:25+01:00"), listed(22.3, CA, "GONE"),
             (24.0, CA, "system", "    GET /v1/models -> 502 Bad Gateway  (duration: 45.8 ms)"),   # after its GONE

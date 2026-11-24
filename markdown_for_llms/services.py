@@ -29,10 +29,22 @@ REFUSALS = {
     "input_unreadable": "The file cannot be read (damaged or truncated?)",
     "route_invalid": "This format has no such route",
     "route_option_unsupported": "The route does not accept this option",
-    "transit_not_confirmed": "The Datalab route sends the document out of this computer: confirm the transit first",
+    "transit_not_confirmed": ("This route sends the document out of this computer (to Datalab, or its page images to the "
+                              "rented GPU of a GPU preset): confirm the transit first"),
     "invalid_setting": "Invalid job option",
     "route_unavailable": "The route is not available on this machine",
-    "route_not_in_product": "The marker-server route is available in mdf convert and mdf bench only, not in the archive",
+    "route_not_in_product": ("In the archive the marker-server route runs only on a GPU preset of the instance; a local or "
+                             "own inference server is for mdf convert and mdf bench only"),
+    "server_cap": ("The GPU spending caps of this instance leave no session for this preset: a cap is 0, or the reserve "
+                   "left under the caps is less than the minimum reserve of a session (see the estimate)"),
+    # what the worker reads of a GPU preset (MFL023 B10, C-DB-NB2.3: its codes in the presets and the estimate)
+    "server_key_missing": "A key of the GPU provider of this preset is missing from the env file of the worker",
+    "server_key_unsafe": ("The env file of the worker is not a private regular file (mode 0600, not a link), or a key in "
+                          "it is unsafe"),
+    "server_not_configured": ("No endpoint of servers.json names this GPU preset, or its endpoint is not valid (fields "
+                              "fixed by the preset, key_env, the URL read at the provider)"),
+    "server_billed_over_bound": ("A reconciliation recorded a bill of this provider over the bound of its windows: the "
+                                 "guarantees of a session did not hold, and the provider stays stopped for good"),
     # the conversion presets (MFL023 A5) and the GPU presets they name
     "preset_unknown": "No conversion preset of that name",
     "preset_reserved": "A conversion preset of the instance cannot be changed or removed, and its name is reserved",
@@ -42,7 +54,25 @@ REFUSALS = {
     "gpu_preset_superseded": "The GPU preset is superseded: it is listed for its measures and never used",
     "gpu_volume_unsupported": "The GPU preset has a global volume, which arrives with a later version",
     "gpu_preset_not_enabled": "The GPU preset is not enabled on this instance",
+    "session_orphaned": ("A GPU window of this provider is orphan or not certified: the ledger counts the provider at its "
+                         "cap until the window is reconciled with the invoice"),
 }
+GPU_FINAL = ("closed", "uncertain", "orphan", "stopped")
+# The texts of a session that cannot be certified (MFL023 B5, plan r3 §4.8): the Web UI fills them.
+UNCERTAIN_TEXT = {
+    "unobserved_interval": ("This computer was suspended, or its clock jumped, while the {provider} session was armed "
+                            "(about {minutes} min not observed). The worker disarmed {provider} when it resumed and saw the "
+                            "GPU at zero at {zero}, but it cannot prove what was spent while it was not watching."),
+    "over_window": ("{provider} reached zero at {zero}, after the limit of this session's window ({limit}): its spend "
+                    "cannot be bounded by the reserve of the window."),
+    "worker_died": ("The worker stopped while the {provider} session was armed. The next start disarmed {provider} and "
+                    "saw the GPU at zero, but the spend of the window is known only from the invoice."),
+    "zero_missing": ("The worker could not see {provider} at zero within 600 s: the window stays open in the ledger. "
+                     "Disarm the endpoint with the first command, then reconcile."),
+}
+BLOCK_TEXT = ("Until you reconcile this window with the invoice of {provider}, the spend ledger counts {provider} at its "
+              "cap ({cap} USD) and no new {provider} session opens. Read on the billing of {provider} the amount for "
+              "{date}, then run:")
 # The conversion presets (MFL023 A5, D7): how a document is converted. Those of the instance come with it
 # (data/conversion-presets.json, provisional until MFL027); a user adds personal ones, in the database with an
 # owner, with the same closed fields; a preset names a GPU preset, never the other way round.
@@ -85,19 +115,50 @@ def stored_options(raw):
     return value
 
 
-def job_options(fmt, options=None):
+def job_options(fmt, options=None, settings=None):
     """The normalized options of a job, one function for the API (`Service.upload`, `Service.retry`) and the
     worker (`worker.engine_request`), so the two processes refuse the same requests (MFL023 A5): those of the
     routes of the engine, plus `preset`, the name of the conversion preset the options came from, kept only when
-    given (a job without a preset stores no key more, not even null). EngineError with a closed code."""
+    given (a job without a preset stores no key more, not even null). On the route marker-server (MFL023 B3) the
+    GPU preset must be usable by the instance of `settings` (`gpu_availability`; without settings nothing is
+    enabled). EngineError with a closed code of the engine, `Refused` with a code of the GPU presets."""
     opts = dict(options or {})
     preset = opts.pop("preset", None)
     if "preset" in (options or {}) and (not isinstance(preset, str) or not PRESET_NAME.fullmatch(preset)):
         raise EngineError(Code.INVALID_SETTING, "preset: the name of a conversion preset")
     result = routes.job_options(fmt, opts)
+    if result["route"] == routes.MARKER_SERVER:
+        state = gpu_availability(result["gpu_preset"], settings)
+        if not state["available"]:
+            if state["code"] == Code.SERVER_CAP.value:
+                raise EngineError(Code.SERVER_CAP, "the GPU caps of the instance")
+            raise Refused(state["code"])
     if preset is not None:
         result["preset"] = preset
     return result
+
+
+def gpu_availability(name, settings):
+    """Whether the instance of `settings` can use the GPU preset `name` (MFL023 B3), {"available", "code"}, in the
+    order of the checks: `gpu_preset_unknown`; the code that keeps the preset from any instance (superseded, a global
+    volume: `gpu.presets.refusal`); `gpu_preset_not_enabled` (not in MDF_GPU_PRESETS); `server_cap` (a cap of the
+    ledger of its provider, or of a session, of 0 USD). What only the worker knows (the endpoint of servers.json, the
+    keys of its env file, an orphan window, the minimum reserve) comes with its readiness, never from here: the API
+    process reads neither the ledger nor a provider."""
+    from decimal import Decimal
+    from .gpu import presets as gpu_presets
+    table = gpu_presets.load()
+    if name not in table:
+        return {"available": False, "code": "gpu_preset_unknown"}
+    code = gpu_presets.refusal(table[name])
+    if code is not None:
+        return {"available": False, "code": code}
+    if settings is None or name not in settings.gpu_presets_enabled():
+        return {"available": False, "code": "gpu_preset_not_enabled"}
+    provider_cap = getattr(settings, "gpu_cap_usd_" + table[name]["provider"])
+    if Decimal(provider_cap) <= 0 or Decimal(settings.gpu_session_cap_usd) <= 0:
+        return {"available": False, "code": Code.SERVER_CAP.value}
+    return {"available": True, "code": None}
 
 
 def check_preset_options(value):
@@ -151,11 +212,92 @@ def builtin_presets(path=None):
         raise IntegrityError("Malformed conversion presets of the instance") from None
 
 
-def preset_availability(options):
-    """Whether a conversion preset can be used by the archive now, with the code when it cannot: the GPU route is
-    refused by the product until tranche B of MFL023."""
-    if options["route"] in routes.PRODUCT_EXCLUDED:
-        return {"available": False, "code": "route_not_in_product"}
+PROVIDER_NAMES = {"runpod": "RunPod", "modal": "Modal"}
+
+
+def gpu_notice(name, preset):
+    """The notice of the transit of a GPU preset, as `api.TRANSIT_NOTICE` for Datalab (plan r2 §4.8)."""
+    group = preset["gpu"]["group"]
+    where = preset["data_center"] or "a region chosen by Modal"
+    return ("With this preset the page images leave this computer: they are sent to a GPU rented by the second on %s "
+            "(%s, %s) through the relay of the worker, which keeps the key; nothing is stored there after the session. "
+            "Send only documents you may share with %s." % (PROVIDER_NAMES[preset["provider"]], where,
+                                                          "/".join(group) if isinstance(group, list) else group,
+                                                          PROVIDER_NAMES[preset["provider"]]))
+
+
+GPU_FACTS = ("preset", "provider", "arm_id", "a_cents", "until", "reserve_cents", "bound_cents", "completed", "error")
+
+
+def gpu_facts(raw):
+    """The facts of a run on its GPU session (`runs.gpu`, closed fields written by the worker), or None."""
+    try:
+        value = json.loads(raw) if raw else None
+    except ValueError:
+        return None
+    return {k: value.get(k) for k in GPU_FACTS} if isinstance(value, dict) else None
+
+
+def gpu_commands(provider, resource, ledger_path, arm_id=None, stopped=False):
+    """The commands that close a GPU window by hand (plan r2 §4.4, r3 §4.7): the reconciliation with the invoice and,
+    for a session that lost its zero, the disarm of its endpoint first. Shared by the worker (its heartbeat) and the
+    API."""
+    runs = str(Path(ledger_path).parent)
+    out = ["mdf bench spend reconcile --runs-dir %s --provider %s --orphan%s --manual-cents N"
+           % (runs, provider, " --arm %s" % arm_id if arm_id else "")]
+    if stopped:
+        out.insert(0, "python -I -B scripts/servers/session.py disarm --provider %s --name %s --env-file .env "
+                      "--spend-ledger %s" % (provider, resource, ledger_path))
+    return out
+
+
+SESSION_FIELDS = ("arm_id", "gpu_preset", "provider", "state", "reason", "origin", "a_cents", "w_s", "t_arm", "until",
+                  "t_zero", "limit_at", "drift_s", "created", "updated")
+
+
+def session_view(row, ledgers):
+    """What the API and the Web UI show of a row of `gpu_sessions`: its closed fields, the total and the cap of its
+    provider in the ledger (from the worker), and for a window that cannot be certified, orphan or stopped the texts of
+    the block (plan r3 §4.8) and the commands that close it."""
+    from datetime import datetime, timezone
+    out = {k: row.get(k) for k in SESSION_FIELDS}
+    led = (ledgers or {}).get(row["provider"]) or {}
+    out.update(ledger_total_cents=led.get("total_cents"), cap_cents=led.get("cap_cents"))
+    if row["state"] not in ("uncertain", "orphan", "stopped"):
+        return out
+    name = {"runpod": "RunPod", "modal": "Modal"}.get(row["provider"], row["provider"])
+
+    def when(t):
+        return datetime.fromtimestamp(t, timezone.utc).strftime("%Y-%m-%d %H:%M UTC") if t else "an unknown time"
+    reason = row["reason"] if row["reason"] in UNCERTAIN_TEXT else ("zero_missing" if row["state"] == "stopped"
+                                                                    else "worker_died")
+    cap = led.get("cap_cents")
+    out["commands"] = gpu_commands(row["provider"], row["resource"], row["ledger_path"], row["arm_id"],
+                                   stopped=row["state"] == "stopped")
+    out["texts"] = {"title": "GPU session not certified" if row["state"] == "uncertain" else "GPU window orphan",
+                    "reason": UNCERTAIN_TEXT[reason].format(provider=name, minutes=round(abs(row.get("drift_s") or 0) / 60),
+                                                            zero=when(row.get("t_zero")), limit=when(row.get("limit_at"))),
+                    "block": BLOCK_TEXT.format(provider=name, cap="%.2f" % (float(cap) / 100) if cap else "?",
+                                               date="the hours from %s to %s" % (when(row.get("t_arm")),
+                                                                                 when(row.get("t_zero") or row.get("until"))))}
+    return out
+
+
+def with_worker(state, worker):
+    """The availability of a GPU preset for the instance (`gpu_availability`), and, when the instance allows it, what the
+    worker last read (MFL023 B6): an orphan or uncertain window of the provider, the endpoint or the keys missing, a
+    reserve under the minimum. The validation of a job stays that of the instance alone, the same in the API and the
+    worker (`job_options`)."""
+    if state["available"] and isinstance(worker, dict) and worker.get("available") is False:
+        return {"available": False, "code": worker.get("code")}
+    return state
+
+
+def preset_availability(options, settings=None):
+    """Whether a conversion preset can be used by the archive now, with the code when it cannot: on the GPU route,
+    whether the instance can use its GPU preset (`gpu_availability`, MFL023 B3)."""
+    if options["route"] == routes.MARKER_SERVER:
+        return gpu_availability(options["gpu_preset"], settings)
     return {"available": True, "code": None}
 
 
@@ -184,7 +326,7 @@ class Service:
         if ext not in EXTENSIONS:
             raise Refused('format_unsupported')
         try:
-            opts = job_options(EXTENSIONS[ext], overrides)
+            opts = job_options(EXTENSIONS[ext], overrides, self.settings)
         except EngineError as exc:
             raise refused(exc) from None
         previous = self.previous(key)
@@ -221,6 +363,7 @@ class Service:
         result = {k: row[k] for k in ("id", "document_id", "attempt_id", "retry_of", "name", "state", "bundle", "quality", "created", "updated", "error")}
         result["options"] = stored_options(row["options"])
         result["format"] = source_format(row["source_path"])
+        result["gpu"] = gpu_facts(row.get("gpu"))              # MFL023 B6: the closed facts of a run on its GPU session
         try:
             result["manifest"] = stored_manifest(row['manifest'], row) if row['manifest'] else None
         except IntegrityError:
@@ -270,7 +413,7 @@ class Service:
         opts["transit_confirmed"] = False
         opts.update(overrides or {})
         try:
-            opts = job_options(source_format(row["source_path"]), opts)
+            opts = job_options(source_format(row["source_path"]), opts, self.settings)
         except EngineError as exc:
             raise refused(exc) from None
         new_id, attempt = uuid.uuid4().hex, uuid.uuid4().hex
@@ -281,29 +424,36 @@ class Service:
 
     # --- conversion presets (MFL023 A5) ---------------------------------------------------------------
 
-    def presets(self):
+    def presets(self, worker=True):
         """The conversion presets of the instance and of the user, the default of the user, and the GPU presets with
-        whether this instance enables them; each with its availability (in this version the GPU route is refused)."""
+        whether this instance enables them; each with its availability (`preset_availability`, `gpu_availability`:
+        the checks of the instance; the readiness of the worker says the rest, unless `worker` is False)."""
         from .gpu import presets as gpu_presets
         with self.storage.connect() as conn:
             rows = conn.execute("SELECT name, options, created, updated FROM conversion_presets WHERE owner=? "
                                 "ORDER BY name", (OWNER,)).fetchall()
             default = conn.execute("SELECT default_preset FROM user_settings WHERE owner=?", (OWNER,)).fetchone()
-        items = [dict(entry, name=name, builtin=True, **preset_availability(entry["options"]))
-                 for name, entry in builtin_presets().items()]
+        worker = ((self.worker_gpu() or {}).get("presets") or {}) if worker else {}
+
+        def state(options):
+            out = preset_availability(options, self.settings)
+            if options["route"] == routes.MARKER_SERVER:
+                out = with_worker(out, worker.get(options["gpu_preset"]))
+            return out
+        items = [dict(entry, name=name, builtin=True, **state(entry["options"])) for name, entry in builtin_presets().items()]
         for row in rows:
             options = json.loads(row["options"])
             items.append({"name": row["name"], "builtin": False, "options": options, "created": row["created"],
-                          "updated": row["updated"], **preset_availability(options)})
+                          "updated": row["updated"], **state(options)})
         enabled = self.settings.gpu_presets_enabled()
-        gpus = [dict(gpu_presets.public(name, p), enabled=name in enabled, available=False,
-                     code=gpu_presets.refusal(p) or "route_not_in_product")
+        gpus = [dict(gpu_presets.public(name, p), enabled=name in enabled,
+                     **with_worker(gpu_availability(name, self.settings), worker.get(name)))
                 for name, p in gpu_presets.load().items()]
         return {"presets": items, "default": default["default_preset"] if default else None, "gpu_presets": gpus}
 
-    def preset(self, name):
-        """One conversion preset, of the instance or of the user; `preset_unknown`."""
-        for item in self.presets()["presets"]:
+    def preset(self, name, worker=True):
+        """One conversion preset, of the instance or of the user; `preset_unknown`. `worker`: as in `presets`."""
+        for item in self.presets(worker)["presets"]:
             if item["name"] == name:
                 return item
         raise Refused("preset_unknown")
@@ -356,19 +506,127 @@ class Service:
         return {"default": name}
 
     def preset_options(self, name, extra=None):
-        """The job options of a conversion preset: its route, OCR and Datalab mode, with only `lang` and
-        `transit_confirmed` of the request beside them, and its name (`preset`). The GPU presets are refused in this
-        version (`route_not_in_product`)."""
+        """The job options of a conversion preset: its route, OCR, Datalab mode and, on the GPU route, its server mode
+        and GPU preset (MFL023 B3), with only `lang` and `transit_confirmed` of the request beside them, and its name
+        (`preset`). A preset the instance cannot use is refused with its code: the availability of the instance alone,
+        as for the same options sent one by one (`job_options`, MFL023 B10, C-DB-NB2.2); what the worker last read
+        stays for the list and the estimate, and the worker checks the rest before any arm."""
         extra = dict(extra or {})
         if set(extra) - {"lang", "transit_confirmed"}:
             raise Refused("invalid_setting")
-        item = self.preset(name)
+        item = self.preset(name, worker=False)
         if not item["available"]:
             raise Refused(item["code"])
-        options = {k: item["options"][k] for k in ("route", "ocr", "datalab_mode") if item["options"][k] is not None}
+        options = {k: item["options"][k] for k in ("route", "ocr", "datalab_mode", "server_mode", "gpu_preset")
+                   if item["options"][k] is not None}
         options.update(extra)
         options["preset"] = name
         return options
+
+    # --- the GPU session (MFL023 B5) -------------------------------------------------------------------------------
+
+    def worker_gpu(self):
+        """The GPU part of the readiness the worker last recorded (closed values), or None."""
+        with self.storage.connect() as conn:
+            row = conn.execute("SELECT heartbeat, readiness FROM worker WHERE id=1").fetchone()
+        if row is None or time.time() - row["heartbeat"] >= self.settings.lease_seconds:
+            return None
+        try:
+            value = json.loads(row["readiness"])
+        except (TypeError, ValueError):
+            return None
+        return value.get("gpu") if isinstance(value, dict) and isinstance(value.get("gpu"), dict) else None
+
+    def gpu_session(self):
+        """The GPU session of the user: the one not closed, else the last one; with, for a session that cannot be
+        certified, orphan or stopped, the texts of the block and the commands that close it (the folder of the ledger of
+        the instance appears only here, never in `Settings.public()`, a manifest or a ZIP)."""
+        with self.storage.connect() as conn:
+            row = conn.execute("SELECT * FROM gpu_sessions WHERE owner=? ORDER BY (state='closed'), updated DESC LIMIT 1",
+                               (OWNER,)).fetchone()
+            pending = [dict(r) for r in conn.execute("SELECT id, gpu_preset, kind, state, code, created FROM gpu_requests "
+                                                     "WHERE owner=? ORDER BY created DESC LIMIT 5", (OWNER,))]
+        gpu = self.worker_gpu() or {}
+        if row is None:
+            return {"session": None, "requests": pending, "ledgers": gpu.get("ledgers")}
+        return {"session": session_view(dict(row), gpu.get("ledgers") or {}), "requests": pending,
+                "ledgers": gpu.get("ledgers")}
+
+    def gpu_arm(self, preset, transit_confirmed):
+        """A request to arm `preset` ahead (plan r2 §4.5): only a preset that arms ahead (RunPod: the arm loads the
+        image without RUNNING), usable by the instance, with the transit confirmed; the worker takes it between two
+        jobs, and refuses it when it is older than 10 minutes."""
+        from .gpu import presets as gpu_presets
+        if not isinstance(preset, str):                  # MFL023 B10 (C-DB-NB4): before any other check
+            raise Refused("invalid_setting")
+        if transit_confirmed is not True:
+            raise Refused("transit_not_confirmed")
+        table = gpu_presets.load()
+        if preset not in table:
+            raise Refused("gpu_preset_unknown")
+        state = gpu_availability(preset, self.settings)
+        if not state["available"]:
+            raise Refused(state["code"])
+        if table[preset]["levers"]["arm_ahead_s"] is None:
+            raise Refused("route_option_unsupported", "This GPU preset does not arm ahead: its provider gives nothing "
+                                                      "before the first request")
+        request = uuid.uuid4().hex
+        with self.storage.reservation('control', 65536), self.storage.connect() as conn:
+            now = time.time()
+            conn.execute("INSERT INTO gpu_requests (id, owner, gpu_preset, kind, state, created, updated) VALUES "
+                         "(?,?,?,?,'pending',?,?)", (request, OWNER, preset, "arm", now, now))
+        return {"request": request, "gpu_preset": preset, "kind": "arm", "state": "pending"}
+
+    def gpu_disarm(self, preset):
+        """Disarm (plan r2 §4.5): in one transaction the conversions of `preset` in progress are cancelled at their next
+        tick and those in the queue cancelled now ("session disarmed by the user"), then the request; the worker stops
+        the session."""
+        from .gpu import presets as gpu_presets
+        if not isinstance(preset, str):                  # MFL023 B10 (C-DB-NB4): before any other check
+            raise Refused("invalid_setting")
+        if preset not in gpu_presets.load():
+            raise Refused("gpu_preset_unknown")
+        request = uuid.uuid4().hex
+        with self.storage.reservation('control', 65536), self.storage.connect() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            now = time.time()
+            running = conn.execute("UPDATE runs SET cancel=1, updated=? WHERE state='running' AND "
+                                   "json_extract(options,'$.gpu_preset')=?", (now, preset)).rowcount
+            queued = conn.execute("UPDATE runs SET cancel=1, state='cancelled', error='Session disarmed by the user', "
+                                  "updated=? WHERE state='queued' AND json_extract(options,'$.gpu_preset')=?",
+                                  (now, preset)).rowcount
+            conn.execute("INSERT INTO gpu_requests (id, owner, gpu_preset, kind, state, created, updated) VALUES "
+                         "(?,?,?,?,'pending',?,?)", (request, OWNER, preset, "disarm", now, now))
+        return {"request": request, "gpu_preset": preset, "kind": "disarm", "state": "pending",
+                "cancelled": {"running": running, "queued": queued}}
+
+    def gpu_estimate(self, preset):
+        """What the user reads before sending a job on a GPU preset (plan r3 §4.8): the reserve `A` and the window `W`
+        of a session now, the minimum reserve of a session (`minimum_reserve_cents`, never a charge), the cost of a
+        start and of a page from the rate and the seconds of the preset, the measures with their date, hardware and
+        source, the transit (provider, region, GPU), quality unverified; the values of the ledger come from the worker,
+        with `open_session` when the open session of the preset hosts the job (MFL023 B10: `A` and `W` stay those of a
+        new session)."""
+        from decimal import Decimal, ROUND_CEILING
+        from .gpu import presets as gpu_presets
+        table = gpu_presets.load()
+        if preset not in table:
+            raise Refused("gpu_preset_unknown")
+        p = table[preset]
+        rate = Decimal(p["rate"]["usd_per_s"])
+        cents = lambda s: str((rate * s * 100).quantize(Decimal("0.01"), rounding=ROUND_CEILING))  # noqa: E731
+        worker = ((self.worker_gpu() or {}).get("presets") or {}).get(preset) or {}
+        state = with_worker(gpu_availability(preset, self.settings), worker)
+        group = p["gpu"]["group"]
+        return {"gpu_preset": preset, "provider": p["provider"], **state,
+                "region": p["data_center"] or "chosen by Modal", "gpu": group if isinstance(group, list) else [group],
+                "a_cents": worker.get("a_cents"), "w_s": worker.get("w_s"),
+                "minimum_reserve_cents": worker.get("minimum_reserve_cents"),
+                "open_session": worker.get("open_session") is True,
+                "start_cents": cents(p["seconds"]["cold_start_s"]), "page_cents": cents(p["seconds"]["page_seconds"]),
+                "rate": p["rate"], "measures": p["measures"], "provisional": True, "quality": "unverified",
+                "arm_ahead": p["levers"]["arm_ahead_s"] is not None, "notice": gpu_notice(preset, p),
+                "bound_text": "A reserve and a measured limit are an upper bound, not a bill"}
 
     def cancel(self, run_id):
         with self.storage.connect() as conn:

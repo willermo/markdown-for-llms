@@ -1,7 +1,8 @@
 """The conversion presets through the API (MFL023 A5, D7): those of the instance, provisional, and the user's own with the
 same closed fields and a unique name; the default of the user; `POST /api/v1/runs?preset=NAME` with only `lang` and
-`transit_confirmed` beside it, its name recorded in the job; the GPU presets listed and, in this version, refused
-(`route_not_in_product`); CSRF on every change; both catalogs in the wheel."""
+`transit_confirmed` beside it, its name recorded in the job; the GPU presets listed with the checks of the instance
+(since MFL023 B3: `gpu_preset_not_enabled`, `server_cap` with the caps at 0); CSRF on every change; both catalogs in the
+wheel."""
 import asyncio
 import json
 from pathlib import Path
@@ -51,14 +52,14 @@ class ListTests(Base):
         self.assertTrue(all(p['provisional'] for p in builtin.values()))
         self.assertEqual({n: (p['available'], p['code']) for n, p in builtin.items()}, {
             'local-fast': (True, None), 'datalab': (True, None),
-            'quality-now': (False, 'route_not_in_product'), 'batch': (False, 'route_not_in_product')})
+            'quality-now': (False, 'server_cap'), 'batch': (False, 'gpu_preset_not_enabled')})
         self.assertEqual((builtin['quality-now']['options']['gpu_preset'], builtin['batch']['options']['gpu_preset']),
                          ('modal-base', 'runpod-serverless-volume-dc'))
         self.assertIsNone(body['default'])
         gpus = {g['name']: g for g in body['gpu_presets']}
         self.assertEqual({n: (g['enabled'], g['available'], g['code']) for n, g in gpus.items()}, {
-            'modal-base': (True, False, 'route_not_in_product'),
-            'runpod-serverless-volume-dc': (False, False, 'route_not_in_product'),
+            'modal-base': (True, False, 'server_cap'),
+            'runpod-serverless-volume-dc': (False, False, 'gpu_preset_not_enabled'),
             'runpod-serverless-volume-eu-se-1': (False, False, 'gpu_preset_superseded')})
         self.assertEqual(gpus['modal-base']['measures'][0]['value'], '164-172 s')
         self.assertNotIn(self.temp.name, json.dumps(body))
@@ -200,7 +201,7 @@ class SubmitTests(Base):
                          ['datalab_mode', 'lang', 'ocr', 'route', 'transit_confirmed'])
 
     def test_refused_jobs(self):
-        for query, code in (('preset=quality-now', 'route_not_in_product'), ('preset=batch', 'route_not_in_product'),
+        for query, code in (('preset=quality-now', 'server_cap'), ('preset=batch', 'gpu_preset_not_enabled'),
                             ('preset=nope', 'preset_unknown'), ('preset=local-fast&route=marker', 'invalid_setting'),
                             ('preset=local-fast&ocr=force', 'invalid_setting'),
                             ('preset=local-fast&datalab_mode=fast', 'invalid_setting'),

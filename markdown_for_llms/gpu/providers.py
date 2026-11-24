@@ -102,7 +102,37 @@ def _sibling(name):
 
 
 class ProviderError(Exception):
-    """A provider call that failed; the message never holds a key."""
+    """A provider call that failed; the message never holds a key (MFL023 B1, SOL2-B2 of the plan r2):
+
+    - `local`, the text of this code: the operation, an exit or HTTP status, a local check;
+    - `op`, the closed name of the operation (`runpod.patch`, `modal.deploy`, ...) or None;
+    - `http`, the HTTP status of RunPod or None;
+    - `remote`, the end of the stderr of the CLI of Modal (`cli_error`), kept in memory only.
+
+    `str()` is `local`, or `local` and `remote` joined by a blank, byte for byte as before
+    (`test_modal.py:203`). The body of a RunPod answer is never kept, not even here. The events and the
+    outputs of `session.py`, the follower and the product take `closed()`, never `str()`."""
+
+    def __init__(self, local, op=None, http=None, remote=None):
+        super().__init__(local if remote is None else "%s %s" % (local, remote))
+        self.local, self.op, self.http, self.remote = local, op, http, remote
+
+
+def closed(exc):
+    """The closed fields of an error for an event, an output or the product (MFL023 B1): `class`, and for a
+    ProviderError its `op`, its `http` and `detail`, the text of this code (`local`). Never the text of the
+    provider (`remote`); of an error of another class (a local error, a transport) only its class, never
+    its str()."""
+    out = {"class": type(exc).__name__}
+    if isinstance(exc, ProviderError):
+        out.update(op=exc.op, http=exc.http, detail=exc.local)
+    return out
+
+
+def _op(args):
+    """The closed name of a call of the CLI of Modal: `modal.` and its first two words (`app list`,
+    `container list`, `function calls`, ...), with `_` for blanks and dashes."""
+    return "modal." + "_".join(str(a).replace("-", "_") for a in list(args)[:2])
 
 
 class TermReached(ProviderError):
@@ -132,9 +162,13 @@ def read_key(env_file, name):
     return envfile.Secret(found[name])
 
 
-def child_env(environ):
-    """The environment of a wrapped command: no key ever travels in it."""
-    return {k: v for k, v in environ.items() if k not in KEYS}
+def child_env(environ, also=()):
+    """The environment of a child or of a wrapped command: no key ever travels in it (MFL023 B10, C-DB-NB5; §5 of the
+    plan r3). Out go the names of KEYS, those of `also` (the `key_env` of an endpoint) and every name of a key by the
+    rule of `engine.servers`: ending in one of `envfile.KEY_SUFFIXES`, never an `MDF_` setting."""
+    drop = set(KEYS) | set(also or ())
+    return {k: v for k, v in environ.items()
+            if k not in drop and (k.startswith("MDF_") or not k.endswith(envfile.KEY_SUFFIXES))}
 
 
 # --- RunPod ---------------------------------------------------------------------------------------
@@ -370,14 +404,16 @@ class RunPod:
             self._past("%s %s" % (method, path))
             left = self._deadline - self.clock()
             extra["timeout"] = httpx.Timeout(min(30.0, left), connect=min(10.0, left))
+        op = "runpod." + method.lower()
         try:
             r = self.http.request(method, REST + path, json=body, params=params, **extra)
         except httpx.HTTPError as exc:
             self._past("%s %s" % (method, path))
-            raise ProviderError("RunPod %s %s: %s" % (method, path, type(exc).__name__)) from None
+            raise ProviderError("RunPod %s %s: %s" % (method, path, type(exc).__name__), op=op) from None
         self._past("%s %s" % (method, path))
         if r.status_code not in ok:
-            raise ProviderError("RunPod %s %s: HTTP %d %s" % (method, path, r.status_code, r.text[:300]))
+            # MFL023 B1 (SOL-R4): the status only; the body of the answer is never kept, not even in memory
+            raise ProviderError("RunPod %s %s: HTTP %d" % (method, path, r.status_code), op=op, http=r.status_code)
         return r.json() if r.content else {}
 
     def balance(self):
@@ -524,7 +560,7 @@ def run_modal(args, env=None, timeout=900, runner=subprocess.run):
         r = runner(MODAL_SDK + list(args), capture_output=True, text=True, timeout=timeout, env=env,
                    stdin=subprocess.DEVNULL)
     except subprocess.TimeoutExpired:
-        raise ProviderError("modal %s: timeout" % args[0]) from None
+        raise ProviderError("modal %s: timeout" % args[0], op="modal." + str(args[0])) from None
     return r.returncode, r.stdout, r.stderr
 
 
@@ -579,11 +615,11 @@ class Modal:
         code, out, err = run_modal(list(args) + ["--json"], env=self.environ, timeout=self._left(120, args[0]),
                                    runner=self.runner)
         if code:
-            raise ProviderError("modal %s: exit %d %s" % (" ".join(args), code, cli_error(err)))
+            raise ProviderError("modal %s: exit %d" % (" ".join(args), code), op=_op(args), remote=cli_error(err))
         try:
             return json.loads(out or "[]")
         except ValueError:
-            raise ProviderError("modal %s: not JSON" % " ".join(args)) from None
+            raise ProviderError("modal %s: not JSON" % " ".join(args), op=_op(args)) from None
 
     def apps(self):
         return [a for a in self._json("app", "list") if _field(a, "Description", "description", "name") == self.name]
@@ -667,7 +703,7 @@ class Modal:
             if self._deadline is not None and self.clock() >= self._deadline:
                 raise TermReached("modal deploy: the term of the session came during the deploy") from None
         if code:
-            raise ProviderError("modal deploy: exit %d %s" % (code, cli_error(err)))
+            raise ProviderError("modal deploy: exit %d" % code, op="modal.deploy", remote=cli_error(err))
         self.function = "Serve.*" if snapshot else "serve"
         if snapshot:
             urls = self.class_urls()
@@ -708,7 +744,7 @@ class Modal:
                                     "--timestamps", "--show-function-id", "--show-container-id", "-s", "system"],
                                    env=self.environ, timeout=60, runner=self.runner)
         if code:
-            raise ProviderError("modal app logs: exit %d %s" % (code, cli_error(err)))
+            raise ProviderError("modal app logs: exit %d" % code, op="modal.app_logs", remote=cli_error(err))
         return [line for line in (out or "").splitlines() if line.strip()]
 
     def inputs(self, since):
@@ -735,7 +771,7 @@ class Modal:
         by the SDK left no app, and 57 refused stops made the window orphan)."""
         code, _, err = run_modal(["app", "stop", self.name, "--yes"], env=self.environ, timeout=300, runner=self.runner)
         if code and not self.nothing_to_stop(cli_error(err, 2000)):
-            raise ProviderError("modal app stop: exit %d %s" % (code, cli_error(err)))
+            raise ProviderError("modal app stop: exit %d" % code, op="modal.app_stop", remote=cli_error(err))
 
     def nothing_to_stop(self, text):
         return "No App with name '%s' found" % self.name in text or "App is already stopped." in text

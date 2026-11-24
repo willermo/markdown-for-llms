@@ -257,12 +257,29 @@ class Driver:
         return 0 if ok else 6
 
     def delete(self):
+        """The endpoint and, since MFL023 B7 (MFL049 (e)), its template: an endpoint created again with the same name
+        was refused (HTTP 400) for hours while the template of the old one lived. By the public documentation of the
+        REST v2 (read on 24/11/2026, MFL023 B10), the delete of a serverless endpoint removes its associated template
+        too, and the reading of an endpoint does not expose `templateId`: the template is deleted apart only when the
+        reading gives that field, which the live service was never seen to give. A template that this key may not
+        delete (403) is a declared outcome (`template: forbidden`, exit 0): the endpoint is gone; another failure of
+        the template is exit 4, with its closed fields."""
         s = self.rp.state()
         if s["armed"]:
             self.rp.disarm()
-        self.rp.call("DELETE", "/serverless/" + self.rp.endpoint()["id"])
-        out({"delete": self.a.name, "state_before": s})
-        return 0
+        ep = self.rp.endpoint()
+        template = ep.get("templateId")
+        self.rp.call("DELETE", "/serverless/" + ep["id"])
+        result, code = {"delete": self.a.name, "state_before": s, "template": None}, 0
+        if template:
+            try:
+                self.rp.call("DELETE", "/templates/" + template)
+                result["template"] = "deleted"
+            except pv.ProviderError as exc:
+                result["template"] = "forbidden" if exc.http == 403 else dict({"outcome": "failed"}, **pv.closed(exc))
+                code = 0 if exc.http == 403 else 4
+        out(result)
+        return code
 
     # --- inside a session -----------------------------------------------------------------------
     def arm_row(self):

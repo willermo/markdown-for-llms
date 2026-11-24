@@ -65,7 +65,7 @@ Each format has a default route; `--route` imposes one of its alternatives.
 | djvu | `marker` (after `ddjvu` makes a PDF of images) | `djvutxt`, `datalab`, `marker-server` | available; `djvutxt` keeps the text layer, page by page |
 | pdf, png, jpeg, tiff | `marker` (an image becomes a PDF page, a TIFF one page per frame) | `datalab`, `marker-server` | available |
 
-`marker-server` runs with `mdf convert` and `mdf bench run` only: the archive of the product refuses it (`route_not_in_product`, see [The marker-server route](#the-marker-server-route)).
+`marker-server` runs with `mdf convert` and `mdf bench run` on an inference server that you name, and in the archive of the product on the GPU presets of the instance, only with a `gpu_preset` (`route_not_in_product` otherwise, see [The marker-server route](#the-marker-server-route) and [The GPU session of the archive](#the-gpu-session-of-the-archive)).
 
 ```bash
 .venv-dev/bin/mdf convert book.djvu --route djvutxt --max-pages 300 --out out/book
@@ -129,7 +129,7 @@ Datalab is a remote service: the document leaves the machine, and the conversion
 
 ## The marker-server route
 
-`marker-server` runs Marker 2.2.0 in `balanced` or `accurate` mode with the OCR of Surya (the model `datalab-to/surya-ocr-2.5`) on an inference server that you name. It is a route of the pages family (pdf, png, jpeg, tiff, djvu) for `mdf convert` and `mdf bench run`; the archive of the product refuses it with `route_not_in_product` in this version. The Marker child still has no network: it reaches the server through a relay of the converting process, on a Unix socket in a private directory of yours, and it never sees a key.
+`marker-server` runs Marker 2.2.0 in `balanced` or `accurate` mode with the OCR of Surya (the model `datalab-to/surya-ocr-2.5`) on an inference server that you name. It is a route of the pages family (pdf, png, jpeg, tiff, djvu) for `mdf convert` and `mdf bench run`; in the archive of the product it runs on the GPU presets of the instance, and is refused with `route_not_in_product` only without a `gpu_preset`. The Marker child still has no network: it reaches the server through a relay of the converting process, on a Unix socket in a private directory of yours, and it never sees a key.
 
 - `balanced`: Marker reads the layout on this machine and the server reads the text lines; the tables are rebuilt on this machine from the lines that the server reads.
 - `accurate`: every page goes to OCR, and the server reads the whole page, its tables included.
@@ -179,7 +179,7 @@ A superseded preset is listed for its measures and never used; a preset on a glo
                 "url": "https://<workspace>--mdf-surya-serve.<region>.modal.run"}}}
 ```
 
-`kind` is the provider of the preset, `resource` the name of the endpoint or app at the provider, `url` its address and `key_env`, optional, the names of its keys. The preset gives every other field (server, model, revision, pins, parallel, gpu, rate, seconds): one of them written next to `preset`, a preset of another provider or a superseded one, and two endpoints of one file with the same preset are `server_not_configured`. `mdf convert` and `mdf bench run` read such an endpoint as any other. For Modal the preset takes `ready_within` 900 and `cold_start_s` 480, lower than the defaults of a Modal endpoint written by hand (1200 and 1100).
+`kind` is the provider of the preset, `resource` the name of the endpoint or app at the provider, `url` its address and `key_env`, optional, only the names that the provider of the preset reads, in their order (`RUNPOD_API_KEY`; `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET`): the worker, its children and the relay read those, so other names are `server_not_configured`. The preset gives every other field (server, model, revision, pins, parallel, gpu, rate, seconds): one of them written next to `preset`, a preset of another provider or a superseded one, and two endpoints of one file with the same preset are `server_not_configured`. `mdf convert` and `mdf bench run` read such an endpoint as any other. For Modal the preset takes `ready_within` 900 and `cold_start_s` 480, and so does a Modal endpoint written by hand (with the former defaults, 1200 and 1100, `mdf convert` refused a reserve under about 0.53 USD).
 
 ### Convert on the local CPU server
 
@@ -214,7 +214,7 @@ L=~/bench-runs/spend.jsonl
 
 - `--cap-usd` is the cap of this session, `--spend-cap-usd` the cap of the ledger for that provider, all sessions together. The session takes `A = min(--cap-usd, what the ledger leaves)` and a window `W = A / rate - 60 s - Z - tail` (Z = 120 s for the zero after the disarm; tail = 30 s on RunPod, which bills until the container has stopped). It refuses to start when the ledger has an orphan window of the provider (`session_orphaned`, below) or when the provider is not idle (`provider_not_idle`).
 - On Modal `--url` is the URL of the app that the arm records, so that `mdf convert` finds the session; on RunPod the session reads it from the endpoint.
-- Inside the window, `mdf convert` needs `--server-cap-usd`, `--spend-ledger` and `--spend-cap-usd` (`server_ledger_required`), reserves the term of the attempt in the ledger before it wakes the server, and refuses with `server_not_armed` outside a session or when the window has less time left than the readiness floor of the endpoint (`ready_within`: 900 s on RunPod, 1200 s on Modal by default), with `server_cap` when the ledger is over its cap.
+- Inside the window, `mdf convert` needs `--server-cap-usd`, `--spend-ledger` and `--spend-cap-usd` (`server_ledger_required`), reserves the term of the attempt in the ledger before it wakes the server, and refuses with `server_not_armed` outside a session or when the window has less time left than the readiness floor of the endpoint (`ready_within`: 900 s on RunPod and on Modal by default), with `server_cap` when the ledger is over its cap.
 - At the end of the command, at the end of the window, or on SIGINT or SIGTERM the session stops the command, disarms the endpoint and reads it every 10 s until nothing runs. The end of the window holds during the arm too: each call that arms the provider gets at most the time left to it, SIGINT, SIGTERM and the end of the window interrupt an arm in progress, and the command starts only while the window is open (exit 5 otherwise). An arm interrupted or finished after the end of the window may have changed the provider: the session disarms it and reads the zero as always. A window is clean when its command was `mdf convert` or `mdf bench` (also as `python -I -B -m markdown_for_llms.cli convert` or `bench`, after the options of `mdf`), ended with 0 and without a fault, and the zero came within Z: the ledger then counts the measured bounds of its attempts (`server_cost_bound` in the problems: an upper bound, not a bill); otherwise it counts the time from the arm to the zero (on RunPod to the stop of the container) plus the tail. No zero within 600 s leaves the window orphan at its cap: `session.py status` names it, `session.py disarm --provider P --name N --spend-ledger L --env-file .env` disarms again and closes it, and only a reconciliation with the bill releases its amount ([The ledger and the bill](#the-ledger-and-the-bill)).
 
 The same session runs a bench (`mdf bench run --route marker-server`, see [the bench guide](bench.md#measure-the-marker-server-route)).
@@ -271,7 +271,7 @@ The scripts of `scripts/servers/` run from the root of a clone with the developm
 
 6. Optionally, the cache of compilation ([below](#the-cache-of-compilation)).
 
-`runpod_endpoint.py delete --name N` deletes an endpoint; the volume stays until you delete it in the console.
+`runpod_endpoint.py delete --name N` deletes an endpoint and, by the public documentation of the REST v2, its template with it; the command deletes the template apart only when the reading of the endpoint gives a `templateId`, and a `403` there is the declared outcome `template: forbidden` (exit 0: the endpoint is gone). The volume stays until you delete it in the console.
 
 ### Prepare a Modal app
 
@@ -325,7 +325,7 @@ The last line of `start_series.py` gives the SHA-256 of the archive (`sha256`). 
 
 ### Arm ahead
 
-On RunPod the arm alone makes a host load the image of the endpoint, and nothing is billed before a worker runs (checked on the bill). Arming about 7 minutes before the first request hides the load: in three sessions armed 420 s ahead the endpoint was ready 192 to 201 s after the first request, against 462 to 621 s after the first request without (both without the cache of compilation). The product does not do it yet; by hand, make the command of the session wait:
+On RunPod the arm alone makes a host load the image of the endpoint, and nothing is billed before a worker runs (checked on the bill). Arming about 7 minutes before the first request hides the load: in three sessions armed 420 s ahead the endpoint was ready 192 to 201 s after the first request, against 462 to 621 s after the first request without (both without the cache of compilation). In the archive, choose the preset `batch`, confirm the transit and press "Arm ahead" ([The GPU session of the archive](#the-gpu-session-of-the-archive)). From the command line, make the command of the session wait:
 
 ```bash
 .venv-dev/bin/python -I -B scripts/servers/session.py run --provider runpod --name mdf-surya --env-file .env \
@@ -419,6 +419,21 @@ prints the total of each provider and of Datalab, every window with its amount a
 
 `--arm` (repeatable) names closed windows, `--activity` activities, `--orphan` the orphan windows that `session.py disarm` closed. A figure above the amounts of its windows is written and then stops the provider for good (`server_billed_over_bound`): a bill over the bound means that the guarantees of the session did not hold, and is a matter for you before any other session. The caps are never raised to let a session pass.
 
+### A window that cannot be certified
+
+A session counts its window within its reserve `A` only when it watched the whole window and saw the zero in time. Two cases make the close not certifiable, for a session of `session.py run` as for one of the archive:
+
+- `unobserved_interval`: the wall clock moved more than 5 s away from the monotonic clock while the window was armed, because the laptop was suspended (Linux does not count a suspend in the monotonic clock) or its clock stepped. A drift that goes back counts at its largest. In that interval nothing was measured, also when it ended before the term `T`;
+- `over_window`: the zero came after the limit of the window, `T + 60 s + Z` for a window not shortened (a slow disarm, a slow zero).
+
+The window is then never cut at `A`: its `disarm` row has `orphan: true` and `uncertain` with the reason, the ledger counts the provider at its cap, and no new window opens on that provider (`session_orphaned`, also for `mdf convert` and the bench) until a reconciliation with the bill. `session.py run` writes the event `uncertain` in its report and exits with 4 (after 130 for a signal and 5 for the term, which come first: the row keeps the block). The archive shows the session as "GPU session not certified" with the reason, the hour of the zero, the provider at its cap and the command ([The GPU session of the archive](#the-gpu-session-of-the-archive)). Read on the bill of the provider the amount for the hours of the window (RunPod: `runpod_endpoint.py --env-file .env read-history --name N --since ISO`; Modal: `uv tool run --from modal==1.6.3 modal billing report --for today -r h --json`), when those hours are closed, then:
+
+```bash
+.venv-dev/bin/mdf bench spend reconcile --runs-dir RUNS --provider runpod --orphan --arm ARM_ID --manual-cents N
+```
+
+`RUNS` is the folder of the ledger (for the archive `MDF_GPU_LEDGER_DIR`). The figure replaces the cap and frees the provider. To keep a session from being suspended, run its commands under `systemd-inhibit --what=sleep:idle:handle-lid-switch`.
+
 ### Limits of the route
 
 - In `balanced` mode a table cell written on several lines can lose part of its text or have it moved to another cell, because Marker rebuilds the tables on this machine from the lines the server reads; seen on the table of a scientific article with the CPU server and with the GPU servers. `accurate` reads the whole page; its result on such tables has not been measured.
@@ -452,7 +467,7 @@ A conversion preset says how a document is converted: route, mode of the GPU rou
 | `batch` | pages and images on a GPU of RunPod (`marker-server`, `balanced`, `runpod-serverless-volume-dc`) |
 | `datalab` | pages and images with Datalab, `balanced` |
 
-In this version the archive lists `quality-now` and `batch` and refuses them (`route_not_in_product`), like every GPU preset. You add presets of your own with the same fields and choose your default:
+`quality-now` and `batch` run on a GPU preset of the instance ([The GPU session of the archive](#the-gpu-session-of-the-archive)): when the instance does not enable it they are listed and unavailable with their code (`gpu_preset_not_enabled`, `server_cap` with a cap of 0, `session_orphaned` while a window of the provider waits for the bill). You add presets of your own with the same fields and choose your default:
 
 ```bash
 .venv-dev/bin/mdf --env-file mdf.env presets list
@@ -464,13 +479,31 @@ In this version the archive lists `quality-now` and `batch` and refuses them (`r
 
 The names of the presets of the archive are reserved (`preset_reserved`); a name is lowercase letters, digits and hyphens (`preset_invalid` otherwise, as for options outside their form), once per user (`preset_exists`). With `--preset` only `--lang` and `--confirm-transit` go beside it; the job records the name of the preset in its options (`preset`). The API has the same operations: `GET /api/v1/presets` (the presets, the default and the GPU presets with whether this instance enables them), `POST /api/v1/presets` with `{"name": …, "options": {…}}`, `PUT` and `DELETE /api/v1/presets/NAME`, `PUT /api/v1/settings/default-preset` with `{"name": …}` or `null`, and `POST /api/v1/runs?preset=NAME`, with only `lang` and `transit_confirmed` beside it.
 
-The GPU presets an instance offers are its settings (in `.env.example`): `MDF_GPU_PRESETS` names them (only supported presets on a network volume), `MDF_SERVERS` is the `servers.json` of the instance, `MDF_GPU_LEDGER_DIR` the folder of its spend ledger, outside the archive, `MDF_GPU_CAP_USD_MODAL`, `MDF_GPU_CAP_USD_RUNPOD` and `MDF_GPU_SESSION_CAP_USD` the caps. None of them is part of the identity of the archive. In this version they are read and checked, and the GPU route is still refused in the archive.
+The GPU presets an instance offers are its settings (in `.env.example`): `MDF_GPU_PRESETS` names them (only supported presets on a network volume), `MDF_SERVERS` is the `servers.json` of the instance, `MDF_GPU_LEDGER_DIR` the folder of its spend ledger, outside the archive, `MDF_GPU_CAP_USD_MODAL`, `MDF_GPU_CAP_USD_RUNPOD` and `MDF_GPU_SESSION_CAP_USD` the caps. None of them is part of the identity of the archive.
+
+### The GPU session of the archive
+
+A job on a GPU preset (`quality-now`, `batch`, or `route=marker-server&server_mode=balanced&gpu_preset=NAME&transit_confirmed=true`) runs on a session of that preset, which the worker opens at the first such job, keeps while the queue has jobs of the preset, and closes 60 s after the last one (`idle_s` of the preset). One session at a time: its jobs go first, a job of another preset closes it, and a local job queued after it closes it at once. Only the worker talks to the provider, each call in a child process with its own limit; the API writes requests and reads states.
+
+What the instance needs:
+
+- `MDF_GPU_PRESETS` with the preset, its caps above 0, and an endpoint of `MDF_SERVERS` that names it ([GPU presets](#gpu-presets));
+- the keys of the endpoint by name in the env file of the worker (`mdf --env-file worker.env worker`, a file of yours with mode 0600: `RUNPOD_API_KEY`, or `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET` with the token of the SDK in `~/.modal.toml`), never in the settings of `mdf serve`;
+- for Modal, `uv` on the `PATH` of the worker (the CLI of the SDK).
+
+Before anything is armed the worker opens a session only when it fits: no orphan window of the provider in the ledger, no window of another session (`provider_not_idle`), the endpoint at rest, and on RunPod its pins and, since this version, those of the preset: the volume of the preset in its data center, of its class and size (`endpoint_out_of_pins`). Only the session of the archive passes the preset to these checks (`pin_checks`, `RunPod.arm`); a session of `session.py run` checks the pins of MFL033 only. The reserve of the session `A` is the smaller of `MDF_GPU_SESSION_CAP_USD` and what the cap of the provider leaves, its window `W = A / rate - 60 s - Z - tail`, and it must hold an attempt of `MDF_MAX_PAGES` pages (one page to arm ahead): that is the **minimum reserve** of a session, 45.23 cents on Modal and 28.76 cents on RunPod with the 50 pages of the default, a reserve and never a charge. A larger `MDF_MAX_PAGES` raises it (98.19 cents on Modal with 200 pages); under it the job fails with `server_cap` before anything is armed.
+
+The Web UI shows, before you send a job with a GPU preset, the provider, its region and GPU, where the page images go, the reserve and window of a session now, its minimum reserve, about how much a start and a page cost and the measures of the preset with their date, hardware and source (provisional values, quality not verified); "Convert" stays disabled until the transit is confirmed. The same estimate is `GET /api/v1/gpu/estimate?preset=NAME` and `mdf gpu estimate NAME`. A job then shows the reserve and the measured limit of its attempt: an upper bound, not a bill.
+
+To arm ahead (RunPod only: see [Arm ahead](#arm-ahead)), confirm the transit and press "Arm ahead", or `mdf gpu arm runpod-serverless-volume-dc --confirm-transit`, or `POST /api/v1/gpu/arm` with `{"gpu_preset": …, "transit_confirmed": true}`: the worker arms between two jobs (a request older than 10 minutes is refused), and the session closes by itself when its window can no longer hold a page (264 s after the arm with a reserve of 0.30 USD). "Disarm" in the section "GPU session" (or `mdf gpu disarm NAME`, `POST /api/v1/gpu/disarm` with `{"gpu_preset": …}`) stops the session at once: the conversions of that preset in progress and in the queue are cancelled. `GET /api/v1/gpu/session` and `mdf gpu session` give the state of the session.
+
+The ledger of the instance is `MDF_GPU_LEDGER_DIR/spend.jsonl`; give the same file to `mdf convert --spend-ledger` and the same folder to `mdf bench run --runs-dir` so that they and the archive never arm the same endpoint at once (`provider_not_idle` in both directions). If Modal has no GPU for 300 s, the job fails with `modal_no_capacity` ("Modal had no GPU: retry later or choose the preset Batch (RunPod)"); the provider is never changed for you. When a worker stops with a session armed, its next start disarms the endpoint before taking any job and holds the window as an orphan at the cap of the provider until you reconcile it with the bill ([A window that cannot be certified](#a-window-that-cannot-be-certified)); the section "GPU session" shows the command. If it cannot close such a window (its ledger missing, a key missing, no zero), the worker stops before any job with `gpu_unrecoverable` and the commands that close it by hand. A session that cannot be certified is shown as "GPU session not certified" with the same command.
 
 ### Formats and routes
 
 The archive accepts every format of the conversion matrix, recognized by the extension of the file name and confirmed by the signature of the whole file: a `.docx` that is not a Word package is refused with `format_mismatch`, an extension outside the matrix with `format_unsupported`, a damaged package with `input_unreadable`. The source is kept with its extension (`sources/<id>.docx`), and the ZIP and "Download source" give it back as `source/document.<ext>` with its media type.
 
-The route is the default of the format unless you choose one of its alternatives (the table in [Choose a route](#choose-a-route)), except `marker-server`, which the API and the worker refuse with `route_not_in_product` in this version, also through a conversion preset; the Web UI preselects "Default of the format (recommended)" and lists only the routes every chosen file has. The API takes the options as query parameters of `POST /api/v1/runs` (`route`, `ocr`, `lang`, `datalab_mode`, `transit_confirmed`); the API and the worker both validate them, and a refusal carries its code next to the text (for example `{"error": "This format has no such route", "code": "route_invalid"}`). `GET /api/v1/session` lists the formats with their routes and `GET /api/v1/readiness` the availability of each route as the worker last checked it. A route that cannot run on this machine (for example Marker without its weights, `weights_missing`) fails its job with `route_unavailable` and the next jobs go on.
+The route is the default of the format unless you choose one of its alternatives (the table in [Choose a route](#choose-a-route)); `marker-server` runs in the archive only on a GPU preset of the instance, usually through a conversion preset, and without one it is refused with `route_not_in_product` (a local or own server is for `mdf convert`). The Web UI preselects "Default of the format (recommended)" and lists only the routes every chosen file has. The API takes the options as query parameters of `POST /api/v1/runs` (`route`, `ocr`, `lang`, `datalab_mode`, `transit_confirmed`, and on the GPU route `server_mode` and `gpu_preset`); a retry of a GPU job confirms the transit again; the API and the worker both validate them, and a refusal carries its code next to the text (for example `{"error": "This format has no such route", "code": "route_invalid"}`). `GET /api/v1/session` lists the formats with their routes and `GET /api/v1/readiness` the availability of each route as the worker last checked it. A route that cannot run on this machine (for example Marker without its weights, `weights_missing`) fails its job with `route_unavailable` and the next jobs go on.
 
 The detail of a completed conversion lists its problems with their page under "Problems" and the limits of its route under "Limits of this conversion" (the limit of Marker on vector and scanned figures is one of them). A run of a previous version keeps its options: `force_ocr` counts as `--ocr force`.
 
@@ -493,7 +526,7 @@ Before sending, the Web UI shows what happens to the document under "Datalab: th
 
 The archive records the identity of the settings it depends on (identity schema 3, profile `engine-v1`): the port, the model root, the time limits, the Datalab cap and the settings of the GPUs are not part of it, the quotas and the limits of a conversion are (`mdf configure` changes the storage quota). An archive of a previous version (identity schema 1 or 2) is upgraded by its first opening, which needs every API, worker and CLI of every version stopped; the upgrade is recorded in the `history` of `identity.json`. If it was created with a former default port, open it once with `MDF_PORT=23460` (or `8765` before 2026-11-07); with the former default model root (`./mdf-models` of the directory it was used from), once with `MDF_MODEL_ROOT` set to the absolute path of that `mdf-models` directory, from any directory, or with `MDF_MODEL_ROOT=./mdf-models` from the directory it was used from; the mismatch message names them.
 
-Its database is at schema 4 (the conversion presets of the users and their default), which an archive of schema 3 reaches at its first opening, with the same identity. The binary of schema 3 refuses a database of schema 4 (`Unsupported database schema`): to use the archive again with it, stop every process and add `--to-schema 3` to the command below. That return leaves `identity.json` as it is, and it is refused, without changes, while a user has a conversion preset or a default, or a run was submitted with a preset (its options hold `preset`).
+Its database is at schema 5 (4: the conversion presets of the users and their default; 5: the GPU sessions, their requests and the GPU facts of each run), which an archive of schema 3 or 4 reaches at its first opening, with the same identity. A binary of an earlier schema refuses it (`Unsupported database schema`): to use the archive again with the binary of schema 4 or 3, stop every process and add `--to-schema 4` or `--to-schema 3` to the command below. Those returns leave `identity.json` as it is. The return under 5 is refused, without changes, while a GPU session is not closed (`uncertain`, `orphan` or `stopped`: reconcile it first), a request to arm or disarm is pending, or a run has GPU facts or ran on the route `marker-server`; the return under 4 while a user has a conversion preset or a default, or a run was submitted with a preset (its options hold `preset`).
 
 To use the archive again with the version of schema 2, stop every process and run:
 

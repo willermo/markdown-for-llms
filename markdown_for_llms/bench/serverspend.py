@@ -11,10 +11,13 @@ Rows (plan r2 §11, r3 §11.5, §11.7, r4 §11.10 and App. G; prescription 2 of 
   session), `spend_cap_cents` (the cap of the provider), `rate`, `fault`, optional `tail_s`;
 - `disarm` (after the zero): `arm_id`, `t_zero`, `clean` (the view of the session: no fault, exit
   0, attempts of the engine only, zero within `Z`), `orphan` (a disarm of a window whose session
-  died: `session.py disarm`), optional `t_stop` and `double_s`;
+  died: `session.py disarm`), optional `t_stop` and `double_s`; since MFL023 also `uncertain` (with
+  `orphan: true`): the reason why a live session could not certify the close of its own window
+  (`closing`), informative only;
 - `reserve` (at the wake of a server, before its first request): `run_id`, `attempt_id`, `arm_id`,
   `reserve_cents`, `rate`, `tail_idle_s`, `t_reserve`, `identity`, `follows` (the previous attempt
-  of the window, closed cleanly, whose short tail this attempt cuts);
+  of the window, closed cleanly, whose short tail this attempt cuts); the canonical URL of the
+  endpoint must be the URL of the window (MFL023 B2);
 - `complete`: `bound_cents` (the measured upper bound; `billed_cents` stays null), `clean`,
   `t_wake`, `t_last`, `t_close`;
 - `activity` (a reservation outside the engine without a window: a disarmed check, a CPU
@@ -29,7 +32,8 @@ counts from its `t_reserve`. A window is:
 - **open**, owned by a live session (its lock `<ledger>.arm-<id>.lock` held): `A`, once; its
   attempts draw from it;
 - **orphan** (an `arm` whose lock is free and has no `disarm`, or a `disarm` with `orphan: true`):
-  the whole residual of the cap of the provider, until a manual reconciliation;
+  the whole residual of the cap of the provider, until a manual reconciliation; `orphan: true` also
+  marks the close of a live session that cannot be certified within `A` (`uncertain`, `closing`);
 - **clean** (disarmed, `clean`, at least one attempt, every attempt complete and clean): the sum
   of its attempts;
 - **unclean** (any other disarmed window, faults and drivers included): `max(sum, (t_end -
@@ -54,6 +58,7 @@ import time
 
 from .codes import BenchError, Code
 from . import spend
+from ..engine.servers import DRIFT_LIMIT_S
 
 PROVIDERS = ("runpod", "modal")
 KINDS = ("arm", "disarm", "reserve", "complete", "activity", "reconcile")
@@ -249,13 +254,7 @@ class Provider:
             return max(a_cents, total)
         if status == "clean":
             return total
-        arm, dis = w["arm"], w["disarm"]
-        end = _num(dis["t_zero"], "t_zero")
-        if dis.get("t_stop") is not None:
-            end = max(end, _num(dis["t_stop"], "t_stop"))
-        end += _seconds(arm, "tail_s")
-        span = max(Decimal(0), end - _num(arm["t_arm"], "t_arm")) + _seconds(dis, "double_s")
-        return max(total, _up(span * _num(arm["rate"], "rate") * 100))
+        return max(total, unclean_cents(w["arm"], w["disarm"]))
 
     def summary(self, is_alive):
         """{"total_cents", "windows": [...], "activities": [...], "orphans": [...], "over_bound": [...]}"""
@@ -302,6 +301,41 @@ class Provider:
     def _cap_cents(self):
         caps = [_cents(w["arm"]["spend_cap_cents"], "spend_cap_cents") for w in self.windows.values()]
         return max(caps) if caps else Decimal(0)
+
+
+def unclean_cents(arm, dis):
+    """The bound of an unclean window in cents: `(t_end - t_arm + double_s) x rate`, `t_end` the later of the
+    `t_zero` and the `t_stop` of the `disarm` row `dis`, plus the `tail_s` of the `arm` row (MFL033 c7.19); the
+    calculation of `window_base`, moved here by MFL023 B2 so that `closing` uses the same one."""
+    end = _num(dis["t_zero"], "t_zero")
+    if dis.get("t_stop") is not None:
+        end = max(end, _num(dis["t_stop"], "t_stop"))
+    end += _seconds(arm, "tail_s")
+    span = max(Decimal(0), end - _num(arm["t_arm"], "t_arm")) + _seconds(dis, "double_s")
+    return _up(span * _num(arm["rate"], "rate") * 100)
+
+
+def closing(arm, t_zero, t_stop=None, double_s=0, drift_s=0):
+    """MFL023 B2 (SOL2-B1 of the plan r2): the rule of a live session that closes its own window, shared by the
+    worker and `session.py run`. None when the close is certifiable: the session observed the whole window (its
+    wall clock moved with its monotonic clock: the largest drift observed, `drift_s`, within
+    `engine.servers.DRIFT_LIMIT_S`, so no suspend and no step of the clock) and the unclean bound up to the zero
+    observed (`unclean_cents`, with `t_stop` and `double_s`) stays within `A`. Otherwise the reason:
+
+    - `unobserved_interval`: the drift beyond the limit; in that interval the session measured neither the
+      overlap of two workers nor the bounds of its attempts, so the bound of the window is not proven, even
+      when the interval ended before `T`;
+    - `over_window`: the bound over `A` (for a window not shortened, a zero observed after `T + 60 s + Z`).
+
+    A close that is not certifiable writes its `disarm` row with `orphan: true` and the reason as `uncertain`:
+    the provider stays at its cap until a manual reconciliation with the invoice (`mdf bench spend reconcile
+    --orphan --arm ID --manual-cents N`); the window is never cut at `A`."""
+    if abs(Decimal(str(drift_s))) > DRIFT_LIMIT_S:
+        return "unobserved_interval"
+    bound = unclean_cents(arm, {"t_zero": t_zero, "t_stop": t_stop, "double_s": double_s})
+    if bound > _cents(arm["a_cents"], "a_cents"):
+        return "over_window"
+    return None
 
 
 def parse(entries):
@@ -372,8 +406,10 @@ def session(ledger_path, provider, url, environ=None, entries=None, rate=None):
 def reserve(locked, ledger_path, provider, arm_id, run_id, attempt_id, info, command_left_cents, clock=time.time):
     """Under the lock of the ledger, at the wake of a server: the checks of the session again,
     the budget, `follows`, then the `reserve` row. `info`: {"reserve_cents", "rate", "tail_idle_s",
-    "identity", "endpoint", "D"}. Raises `session_orphaned`, `server_not_armed`, `server_cap`,
-    `server_billed_over_bound`; returns the row."""
+    "identity", "endpoint", "url", "D"}, `url` the canonical URL of the endpoint, which must be the URL of
+    the window (MFL023 B2, C-B2 of the plan r1): an attempt never draws from the window of another
+    endpoint. Raises `session_orphaned`, `server_not_armed`, `server_cap`, `server_billed_over_bound`;
+    returns the row."""
     entries = locked.entries()
     p = parse(entries).get(provider) or Provider(provider)
     s = p.summary(lambda a: alive(ledger_path, a))
@@ -385,6 +421,8 @@ def reserve(locked, ledger_path, provider, arm_id, run_id, attempt_id, info, com
         raise BenchError(Code.SERVER_NOT_ARMED, "the session %s is not live" % arm_id)
     if (run_id, attempt_id) in p.attempts:
         raise BenchError(Code.SPEND_LEDGER_INCONSISTENT, "two reservations of one attempt")
+    if info.get("url") != w["arm"].get("url"):            # MFL023 B2: the window of this endpoint only
+        raise BenchError(Code.SERVER_NOT_ARMED, "the session %s does not arm the endpoint of this attempt" % arm_id)
     check_rate(w["arm"], info.get("rate"))                # S-B6, again under the lock
     left = _cents(w["arm"]["a_cents"], "a_cents") - sum(p.window_attempts(arm_id).values(), Decimal(0))
     budget = min(left, Decimal(str(command_left_cents)))
