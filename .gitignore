@@ -122,3 +122,7 @@ CLAUDE.local.md
 
 # Local paths of this machine for scripts/full-check.sh
 .full-check.env
+
+# Archive and state of a local product in containers (MFL051; bind mounts of the compose project)
+/data/
+/state/

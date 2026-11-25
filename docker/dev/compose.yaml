@@ -1,0 +1,150 @@
+# Development project of MFL051 (tranche A1): a dedicated launcher, bound by ID to the image `engine` built
+# from the tree under test, and the container that runs the component tests against it. Started only by
+# `make test-components`, with a project name, volumes and image tags of its own for each invocation; nothing of
+# the product uses this file. Every value comes from the Makefile; nothing has a default.
+#
+#   init       once: gives the root of each named volume to the user of the host, mode 0700. The only
+#              container with a capability (CHOWN), without network, with a read-only root. A root that is
+#              already right is not touched; otherwise it is taken (chown 0:0), given its mode by its owner and
+#              handed back, so no CAP_FOWNER is needed and two runs in a row leave the same state.
+#   launcher   the one process with the Docker socket (markdown_for_llms/launcher.py): the user of the host, the
+#              GID of the socket as its only extra group, no network, no capability, a read-only root; it sees
+#              the work and run volumes read-only. `restart: "no"`: the tests kill it and need it to stay down.
+#   suite      the test driver (image `dev`): pytest on tests/container with the working copy mounted read-only
+#              at its own path. It is a client of the launcher like the worker will be (the launcher's socket,
+#              the work and run volumes), and it ALSO mounts the Docker socket, which no service of the product
+#              but the launcher ever does: the tests stop and start the launcher, read what Docker really
+#              created and record it. It is a development tool, not a part of the product.
+#   no-socket, no-group   two launchers that must refuse to start: a Docker socket that does not exist, and the
+#              real socket without its group (the access check of the launcher, with the real identity).
+name: mdf-dev
+services:
+  init:
+    image: ${MDF_COMPOSE_ENGINE_IMAGE:?}
+    user: "0:0"
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    security_opt: ["no-new-privileges"]
+    mem_limit: 128m
+    memswap_limit: 128m
+    restart: "no"
+    entrypoint: ["/bin/sh", "-euc"]
+    command:
+      - |
+        for root in /volumes/*; do
+          if [ -L "$$root" ] || [ ! -d "$$root" ]; then echo "init: $$root is not a directory" >&2; exit 1; fi
+          if [ "$$(stat -c '%u:%g %a' "$$root")" = "$$1 700" ]; then continue; fi
+          chown 0:0 "$$root"
+          chmod 0700 "$$root"
+          chown "$$1" "$$root"
+        done
+      - init
+      - "${MDF_COMPOSE_UID:?}:${MDF_COMPOSE_GID:?}"
+    volumes:
+      - mdf-work:/volumes/work
+      - mdf-run:/volumes/run
+      - mdf-launcher:/volumes/launcher
+      - mdf-models:/volumes/models
+      - mdf-cpu-server:/volumes/cpu-server
+
+  launcher: &launcher
+    image: ${MDF_COMPOSE_ENGINE_IMAGE:?}
+    user: "${MDF_COMPOSE_UID:?}:${MDF_COMPOSE_GID:?}"
+    group_add: ["${MDF_COMPOSE_DOCKER_GID:?}"]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges"]
+    mem_limit: 512m
+    memswap_limit: 512m
+    pids_limit: 256
+    restart: "no"
+    stop_grace_period: 30s
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    command: &launcher-command
+      - /opt/mdf/venv/bin/python
+      - "-I"
+      - "-B"
+      - "-m"
+      - markdown_for_llms.launcher
+      - serve
+      - "--docker=/run/docker.sock"
+      - "--socket=/run/mdf/launcher/launcher.sock"
+      - "--project=${COMPOSE_PROJECT_NAME}"
+      - "--service=launcher"
+      - "--work=/work"
+      - "--run=/run/mdf/run"
+      - "--volume=work=${COMPOSE_PROJECT_NAME}_mdf-work"
+      - "--volume=run=${COMPOSE_PROJECT_NAME}_mdf-run"
+      - "--volume=models=${COMPOSE_PROJECT_NAME}_mdf-models"
+      - "--volume=cpuserver=${COMPOSE_PROJECT_NAME}_mdf-cpu-server"
+      - "--max-children=${MDF_COMPOSE_MAX_CHILDREN:-8}"
+    volumes:
+      - type: bind
+        source: ${MDF_COMPOSE_DOCKER_SOCKET:?}
+        target: /run/docker.sock
+      - mdf-launcher:/run/mdf/launcher
+      - mdf-work:/work:ro
+      - mdf-run:/run/mdf/run:ro
+
+  no-socket:
+    <<: *launcher
+    profiles: [faults]
+    command: ["/opt/mdf/venv/bin/python", "-I", "-B", "-m", "markdown_for_llms.launcher", "check", "--docker=/run/absent/docker.sock"]
+    volumes: []
+
+  no-group:
+    <<: *launcher
+    profiles: [faults]
+    group_add: []
+    command: ["/opt/mdf/venv/bin/python", "-I", "-B", "-m", "markdown_for_llms.launcher", "check", "--docker=/run/docker.sock"]
+    volumes:
+      - type: bind
+        source: ${MDF_COMPOSE_DOCKER_SOCKET:?}
+        target: /run/docker.sock
+
+  suite:
+    image: ${MDF_COMPOSE_DEV_IMAGE:?}
+    profiles: [suite]
+    user: "${MDF_COMPOSE_UID:?}:${MDF_COMPOSE_GID:?}"
+    group_add: ["${MDF_COMPOSE_DOCKER_GID:?}"]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges"]
+    mem_limit: ${MDF_COMPOSE_TEST_MEMORY:?}
+    memswap_limit: ${MDF_COMPOSE_TEST_MEMORY:?}
+    pids_limit: 1024
+    restart: "no"
+    working_dir: ${MDF_COMPOSE_SOURCE:?}
+    environment:
+      HOME: /tmp
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=512m
+    volumes:
+      - type: bind
+        source: ${MDF_COMPOSE_SOURCE:?}
+        target: ${MDF_COMPOSE_SOURCE:?}
+        read_only: true
+      - type: bind
+        source: ${MDF_COMPOSE_OUT:?}
+        target: /out
+      - type: bind
+        source: ${MDF_COMPOSE_DOCKER_SOCKET:?}
+        target: /run/docker.sock
+      - mdf-launcher:/run/mdf/launcher
+      - mdf-work:/work
+      - mdf-run:/run/mdf/run
+      - mdf-models:/models
+      - mdf-cpu-server:/cpu-server
+
+volumes:
+  mdf-work:
+  mdf-run:
+  mdf-launcher:
+  mdf-models:
+  mdf-cpu-server:

@@ -1,0 +1,140 @@
+{
+ "AttachStderr": false,
+ "AttachStdin": false,
+ "AttachStdout": false,
+ "Cmd": [
+  "pandoc",
+  "+RTS",
+  "-M512m",
+  "-RTS",
+  "--sandbox",
+  "-f",
+  "docx",
+  "-t",
+  "json",
+  "/in/source.docx"
+ ],
+ "Entrypoint": [
+  "/bin/bash",
+  "-c",
+  "<supervisor>",
+  "mdf-supervise",
+  "1200",
+  "300",
+  "0.1",
+  "/ctl",
+  "/stat",
+  "/sys/fs/cgroup",
+  "--"
+ ],
+ "Env": [
+  "HOME=/work/home",
+  "LANG=C.UTF-8",
+  "LC_ALL=C.UTF-8",
+  "TMPDIR=/work/tmp"
+ ],
+ "HostConfig": {
+  "AutoRemove": false,
+  "CapDrop": [
+   "ALL"
+  ],
+  "CgroupnsMode": "private",
+  "Init": false,
+  "IpcMode": "private",
+  "LogConfig": {
+   "Config": {},
+   "Type": "none"
+  },
+  "Memory": 268435456,
+  "MemorySwap": 268435456,
+  "Mounts": [
+   {
+    "ReadOnly": false,
+    "Source": "mdf-unit_mdf-work",
+    "Target": "/work",
+    "Type": "volume",
+    "VolumeOptions": {
+     "NoCopy": true,
+     "Subpath": "call/mdf-eng-0123456789abcdef-tool-1/scratch"
+    }
+   },
+   {
+    "ReadOnly": true,
+    "Source": "mdf-unit_mdf-work",
+    "Target": "/in",
+    "Type": "volume",
+    "VolumeOptions": {
+     "NoCopy": true,
+     "Subpath": "call/mdf-eng-0123456789abcdef-tool-1/in"
+    }
+   },
+   {
+    "ReadOnly": true,
+    "Source": "mdf-unit_mdf-work",
+    "Target": "/ctl",
+    "Type": "volume",
+    "VolumeOptions": {
+     "NoCopy": true,
+     "Subpath": "call/mdf-eng-0123456789abcdef-tool-1/ctl"
+    }
+   },
+   {
+    "ReadOnly": false,
+    "Source": "mdf-unit_mdf-work",
+    "Target": "/stat",
+    "Type": "volume",
+    "VolumeOptions": {
+     "NoCopy": true,
+     "Subpath": "call/mdf-eng-0123456789abcdef-tool-1/stat"
+    }
+   }
+  ],
+  "NetworkMode": "none",
+  "PidsLimit": 64,
+  "Privileged": false,
+  "ReadonlyRootfs": true,
+  "RestartPolicy": {
+   "MaximumRetryCount": 0,
+   "Name": "no"
+  },
+  "SecurityOpt": [
+   "no-new-privileges"
+  ],
+  "ShmSize": 67108864,
+  "Tmpfs": {
+   "/tmp": "rw,nosuid,nodev,size=16m"
+  },
+  "Ulimits": [
+   {
+    "Hard": 0,
+    "Name": "core",
+    "Soft": 0
+   },
+   {
+    "Hard": 67108864,
+    "Name": "fsize",
+    "Soft": 67108864
+   },
+   {
+    "Hard": 256,
+    "Name": "nofile",
+    "Soft": 256
+   }
+  ]
+ },
+ "Image": "sha256:810ca7e109f79b3bd70d0e763c33601f3068db9eca7df148554cb81711dc725f",
+ "Labels": {
+  "mdf.attempt": "mdf-eng-0123456789abcdef",
+  "mdf.kind": "tool",
+  "mdf.lease": "30",
+  "mdf.max": "120",
+  "mdf.project": "mdf-unit",
+  "mdf.t0": "1000.0"
+ },
+ "NetworkDisabled": true,
+ "OpenStdin": false,
+ "StdinOnce": false,
+ "Tty": false,
+ "User": "1000:1000",
+ "WorkingDir": "/work"
+}

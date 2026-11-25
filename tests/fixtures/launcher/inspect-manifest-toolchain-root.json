@@ -1,0 +1,320 @@
+{
+ "context": {
+  "gid": 1000,
+  "image": {
+   "architecture": "amd64",
+   "id": "sha256:810ca7e109f79b3bd70d0e763c33601f3068db9eca7df148554cb81711dc725f",
+   "inspect": {
+    "Architecture": "amd64",
+    "Config": {
+     "Entrypoint": null,
+     "Env": [
+      "PATH=/opt/djvulibre/bin:/opt/toolchain/.pixi/envs/default/bin:/usr/local/bin:/usr/bin:/bin",
+      "LC_ALL=C.UTF-8",
+      "LANG=C.UTF-8",
+      "LD_LIBRARY_PATH=/opt/djvulibre/lib"
+     ],
+     "User": ""
+    },
+    "Id": "sha256:810ca7e109f79b3bd70d0e763c33601f3068db9eca7df148554cb81711dc725f"
+   }
+  },
+  "project": "mdf-fixture",
+  "t0": 1000.0,
+  "uid": 1000,
+  "volumes": {
+   "cpuserver": "mdf-fixture_mdf-cpu-server",
+   "models": "mdf-fixture_mdf-models",
+   "run": "mdf-fixture_mdf-run",
+   "work": "mdf-fixture_mdf-work"
+  }
+ },
+ "docker": {
+  "api": "1.57",
+  "apparmor": "docker-default",
+  "architecture": "x86_64",
+  "cgroup_driver": "systemd",
+  "runtime": "runc",
+  "version": "29.10.0"
+ },
+ "inspect": {
+  "AppArmorProfile": "",
+  "Args": [
+   "-c",
+   "<supervisor>",
+   "mdf-supervise",
+   "1200",
+   "300",
+   "0.1",
+   "/ctl",
+   "-",
+   "/sys/fs/cgroup",
+   "--",
+   "/usr/local/bin/mdf-bench-content-manifest"
+  ],
+  "Config": {
+   "AttachStderr": false,
+   "AttachStdin": false,
+   "AttachStdout": false,
+   "Cmd": [
+    "/usr/local/bin/mdf-bench-content-manifest"
+   ],
+   "Domainname": "",
+   "Entrypoint": [
+    "/bin/bash",
+    "-c",
+    "<supervisor>",
+    "mdf-supervise",
+    "1200",
+    "300",
+    "0.1",
+    "/ctl",
+    "-",
+    "/sys/fs/cgroup",
+    "--"
+   ],
+   "Env": [
+    "LANG=C.UTF-8",
+    "LC_ALL=C.UTF-8",
+    "PATH=/opt/djvulibre/bin:/opt/toolchain/.pixi/envs/default/bin:/usr/local/bin:/usr/bin:/bin",
+    "LD_LIBRARY_PATH=/opt/djvulibre/lib"
+   ],
+   "Hostname": "c0ffee012345",
+   "Image": "sha256:810ca7e109f79b3bd70d0e763c33601f3068db9eca7df148554cb81711dc725f",
+   "Labels": {
+    "mdf.attempt": "mdf-eng-0123456789abcdef",
+    "mdf.kind": "manifest",
+    "mdf.lease": "30",
+    "mdf.max": "120",
+    "mdf.project": "mdf-fixture",
+    "mdf.t0": "1000.0"
+   },
+   "NetworkDisabled": true,
+   "OpenStdin": false,
+   "StdinOnce": false,
+   "Tty": false,
+   "User": "0:0",
+   "Volumes": null,
+   "WorkingDir": "/"
+  },
+  "Created": "2026-01-01T00:00:00Z",
+  "Driver": "overlay2",
+  "ExecIDs": null,
+  "GraphDriver": {
+   "Data": {
+    "ID": "c0ffee0123456789abcdef0123456789abcdef0123456789abcdefc0ffee0123",
+    "LowerDir": "/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000init/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff:/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff",
+    "MergedDir": "/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/merged",
+    "UpperDir": "/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/diff",
+    "WorkDir": "/var/lib/docker/overlay2/0000000000000000000000000000000000000000000000000000000000000000/work"
+   },
+   "Name": "overlay2"
+  },
+  "HostConfig": {
+   "AutoRemove": false,
+   "Binds": null,
+   "BlkioDeviceReadBps": null,
+   "BlkioDeviceReadIOps": null,
+   "BlkioDeviceWriteBps": null,
+   "BlkioDeviceWriteIOps": null,
+   "BlkioWeight": 0,
+   "BlkioWeightDevice": null,
+   "CapAdd": null,
+   "CapDrop": [
+    "ALL"
+   ],
+   "Cgroup": "",
+   "CgroupParent": "",
+   "CgroupnsMode": "private",
+   "ConsoleSize": [
+    0,
+    0
+   ],
+   "ContainerIDFile": "",
+   "CpuCount": 0,
+   "CpuPercent": 0,
+   "CpuPeriod": 0,
+   "CpuQuota": 0,
+   "CpuRealtimePeriod": 0,
+   "CpuRealtimeRuntime": 0,
+   "CpuShares": 0,
+   "CpusetCpus": "",
+   "CpusetMems": "",
+   "DeviceCgroupRules": null,
+   "DeviceRequests": null,
+   "Devices": null,
+   "Dns": null,
+   "DnsOptions": null,
+   "DnsSearch": null,
+   "ExtraHosts": null,
+   "GroupAdd": null,
+   "IOMaximumBandwidth": 0,
+   "IOMaximumIOps": 0,
+   "Init": false,
+   "IpcMode": "private",
+   "Isolation": "",
+   "Links": null,
+   "LogConfig": {
+    "Config": {
+     "compress": "false",
+     "max-file": "1",
+     "max-size": "64m"
+    },
+    "Type": "local"
+   },
+   "MaskedPaths": [
+    "/proc/acpi",
+    "/proc/asound",
+    "/proc/interrupts",
+    "/proc/kcore",
+    "/proc/keys",
+    "/proc/latency_stats",
+    "/proc/sched_debug",
+    "/proc/scsi",
+    "/proc/timer_list",
+    "/proc/timer_stats",
+    "/sys/devices/virtual/powercap",
+    "/sys/firmware",
+    "/sys/devices/system/cpu/cpu0/thermal_throttle",
+    "/sys/devices/system/cpu/cpu1/thermal_throttle",
+    "/sys/devices/system/cpu/cpu2/thermal_throttle",
+    "/sys/devices/system/cpu/cpu3/thermal_throttle",
+    "/sys/devices/system/cpu/cpu4/thermal_throttle",
+    "/sys/devices/system/cpu/cpu5/thermal_throttle",
+    "/sys/devices/system/cpu/cpu6/thermal_throttle",
+    "/sys/devices/system/cpu/cpu7/thermal_throttle"
+   ],
+   "Memory": 268435456,
+   "MemoryReservation": 0,
+   "MemorySwap": 268435456,
+   "MemorySwappiness": null,
+   "Mounts": [
+    {
+     "ReadOnly": true,
+     "Source": "mdf-fixture_mdf-work",
+     "Target": "/ctl",
+     "Type": "volume",
+     "VolumeOptions": {
+      "NoCopy": true,
+      "Subpath": "call/mdf-eng-0123456789abcdef-manifest-8/ctl"
+     }
+    }
+   ],
+   "NanoCpus": 0,
+   "NetworkMode": "none",
+   "OomKillDisable": false,
+   "OomScoreAdj": 0,
+   "PidMode": "",
+   "PidsLimit": 64,
+   "PortBindings": {},
+   "Privileged": false,
+   "PublishAllPorts": false,
+   "ReadonlyPaths": [
+    "/proc/bus",
+    "/proc/fs",
+    "/proc/irq",
+    "/proc/sys",
+    "/proc/sysrq-trigger"
+   ],
+   "ReadonlyRootfs": true,
+   "RestartPolicy": {
+    "MaximumRetryCount": 0,
+    "Name": "no"
+   },
+   "Runtime": "runc",
+   "SecurityOpt": [
+    "no-new-privileges"
+   ],
+   "ShmSize": 67108864,
+   "Tmpfs": {
+    "/tmp": "rw,nosuid,nodev,size=16m"
+   },
+   "UTSMode": "",
+   "Ulimits": [
+    {
+     "Hard": 0,
+     "Name": "core",
+     "Soft": 0
+    },
+    {
+     "Hard": 67108864,
+     "Name": "fsize",
+     "Soft": 67108864
+    },
+    {
+     "Hard": 256,
+     "Name": "nofile",
+     "Soft": 256
+    }
+   ],
+   "UsernsMode": "",
+   "VolumeDriver": "",
+   "VolumesFrom": null
+  },
+  "HostnamePath": "",
+  "HostsPath": "",
+  "Id": "c0ffee0123456789abcdef0123456789abcdef0123456789abcdefc0ffee0123",
+  "Image": "sha256:810ca7e109f79b3bd70d0e763c33601f3068db9eca7df148554cb81711dc725f",
+  "LogPath": "",
+  "MountLabel": "",
+  "Mounts": [
+   {
+    "Destination": "/ctl",
+    "Driver": "local",
+    "Mode": "z",
+    "Name": "mdf-fixture_mdf-work",
+    "Propagation": "",
+    "RW": false,
+    "Source": "/var/lib/docker/volumes/mdf-fixture_mdf-work/_data",
+    "Type": "volume"
+   }
+  ],
+  "Name": "/mdf-eng-0123456789abcdef-manifest-8",
+  "NetworkSettings": {
+   "Networks": {},
+   "Ports": {},
+   "SandboxID": "",
+   "SandboxKey": ""
+  },
+  "Path": "/bin/bash",
+  "Platform": "linux",
+  "ProcessLabel": "",
+  "ResolvConfPath": "",
+  "RestartCount": 0,
+  "State": {
+   "Dead": false,
+   "Error": "",
+   "ExitCode": 0,
+   "FinishedAt": "2026-01-01T00:00:00Z",
+   "OOMKilled": false,
+   "Paused": false,
+   "Pid": 0,
+   "Restarting": false,
+   "Running": false,
+   "StartedAt": "2026-01-01T00:00:00Z",
+   "Status": "created"
+  }
+ },
+ "request": {
+  "argv": [
+   "/usr/local/bin/mdf-bench-content-manifest"
+  ],
+  "env": {
+   "LANG": "C.UTF-8",
+   "LC_ALL": "C.UTF-8"
+  },
+  "image": "toolchain",
+  "kind": "manifest",
+  "limits": {
+   "fsize_mib": 64,
+   "lease_seconds": 30,
+   "max_seconds": 120,
+   "memory_mib": 256,
+   "nofile": 256,
+   "pids": 64,
+   "tmpfs_mib": 16
+  },
+  "name": "mdf-eng-0123456789abcdef-manifest-8",
+  "op": "run"
+ }
+}

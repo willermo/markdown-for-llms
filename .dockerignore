@@ -1,0 +1,28 @@
+# Build context of docker/app/Dockerfile: a positive list. Everything is left out, then only what the
+# images are built from comes back. `.env`, `temp/`, `.cache/`, `data/`, `state/`, the virtual
+# environments and git never enter the context (tests/unit/test_dockerignore.py).
+*
+!pyproject.toml
+!uv.lock
+!build-constraints.txt
+!MANIFEST.in
+!README.md
+!LICENSE
+!.python-version
+!markdown_for_llms
+!docker
+docker/*
+!docker/app
+docker/app/*
+!docker/app/Dockerfile
+!scripts
+scripts/*
+!scripts/diagnostics
+scripts/diagnostics/*
+!scripts/diagnostics/run-a001-fase0-uv
+scripts/diagnostics/run-a001-fase0-uv/*
+!scripts/diagnostics/run-a001-fase0-uv/guard_product_inputs.py
+**/__pycache__
+**/*.py[cod]
+# after the lines that bring paths back: no file of settings or keys, wherever it is
+**/.env*

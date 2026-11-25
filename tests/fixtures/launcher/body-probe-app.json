@@ -1,0 +1,129 @@
+{
+ "AttachStderr": false,
+ "AttachStdin": false,
+ "AttachStdout": false,
+ "Cmd": [
+  "/opt/mdf/venv/bin/python",
+  "-I",
+  "-B",
+  "-c",
+  "from markdown_for_llms.engine.child import main; raise SystemExit(main())",
+  "limits.json",
+  "markdown_for_llms.engine.selfprobe",
+  "container"
+ ],
+ "Entrypoint": [
+  "/bin/bash",
+  "-c",
+  "<supervisor>",
+  "mdf-supervise",
+  "1200",
+  "300",
+  "0.1",
+  "/ctl",
+  "/stat",
+  "/sys/fs/cgroup",
+  "--"
+ ],
+ "Env": [
+  "HOME=/scratch",
+  "LANG=C.UTF-8",
+  "LC_ALL=C.UTF-8",
+  "PATH=/usr/bin",
+  "TMPDIR=/scratch"
+ ],
+ "HostConfig": {
+  "AutoRemove": false,
+  "CapDrop": [
+   "ALL"
+  ],
+  "CgroupnsMode": "private",
+  "Init": false,
+  "IpcMode": "private",
+  "LogConfig": {
+   "Config": {},
+   "Type": "none"
+  },
+  "Memory": 268435456,
+  "MemorySwap": 268435456,
+  "Mounts": [
+   {
+    "ReadOnly": false,
+    "Source": "mdf-unit_mdf-work",
+    "Target": "/scratch",
+    "Type": "volume",
+    "VolumeOptions": {
+     "NoCopy": true,
+     "Subpath": "call/mdf-eng-0123456789abcdef-probe-1/scratch"
+    }
+   },
+   {
+    "ReadOnly": true,
+    "Source": "mdf-unit_mdf-work",
+    "Target": "/ctl",
+    "Type": "volume",
+    "VolumeOptions": {
+     "NoCopy": true,
+     "Subpath": "call/mdf-eng-0123456789abcdef-probe-1/ctl"
+    }
+   },
+   {
+    "ReadOnly": false,
+    "Source": "mdf-unit_mdf-work",
+    "Target": "/stat",
+    "Type": "volume",
+    "VolumeOptions": {
+     "NoCopy": true,
+     "Subpath": "call/mdf-eng-0123456789abcdef-probe-1/stat"
+    }
+   }
+  ],
+  "NetworkMode": "none",
+  "PidsLimit": 64,
+  "Privileged": false,
+  "ReadonlyRootfs": true,
+  "RestartPolicy": {
+   "MaximumRetryCount": 0,
+   "Name": "no"
+  },
+  "SecurityOpt": [
+   "no-new-privileges"
+  ],
+  "ShmSize": 67108864,
+  "Tmpfs": {
+   "/tmp": "rw,nosuid,nodev,size=16m"
+  },
+  "Ulimits": [
+   {
+    "Hard": 0,
+    "Name": "core",
+    "Soft": 0
+   },
+   {
+    "Hard": 67108864,
+    "Name": "fsize",
+    "Soft": 67108864
+   },
+   {
+    "Hard": 256,
+    "Name": "nofile",
+    "Soft": 256
+   }
+  ]
+ },
+ "Image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "Labels": {
+  "mdf.attempt": "mdf-eng-0123456789abcdef",
+  "mdf.kind": "probe",
+  "mdf.lease": "30",
+  "mdf.max": "120",
+  "mdf.project": "mdf-unit",
+  "mdf.t0": "1000.0"
+ },
+ "NetworkDisabled": true,
+ "OpenStdin": false,
+ "StdinOnce": false,
+ "Tty": false,
+ "User": "1000:1000",
+ "WorkingDir": "/scratch"
+}
