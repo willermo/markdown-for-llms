@@ -1,5 +1,6 @@
-"""The Marker child: Marker 2.2.0 inside Bubblewrap and a memory scope, `fast` on the CPU or, on the
-`marker-server` route (MFL033), `balanced` or `accurate` with the inference of Surya on a server.
+"""The Marker child: Marker 2.2.0 in a container of its own started by the launcher (no network, a memory
+cap; MFL051), `fast` on the CPU or, on the `marker-server` route (MFL033), `balanced` or `accurate` with the
+inference of Surya on a server.
 
 Run by `pages.py` through `isolation.run` (never imported by the engine process):
 

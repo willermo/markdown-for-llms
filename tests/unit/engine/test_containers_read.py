@@ -457,11 +457,13 @@ class TestChild(Base):
     def test_a_child_the_launcher_killed_has_the_launchers_reason_never_memory(self):
         """SOL-A1-B2. The launcher's own watch kills a child at its term or at its lease when the supervisor did
         not: Docker then says 137, or nothing at all once the child is removed. The launcher says why (`reaped`),
-        and that is the cause, with its closed code: `timeout` for the term, `interrupted` for the lease."""
+        and that is the cause, with its closed code: `timeout` for the term, `interrupted` for the lease. A2-c:
+        the stop of the launcher itself (the service going down or restarting) is an interruption too,
+        `interrupted`, never a failure of the engine."""
         cases = (("term", "removed", "term", Code.TIMEOUT, Code.TOOL_TIMEOUT), ("term", 137, "term", Code.TIMEOUT, Code.TOOL_TIMEOUT),
                  ("lease", "removed", "lease", Code.INTERRUPTED, Code.INTERRUPTED), ("lease", 137, "lease", Code.INTERRUPTED, Code.INTERRUPTED),
-                 ("stop", 137, "vanished", Code.ENGINE_FAILED, Code.ENGINE_FAILED),            # the stop of the launcher itself
-                 ("stop", "removed", "vanished", Code.ENGINE_FAILED, Code.ENGINE_FAILED),
+                 ("stop", 137, "interrupted", Code.INTERRUPTED, Code.INTERRUPTED),             # the stop of the launcher itself
+                 ("stop", "removed", "interrupted", Code.INTERRUPTED, Code.INTERRUPTED),
                  ("ended", "removed", "vanished", Code.ENGINE_FAILED, Code.ENGINE_FAILED))
         for n, (reaped, seen, cause, code, tool_code) in enumerate(cases):
             with self.subTest(reaped=reaped, seen=seen):
@@ -635,6 +637,224 @@ class TestNotAttested(Base):
         self.assertEqual(raised.exception.code, Code.ISOLATION_UNAVAILABLE)
         self.assertTrue((child.call.root / "ctl" / "stop").exists())
         self.assertTrue(child.call.root.is_dir())
+
+
+class TestCollect(unittest.TestCase):
+    """E-8. The results of a child leave its scratch only through the rooted copy: what a command left in place
+    of a result, or of a directory above it, is never opened, so no byte of what it points to reaches the caller."""
+    SECRET = b"SYNTHETIC_KEY=synthetic-value-of-the-caller\n"
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.top = Path(tmp.name)
+        self.root = self.top / "call"
+        (self.root / "scratch" / "out" / "images").mkdir(parents=True)
+        self.secret = self.top / "keys.env"
+        self.secret.write_bytes(self.SECRET)
+        self.secrets = self.top / "secrets"
+        self.secrets.mkdir()
+        (self.secrets / "modal.toml").write_bytes(self.SECRET)
+        self.dest = self.top / "caller"
+        self.dest.mkdir()
+
+    def leaked(self):
+        return [str(p.relative_to(self.dest)) for p in self.dest.rglob("*") if p.is_file() and b"synthetic-value" in p.read_bytes()]
+
+    def test_a_regular_file_is_copied_and_moved_into_place(self):
+        (self.root / "scratch" / "result.json").write_bytes(b'{"ok": true}')
+        self.assertEqual(containers.collect(self.root, "scratch/result.json", self.dest / "deep" / "result.json"), 12)
+        self.assertEqual((self.dest / "deep" / "result.json").read_bytes(), b'{"ok": true}')
+        self.assertEqual(sorted(p.name for p in (self.dest / "deep").iterdir()), ["result.json"])      # no partial left
+        self.assertEqual(stat.S_IMODE((self.dest / "deep" / "result.json").stat().st_mode), 0o600)
+
+    def test_a_link_a_fifo_a_directory_and_nothing_are_not_collected(self):
+        scratch = self.root / "scratch"
+        os.symlink(self.secret, scratch / "leaf.json")                       # a link in place of the result
+        os.symlink(self.secrets, scratch / "parent")                         # a link in place of its directory
+        os.mkfifo(scratch / "fifo.json")
+        for name in ("leaf.json", "parent/modal.toml", "fifo.json", "out", "absent.json", "../keys.env", "/etc/hostname"):
+            with self.subTest(name=name):
+                self.assertIsNone(containers.collect(self.root, "scratch/" + name, self.dest / "got"))
+                self.assertFalse((self.dest / "got").exists())
+        self.assertEqual(self.leaked(), [])
+        self.assertEqual((containers.entry_kind(self.root, "scratch/leaf.json"), containers.entry_kind(self.root, "scratch/parent"),
+                          containers.entry_kind(self.root, "scratch/parent/modal.toml"), containers.entry_kind(self.root, "scratch/fifo.json"),
+                          containers.entry_kind(self.root, "scratch/out"), containers.entry_kind(self.root, "scratch/absent.json"),
+                          containers.entry_kind(self.root, "scratch/absent/x"), containers.entry_kind(self.root, "scratch/../x")),
+                         ("other", "other", "other", "other", "directory", "absent", "absent", "other"))
+
+    def test_the_cap_of_a_file_and_of_a_tree(self):
+        (self.root / "scratch" / "big.bin").write_bytes(b"x" * 5000)
+        with self.assertRaises(containers.Uncollected):
+            containers.collect(self.root, "scratch/big.bin", self.dest / "big.bin", limit=4096)
+        self.assertEqual(list(self.dest.iterdir()), [])                       # nothing half written
+        (self.root / "scratch" / "out" / "a.bin").write_bytes(b"x" * 3000)
+        (self.root / "scratch" / "out" / "b.bin").write_bytes(b"x" * 3000)
+        with self.assertRaises(containers.Uncollected):
+            containers.collect_tree(self.root, "scratch/out", self.dest / "out", limit=4096)
+
+    def test_a_tree_is_copied_without_what_is_not_a_file_or_a_directory_of_this_user(self):
+        out = self.root / "scratch" / "out"
+        (out / "document.md").write_bytes(b"# the document\n")
+        (out / "images" / "a.png").write_bytes(b"png")
+        (out / "empty").mkdir()
+        os.symlink(self.secret, out / "images" / "b.png")                    # a link to a file of the caller
+        os.symlink(self.secrets, out / "linked")                             # a link to a directory of the caller
+        os.symlink("images", out / "inside")                                 # and one that stays inside the result
+        os.mkfifo(out / "pipe")
+        copied, skipped = containers.collect_tree(self.root, "scratch/out", self.dest / "out")
+        self.assertEqual(copied, len(b"# the document\n") + 3)
+        self.assertEqual(sorted(skipped), ["images/b.png", "inside", "linked", "pipe"])
+        self.assertEqual(sorted(str(p.relative_to(self.dest)) for p in self.dest.rglob("*")),
+                         ["out", "out/document.md", "out/empty", "out/images", "out/images/a.png"])
+        self.assertEqual(self.leaked(), [])
+        for p in self.dest.rglob("*"):
+            self.assertFalse(p.is_symlink(), p)
+
+    def test_a_link_in_place_of_the_tree_or_above_it_is_not_a_tree(self):
+        os.symlink(self.secrets, self.root / "scratch" / "media")
+        os.symlink(self.top, self.root / "scratch" / "up")
+        for name in ("scratch/media", "scratch/up/secrets", "scratch/absent", "scratch/..", "/"):
+            with self.subTest(name=name):
+                self.assertIsNone(containers.collect_tree(self.root, name, self.dest / "media"))
+        self.assertEqual(list(self.dest.iterdir()), [])
+        (self.root / "scratch" / "file").write_bytes(b"x")
+        self.assertIsNone(containers.collect_tree(self.root, "scratch/file", self.dest / "media"))
+
+    def test_directories_nested_without_end_stop_at_a_depth(self):
+        deep = self.root / "scratch" / "out"
+        for _ in range(containers.COLLECT_DEPTH + 5):
+            deep = deep / "d"
+            deep.mkdir()
+        (deep / "bottom.txt").write_bytes(b"x")
+        copied, skipped = containers.collect_tree(self.root, "scratch/out", self.dest / "out")
+        self.assertEqual(copied, 0)
+        self.assertEqual(len(skipped), 1)
+        self.assertEqual(skipped[0].count("/"), containers.COLLECT_DEPTH)
+
+    def test_what_the_caller_prepared_is_seeded_into_the_call(self):
+        mine = self.top / "mine"
+        (mine / "home").mkdir(parents=True)
+        (mine / "request.json").write_bytes(b"{}")
+        containers.seed(mine, self.root / "scratch")
+        self.assertEqual((self.root / "scratch" / "request.json").read_bytes(), b"{}")
+        self.assertTrue((self.root / "scratch" / "home").is_dir())
+
+    def test_the_events_are_read_from_an_offset(self):
+        (self.root / "scratch" / "events.jsonl").write_bytes(b'{"a": 1}\n{"b": 2}\n')
+        self.assertEqual(containers.read_regular(self.root, "scratch/events.jsonl", 100, offset=9), b'{"b": 2}\n')
+        self.assertEqual(containers.read_regular(self.root, "scratch/events.jsonl", 4, offset=9), b'{"b"')
+        self.assertEqual(containers.read_regular(self.root, "scratch/events.jsonl", 100, offset=500), b"")
+
+
+class TestNames(Base):
+    """The names of the children of a process: one per call, by the prefix of the attempt or of the process."""
+
+    def test_the_prefix_of_an_attempt_and_of_a_process_without_one(self):
+        self.assertEqual(containers.prefix_of("0123456789abcdefXYZ"), "mdf-eng-0123456789abcdef")
+        mine = containers.prefix_of(None)
+        self.assertRegex(mine, r"^mdf-bench-%d-[0-9a-f]{8}$" % os.getpid())
+        self.assertEqual(containers.prefix_of(None), mine)                   # the same for the life of the process
+        self.assertTrue(containers.PREFIX.fullmatch(mine))
+        for bad in ("", "a/b", "a b", "à"):
+            with self.subTest(attempt=bad), self.assertRaises(ValueError):
+                containers.prefix_of(bad)
+
+    def test_every_call_has_a_name_of_its_own_and_a_taken_folder_is_skipped(self):
+        first = containers.open_child(support.ATTEMPT, "light", self.launcher, self.work)
+        second = containers.open_child(support.ATTEMPT, "light", self.launcher, self.work)
+        tool = containers.open_child(support.ATTEMPT, "tool", self.launcher, self.work)
+        for child in (first, second, tool):
+            self.addCleanup(child.call.close, True)
+        numbers = [containers.split_name(c.name)[2] for c in (first, second, tool)]
+        self.assertEqual(len(set(numbers)), 3)
+        self.assertEqual([containers.split_name(c.name)[:2] for c in (first, second, tool)],
+                         [(support.PREFIX, "light"), (support.PREFIX, "light"), (support.PREFIX, "tool")])
+        # a folder that another process left under the next name: the name after it is taken
+        taken = "%s-light-%d" % (support.PREFIX, numbers[2] + 1)
+        (self.work / "call" / taken).mkdir()
+        third = containers.open_child(support.ATTEMPT, "light", self.launcher, self.work)
+        self.addCleanup(third.call.close, True)
+        self.assertEqual(containers.split_name(third.name)[2], numbers[2] + 2)
+
+    def test_without_the_work_volume_there_is_no_child(self):
+        for root in (self.work / "absent" / "volume", "/proc/version"):
+            with self.subTest(root=str(root)), self.assertRaises(EngineError) as caught:
+                containers.open_child(support.ATTEMPT, "light", self.launcher, root)
+            self.assertEqual(caught.exception.code, Code.ISOLATION_UNAVAILABLE)
+        self.assertEqual(self.launcher.calls, [])
+
+
+class TestBackground(Base):
+    """A child that runs while its caller does other work (the local CPU server): `begin`, a thread that renews
+    its lease, `end`."""
+
+    def test_begin_then_end_stops_it_and_attests_its_end(self):
+        with containers.open_child(support.ATTEMPT, "cpuserver", self.launcher, self.work, clock=self.clock,
+                                   sleep=self.clock.sleep) as child:
+            child.begin("app", ["/opt/llama/bin/llama-server"], {}, support.LIMITS)
+            self.assertEqual(self.launcher.children[child.name]["state"], "running")
+            self.assertIsNone(child.ended())
+            self.clock.at(0.3, lambda: self.launcher.exits(child.name, 202))
+            outcome = child.end(reason="stop")
+        self.assertEqual((outcome.cause, outcome.reason, child.attested, child.removed), ("stopped", "stop", True, True))
+        self.assertTrue(self.launcher.ops("remove"))
+
+    def test_a_program_that_already_ended_keeps_its_own_status(self):
+        with containers.open_child(support.ATTEMPT, "cpuserver", self.launcher, self.work, clock=self.clock,
+                                   sleep=self.clock.sleep) as child:
+            child.begin("app", ["/opt/llama/bin/llama-server"], {}, support.LIMITS)
+            (child.call.stat / "exit").write_text("1\n")
+            self.launcher.exits(child.name, 1)
+            outcome = child.end(reason="stop")
+        self.assertEqual((outcome.cause, outcome.exit, outcome.reason), ("exited", 1, None))
+        self.assertFalse((self.work / "call" / child.name).exists())
+
+    def test_the_renewer_renews_the_lease_until_it_is_stopped(self):
+        call = containers.Call(self.work, support.name("cpuserver"))
+        self.addCleanup(call.close, True)
+        renewer = containers.Renewer(call)
+        with mock.patch.object(renewer.done, "wait", side_effect=[False, False, False, True]):
+            renewer.run()
+        self.assertGreaterEqual(call.lease, 1)
+        self.assertEqual((call.root / "ctl" / "lease").read_text(), "%d\n" % call.lease)
+        renewer.done.set()
+
+    def test_the_stdout_of_a_manifest_child_is_read_before_its_removal(self):
+        order = []
+        real_logs, real_remove = self.launcher.logs, self.launcher.remove
+        self.launcher.logs = lambda name: (order.append("logs"), real_logs(name))[1]
+        self.launcher.remove = lambda name: (order.append("remove"), real_remove(name))[1]
+        with containers.open_child(None, "manifest", self.launcher, self.work, clock=self.clock, sleep=self.clock.sleep) as child:
+            def end():
+                self.launcher.children[child.name]["log"] = b"sha  /usr/bin/x\n"
+                self.launcher.exits(child.name, 0)
+            self.clock.at(0.5, end)
+            outcome = child.run("candidate", containers.MANIFEST_READ, {}, support.LIMITS, timeout=60)
+        self.assertEqual((outcome.cause, outcome.exit, outcome.stdout), ("exited", 0, b"sha  /usr/bin/x\n"))
+        self.assertEqual(order, ["logs", "remove"])
+
+    def test_the_wait_wakes_often_and_polls_as_asked(self):
+        """A caller with a long poll still renews the lease and sees the end at once: `on_poll` runs every
+        `poll_seconds`, the wait wakes every `WAKE_SECONDS`."""
+        polls, sleeps = [], []
+
+        def sleep(seconds):
+            sleeps.append(seconds)
+            self.clock.sleep(seconds)
+        with containers.open_child(support.ATTEMPT, "light", self.launcher, self.work, clock=self.clock, sleep=sleep) as child:
+            def end():
+                (child.call.stat / "exit").write_text("0\n")
+                self.launcher.exits(child.name, 0)
+            self.clock.at(3.0, end)
+            outcome = child.run("app", containers.PROBE_PYTHON, {}, support.LIMITS, timeout=600, poll_seconds=120,
+                                on_poll=lambda child, metrics: polls.append(self.clock()))
+        self.assertEqual(outcome.cause, "exited")
+        self.assertEqual(len(polls), 1)                                   # once at the start, never again in three seconds
+        self.assertEqual(set(sleeps), {containers.WAKE_SECONDS})
+        self.assertLess(outcome.seconds, 3.5)                             # seen within a wake of its end, not at the next poll
+        self.assertGreaterEqual(child.call.lease, 3)                      # and the lease renewed every second meanwhile
 
 
 class TestWire(unittest.TestCase):

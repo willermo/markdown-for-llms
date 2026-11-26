@@ -10,6 +10,8 @@ clock alone reads no drift (the test of MFL033 `test_the_term_closes_the_relay`)
 `httpx.MockTransport` behind the relay; the child side reaches the relay through a socketpair."""
 import unittest
 
+from engine_test_support import private_sockets
+
 import httpx
 
 from fake_inference import Fake, MODEL, PairTransport
@@ -46,7 +48,7 @@ class Clocks:
 
 class WallTerm(unittest.TestCase):
     def setUp(self):
-        self.private = sockets.Private()
+        self.private = private_sockets()
         self.addCleanup(self.private.close)
         self.fake = Fake(mark="forwarded")
         self.addCleanup(self.fake.close)

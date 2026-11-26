@@ -1,6 +1,6 @@
 """The relay of the `marker-server` route (MFL033): the only way out of the Marker child.
 
-The Marker child has no network (Bubblewrap `--unshare-all`). On this route it reaches the
+The Marker child has no network (its container is started without one; MFL051). On this route it reaches the
 inference server through a Unix socket of the converting process, `relay/relay.sock` in a private
 directory (`sockets.Private`), bound read-only on `/relay` of the child. The relay runs in the
 converting process, never in the child, with `ThreadingMixIn` + `UnixStreamServer`:

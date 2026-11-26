@@ -7,56 +7,49 @@ document unavailable, a fatal one stops the command, `toolchain_missing` prints 
 """
 import contextlib
 import io
-import subprocess
+from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
 
+import containers_test_support as launcher_fake
 from markdown_for_llms.bench import cli as bench_cli
 from markdown_for_llms.bench import fetch, selftest
 from markdown_for_llms.bench.codes import Code as BenchCode
-from markdown_for_llms.engine import toolchain, tools
+from markdown_for_llms.engine import containers, toolchain, tools
 from markdown_for_llms.engine.codes import Code, EngineError
-
-FAKE_IMAGE = "sha256:" + "e" * 64
-
-
-class FakeDocker:
-    """`docker run` exits 2 (`tool_failed`) or times out leaving its container (fatal)."""
-
-    def __init__(self):
-        self.mode = "fail"
-
-    def __call__(self, args, timeout, stdin=b""):
-        if args[0] == "run":
-            if self.mode == "timeout":
-                raise subprocess.TimeoutExpired(args, timeout)
-            return subprocess.CompletedProcess(args, 2, b"", b"qpdf: not a PDF file\n")
-        if args[0] == "rm":
-            return subprocess.CompletedProcess(args, 0, b"", b"")
-        if args[0] == "container":          # the container is still there: the timeout is fatal
-            return subprocess.CompletedProcess(args, 0, b"[{}]", b"")
-        raise AssertionError("unexpected docker call: " + " ".join(args))
 
 
 class BoundaryTests(unittest.TestCase):
+    """The tool of a call exits 2 (`tool_failed`), or times out and the launcher cannot confirm that its
+    container is gone (fatal): a scripted launcher, no container."""
+
     def setUp(self):
         saved = dict(toolchain._state)
         self.addCleanup(toolchain._state.update, saved)
-        toolchain._state.update(image=FAKE_IMAGE, engine="test")
-        self.docker = FakeDocker()
-        patcher = mock.patch.object(toolchain, "engine_run", self.docker)
-        patcher.start()
-        self.addCleanup(patcher.stop)
+        toolchain.reset()
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.tmp = tmp.name
+        self.mode = "fail"
+        self.launcher = launcher_fake.patched(self, Path(tmp.name) / "volume", self.script)
+
+    def script(self, request, call):
+        if self.mode == "timeout":
+            return None                     # the tool never ends; its removal will not be confirmed
+        return 2, b"", b"qpdf: not a PDF file\n"
 
     def derive(self, doc, manifest, cache, transport, offline=False):
         """Stands in for the fetch of a document: a derivation through the engine's runner."""
         if doc["id"] == "D05":
-            self.docker.mode = "timeout"
-        tools.run("qpdf", ["--check", "x"], cache.tool_work_dir, timeout=1)
+            self.mode = "timeout"
+
+            class Every:
+                def __contains__(self, name):
+                    return True
+            self.launcher.unconfirmed = Every()
+        with mock.patch.object(containers, "UNREACHABLE_SECONDS", 0.3):
+            tools.run("qpdf", ["--check", "x"], cache.tool_work_dir, timeout=1)
         raise AssertionError("not reached")
 
     def test_fetch_handlers_of_the_bench(self):
@@ -71,12 +64,12 @@ class BoundaryTests(unittest.TestCase):
 
     def test_toolchain_missing_reaches_the_top_handler_with_its_hint(self):
         err = io.StringIO()
-        with mock.patch.object(toolchain, "engine_path", side_effect=EngineError(Code.TOOLCHAIN_MISSING, "no docker")), \
-                contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+        self.launcher.answer["refuse"] = ("toolchain_missing", "no image mdf-bench-toolchain:candidate")
+        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
             code = bench_cli.main(["prepare", "--toolchain", "--cache", self.tmp])
         self.assertEqual(code, 1)
         self.assertIn("error: toolchain_missing", err.getvalue())
-        self.assertIn("mdf prepare --toolchain", err.getvalue())
+        self.assertIn("make prepare", err.getvalue())
 
     def test_selftest_expects_engine_codes(self):
         detail = selftest._expect_code("step", BenchCode.TOOL_FAILED, lambda: tools.run("qpdf", ["x"], self.tmp))

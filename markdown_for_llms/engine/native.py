@@ -1,7 +1,8 @@
 """The native routes of the engine: `pandoc` (born-digital formats) and `djvutxt` (DjVu text layer).
 
-Both run in the toolchain image with the isolation of `tools.run` (no network, read-only root,
-no capabilities, the caller's user, a private /work under the caps of a `tools.Watch`).
+Both run in the toolchain image with the isolation of `tools.run` (a container of the launcher: no
+network, read-only root, no capabilities, the caller's user, a private /work under the caps of a
+`tools.Watch`).
 
 `pandoc`: doc and ods are first converted by LibreOffice to docx and xlsx; every ZIP package
 (docx, pptx, xlsx, odt, epub) is audited in the light child (`pkgaudit`), which may also write a
@@ -74,13 +75,15 @@ def libreoffice(ctx, src, fmt):
 
 
 def audit(ctx, path, fmt, flags=()):
-    """The package audit in the light child; returns (audit dict, its directory)."""
+    """The package audit in the light child; returns (audit dict, its directory): a directory of the caller, with
+    the audit, the normalized copy and the media of the sheets copied out of the scratch of the child."""
     scratch = ctx.work / "audit"
     ctx.event("audit")
     try:
         rc, log = isolation.run(scratch, AUDIT_MODULE, [fmt, "/in/source." + fmt, *flags], inputs=[(path, "source." + fmt)],
                                 memory_mib=min(AUDIT_MEMORY_MIB, ctx.memory_mib), output_mib=ctx.output_mib, timeout=min(600, ctx.timeout()),
-                                steps=ctx.steps, observer=ctx.observer)
+                                steps=ctx.steps, observer=ctx.observer, attempt=ctx.attempt,
+                                results=("audit.json", "normalized." + fmt, "media"))
     except EngineError as exc:
         ctx.diagnostics["audit.log"] = getattr(exc, "log", b"")
         raise

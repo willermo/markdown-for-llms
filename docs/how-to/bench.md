@@ -20,63 +20,38 @@ For developers on Linux. The bench is a development tool, separate from the expe
 
 ## Prerequisites
 
+The bench runs in the containers of the product ([Run the product in containers](run-in-containers.md)): no virtual environment, no `uv`, no Bubblewrap and no `systemd` of the host.
+
 - **Linux x86_64**: tested. Other systems are not.
-- **Docker**, with the `buildx` plugin, reachable through a local socket (`unix://`) by your user. Tested: Docker Engine 29.9.3 with buildx 0.39.0 on Ubuntu 24.04, user in the `docker` group (which is equivalent to root on that machine). The bench refuses a remote Docker endpoint, because it would receive the documents. Docker Desktop on macOS and Windows is **not tested**; note its licence: Docker Desktop is free for personal use, education, non-commercial open source projects and businesses with fewer than 250 employees and less than USD 10 million in annual revenue, while larger organizations need a paid subscription. Docker Engine on Linux has no such licence.
-- **uv 0.13.7** (the `required-version` of `pyproject.toml`) and the uv-managed CPython 3.12.13 under `.venv-python/`, prepared as in [Prepare and update the uv environment](uv-environment.md).
-- **No other system tool for preparing the set**: pandoc, poppler, qpdf, Ghostscript, DjVuLibre and LibreOffice run inside the toolchain image, never from the host `PATH`.
-- **For the measured run (`mdf bench run`)**, what the conversion engine needs ([Convert documents](convert-documents.md)): Bubblewrap at `/usr/bin/bwrap` (`isolation_unavailable` without it), a systemd user manager (`systemd-run --user --scope`, which caps the memory of the Marker child) and the 18 weight files of the Marker route, prepared once with `mdf prepare --weights` (`weights_missing` without them).
-- Disk space: about 1.5 GB for `.venv-bench`, 1.4 GB for the image, and the build cache of the BuildKit builder (it can grow to several GB over repeated builds).
+- `make up` done once: the images, the toolchain image (pandoc, poppler, qpdf, Ghostscript, DjVuLibre and LibreOffice run inside it, never from the host `PATH`) and the weights of the Marker route. The bench converts through the launcher of the product, so the product must be running.
+- Disk space: 1.4 GB for the toolchain image, and the build cache of the BuildKit builder (it can grow to several GB over repeated builds).
 
-## Create the bench environment
+## Run the commands of the bench
 
-The bench has its own venv, `.venv-bench/`, with the `bench` extra (Marker 2.2.0, Surya 0.23.0, torch 2.15.0 and torchvision 0.29.1 for CPU, markdown-it-py, mdit-py-plugins). The development venv never receives this extra. At the root of the clone:
+Two ways, the same container (`bench` and `cli` of compose.yaml, with the cache in `state/bench/cache` and the runs in `state/bench/runs`):
 
 ```bash
-(
-  RUN_REPO="$(pwd -P)"
-  unset VIRTUAL_ENV
-  export UV_PYTHON_INSTALL_DIR="$RUN_REPO/.venv-python" UV_PYTHON_DOWNLOADS=never
-  export UV_CACHE_DIR="$RUN_REPO/.cache/uv-bench" UV_PROJECT_ENVIRONMENT="$RUN_REPO/.venv-bench"
-  uv sync --locked --no-default-groups --extra bench --no-editable --python 3.12.13 --managed-python --no-python-downloads
-  "$RUN_REPO/.venv-bench/bin/mdf" bench list
-)
+make bench                                  # mdf bench run --level quick, on the local routes
+make bench BENCH="fetch --level quick"      # any other command of the bench
+mdf bench list --level quick                # the same through the installed `mdf` (make install-cli)
 ```
 
-`--locked` stops when `uv.lock` is out of date. The first sync downloads the packages from PyPI and the PyTorch CPU index. No command of the bench downloads models today. After a change to the code, repeat the same `uv sync`: it rebuilds and reinstalls the package from the working tree. The examples of preparation, listing, download and checks below call `.venv-bench/bin/mdf` from the root of the clone.
-
-The examples of the measured run and of the commands that read its reports (`run`, `report`, `compare`, `crosscheck`, `secret-scan`) call the development venv instead, `.venv-dev/bin/python -I -B -m markdown_for_llms.cli`: it is the venv of the product, built as in [Prepare and update the uv environment](uv-environment.md), where the full check installs the wheel of the commit, and it has the CPU engine with Marker (extra `engine`) and the Markdown reader of the bench. A run records the identity of the package it runs from, and it is that venv that the full check locks (`venv_busy`). `.venv-bench/bin/mdf` accepts the same commands.
+`make bench` and `mdf bench ...` see the state folder at `/state` and, with `mdf`, the current directory at its own path: a run folder or a report under the current directory is written there, as your user. The examples below are written with `mdf bench ...`. The ones that call `.venv-dev/bin/python ... scripts/servers/...` or `scripts/bench_interrupt.py` are development tools that still run from a virtual environment of the host ([the uv guide](uv-environment.md)); they are not part of the product in containers.
 
 ## Build the reference toolchain
 
 ```bash
-.venv-bench/bin/mdf bench prepare --toolchain
+make prepare                      # skips the build when the image exists and the launcher verifies it
+make prepare PREPARE=--no-cache   # builds it again
 ```
 
-The command checks the build context `scripts/bench-toolchain/` of the checkout against the identity packaged in `markdown_for_llms/engine/data/toolchain.json` (it refuses a changed, added or missing file), creates the BuildKit builder `mdf-bench-toolchain` (memory cap 6 GiB) when it is absent, builds the image, verifies every file of the image against its content manifest and runs a self-test of the tools. Only then does it tag the image `mdf-bench-toolchain:<first 16 characters of the content SHA-256>`.
+`make prepare` (`scripts/prepare-toolchain.sh`) copies the build context `scripts/bench-toolchain/` of the checkout, has the copy verified against the identity packaged in `markdown_for_llms/engine/data/toolchain.json` (it refuses a context that differs), builds it with a BuildKit builder capped in memory and tags the result `mdf-bench-toolchain:candidate`. Then `mdf prepare --toolchain`, in the `cli` container and through the launcher, verifies every file of the candidate against its content manifest and runs the self-test on it; only then the image gets its tag, `mdf-bench-toolchain:<first 16 characters of the content SHA-256>`, by ID. A candidate that does not pass is not tagged.
 
-Everything happens on your machine: no account, no registry login, no push. The build needs the network: the BuildKit image and the Debian base image from Docker Hub, by digest, a Debian snapshot, conda-forge, the pixi release on GitHub, DjVuLibre on SourceForge and the LibreOffice archive, each input pinned by digest or SHA-256. A build from scratch took about 2.5 minutes on the tested laptop (161 s), and the whole command about 3 minutes. Expected output (abridged; the image ID of your build differs):
-
-```text
-toolchain context ok 4 files (Dockerfile, content-manifest.sh, pixi.lock, pixi.toml)
-toolchain builder ok mdf-bench-toolchain memory 6g
-toolchain build ok sha256:<image id> in 161 s
-toolchain content ok dcc2395ac8922f90e926952475e4a32f43555afd5b0dcbd5b8204e46f42d2c84 (48792 manifest lines, every file verified)
-toolchain reference build no (same content, another build)
-selftest versions ok ddjvu 3.5.29 qpdf 12.4.2 pdftoppm 26.11.0 pdftotext 26.11.0 pdfinfo 26.11.0 pandoc 3.14 soffice 26.8.3.1 gs 10.08.0
-selftest isolation ok host path not visible, the same file mounted is
-...
-selftest timeout ok container removed by name
-toolchain ready mdf-bench-toolchain:dcc2395ac8922f90 sha256:<image id> docker 29.9.3
-```
-
-The identity of the toolchain is the content SHA-256 (`dcc2395a…`), not the image ID: every build has a new image ID, and `reference build no (same content, another build)` is the normal result of a local build. `--no-cache` builds without the builder cache; `--context DIR` reads the build context from another directory (default: `scripts/bench-toolchain` of the current directory). `mdf bench prepare` without `--toolchain` prepares nothing and exits with 2.
-
-Each later command verifies the image at its first tool call and runs the tools with `--network none`, a read-only root, no capabilities, your user and a memory cap; only the input file of a call is mounted.
 
 ## List the documents
 
 ```bash
-.venv-bench/bin/mdf bench list --level quick
+mdf bench list --level quick
 ```
 
 ```text
@@ -97,7 +72,7 @@ The set covers every format of the conversion engine: pdf, png, jpeg, tiff, djvu
 ## Download and verify the documents
 
 ```bash
-.venv-bench/bin/mdf bench fetch --level standard
+mdf bench fetch --level standard
 ```
 
 ```text
@@ -112,8 +87,8 @@ D36 available
 ## Generate and self-check the checks
 
 ```bash
-.venv-bench/bin/mdf bench checks --docs D18
-.venv-bench/bin/mdf bench checks --level standard --self-check --json ~/bench-runs/self-check.json
+mdf bench checks --docs D18
+mdf bench checks --level standard --self-check --json ~/bench-runs/self-check.json
 ```
 
 `checks` reads the cache only (never the network) and generates, for each document, the checks of three classes (content, structure, form) from its twin. A document that was not fetched is reported `unavailable source_unreachable`. Each line gives the first characters of the SHA-256 of the check set, the counts per class and `nd`, the checks that cannot be determined from the twin:
@@ -134,10 +109,10 @@ A document without a twin (D35, D36) prints its oracle instead: `D35 oracle 77c6
 ## Run the measured conversions
 
 ```bash
-.venv-dev/bin/python -I -B -m markdown_for_llms.cli bench run --level quick --runs-dir ~/bench-runs --out ~/bench-runs/quick-1
+mdf bench run --level quick --out /state/bench/runs/quick-1
 ```
 
-`run` takes `--level` or `--docs D04,D19`, and reads the cache only, like `checks`: run `fetch` first. Without `--route` it converts each document on every local route of its format in the matrix of the engine (for example pandoc, Marker and LibreOffice for a pptx, Marker and djvutxt for a DjVu); `--route marker,pandoc` keeps only those routes. `--ocr force` asks Marker to run OCR on every page (default `auto`); the other routes ignore it. `--repeat N` (at most 10) converts every attempt N times, to measure the spread of the times and whether the output is deterministic. Datalab runs only with `--route datalab` and its own options ([Measure the Datalab route](#measure-the-datalab-route)), an inference server only with `--route marker-server` ([Measure the marker-server route](#measure-the-marker-server-route)). The bench converts only through the engine, with the limits of the product (`mdf convert`) and the `limits` of the manifest (more pages for D13, D16, D17 and D21), and with the weights of the Marker route in `~/.cache/markdown-for-llms/models`.
+`run` takes `--level` or `--docs D04,D19`, and reads the cache only, like `checks`: run `fetch` first. Without `--route` it converts each document on every local route of its format in the matrix of the engine (for example pandoc, Marker and LibreOffice for a pptx, Marker and djvutxt for a DjVu); `--route marker,pandoc` keeps only those routes. `--ocr force` asks Marker to run OCR on every page (default `auto`); the other routes ignore it. `--repeat N` (at most 10) converts every attempt N times, to measure the spread of the times and whether the output is deterministic. Datalab runs only with `--route datalab` and its own options ([Measure the Datalab route](#measure-the-datalab-route)), an inference server only with `--route marker-server` ([Measure the marker-server route](#measure-the-marker-server-route)). The bench converts only through the engine, with the limits of the product (`mdf convert`) and the `limits` of the manifest (more pages for D13, D16, D17 and D21), and with the weights of the Marker route in the models volume of the product (`/models/marker`, prepared by `make up`). The paths of the command are those of its container: the runs go to `/state/bench/runs`, which is `state/bench/runs` of the checkout, and a folder of the host is seen only under the directory `mdf` is run from, which is mounted at its own path.
 
 Each attempt prints one line with its document, route, variant, repetition, generation, status and seconds, and the command ends with the number of documents unavailable (exit 0 means that every attempt has an outcome: some may have failed, as the report shows):
 
@@ -160,20 +135,20 @@ Ctrl-C stops a run: the engine records the interrupted attempt (`interrupted`), 
 R=~/bench-runs
 scripts/run-capped.sh bench-int 24G -- .venv-dev/bin/python -I -B scripts/bench_interrupt.py \
   --evidence "$R/standard-int/work/attempt-*-D04-marker-*" --timeout 1800 -- \
-  .venv-dev/bin/python -I -B -m markdown_for_llms.cli bench run --level standard --runs-dir "$R" --out "$R/standard-int"
-.venv-dev/bin/python -I -B -m markdown_for_llms.cli bench run --resume "$R/standard-int"
+  mdf bench run --level standard --runs-dir "$R" --out "$R/standard-int"
+mdf bench run --resume "$R/standard-int"
 ```
 
 `--resume RUN_DIR` takes every option from the state of the run (selection, routes, repetitions, manifest, exclusions, cache, limits). It accepts only `--confirm-transit` and `--env-file` (asked again, never kept), `--retry-unaccepted`, and, for a run that moved, `--cache` and `--model-root`, which replace the paths of the state and are verified by what it recorded (the SHA-256 of the check sets and inputs, the identity of the weights); any other option is `resume_option_not_allowed`, and a path of the state that is missing without its option is `run_path_missing`. A run that pays (Datalab, or a server with a provider) is resumed only where it was created, next to the ledger of its runs folder (`run_path_missing` otherwise), because a resumption converts the keys left and pays for them. It refuses a run whose package, toolchain image, weights, manifest or exclusions changed (`resume_identity_changed`). An attempt that ended is never converted again; an attempt that was running is adopted when its `engine.json` belongs to it (same attempt, input and options, files as listed) and is complete or failed for a reason other than the interruption, otherwise it is kept and converted again in a new generation (`g2`). Each adopted attempt prints a line, for example `D04 marker 6339a111 k1 g1 adopted complete`. Two processes never work on one run: the second one exits with `run_busy`, and the lock goes away with the process, even after a SIGKILL.
 
-The bench refuses to start while the full check holds the development venv (`venv_busy`), and while another process runs a program of the venv it runs from (`venv_in_use`: stop the API and the worker first; other bench runs are allowed).
+In its container the bench is alone with the environment it runs from, so the two refusals for a shared development venv (`venv_busy`: the full check holds it; `venv_in_use`: another process runs a program of it) do not concern the API, the worker or `make check`, which run in containers of their own: nothing has to be stopped. They remain for a bench run from a development venv on the host.
 
 ## Measure the Datalab route
 
 Datalab is remote and paid: the documents leave your machine for Datalab (https://www.datalab.to, US region). For the Datalab team of the key, training on the data and retention are on, and the API can neither read nor change them; the result of each document is deleted after the conversion (`DELETE`), but the copy kept for training may stay. `run` prints this warning when it is about to send, and the report repeats it. Only documents of the public set are sent, never a personal set.
 
 ```bash
-P=".venv-dev/bin/python -I -B -m markdown_for_llms.cli"
+P="mdf"
 scripts/run-capped.sh bench-datalab 4G -- $P bench run --docs D18 --route datalab --datalab-mode lite --confirm-transit \
   --max-cost-usd 0.02 --spend-cap-usd 4.00 --env-file .env --runs-dir ~/bench-runs --out ~/bench-runs/datalab-d18
 ```
@@ -210,9 +185,9 @@ To interrupt a Datalab run once Datalab has accepted a request, wait for its `da
 R=~/bench-runs
 scripts/run-capped.sh bench-datalab-int 4G -- .venv-dev/bin/python -I -B scripts/bench_interrupt.py \
   --evidence "$R/datalab-int/work/attempt-*-D18-datalab-*/datalab-request.json" --timeout 600 -- \
-  .venv-dev/bin/python -I -B -m markdown_for_llms.cli bench run --docs D18 --route datalab --datalab-mode lite \
+  mdf bench run --docs D18 --route datalab --datalab-mode lite \
   --confirm-transit --max-cost-usd 0.02 --spend-cap-usd 4.00 --env-file .env --runs-dir "$R" --out "$R/datalab-int"
-.venv-dev/bin/python -I -B -m markdown_for_llms.cli bench run --resume "$R/datalab-int" --confirm-transit --env-file .env
+mdf bench run --resume "$R/datalab-int" --confirm-transit --env-file .env
 ```
 
 The resumption reports `datalab_unresolved` and posts nothing. When Datalab completes before the signal, the harness exits with 3 and the run has its result.
@@ -224,7 +199,7 @@ In the report each Datalab attempt carries its pages, estimate, billed cost, cap
 The `marker-server` route ([Convert documents](convert-documents.md#the-marker-server-route)) is measured like the other routes, on the server you name, in one or both of its modes:
 
 ```bash
-P=".venv-dev/bin/python -I -B -m markdown_for_llms.cli"
+P="mdf"
 scripts/run-capped.sh bench-cpu 16G -- $P bench run --docs D18,D19 --route marker-server \
   --server-mode balanced,accurate --server cpu --runs-dir ~/bench-runs --out ~/bench-runs/cpu-1
 ```
@@ -248,7 +223,7 @@ scripts/run-capped.sh bench-modal 16G -- .venv-dev/bin/python -I -B scripts/serv
   --confirm-transit --max-cost-usd 6 --spend-cap-usd 15 --env-file .env --runs-dir "$R" --out "$R/modal-standard"
 ```
 
-A bench refuses to start while another program of the development venv runs (`venv_in_use`), its own session excepted: start the bench when no other session runs; other sessions may start after it. The report gives each attempt of the route its server (`server`: the endpoint, its provider, kind and GPU, the mode, the readiness, the requests answered and not, the retried ones, whether the relay closed cleanly, the reservation and the measured bound of the cost) and the limits that the route declares. The standard level in both modes on Modal took 21 minutes and 0.98 USD of bound (0.45 USD billed): 21 of its 24 attempts were complete, and 3 failed for errors of the network between the laptop and Modal (`server_unavailable`, `server_mismatch`), each with its code in the report; the quick level on RunPod took 16 minutes and 0.21 USD of bound. The measures per page are over the complete attempts. The exit of `run` is not the outcome of its conversions: it exits with 0 when the run ended with failed attempts, which the report lists, and a key that ended is not converted again by a resumption.
+A bench run from a development venv on the host, next to a session of `scripts/servers/`, refuses to start while another program of that venv runs (`venv_in_use`), its own session excepted: start the bench when no other session runs; other sessions may start after it. In the `bench` container no such process exists. The report gives each attempt of the route its server (`server`: the endpoint, its provider, kind and GPU, the mode, the readiness, the requests answered and not, the retried ones, whether the relay closed cleanly, the reservation and the measured bound of the cost) and the limits that the route declares. The standard level in both modes on Modal took 21 minutes and 0.98 USD of bound (0.45 USD billed): 21 of its 24 attempts were complete, and 3 failed for errors of the network between the laptop and Modal (`server_unavailable`, `server_mismatch`), each with its code in the report; the quick level on RunPod took 16 minutes and 0.21 USD of bound. The measures per page are over the complete attempts. The exit of `run` is not the outcome of its conversions: it exits with 0 when the run ended with failed attempts, which the report lists, and a key that ended is not converted again by a resumption.
 
 To compare a route with another one document by document (for example `marker-server` in `balanced` against `datalab` in `balanced`), whatever their variants:
 
@@ -361,7 +336,7 @@ The criteria (at least 24 pages running at once in vLLM, every page 200, the loa
 ## Write the report of a run again
 
 ```bash
-.venv-dev/bin/python -I -B -m markdown_for_llms.cli bench report ~/bench-runs/standard
+mdf bench report ~/bench-runs/standard
 ```
 
 ```text
@@ -371,7 +346,7 @@ report 3c9d0e5a1b7f4c21: 47 results verified, report.json and report.md written 
 `report` rewrites `report.json`, `report.md` and the `results.json` of each attempt of a finished run from the outputs it saved, with the scoring of the installed package, for example after a fix of the scoring. Unlike a resumption it never converts, sends or pays, so it also runs on a run that paid and on a run that moved:
 
 ```bash
-.venv-dev/bin/python -I -B -m markdown_for_llms.cli bench report ~/archive/modal-standard --report-dir ~/reports/modal-standard \
+mdf bench report ~/archive/modal-standard --report-dir ~/reports/modal-standard \
   --cache ~/archive/bench-cache
 ```
 
@@ -380,7 +355,7 @@ With `--report-dir DIR` (a new or empty directory outside the run) the run is on
 ## Compare two runs
 
 ```bash
-P=".venv-dev/bin/python -I -B -m markdown_for_llms.cli"
+P="mdf"
 $P bench compare ~/bench-runs/quick-1/report.json ~/bench-runs/quick-2/report.json --fail-on-regression
 ```
 
@@ -445,13 +420,13 @@ After `prepare --toolchain` and `fetch`, the bench needs no network: `list`, `fe
 
 ## Folders, environment file and settings
 
-The cache defaults to `$XDG_CACHE_HOME/markdown-for-llms/bench` (`~/.cache/markdown-for-llms/bench`); change it with `--cache DIR` or `MDF_BENCH_CACHE_DIR`. It holds `sources/` (files by SHA-256), `quarantine/`, `wikisource/`, `derived/`, `checks/`, `tool-work/` (the private working directory of each tool call, removed after it), `toolchain/` (the build logs of `prepare --toolchain`) and `work/`. It contains document text: keep it local. The runs folder defaults to `$XDG_DATA_HOME/markdown-for-llms/bench/runs` (`~/.local/share/markdown-for-llms/bench/runs`); `run` creates one directory per run there, with document text too.
+In the containers the cache is `state/bench/cache` of the checkout (`/state/bench/cache` for the command) and the runs are in `state/bench/runs`; `--cache DIR` and `--runs-dir DIR` name others. It holds `sources/` (files by SHA-256), `quarantine/`, `wikisource/`, `derived/`, `checks/`, `tool-work/` (the private working directory of each tool call, removed after it), `toolchain/` (the build logs of `prepare --toolchain`) and `work/`. It contains document text: keep it local. The runs folder defaults to `$XDG_DATA_HOME/markdown-for-llms/bench/runs` (`~/.local/share/markdown-for-llms/bench/runs`); `run` creates one directory per run there, with document text too.
 
-Put `MDF_BENCH_*` settings in a file and pass it with `--env-file FILE`; do not export them, because [the full check](uv-environment.md#run-the-full-check) stops when any `MDF_` variable is in the environment. A variable in the environment wins over the file, and `--cache` wins over both. `run` and `secret-scan` read no settings file: their `--env-file` is a file of keys only (Datalab, RunPod, the Modal proxy token), so set their `MDF_BENCH_*` values on their command line only (`MDF_BENCH_CAP_DATALAB_USD=4.00 .venv-dev/bin/python ... bench run ...`) or use the options. An unknown `MDF_BENCH_` name stops the command with `unknown_setting`, a bad value with `invalid_setting`.
+In the containers compose sets `MDF_BENCH_CACHE_DIR` and `MDF_BENCH_RUNS_DIR` for `mdf bench`; other `MDF_BENCH_*` settings go in a file passed with `--env-file FILE` (a file under the current directory, with `mdf`). A variable in the environment wins over the file, and `--cache` wins over both. `run` and `secret-scan` read no settings file: their `--env-file` is a file of keys only (Datalab, RunPod, the Modal proxy token), so set their `MDF_BENCH_*` values on their command line only (`MDF_BENCH_CAP_DATALAB_USD=4.00 .venv-dev/bin/python ... bench run ...`) or use the options. An unknown `MDF_BENCH_` name stops the command with `unknown_setting`, a bad value with `invalid_setting`.
 
 ```bash
 printf 'MDF_BENCH_CACHE_DIR=%s\nMDF_BENCH_TOOL_MEMORY_MB=4096\n' "$HOME/bench-cache" > ~/bench.env
-.venv-bench/bin/mdf bench fetch --offline --level quick --env-file ~/bench.env
+mdf bench fetch --offline --level quick --env-file ~/bench.env
 ```
 
 | Variable | Default | Used today |
@@ -467,10 +442,10 @@ Ports 23461 and 23463 are only reserved: no command opens them today. `.env.exam
 
 ## The image and the full check
 
-The fast suite runs the real tests of the bench and of the conversion engine inside the toolchain image, so [`scripts/full-check.sh`](uv-environment.md#run-the-full-check) needs the image: before the suites, its precondition X runs `python -m markdown_for_llms.engine.toolchain verify` in the development venv and stops when the image is missing or differs from `toolchain.json`. It never builds or downloads anything. To check the image before a full check:
+The fast suite runs the real tests of the bench and of the conversion engine inside the toolchain image, so [the full check](uv-environment.md#run-the-full-check) needs the image: before the suites, its precondition X asks the launcher of the check to verify it and stops when the image is missing or differs from `toolchain.json`. It never builds or downloads anything. To verify or build the image:
 
 ```bash
-.venv-bench/bin/python -I -B -m markdown_for_llms.engine.toolchain verify
+make prepare        # verifies the image through the launcher, and builds it only when it does not pass
 ```
 
 ```text

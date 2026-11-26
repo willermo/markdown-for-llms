@@ -301,18 +301,59 @@ class ModalLogs:
     the CLI, which may repeat text of the service, and goes to /dev/null (MFL023 B1, SOL3-N1): the outcome of
     a stream is its exit, in `logs_stream_end`."""
 
-    def __init__(self, app, environ, containers, popen=subprocess.Popen):
+    def __init__(self, app, environ, containers, popen=subprocess.Popen, auth=None, auth_dir=None):
         if __package__:                 # MFL023 A2
             from . import providers
         else:
             import providers
+        self.providers = providers
         self.app, self.containers, self.popen = app, containers, popen
         self.argv = providers.MODAL_SDK + ["app", "logs", app, "-f", "--timestamps", "--show-container-id", "-s"]
         self.env = dict(environ, COLUMNS=providers.MODAL_COLUMNS)
+        # MFL051: the keys file with the token of the SDK and where its private files go (`providers.modal_auth`)
+        self.auth, self.auth_dir = auth, auth_dir or providers.MODAL_AUTH_DIR
 
     def stream(self, source):
-        return self.popen(self.argv + [source], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
-                          env=self.env, stdin=subprocess.DEVNULL, errors="replace")
+        """One process of the CLI that follows `source`. With a keys file it gets a credentials file of its own,
+        which goes when the process has ended (`AuthStream.wait`): the streams of a follower, the operations of a
+        session and a capacity watch never share one. The real CLI never starts without it."""
+        if self.auth is None:
+            if self.popen is subprocess.Popen:
+                raise self.providers.ProviderError("%s missing: no keys file" % ", ".join(self.providers.MODAL_TOKEN))
+            return self.popen(self.argv + [source], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
+                              env=self.env, stdin=subprocess.DEVNULL, errors="replace")
+        import contextlib
+        stack = contextlib.ExitStack()
+        try:
+            extra = stack.enter_context(self.providers.modal_auth(self.auth, self.auth_dir))
+            proc = self.popen(self.argv + [source], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
+                              env=dict(self.env, **extra), stdin=subprocess.DEVNULL, errors="replace")
+        except BaseException:
+            stack.close()
+            raise
+        return AuthStream(proc, stack.close)
+
+
+class AuthStream:
+    """A process of the Modal CLI with the private file of its credentials. Everything is the process's own; the
+    file is removed as soon as a `wait` or a `poll` sees that the process has ended."""
+
+    def __init__(self, proc, release):
+        self._proc, self._release = proc, release
+
+    def __getattr__(self, name):
+        return getattr(self._proc, name)
+
+    def wait(self, timeout=None):
+        code = self._proc.wait(timeout=timeout)
+        self._release()
+        return code
+
+    def poll(self):
+        code = self._proc.poll()
+        if code is not None:
+            self._release()
+        return code
 
 
 class ModalFollower(Follower):

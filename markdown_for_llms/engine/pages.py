@@ -26,19 +26,21 @@ group as `media_furniture` (`warning`, as D11); every raster keeps its outcome i
 A raster entirely inside another kept crop is part of that figure; one that partly overlaps it
 widens the crop to their union (no pixel cut, FC1 of the review of B).
 
-The child runs in Bubblewrap without network, the model root read-only, under a systemd scope
-with the memory cap of the conversion; the weights are verified before each start. Its events
+The child runs in a container of the launcher without network (`isolation.run`, kind `marker`),
+the weights of the models volume read-only on `/models`, under the memory cap of the conversion;
+the weights are verified before each start. Its events
 carry a monotonic clock (`mono`): `timings.stages` and `timings.pages` of `engine.json` come
 from the events of the child whose result is kept (`marker_timings`).
 """
 import collections
 import json
+import os
 import re
 import shutil
 import statistics
 import time
 
-from . import contract, isolation, weights
+from . import containers, contract, isolation, weights
 from .codes import Code, EngineError
 
 PREP = "markdown_for_llms.engine.pdfprep"
@@ -89,12 +91,18 @@ FALLING_BACK = re.compile(rb"falling back", re.I)
 TO_PDF = {"docx": "docx", "xlsx": "xlsx", "pptx": "pptx", "epub": "epub", "html": "html"}
 
 
+# what each step of `pdfprep` leaves for its caller: the only files taken out of the scratch of the child
+PREP_RESULTS = {"image": ("image.json", "source.pdf"), "classify": ("pdfprep.json",), "strip": ("strip.json", "stripped.pdf")}
+CHILD_RESULTS = ("out", "result.json")
+
+
 def _prep(ctx, name, args, inputs, memory_mib=PREP_MEMORY_MIB):
     scratch = ctx.work / ("pdfprep-" + name)
     shutil.rmtree(scratch, ignore_errors=True)
     rc, log = isolation.run(scratch, PREP, args, inputs=inputs, memory_mib=min(memory_mib, ctx.memory_mib),
                             output_mib=ctx.output_mib, timeout=min(1800, ctx.timeout()), steps=ctx.steps,
-                            observer=ctx.observer, poll_seconds=ctx.poll_seconds)
+                            observer=ctx.observer, poll_seconds=ctx.poll_seconds, attempt=ctx.attempt,
+                            results=PREP_RESULTS[name])
     if rc == 3:
         raise EngineError(Code.MEMORY_LIMIT, "pdfprep " + name)
     if rc != 0:
@@ -102,10 +110,6 @@ def _prep(ctx, name, args, inputs, memory_mib=PREP_MEMORY_MIB):
         err.log = log
         raise err
     return scratch
-
-
-def _scope(ctx, n):
-    return "mdf-eng-%s-marker-%d" % (ctx.attempt[:16], n)
 
 
 def child_env(model_root, threads):
@@ -124,12 +128,25 @@ def _relay_stop(check):
     return stop
 
 
-def run_child(ctx, args, inputs, request=None, binds=(), check=None, activity=None):
-    """One Marker child; returns (exit status, scratch). Weights verified before the start. On the
-    `marker-server` route `binds` adds the relay directory on `/relay` and `check` stops the child
-    with the failure of the relay; an `Inference error` line is then a retried request, counted by
-    the child, and only `falling back` fails the log."""
+def model_root(path):
+    """The model root of a Marker child must be the weights of the models volume: that is what the launcher
+    mounts on its `/models`, whatever the caller names. Another directory would be verified here and not read
+    there: `invalid_setting`."""
+    if os.path.realpath(path) != os.path.realpath(containers.MODEL_ROOT):
+        raise EngineError(Code.INVALID_SETTING, "model root: the Marker child reads the weights of the models volume, %s"
+                          % containers.MODEL_ROOT)
+    return path
+
+
+def run_child(ctx, args, inputs, request=None, check=None, activity=None):
+    """One Marker child; returns (exit status, scratch). Weights verified before the start. The socket
+    directory of the attempt is on its `/relay`: on the `marker-server` route the relay listens there, and
+    `check` stops the child with the failure of the relay; an `Inference error` line is then a retried
+    request, counted by the child, and only `falling back` fails the log. `scratch` is a directory of the
+    caller, with `out/` and `result.json` of the child copied into it (`isolation.run`)."""
     report = weights.verify(ctx.model_root)
+    model_root(ctx.model_root)
+    ctx.private()                               # the socket directory of the attempt, which the launcher mounts
     ctx.weights = report
     ctx.child_runs += 1
     ctx.child_events = []                       # the timings come from the child whose result is kept
@@ -141,8 +158,8 @@ def run_child(ctx, args, inputs, request=None, binds=(), check=None, activity=No
     rc, log = isolation.run(
         scratch, CHILD, args, inputs=inputs, memory_mib=ctx.memory_mib, output_mib=ctx.output_mib,
         timeout=ctx.timeout(), steps=ctx.steps, observer=ctx.observer, poll_seconds=ctx.poll_seconds,
-        ro_binds=[(str(ctx.model_root), "/models"), *binds], env=child_env(ctx.model_root, ctx.threads), fonts=True,
-        scope=_scope(ctx, ctx.child_runs), process_limit=512, files_limit=1024,
+        env=child_env(ctx.model_root, ctx.threads), kind="marker", attempt=ctx.attempt, results=CHILD_RESULTS,
+        process_limit=512, files_limit=1024,
         address_space_mib=ctx.memory_mib * 2 + 8192, cpu_seconds=max(60, ctx.timeout()) * max(1, ctx.threads),
         stall_seconds=ctx.stall_seconds, on_events=ctx.feed_events,
         check=None if check is None else _relay_stop(check), activity=activity)
@@ -493,8 +510,8 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
     counters and times go to `engine.json` (`marker_server`), with the measured bound of the cost
     for a provider (`server_cost_bound`). The `cpu` endpoint starts the local CPU server first
     (`cpuserver`, verified before the wake; `cpu` = {"root", "manifest"} replaces its defaults in
-    the tests), in its own sandbox and scope, on the `llama/` socket of the same directory."""
-    from . import relay as relay_mod, servers, sockets
+    the tests), in a container of its own, on the `llama/` socket of the same directory."""
+    from . import relay as relay_mod, servers
     from .codes import Code as C
     opts = request.get("server") or {}
     mode = opts.get("mode")
@@ -531,16 +548,15 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
                                       "url": None if ep.kind == "cpu" else servers.canonical_url(ep.url),
                                       "reserve_cents": term["reserve_cents"], "rate": ep.rate_usd_per_s,
                                       "tail_idle_s": ep.tail_idle_s, "D": term["D"]})
-    sockets.sweep()
-    private = sockets.Private()
+    private = ctx.private()
     relay = started = None
     done = False
     try:
         if ep.kind == "cpu":
-            from . import cpuserver, isolation
+            from . import cpuserver
             ctx.event("cpu-server")
-            started = cpuserver.start(cpu["record"]["root"], private.llama_dir, "mdf-eng-%s-llama" % ctx.attempt[:16],
-                                      ctx.work / "llama-server.log", cpu["manifest"])
+            started = cpuserver.start(cpu["record"]["root"], ctx.attempt, ctx.work / "llama-server.log", cpu["manifest"],
+                                      timeout=ctx.timeout(), observer=ctx.observer)
         relay = relay_mod.Relay(ep, keys, private.relay_socket, transport_factory=transport_factory,
                                 upstream_socket=private.llama_socket if ep.kind == "cpu" else None)
         relay.start()
@@ -552,10 +568,8 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
                          "pages": page_info, "pictures": pictures, "mode": mode,
                          "server": {"parallel": ep.parallel, "model": ep.model, "timeout": ep.read_timeout,
                                     **ep.requests()}}
-        binds = [(str(private.relay_dir), "/relay")]
         ctx.event("marker")
-        rc, scratch = run_child(ctx, ["convert"], [(pdf, "source.pdf")], child_request, binds, relay.check,
-                                relay.activity)
+        rc, scratch = run_child(ctx, ["convert"], [(pdf, "source.pdf")], child_request, relay.check, relay.activity)
         retried = None
         if rc == 5:
             first = json.loads((scratch / "result.json").read_text())
@@ -563,7 +577,7 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
             ctx.problems.append(contract.problem("ocr_forced_document", page=first.get("page"),
                                                  detail="an OCR layer read as %s" % first.get("source")))
             force, reason = True, "ocr_layer_not_removable"
-            rc, scratch = run_child(ctx, ["convert"], [(pdf, "source.pdf")], dict(child_request, force_ocr=True), binds,
+            rc, scratch = run_child(ctx, ["convert"], [(pdf, "source.pdf")], dict(child_request, force_ocr=True),
                                     relay.check, relay.activity)
             if rc == 5:
                 raise EngineError(C.PAGE_FAILED, "an OCR layer page read from its text layer under force_ocr")
@@ -593,15 +607,13 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
                 ctx.problems.append(contract.problem("server_cost_bound", detail="%s: a measured upper bound of %s "
                                                      "cents, not a billed amount" % (ep.provider, ctx.cost["bound_cents"])))
         if started is not None:
-            from . import isolation
             step = isolation.stop(started)
-            ctx.steps.append(dict(step, tool="bwrap:llama-server", args=[]))
+            ctx.steps.append(dict(step, tool="child:llama-server", args=[]))
             ctx.server["cpu"]["run"] = step
             try:
                 ctx.diagnostics["llama-server.log"] = started.log_path.read_bytes()[-contract.LOG_TAIL:]
             except OSError:
                 pass
-        private.close()
     out = collect(ctx, scratch, result, pages, page_info, rasters, force, reason, strip_report, retried,
                   limits=server_limits(mode))
     srv = result.get("server") or {}

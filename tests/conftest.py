@@ -10,11 +10,23 @@ import os
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-# Guardie installate prima della collection; socketpair AF_UNIX resta locale.
+# Guards installed before the collection; an AF_UNIX socketpair stays local.
 _guard_originals = {}
+# The one address a test may connect to (MFL051): the socket of the launcher, through which the engine starts
+# every child. The same constant as markdown_for_llms.engine.containers.LAUNCHER_SOCKET
+# (tests/unit/test_conftest_guard.py keeps them equal); every other address stays forbidden, the Docker socket
+# included, and so do `connect_ex` and `sendto`.
+LAUNCHER_SOCKET = '/run/mdf/launcher/launcher.sock'
 
 def _deny_network(*args, **kwargs):
     raise RuntimeError('Rete e socket daemon vietati nei test; preparare cache fuori suite')
+
+
+def _connect_launcher_only(self, address, *args, **kwargs):
+    import socket
+    if self.family == socket.AF_UNIX and isinstance(address, str) and address == LAUNCHER_SOCKET:
+        return _guard_originals['connect'](self, address, *args, **kwargs)
+    return _deny_network()
 
 
 def pytest_addoption(parser):
@@ -27,7 +39,7 @@ def pytest_configure(config):
     import subprocess
     for name in ('connect', 'connect_ex', 'sendto'):
         _guard_originals[name] = getattr(socket.socket, name)
-        setattr(socket.socket, name, _deny_network)
+        setattr(socket.socket, name, _connect_launcher_only if name == 'connect' else _deny_network)
     source = os.environ.get('RUN_SOURCE_MANIFEST')
     receipt = os.environ.get('RUN_INSTALLATION_RECEIPT')
     if not source or not receipt:

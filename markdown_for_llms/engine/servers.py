@@ -325,11 +325,16 @@ def endpoint(name, raw, presets=None):
     return Endpoint(name, fields)
 
 
-def load(path=None, name=None, environ=None, presets=None):
+def load(path=None, name=None, environ=None, presets=None, host_loopback=True):
     """The endpoint `name` (default: the file's `default`) of the file `path` (default:
     `default_path()`); `server_not_configured` when the file, the entry or a field is missing or
     invalid, or when two entries name the same GPU preset. `presets`: the table of the GPU presets
-    (`gpu.presets.endpoint_table()`), for an entry that names one."""
+    (`gpu.presets.endpoint_table()`), for an entry that names one.
+
+    `host_loopback` (MFL051): whether the caller can reach a server on the loopback of the host. A caller in a
+    container cannot: it passes False, and an endpoint of kind `local` is refused (`server_not_configured`, with
+    the reason) in place of a conversion that waits for a server it will never reach. The rule is of the caller,
+    as a policy of the product: this module holds no path and no fact of a container."""
     path = Path(path) if path is not None else default_path(environ)
     try:
         fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NONBLOCK)
@@ -353,7 +358,11 @@ def load(path=None, name=None, environ=None, presets=None):
     name = name if name is not None else doc.get("default")
     if not isinstance(name, str) or name not in doc["servers"]:
         raise _bad("no endpoint %r in the servers file" % (name,))
-    return endpoint(name, doc["servers"][name], presets)
+    ep = endpoint(name, doc["servers"][name], presets)
+    if ep.kind == "local" and not host_loopback:
+        raise _bad("endpoint %r is of kind `local`, a server on the loopback of the host: a container of the "
+                   "product cannot reach it" % (name,))
+    return ep
 
 
 def read_keys(ep, env_file=None, environ=None):

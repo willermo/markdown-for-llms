@@ -10,6 +10,7 @@ GraphQL only to read the balance. Modal: the SDK `modal==1.6.3`, outside the pro
 Each provider has the same face for the session: `state()` (armed, busy and what was read),
 `arm(fault, allow_download)`, `disarm()`, `zero()` (one reading: True when nothing runs), `url`.
 """
+import contextlib
 from datetime import datetime, timezone
 from decimal import Decimal
 import base64
@@ -18,7 +19,6 @@ import hmac
 import json
 from pathlib import Path
 import re
-import shutil
 import subprocess
 import sys
 import time
@@ -34,7 +34,17 @@ IMAGE = "vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd
 VOLUME = "mdf-surya-weights"
 VOLUME_GB = 10
 POOL = "AMPERE_24"
-MODAL_SDK = ["uv", "tool", "run", "--from", "modal==1.6.3", "modal"]
+# The Modal CLI of the image `engine` (MFL051): SDK 1.6.3 in a virtual environment of its own, from a lock with
+# hashes (docker/app/modal-requirements.txt). No container of the product has `uv`, and none has a ~/.modal.toml.
+MODAL_SDK = ["/opt/modal/bin/modal"]
+# The token of the SDK, by name in the keys file. The CLI gets it only from a private file named by
+# MODAL_CONFIG_PATH in its own environment (`modal_auth`): never from an environment, never from a file of the home.
+MODAL_TOKEN = ("MODAL_TOKEN_ID", "MODAL_TOKEN_SECRET")
+# Where `modal_auth` writes by default: the tmpfs of the worker and of the CLI in the containers of the product
+# (compose.yaml). A parameter everywhere: the GPU package does not depend on a path of a container.
+MODAL_AUTH_DIR = "/run/mdf/secrets"
+MODAL_AUTH_NAME = re.compile(r"modal-([0-9]+)-[A-Za-z0-9_]+\.toml")
+MODAL_TOKEN_VALUE = re.compile(r"[A-Za-z0-9_.:=+/-]{1,512}")
 # The GPUs of the Modal app in their order of preference (`gpu=` of modal_app.py): Modal places the
 # function on an L4, else on an A10G (MFL033 c7.14; on 20/11 no L4 was free for 13 minutes).
 MODAL_GPUS = ("L4", "A10G")
@@ -88,7 +98,8 @@ ZERO_LATENCY_S = {"runpod": 120, "modal": 120}
 BILLING_TAIL_S = {"runpod": 30, "modal": 0}
 ZERO_STOP_S = 600
 ZERO_POLL_S = 10
-KEYS = ("RUNPOD_API_KEY", "MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET", "MODAL_PROXY_BEARER", "DATALAB_API_KEY")
+KEYS = ("RUNPOD_API_KEY", "MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET", "MODAL_PROXY_BEARER", "DATALAB_API_KEY",
+        "MODAL_TOKEN_ID", "MODAL_TOKEN_SECRET")
 
 
 def _sibling(name):
@@ -551,16 +562,99 @@ MODAL_COLUMNS = "1000"          # off a terminal rich wraps at 80 columns: the U
 SYSTEM_LOG_TAIL = 1000          # the system lines of a window fetched at most (the SDK allows 20,000)
 
 
-def run_modal(args, env=None, timeout=900, runner=subprocess.run):
-    """`modal ARGS` of the pinned SDK; (exit status, stdout). The SDK token stays in ~/.modal.toml."""
-    if shutil.which("uv") is None and runner is subprocess.run:
-        raise ProviderError("uv not found")
-    env = dict(child_env(__import__("os").environ) if env is None else env, COLUMNS=MODAL_COLUMNS)
+def modal_auth_sweep(directory=MODAL_AUTH_DIR):
+    """Remove the credential files of `modal_auth` whose process no longer exists (the pid is in the name). A
+    directory that is not there, or a file that is going away, is not an error. Returns the names removed."""
+    import os
+    removed = []
     try:
-        r = runner(MODAL_SDK + list(args), capture_output=True, text=True, timeout=timeout, env=env,
-                   stdin=subprocess.DEVNULL)
-    except subprocess.TimeoutExpired:
-        raise ProviderError("modal %s: timeout" % args[0], op="modal." + str(args[0])) from None
+        names = os.listdir(directory)
+    except OSError:
+        return removed
+    for name in names:
+        match = MODAL_AUTH_NAME.fullmatch(name)
+        if match is None:
+            continue
+        try:
+            os.kill(int(match.group(1)), 0)
+        except ProcessLookupError:
+            try:
+                os.unlink(os.path.join(directory, name))
+                removed.append(name)
+            except OSError:
+                pass
+        except OSError:
+            pass                                    # a process of another user: not ours to judge
+    return removed
+
+
+@contextlib.contextmanager
+def modal_auth(keys_file, directory=MODAL_AUTH_DIR):
+    """The credentials of ONE process of the Modal CLI (MFL051, D-2): `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET` are
+    read by name from `keys_file` (`envfile.read`: a private regular file that still has a name) and written to a
+    file of their own, mode 0600, with a unique name that carries the pid of this process, in `directory`, which
+    must be a directory of this user with mode 0700. Yields what to add to the environment of the CLI:
+    `MODAL_CONFIG_PATH`, the path the CLI reads its configuration from when it starts. The file is removed when
+    the block ends, whatever the outcome; the files of processes that no longer exist are removed at every use.
+
+    A value never goes in an environment, in an argument or in an error. Without the two names in the keys file
+    the block is never entered: no CLI starts, and no file of the home is read in its place."""
+    import os
+    import stat
+    import tempfile
+    if keys_file is None:
+        raise ProviderError("%s missing: no keys file" % ", ".join(MODAL_TOKEN))
+    try:
+        found = envfile.read(keys_file, MODAL_TOKEN)
+    except envfile.Unsafe as exc:
+        raise ProviderError(str(exc)) from None
+    missing = [name for name in MODAL_TOKEN if not found.get(name)]
+    if missing:
+        raise ProviderError("%s missing in the env file" % ", ".join(missing))
+    if any(MODAL_TOKEN_VALUE.fullmatch(found[name]) is None for name in MODAL_TOKEN):
+        raise ProviderError("%s: not a token of Modal" % ", ".join(MODAL_TOKEN))      # the name, never the value
+    try:
+        info = os.lstat(directory)
+    except OSError:
+        raise ProviderError("the directory of the Modal credentials does not exist") from None
+    if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) != 0o700:
+        raise ProviderError("the directory of the Modal credentials is not a directory of this user with mode 0700")
+    modal_auth_sweep(directory)
+    fd, path = tempfile.mkstemp(prefix="modal-%d-" % os.getpid(), suffix=".toml", dir=directory)
+    try:
+        try:
+            os.fchmod(fd, 0o600)
+            os.write(fd, ('[default]\ntoken_id = "%s"\ntoken_secret = "%s"\n'
+                          % (found[MODAL_TOKEN[0]], found[MODAL_TOKEN[1]])).encode("ascii"))
+        finally:
+            os.close(fd)
+        yield {"MODAL_CONFIG_PATH": path}
+    finally:
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+
+
+def run_modal(args, env=None, timeout=900, runner=subprocess.run, auth=None, auth_dir=MODAL_AUTH_DIR):
+    """`modal ARGS` of the CLI of the image; (exit status, stdout, stderr). `auth`: the keys file with the token of
+    the SDK, given to this one process through `modal_auth`. The real CLI never starts without it: it would look
+    for a token in the home of the user."""
+    import os
+    if runner is subprocess.run:
+        if not os.access(MODAL_SDK[0], os.X_OK):
+            raise ProviderError("the Modal CLI is not in this image (%s)" % MODAL_SDK[0])
+        if auth is None:
+            raise ProviderError("%s missing: no keys file" % ", ".join(MODAL_TOKEN))
+    env = dict(child_env(os.environ) if env is None else env, COLUMNS=MODAL_COLUMNS)
+    with contextlib.ExitStack() as stack:
+        if auth is not None:
+            env.update(stack.enter_context(modal_auth(auth, auth_dir)))
+        try:
+            r = runner(MODAL_SDK + list(args), capture_output=True, text=True, timeout=timeout, env=env,
+                       stdin=subprocess.DEVNULL)
+        except subprocess.TimeoutExpired:
+            raise ProviderError("modal %s: timeout" % args[0], op="modal." + str(args[0])) from None
     return r.returncode, r.stdout, r.stderr
 
 
@@ -593,10 +687,15 @@ class Modal:
     provider = "modal"
 
     def __init__(self, name, runner=subprocess.run, clock=time.time, sleep=time.sleep, environ=None, env_file=None,
-                 snapshot=False):
+                 snapshot=False, auth_dir=None):
         self.name, self.runner, self.clock, self.sleep = name, runner, clock, sleep
         self.environ = child_env(environ if environ is not None else __import__("os").environ)
+        # the keys file: the proxy token of the endpoint and, since MFL051, the token of the SDK, given to every
+        # process of the CLI through a private file (`modal_auth`, in `auth_dir`). Always with the real CLI; with
+        # the runner of a test only when the test names an `auth_dir`: no real process, no file to write.
         self.env_file = env_file
+        self.auth = env_file if (runner is subprocess.run or auth_dir is not None) else None
+        self.auth_dir = auth_dir or MODAL_AUTH_DIR
         self._url = None
         # MFL045 c2: the function of the inputs, `serve` of modal_app.py or `Serve.*` of the class of modal_snap.py
         self.function = "Serve.*" if snapshot else "serve"
@@ -613,7 +712,7 @@ class Modal:
 
     def _json(self, *args):
         code, out, err = run_modal(list(args) + ["--json"], env=self.environ, timeout=self._left(120, args[0]),
-                                   runner=self.runner)
+                                   runner=self.runner, auth=self.auth, auth_dir=self.auth_dir)
         if code:
             raise ProviderError("modal %s: exit %d" % (" ".join(args), code), op=_op(args), remote=cli_error(err))
         try:
@@ -698,7 +797,7 @@ class Modal:
         try:
             app_file = HERE / ("modal_snap.py" if snapshot else "modal_app.py")
             code, out, err = run_modal(["deploy", str(app_file)], env=env, timeout=self._left(1200, "deploy"),
-                                       runner=self.runner)
+                                       runner=self.runner, auth=self.auth, auth_dir=self.auth_dir)
         finally:
             if self._deadline is not None and self.clock() >= self._deadline:
                 raise TermReached("modal deploy: the term of the session came during the deploy") from None
@@ -742,7 +841,8 @@ class Modal:
         stamp = datetime.fromtimestamp(int(since), timezone.utc).isoformat()
         code, out, err = run_modal(["app", "logs", self.name, "--since", stamp, "--tail", str(SYSTEM_LOG_TAIL),
                                     "--timestamps", "--show-function-id", "--show-container-id", "-s", "system"],
-                                   env=self.environ, timeout=60, runner=self.runner)
+                                   env=self.environ, timeout=60, runner=self.runner, auth=self.auth,
+                                   auth_dir=self.auth_dir)
         if code:
             raise ProviderError("modal app logs: exit %d" % code, op="modal.app_logs", remote=cli_error(err))
         return [line for line in (out or "").splitlines() if line.strip()]
@@ -761,15 +861,17 @@ class Modal:
     def log_follower(self, path, t_arm, clock=time.time):
         """The follower of the logs and containers of this app (`worker_logs.ModalFollower`, c7.8)."""
         worker_logs = _sibling("worker_logs")
-        return worker_logs.ModalFollower(worker_logs.ModalLogs(self.name, self.environ, self.app_containers), path,
-                                         t_arm, clock=clock)
+        source = worker_logs.ModalLogs(self.name, self.environ, self.app_containers, auth=self.auth,
+                                       auth_dir=self.auth_dir)
+        return worker_logs.ModalFollower(source, path, t_arm, clock=clock)
 
     def disarm(self):
         """`modal app stop`. Its exit 1 for nothing to stop (modal 1.6.3 `cli/app.py`: an app never
         deployed is a NotFoundError, an app already stopped a SystemExit) leaves nothing armed: it is a
         disarm, and the zero is read from the state as always (MFL033 c7.12; on 19/11 a deploy refused
         by the SDK left no app, and 57 refused stops made the window orphan)."""
-        code, _, err = run_modal(["app", "stop", self.name, "--yes"], env=self.environ, timeout=300, runner=self.runner)
+        code, _, err = run_modal(["app", "stop", self.name, "--yes"], env=self.environ, timeout=300, runner=self.runner,
+                                 auth=self.auth, auth_dir=self.auth_dir)
         if code and not self.nothing_to_stop(cli_error(err, 2000)):
             raise ProviderError("modal app stop: exit %d" % code, op="modal.app_stop", remote=cli_error(err))
 

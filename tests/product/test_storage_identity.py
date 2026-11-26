@@ -197,12 +197,14 @@ class StorageIdentityTests(unittest.TestCase):
         self.assertNotIn('history', self.identity())
         self.assertEqual(self.snapshot()[1], storage.SCHEMA)
 
-    def test_the_default_model_root_is_the_one_of_the_engine(self):            # D10
-        from markdown_for_llms.engine.weights import default_root
+    def test_the_default_model_root_is_the_models_volume(self):                # D10, MFL051
+        """The one model root a Marker child can read: the launcher mounts the models volume in it. A constant of
+        the containers, whatever the environment says."""
+        from markdown_for_llms import settings as settings_module
+        from markdown_for_llms.engine import containers
+        self.assertEqual(settings_module.MODEL_ROOT, containers.MODEL_ROOT)
         with patch.dict(os.environ, {'XDG_CACHE_HOME': self.tmp.name + '/cache'}):
-            self.assertEqual(Settings(data_root=self.tmp.name + '/d').model_root, str(default_root()))
-            self.assertEqual(Settings(data_root=self.tmp.name + '/d').model_root,
-                             self.tmp.name + '/cache/markdown-for-llms/models')
+            self.assertEqual(Settings(data_root=self.tmp.name + '/d').model_root, containers.MODEL_ROOT)
 
     def test_scope_indicator_is_monotonic(self):
         service = Service(self.settings)

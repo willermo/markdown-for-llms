@@ -11,9 +11,15 @@ named by `--server` in `servers.json` (`--servers FILE`; MFL033): `--confirm-tra
 server outside the loopback; for an endpoint with a provider (RunPod, Modal) also
 `--server-cap-usd`, `--spend-ledger FILE` and `--spend-cap-usd`, inside a live session of
 `scripts/servers/session.py run` (`server_ledger_required`, `server_not_armed`,
-`session_orphaned`). Its keys come from `--env-file` or the environment. `mdf submit` sends files to the archive of the product (the same durable services as the
-HTTP application) and `--wait` follows them. `mdf prepare --toolchain` builds the toolchain image
-of the engine (the same function as `mdf bench prepare --toolchain`); `mdf prepare --weights`
+`session_orphaned`). The settings (`MDF_` names) come from `--env-file`, the keys by name from `--keys-file`, read
+again at every use (MFL051: in the containers of the product the two are different files, `settings.env` and
+the env file of the user; with `--env-file` alone that file is both). `mdf submit` sends files to the archive of
+the product (the same durable services as the HTTP application) and `--wait` follows them. `mdf serve --uds PATH`
+serves the HTTP application on a Unix socket with mode 0600 (behind the nginx of the product) in place of the
+loopback port. `mdf settings-env --out FILE --set NAME=VALUE` is the `config` service of compose: it validates the
+env file of the user and writes the settings every service reads. `mdf prepare --toolchain` verifies, through the launcher,
+the candidate of the toolchain image that the host built (`make prepare`, scripts/prepare-toolchain.sh; the same
+function as `mdf bench prepare --toolchain`); `mdf prepare --weights`
 downloads and checks the weights of the Marker route (`engine/weights.py`); `mdf prepare
 --cpu-server` downloads and checks the local CPU server of the marker-server route
 (`engine/cpuserver.py`).
@@ -35,6 +41,14 @@ from .engine.routes import CONVERTERS, DATALAB_MODES, MARKER_SERVER, OCR_MODES, 
 from .services import Refused as ServiceRefused, Service, TERMINAL
 from .settings import Settings
 from .files import open_file
+
+
+# The commands that change the archive itself, with every service stopped (`Storage.configure`, `Storage.downgrade`)
+ARCHIVE_COMMANDS = ("configure", "downgrade-storage")
+NO_SETTINGS = ("The settings of the last start are not there: `mdf %s` opens the archive with them. In the product "
+               "they are settings.env, written at every start and removed by `make clean`: put the env file back as "
+               "it was at the last start, run `make up` and then `make down`, and run this command again. Nothing "
+               "was opened or changed.")
 
 
 def emit(value):
@@ -115,8 +129,11 @@ def prepare_server(args):
     converted."""
     from .engine import servers
     from .gpu import presets
-    ep = servers.load(args.servers, args.server, presets=presets.endpoint_table())
-    keys = servers.read_keys(ep, args.env_file, os.environ)
+    from .engine import containers
+    # in a container of the product a server on the loopback of the host cannot be reached (`kind: local`)
+    ep = servers.load(args.servers, args.server, presets=presets.endpoint_table(),
+                      host_loopback=not containers.in_product_image())
+    keys = servers.read_keys(ep, keys_file(args), os.environ)
     srv = {"name": ep.name, "mode": args.server_mode, "transit_confirmed": bool(args.confirm_transit)}
     if not ep.costs:
         if any(getattr(args, k) is not None for k in ("server_cap_usd", "spend_ledger", "spend_cap_usd")):
@@ -155,6 +172,133 @@ class Chain:
             if stop:
                 return stop
         return None
+
+
+def keys_file(args):
+    """The file the keys are read from, by name: `--keys-file`, or `--env-file` when it is the only one given."""
+    return args.keys_file if args.keys_file is not None else args.env_file
+
+
+def private_socket(path):
+    """A listening Unix socket at `path` with mode 0600, in a directory that is of this user alone (0700): the
+    socket of the API behind nginx (MFL051). A socket left there by a previous process is replaced; anything
+    else at that path is refused."""
+    import socket
+    import stat
+    path = Path(path)
+    parent = os.stat(path.parent)
+    if not stat.S_ISDIR(parent.st_mode) or parent.st_uid != os.getuid() or stat.S_IMODE(parent.st_mode) != 0o700:
+        raise ValueError("The directory of the socket is not a directory of this user with mode 0700")
+    try:
+        if not stat.S_ISSOCK(os.lstat(path).st_mode):
+            raise ValueError("The path of the socket holds something that is not a socket")
+        path.unlink()
+    except FileNotFoundError:
+        pass
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    previous = os.umask(0o177)
+    try:
+        sock.bind(str(path))
+    finally:
+        os.umask(previous)
+    sock.listen(128)
+    return sock
+
+
+def archive_refusal(settings, previous=None):
+    """Why the archive at the data root of `settings` would refuse them, or None: the checks `Storage` makes when a
+    service opens it, made here first and without writing anything. A service that is refused leaves with 1, and
+    compose would start it again for ever: the `config` step stops before that, with the reason and the way out.
+    `previous`: the settings of the last start that passed, to name what changed (names, never values)."""
+    from . import legacy_identity
+    from .settings import identity_names
+    root = Path(settings.data_root)
+    try:
+        info = root.stat()
+    except OSError:
+        return None                                 # no archive yet: the first service that opens it creates it
+    if info.st_uid != os.getuid() or info.st_mode & 0o022:
+        return ("The folder of the archive must be yours and not writable by others (on the host: chmod go-w on the "
+                "folder of MDF_COMPOSE_DATA). Nothing was started or changed.")
+    try:
+        config = json.loads((root / "identity.json").read_bytes())["config"]
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError, KeyError, TypeError):
+        return "The identity of the archive (identity.json) cannot be read. Nothing was started or changed."
+    if config == settings.identity() or config in legacy_identity.candidates(settings):
+        return None
+    changed = identity_names(previous, settings) if previous is not None else []
+    return ("The archive was created with other settings and refuses these: the settings that are part of the "
+            "identity of an archive cannot change after it is created%s. Put the value of before back in the env "
+            "file, or keep this archive and start a new one in another folder (MDF_COMPOSE_DATA); only the storage "
+            "quota (MDF_STORAGE_MIB) can change, with `mdf configure` and the product stopped: `make down`, then "
+            "`mdf configure --expected-config ID --storage-mib N` (ID is the value of \"config\" in identity.json "
+            "of the archive), then the same N in the env file and `make up`; the steps are in "
+            "docs/how-to/run-in-containers.md, \"Settings that cannot change\". Nothing was started "
+            "or changed: services that are running keep the settings of before."
+            % ((" (changed since the last start: %s)" % ", ".join(changed)) if changed else ""))
+
+
+def settings_env(args):
+    """`mdf settings-env`: the `config` service. Exit 1 with the reason (never a value) when the env file of the
+    user is refused, or when the archive would refuse its settings (`archive_refusal`); nothing is written then,
+    and the services are not started. `--check` validates and writes nothing."""
+    from .settings import ConfigurationError, Settings, container_settings, settings_of
+    fixed = {}
+    for item in args.set:
+        name, sep, value = item.partition("=")
+        if not sep or not name.startswith("MDF_") or not value:
+            emit({"error": "--set NAME=VALUE with an MDF_ name"})
+            return 2
+        fixed[name] = value
+    out = Path(args.out)
+    try:
+        text = container_settings(args.env_file, fixed)
+        try:
+            previous = Settings.load(out, environ={}) if out.is_file() else None
+        except (ConfigurationError, OSError):
+            previous = None
+        refusal = archive_refusal(settings_of(text), previous)
+    except ConfigurationError as exc:
+        emit({"error": str(exc), "code": "invalid_setting"})
+        return 1
+    if refusal is not None:
+        emit({"error": refusal, "code": "invalid_setting"})
+        return 1
+    if args.check:
+        emit({"settings": str(out), "checked": True})
+        return 0
+    partial = out.with_name(out.name + ".partial")
+    fd = os.open(partial, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as stream:
+        stream.write(text)
+    os.replace(partial, out)
+    emit({"settings": str(out), "names": sorted({line.partition("=")[0].removeprefix("export ").strip()
+                                                 for line in text.splitlines() if "=" in line})})
+    return 0
+
+
+def convert_preset(args):
+    """`mdf convert --preset NAME`: the route and the options of the preset go into `args`, as if they had been
+    given one by one. Returns None, or the exit code of a refusal already printed. The presets of the user are in
+    the archive: this is the one case in which `mdf convert` opens it, to read."""
+    if args.route or args.ocr or args.datalab_mode or any(getattr(args, k) is not None for k in SERVER_OPTIONS):
+        emit({"status": "refused", "error": "invalid_setting", "out": args.out,
+              "detail": "--preset takes only --lang and --confirm-transit beside it"})
+        return 2
+    try:
+        service = Service(Settings.load(args.env_file, {"data_root": args.data_root, "model_root": args.model_root}))
+        try:
+            options = service.convert_preset(args.preset, {"lang": args.lang} if args.lang else None)
+        finally:
+            service.storage.close()
+    except (ValueError, OSError, sqlite3.OperationalError) as exc:
+        code = getattr(exc, "code", None)
+        emit({"status": "refused", "error": code or "invalid_setting", "out": args.out, "detail": str(exc)})
+        return 1
+    args.route, args.ocr, args.datalab_mode = options.get("route"), options.get("ocr"), options.get("datalab_mode")
+    return None
 
 
 def convert_file(args, settings, key=None, server=None):
@@ -217,12 +361,13 @@ def convert_file(args, settings, key=None, server=None):
 def prepare_weights(argv):
     """`mdf prepare --weights [--model-root DIR]`: the only download of the Marker weights."""
     from .engine import weights
+    from .engine.containers import MODEL_ROOT
     parser = argparse.ArgumentParser(prog="mdf prepare")
     parser.add_argument("--weights", action="store_true", required=True)
-    parser.add_argument("--model-root", help="model root (default: %s)" % weights.default_root())
+    parser.add_argument("--model-root", help="model root (default: %s, the models volume)" % MODEL_ROOT)
     args = parser.parse_args(argv)
     try:
-        emit(weights.prepare(args.model_root or weights.default_root()))
+        emit(weights.prepare(args.model_root or MODEL_ROOT))
     except EngineError as exc:
         emit({"status": "failed", "error": exc.code.value, "detail": exc.detail})
         return 1
@@ -262,13 +407,29 @@ def main(argv=None):
         from .bench.cli import main as bench_main
         return bench_main(argv)
     parser = argparse.ArgumentParser(prog="mdf")
-    parser.add_argument("--env-file")
+    parser.add_argument("--env-file", help="the file of the settings (its MDF_ lines); also of the keys without --keys-file")
+    parser.add_argument("--keys-file", help="the file the keys are read from by name, at every use (a regular file "
+                                            "of yours with mode 0600)")
     parser.add_argument("--data-root")
-    parser.add_argument("--model-root")
+    parser.add_argument("--model-root", help="the weights of the Marker route: /models/marker, the models volume "
+                                             "(the default). The children of the engine read the weights from that "
+                                             "volume alone: another folder is refused with invalid_setting")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("serve")
+    sub.add_parser("serve").add_argument("--uds", help="serve on this Unix socket (mode 0600, in a directory of "
+                                                       "yours with mode 0700) in place of the loopback port")
+    senv = sub.add_parser("settings-env", help="validate the env file (--env-file) and write the settings of the "
+                                               "services of the product in containers")
+    senv.add_argument("--out", required=True)
+    mode = senv.add_mutually_exclusive_group()
+    mode.add_argument("--check", action="store_true", help="validate the env file against the archive and write nothing")
+    mode.add_argument("--write", action="store_true", help="write the settings (the default)")
+    senv.add_argument("--set", action="append", default=[], metavar="NAME=VALUE",
+                      help="a setting fixed in the containers; refused when the env file sets it")
     sub.add_parser("worker").add_argument("--once", action="store_true")
     sub.add_parser("jobs")
+    shown = sub.add_parser("routes", help="the state of every route of this instance, as the worker last computed it")
+    shown.add_argument("--refresh", action="store_true", help="ask the worker to check the routes now, and wait for it")
+    shown.add_argument("--json", action="store_true", help="the answer of GET /api/v1/routes in place of one line per route")
     admin = sub.add_parser('configure')
     admin.add_argument('--expected-config', required=True)
     admin.add_argument('--storage-mib', type=int)
@@ -282,7 +443,10 @@ def main(argv=None):
     convert.add_argument("--out", required=True, help="output directory, new or empty (with several files: one "
                                                       "numbered directory per file inside it)")
     convert.add_argument("--route", choices=CONVERTERS, help="a route of the matrix other than the default")
-    convert.add_argument("--ocr", choices=OCR_MODES, default="auto")
+    convert.add_argument("--ocr", choices=OCR_MODES, help="OCR of the conversion (default: auto)")
+    convert.add_argument("--preset", help="a conversion preset (mdf presets list): its route and options, with only "
+                                          "--lang and --confirm-transit beside it; a preset on a rented GPU runs "
+                                          "through the archive (mdf submit --preset NAME --wait FILE)")
     convert.add_argument("--lang", help="language of the document (recorded; no converter of this version uses it)")
     convert.add_argument("--max-pages", type=int, help="page limit (default: MDF_MAX_PAGES)")
     convert.add_argument("--work", help="directory for the private work of the conversion (default: a temporary one)")
@@ -296,7 +460,10 @@ def main(argv=None):
     convert.add_argument("--server-mode", choices=SERVER_MODES, help="with --route marker-server: balanced or accurate")
     convert.add_argument("--server", help="with --route marker-server: an endpoint of servers.json (default: its default)")
     convert.add_argument("--servers", help="with --route marker-server: the servers.json file (default: "
-                                           "$XDG_CONFIG_HOME/markdown-for-llms/servers.json)")
+                                           "$XDG_CONFIG_HOME/markdown-for-llms/servers.json). The local CPU server "
+                                           "of an endpoint of kind `cpu` is the one of the CPU server volume "
+                                           "(/cpu-server, `make prepare CPU_SERVER=1`): another root is refused "
+                                           "with server_not_configured")
     convert.add_argument("--server-cap-usd", help="with an endpoint with a provider: cap of this conversion, in USD")
     convert.add_argument("--spend-ledger", help="with an endpoint with a provider: the spend ledger (spend.jsonl)")
     convert.add_argument("--spend-cap-usd", help="with an endpoint with a provider: cap of the ledger for the provider, in USD")
@@ -351,6 +518,13 @@ def main(argv=None):
             p.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
     key = server = None
+    if args.command == "convert":
+        if args.preset is not None:
+            # the function of `mdf submit --preset` and of the API: the same preset, the same refusal (MFL051)
+            code = convert_preset(args)
+            if code is not None:
+                return code
+        args.ocr = args.ocr or "auto"
     if args.command == "convert" and args.route == MARKER_SERVER:
         # as the Datalab key: the endpoint, its keys and the session before anything else reads the env file
         if args.datalab_mode or args.datalab_cap_usd is not None or args.server_mode is None:
@@ -370,19 +544,24 @@ def main(argv=None):
         # reads it, Settings.load included (HC2 of the review of B of MFL032)
         from .engine import datalab
         try:
-            key = datalab.read_key(args.env_file)
+            key = datalab.read_key(keys_file(args))
         except EngineError as exc:
             emit({"status": "refused", "error": exc.code.value, "out": args.out})
             return 1
-    if args.command == "worker" and args.env_file is not None:
-        # the env file of the worker holds the keys of its GPU sessions (MFL023): checked as envfile.read
-        # checks a key file (regular, of the caller, 0600, no link, no blocking) before anything reads it
-        from .engine import envfile
-        try:
-            envfile.read(args.env_file, [])
-        except envfile.Unsafe as exc:
-            emit({"error": str(exc), "code": "server_key_unsafe"})
-            return 1
+    if args.command == "settings-env":
+        if args.env_file is None:
+            emit({"error": "settings-env needs --env-file"})
+            return 2
+        return settings_env(args)
+    if args.command in ARCHIVE_COMMANDS and args.env_file is not None and not Path(args.env_file).is_file():
+        # SOL-A2-B2: these commands open the archive with the settings it was last started with. In the product
+        # that file is `settings.env`, in a volume that `make down` keeps and `make clean` removes: without it
+        # nothing is opened, and the answer says how to get it back
+        emit({"error": NO_SETTINGS % args.command, "code": "invalid_setting"})
+        return 1
+    # MFL051: the worker starts also with a keys file that is not safe. Its settings do not come from that file;
+    # the routes with a key are then unavailable with their closed code (`datalab_key_unsafe`,
+    # `server_key_unsafe`), no key is read and there is no fallback
     try:
         settings = Settings.load(args.env_file, {"data_root": args.data_root, "model_root": args.model_root})
         if args.command == "convert":
@@ -396,7 +575,7 @@ def main(argv=None):
                 return 130
         if args.command == "worker":
             from .worker import Worker
-            worker = Worker(settings, env_file=args.env_file)
+            worker = Worker(settings, env_file=keys_file(args))
             for sig in (signal.SIGINT, signal.SIGTERM):
                 signal.signal(sig, lambda *_: setattr(worker, "stop", True))
             worker.run(args.once)
@@ -404,7 +583,12 @@ def main(argv=None):
         if args.command == "serve":
             import uvicorn
             from .api import create_app
-            uvicorn.run(create_app(settings), host=settings.host, port=settings.port)
+            if args.uds is not None:
+                # nginx is the only door (MFL051): the API has no network, and its socket is of this user alone
+                sock = private_socket(args.uds)
+                uvicorn.run(create_app(settings), fd=sock.fileno())
+            else:
+                uvicorn.run(create_app(settings), host=settings.host, port=settings.port)
             return 0
         if args.command == 'configure':
             from .storage import Storage
@@ -418,6 +602,23 @@ def main(argv=None):
         service = Service(settings)
         if args.command == "jobs":
             emit(service.list())
+        elif args.command == "routes":
+            # the same services as GET /api/v1/routes and POST /api/v1/routes/refresh
+            from . import routestate
+            body = service.routes()
+            if args.refresh:
+                asked = service.routes_refresh()["requested_at"]
+                until = time.monotonic() + max(10, 5 * settings.poll_seconds)
+                while time.monotonic() < until:
+                    body = service.routes()
+                    if body["worker"] != "alive" or (body["computed_at"] or 0) >= asked:
+                        break
+                    time.sleep(0.2)
+            if args.json:
+                emit(body)
+            else:
+                print(routestate.summary(body))
+            return 0 if body["worker"] == "alive" else 1
         elif args.command == "presets":
             name = getattr(args, "name", None)
             if args.presets_command == "list":

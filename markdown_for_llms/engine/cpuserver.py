@@ -4,32 +4,34 @@ with the GGUF weights of Surya OCR 2.5, on the user's CPU.
 `engine/data/cpu-server.json` pins the release (`b12040`, its tarball by URL, bytes and SHA-256) and
 the two GGUF files (repository, revision, bytes, SHA-256), the arguments and the memory cap.
 `prepare` (the only download, `mdf prepare --cpu-server`) fetches what is missing with curl into
-`<root>` (default `${XDG_CACHE_HOME:-~/.cache}/markdown-for-llms/cpu-server`), each file through a
+`<root>`, the volume of the CPU server (`containers.CPU_SERVER_ROOT`), each file through a
 `.partial` checked before its rename, never touching a present file that differs; it extracts the
 tarball (members checked: regular files and directories under one tree, links only inside it)
-into `llama-<release>/` with a manifest of its files, and records whether `--host` of that build
-binds a Unix socket (`.sock` in its `--help`): without it the route cannot run in the sandbox.
+into `llama/` with a manifest of its files and its release (`llama.json`), and records whether
+`--host` of that build binds a Unix socket (`.sock` in its `--help`): without it the route cannot
+run in its container.
 
-`verify` checks all of it before every start. `start` runs `llama-server` in Bubblewrap without
-network (`isolation.program_command`), the tree and the weights read-only, the `llama/` directory
-of the private socket directory on `/relay`, `--host /relay/llama.sock`, under a transient scope
-`mdf-eng-<attempt>-llama` with its memory cap; `stop` kills it and its scope.
+`verify` checks all of it before every start. `start` runs `llama-server` as a `cpuserver` child of
+the launcher (`isolation.start`): a container without network, `llama/` of the volume read-only on
+`/opt/llama` and `gguf/` on `/models`, the `llama/` directory of the socket directory of the
+attempt on `/relay`, `--host /relay/llama.sock`, under its memory cap; `isolation.stop` ends it
+and attests its end. The binary is x64 only: the launcher refuses the kind when its own image is
+not amd64, and the route is not available there.
 """
 import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
 import sys
 import tarfile
 
-from . import isolation, weights
+from . import containers, isolation, weights
 from .codes import Code, EngineError
 
 DATA = Path(__file__).resolve().parent / "data" / "cpu-server.json"
 SOCKET_IN_SANDBOX = "/relay/llama.sock"
-TREE = "/opt/llama"
+TREE = containers.CPU_SERVER_TREE
 MODELS = "/models"
 
 
@@ -38,8 +40,18 @@ def manifest(path=None):
 
 
 def default_root():
-    base = os.environ.get("XDG_CACHE_HOME") or str(Path.home() / ".cache")
-    return Path(base) / "markdown-for-llms" / "cpu-server"
+    """The volume of the CPU server, as the processes that start children see it."""
+    return Path(containers.CPU_SERVER_ROOT)
+
+
+def volume_root(root):
+    """`root` when it is the volume of the CPU server: the launcher mounts `llama/` and `gguf/` of that volume in
+    the child, whatever the caller names, so another directory would be verified here and not run there."""
+    root = Path(root or default_root()).expanduser().absolute()
+    if os.path.realpath(root) != os.path.realpath(containers.CPU_SERVER_ROOT):
+        raise EngineError(Code.SERVER_NOT_CONFIGURED, "the local CPU server runs from its volume, %s"
+                          % containers.CPU_SERVER_ROOT)
+    return root
 
 
 def _entries(m):
@@ -50,7 +62,8 @@ def _entries(m):
 
 
 def _tree_dir(root, m):
-    return Path(root) / ("llama-" + m["llama_server"]["release"])
+    """`llama/`: the folder of the volume that the launcher mounts on `containers.CPU_SERVER_TREE`."""
+    return Path(root) / "llama"
 
 
 def _sha256(path):
@@ -100,8 +113,9 @@ def prepare(root=None, fetch=None, log=None, m=None):
     fetch = fetch or weights._curl
     log = log or (lambda line: print(line, file=sys.stderr))
     m = m or manifest()
-    root = Path(root or default_root()).expanduser().absolute()
+    root = volume_root(root)
     root.mkdir(parents=True, exist_ok=True, mode=0o700)
+    (root / "gguf").mkdir(exist_ok=True, mode=0o700)
     if fetch is weights._curl and shutil.which("curl") is None:
         raise EngineError(Code.SERVER_NOT_CONFIGURED, "curl is needed to download the CPU server")
     kept, downloaded = [], []
@@ -142,7 +156,8 @@ def prepare(root=None, fetch=None, log=None, m=None):
         try:
             _extract(root / m["llama_server"]["path"], staging)
             binary = _binary(staging)
-            (root / (tree.name + ".json")).write_text(json.dumps({"binary": str(binary.relative_to(staging)),
+            (root / (tree.name + ".json")).write_text(json.dumps({"release": m["llama_server"]["release"],
+                                                                  "binary": str(binary.relative_to(staging)),
                                                                   "files": _inventory(staging)}, indent=1))
             os.rename(staging, tree)
         except BaseException:
@@ -157,7 +172,7 @@ def verify(root=None, m=None, help_check=False):
     """The checks before a start (downloads, extracted tree, socket support); returns what
     `engine.json` records. `server_not_configured` when something is missing or differs."""
     m = m or manifest()
-    root = Path(root or default_root()).expanduser().absolute()
+    root = volume_root(root)
     for entry in _entries(m):
         bad = weights.check_file(str(root), entry)
         if bad is not None:
@@ -167,7 +182,8 @@ def verify(root=None, m=None, help_check=False):
         saved = json.loads((root / (tree.name + ".json")).read_text())
     except (OSError, ValueError):
         raise EngineError(Code.SERVER_NOT_CONFIGURED, "the extracted llama-server (mdf prepare --cpu-server)") from None
-    if not tree.is_dir() or tree.is_symlink() or _inventory(tree) != saved["files"]:
+    if (not tree.is_dir() or tree.is_symlink() or saved.get("release") != m["llama_server"]["release"]
+            or _inventory(tree) != saved["files"]):
         raise EngineError(Code.SERVER_NOT_CONFIGURED, "the extracted llama-server differs (mdf prepare --cpu-server)")
     record = {"root": str(root), "release": m["llama_server"]["release"], "binary": saved["binary"],
               "tarball_sha256": m["llama_server"]["sha256"], "gguf_revision": m["gguf"]["revision"],
@@ -178,7 +194,8 @@ def verify(root=None, m=None, help_check=False):
     return record
 
 
-def argv(root, m, relay_dir, threads=None, help_only=False):
+def argv(root, m, threads=None, help_only=False):
+    """(command, variables) of `llama-server` in its container: the binary under `containers.CPU_SERVER_TREE`."""
     root = Path(root)
     tree = _tree_dir(root, m)
     binary = json.loads((root / (tree.name + ".json")).read_text())["binary"]
@@ -190,26 +207,25 @@ def argv(root, m, relay_dir, threads=None, help_only=False):
     if threads is not None and not help_only:
         i = args.index("--threads")
         args[i + 1] = str(threads)
-    binds = [] if relay_dir is None else [(str(relay_dir), "/relay")]
-    return isolation.program_command(exe, args, ro_binds=[(str(tree), TREE), (str(root / "gguf"), MODELS)],
-                                     binds=binds, env={"LD_LIBRARY_PATH": libdir})
+    return [exe, *args], {"LD_LIBRARY_PATH": libdir}
 
 
 def unix_socket(root, m=None):
     """True when `--host` of the prepared build binds a Unix socket (`.sock` in its `--help`)."""
     m = m or manifest()
-    done = subprocess.run(argv(root, m, None, help_only=True), stdin=subprocess.DEVNULL, capture_output=True,
-                          timeout=60, env={"PATH": "/usr/bin:/bin"})
-    text = (done.stdout + done.stderr).decode("utf-8", "replace")
+    command, variables = argv(volume_root(root), m, help_only=True)
+    _, output = isolation.run_program(command, env=variables, timeout=60)
+    text = output.decode("utf-8", "replace")
     host = [line for line in text.splitlines() if "--host" in line]
     following = text[text.find("--host"):text.find("--host") + 400] if "--host" in text else ""
     return bool(host) and ".sock" in following
 
 
-def start(root, relay_dir, scope, log_path, m=None, threads=None):
-    """`llama-server` in its sandbox and scope (see the module docstring); `isolation.stop` ends it."""
+def start(root, attempt, log_path, m=None, threads=None, timeout=isolation.MAX_SECONDS, observer=None):
+    """`llama-server` in its container (see the module docstring), named by the attempt; `isolation.stop` ends it."""
     m = m or manifest()
-    return isolation.start(argv(root, m, relay_dir, threads), scope, m["memory_mib"], log_path)
+    command, variables = argv(volume_root(root), m, threads)
+    return isolation.start(command, attempt, m["memory_mib"], log_path, env=variables, timeout=timeout, observer=observer)
 
 
 def main(argv_=None):

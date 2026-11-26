@@ -1,8 +1,8 @@
 """Statements of the guide and of `.env.example` that the tranche B of MFL023 made false or left out (MFL023 B10, C-DB-NB1
 of the review of the diff B): the route marker-server runs in the archive on the GPU presets of the instance; the floor
 of readiness of `mdf convert` is the same on RunPod and on Modal (`engine.servers.DEFAULTS`); `runpod_endpoint.py
-delete` removes the endpoint and, by the public REST v2, its template; `mdf --env-file FILE worker` reads the keys of
-the GPU sessions by name from that 0600 file."""
+delete` removes the endpoint and, by the public REST v2, its template; the worker reads the keys of the GPU sessions by name from
+the env file of the user, a private file (since MFL051 the one `.env`, mounted in the containers)."""
 from pathlib import Path
 
 from markdown_for_llms.engine import servers
@@ -39,5 +39,8 @@ def test_the_delete_of_an_endpoint_and_its_template():
 
 def test_the_keys_of_the_gpu_sessions_in_env_example():
     text = one_line(ENV_EXAMPLE)
-    assert "`mdf --env-file FILE worker` reads the keys of the GPU sessions by name from that FILE" in text
-    assert "mode 0600, not a link" in text
+    # MFL051: one env file, mounted in the containers; the statement keeps its three parts (by name, from the file
+    # and never an environment, a private file that is not a link)
+    assert "The worker and the `mdf` tool read a key by name from this file each time they use it" in text
+    assert "no key is ever in the environment of a container" in text
+    assert "`make up` gives this file mode 0600; a link, or a file of another user, is refused" in text

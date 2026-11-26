@@ -1,0 +1,102 @@
+#!/bin/sh
+# mdf: the CLI of markdown-for-llms, run in a one-off container of the product (MFL051).
+#
+#   bin/mdf convert FILE --out DIR      bin/mdf submit --wait FILE      bin/mdf routes      bin/mdf --help
+#
+# POSIX sh; it needs Docker with the compose plugin, nothing else. `make install-cli` puts a small `mdf` on your
+# PATH that runs this file of this checkout.
+#
+# What it does, in order:
+#   1. finds the checkout (the directory above this file) and Docker (exit 127 without one of them);
+#   2. looks at the env file of the checkout on its ORIGINAL path (scripts/env-preflight.sh): a link, something
+#      that is not a regular file or a file of another user are refused here, before anything is mounted. It never
+#      changes a mode (`make up` does): a file with another mode is mounted, and the CLI answers with the closed
+#      code of the route that needs a key;
+#   3. checks that the launcher of the product runs: the engine starts its children only through it. Without it
+#      the answer is `isolation_unavailable` and exit 1: nothing is started for you, and nothing runs on the host.
+#      Two commands are the exception, `mdf configure` and `mdf downgrade-storage`: they change the archive itself
+#      and need every service that holds it stopped (`make down`), the launcher with them; they convert nothing
+#      and start no child of the engine, so they run without it;
+#   4. runs `mdf ...` in the `cli` service, as you, with the current directory mounted at its own path: the paths
+#      under it work as they are, and the files written there are yours. That mount is of the CLI alone, never of
+#      a child of the engine.
+#
+# The settings are those of the product (`settings.env`, written by `make up`); the keys are read by name from the
+# env file of the checkout, or from the file of `--env-file FILE` given before the command.
+# Exit codes: those of `mdf` (0, 1, 2, 130), and 127 when Docker or the checkout is missing.
+set -eu
+
+fail() {    # CODE STATUS MESSAGE: one JSON line on stderr, as the CLI answers
+  printf '{"error": "%s", "code": "%s"}\n' "$3" "$1" >&2
+  exit "$2"
+}
+
+self=$0
+# the file may be reached through links (a link in a directory of the PATH): the checkout is where the file is
+while [ -L "$self" ]; do
+  target=$(readlink "$self")
+  case "$target" in /*) self=$target ;; *) self=$(dirname -- "$self")/$target ;; esac
+done
+top=$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd -P)
+[ -f "$top/compose.yaml" ] && [ -f "$top/scripts/env-preflight.sh" ] \
+  || { echo "mdf: not a checkout of markdown-for-llms: $top" >&2; exit 127; }
+command -v docker > /dev/null 2>&1 || { echo "mdf: docker not found on the PATH" >&2; exit 127; }
+
+here=$(pwd -P)
+# the options before the command: `--env-file FILE` names another file of the keys; the rest goes on as it is
+keys=
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --env-file) [ "$#" -ge 2 ] || fail invalid_setting 2 "--env-file needs a file"; keys=$2; shift 2 ;;
+    --env-file=*) keys=${1#--env-file=}; shift ;;
+    *) break ;;
+  esac
+done
+case "$keys" in ""|/*) ;; *) keys=$here/$keys ;; esac
+
+cd "$top"
+. scripts/env-preflight.sh
+
+case "$(env_state ./.env)" in
+  ok|mode) ;;
+  missing) fail invalid_setting 1 "no .env in the checkout: cp .env.example .env, then make up" ;;
+  *) fail server_key_unsafe 1 "the .env of the checkout is a link, not a regular file, or of another user" ;;
+esac
+keys_inside=/run/mdf/env
+mount_keys=
+if [ -n "$keys" ]; then
+  case "$(env_state "$keys")" in
+    ok|mode) mount_keys=$keys; keys_inside=/run/mdf/keys ;;
+    # a file that is not there is not mounted (Docker would make a directory on the host): the CLI gets a path
+    # that does not exist, and answers as it does for one
+    missing) keys_inside=/run/mdf/absent ;;
+    *) fail server_key_unsafe 1 "the file of --env-file is a link, not a regular file, or of another user" ;;
+  esac
+fi
+
+compose_environment ./.env || exit 1
+# `--progress quiet`: compose says nothing of the container it creates; stdout and stderr are those of `mdf`
+compose="docker compose --progress quiet --env-file /dev/null --profile tools"
+
+case "${1:-}" in
+  --help|-h|--version|"") ;;                    # nothing is converted: no launcher is needed
+  # The administrative commands of the archive (SOL-A2-B2): they take its configuration lock alone, so they work
+  # only with the product stopped, where there is no launcher to ask for; with a service still running the
+  # archive itself refuses them. They read the settings of the last start (`settings.env`, kept by `make down`).
+  configure|downgrade-storage) ;;
+  *)
+    running=$($compose ps --status running -q launcher 2> /dev/null || true)
+    [ -n "$running" ] || fail isolation_unavailable 1 "the product is not running: run make up"
+    ;;
+esac
+
+# `mdf prepare` and `mdf bench` have a command line of their own: the options of the product do not precede them
+case "${1:-}" in
+  prepare|bench) ;;
+  *) set -- --env-file=/run/mdf/settings/settings.env --keys-file="$keys_inside" "$@" ;;
+esac
+if [ -n "$mount_keys" ]; then set -- -v "$mount_keys:$keys_inside:ro" cli mdf "$@"; else set -- cli mdf "$@"; fi
+tty=-T
+if [ -t 0 ] && [ -t 1 ]; then tty=; fi
+# shellcheck disable=SC2086
+exec $compose run --rm $tty --no-deps --user "$MDF_COMPOSE_UID:$MDF_COMPOSE_GID" -v "$here:$here" -w "$here" "$@"

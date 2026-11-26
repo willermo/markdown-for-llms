@@ -2,8 +2,12 @@
 `out` (document.md, assets, diagnostics, engine.json) without converting anything, after
 handing `events` to the observer. The engine itself is tested in tests/unit/engine."""
 from pathlib import Path
+import sys
 
 from markdown_for_llms.files import identify, write, write_json
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'unit' / 'engine'))
+import containers_test_support as launcher_fake                       # noqa: E402,F401  (the scripted launcher)
 
 
 def fake_convert(document=b'converted', assets=None, problems=None, code=None, events=(), calls=None,

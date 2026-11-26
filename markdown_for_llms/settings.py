@@ -35,11 +35,16 @@ IDENTITY_SCHEMA = 3
 PROFILE = "engine-v1"
 
 
+# Names with the prefix `MDF_` that are not settings of the product: of the bench, and of `make` and compose.
+NOT_SETTINGS = ("MDF_BENCH_", "MDF_COMPOSE_")
+MODEL_ROOT = "/models/marker"           # `engine.containers.MODEL_ROOT`: the weights of Marker in the models volume
+
+
 def default_model_root():
-    """`${XDG_CACHE_HOME:-~/.cache}/markdown-for-llms/models` (D10 of MFL032), the default of
-    `engine.weights.default_root`."""
-    base = os.environ.get("XDG_CACHE_HOME") or str(Path.home() / ".cache")
-    return str(Path(base) / "markdown-for-llms" / "models")
+    """The weights of Marker in the models volume (MFL051): the one model root a Marker child can read, because
+    the launcher mounts that volume in it. A constant of the containers, the same as `engine.containers.MODEL_ROOT`
+    (tests/product/test_storage_identity.py keeps them equal): this module imports nothing of the engine."""
+    return MODEL_ROOT
 
 
 def default_servers():
@@ -88,7 +93,7 @@ class Settings:
     bind_profile: str = PROFILE
     review_provider: str = "disabled"
     # spending cap of one Datalab conversion, in USD (0: nothing is sent); the key is never a
-    # setting: it is DATALAB_API_KEY in the environment of the worker
+    # setting: it is DATALAB_API_KEY in the keys file, which the worker reads by name at every use
     datalab_cap_usd: str = "0"
     # The rented GPUs (MFL023): the GPU presets enabled (comma-separated names of
     # markdown_for_llms/gpu/data/presets.json, only supported ones on a network volume), the
@@ -164,9 +169,10 @@ class Settings:
         sources.append(os.environ if environ is None else environ)
         for source in sources:
             for key, value in source.items():
-                if not key.startswith("MDF_") or key.startswith("MDF_BENCH_") or key == "MDF_SESSION_ARM":
-                    # MDF_BENCH_* belong to `mdf bench` (markdown_for_llms/bench/settings.py); MDF_SESSION_ARM
-                    # is the window of a live session of scripts/servers/session.py (MFL033), not a setting
+                if not key.startswith("MDF_") or key.startswith(NOT_SETTINGS) or key == "MDF_SESSION_ARM":
+                    # MDF_BENCH_* belong to `mdf bench` (markdown_for_llms/bench/settings.py); MDF_COMPOSE_* are
+                    # read by `make` and compose only (MFL051); MDF_SESSION_ARM is the window of a live session
+                    # of scripts/servers/session.py (MFL033), not a setting
                     continue
                 if key not in known:
                     raise ConfigurationError("Unknown MDF setting")
@@ -217,6 +223,44 @@ def settings_lines(env_file):
         if name.startswith("MDF_"):
             keep.append(line)
     return "\n".join(keep) + "\n"
+
+
+def container_settings(env_file, fixed):
+    """The text of `settings.env` (MFL051): the settings every service of the product in containers reads. From
+    the env file of the user only the lines that set an `MDF_` name stay (`settings_lines`: no key), without the
+    `MDF_COMPOSE_` ones, which `make` and compose read; then the lines of `fixed`, {name: value}: the paths of the
+    containers, which compose decides. A name of `fixed` written in the env file is refused: in the containers
+    those paths are not a choice (the archive and the state are moved with `MDF_COMPOSE_DATA` and
+    `MDF_COMPOSE_STATE`). The result is validated as the services will read it. Messages name settings, never
+    values."""
+    known = {"MDF_" + f.name.upper() for f in fields(Settings)}
+    if set(fixed) - known:
+        raise ConfigurationError("Unknown MDF setting")
+    if not Path(env_file).is_file():
+        raise ConfigurationError("Explicit environment file unavailable")
+    keep = []
+    for line in settings_lines(env_file).splitlines():
+        name = line.strip().removeprefix("export ").lstrip().partition("=")[0].strip()
+        if name in fixed:
+            raise ConfigurationError("Fixed in the containers, remove it from the env file: " + name)
+        if not name.startswith("MDF_COMPOSE_"):
+            keep.append(line)
+    text = "\n".join(keep + ["%s=%s" % item for item in sorted(fixed.items())]) + "\n"
+    settings_of(text)
+    return text
+
+
+def settings_of(text):
+    """The settings a service reads from the text of a `settings.env`, the environment of the process left out."""
+    from dotenv import dotenv_values
+    values = dotenv_values(stream=io.StringIO(text), interpolate=False)
+    return Settings.load(environ={k: v for k, v in values.items() if v is not None})
+
+
+def identity_names(old, new):
+    """The names (`MDF_...`) of the settings of the identity of an archive that differ between two `Settings`."""
+    a, b = asdict(old), asdict(new)
+    return sorted("MDF_" + name.upper() for name in a if name not in OPERATIONAL and a[name] != b[name])
 
 
 def digest(value):

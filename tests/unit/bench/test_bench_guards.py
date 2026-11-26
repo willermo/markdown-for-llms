@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[3]
 BENCH = ROOT / "markdown_for_llms" / "bench"
@@ -186,13 +185,6 @@ class ToolchainContextTests(unittest.TestCase):
             with self.assertRaises(BenchError) as exc:
                 toolchain.verify_context(Path(tmp) / "absent")
             self.assertEqual(exc.exception.code, Code.TOOLCHAIN_MISSING)
-            # a refused context never reaches the engine
-            with mock.patch.object(toolchain, "engine_run", side_effect=AssertionError("engine called")), \
-                    mock.patch.object(toolchain, "_check_local"), mock.patch.object(toolchain, "engine_path"):
-                (ctx / "extra.txt").write_text("x")
-                with self.assertRaises(BenchError) as exc:
-                    toolchain.prepare(ctx, None, out=lambda line: None)
-                self.assertEqual(exc.exception.code, Code.TOOLCHAIN_MISMATCH)
 
     def test_full_check_verifies_the_image_before_the_suites(self):
         text = (ROOT / "scripts" / "full-check.sh").read_text()

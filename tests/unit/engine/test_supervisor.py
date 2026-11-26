@@ -363,9 +363,17 @@ class TestNoSurvivor(SupervisorCase):
         marker = "31.%d" % (os.getpid() % 100000)
         status, _ = self.run_case([SLEEP, marker], stop_after=0.3)
         self.assertEqual(status, supervisor.EXIT_STOP)
-        left = subprocess.run(["/usr/bin/pgrep", "-fc", "^%s %s$" % (SLEEP, marker.replace(".", r"\."))], capture_output=True,
-                              text=True).stdout.strip()
-        self.assertEqual(left or "0", "0")
+        wanted = ("%s\0%s\0" % (SLEEP, marker)).encode()
+        left = []
+        for entry in os.listdir("/proc"):               # the image has no pgrep: the command lines of /proc
+            if entry.isdigit():
+                try:
+                    with open("/proc/%s/cmdline" % entry, "rb") as stream:
+                        if stream.read() == wanted:
+                            left.append(entry)
+                except OSError:
+                    pass
+        self.assertEqual(left, [])
 
 
 if __name__ == "__main__":

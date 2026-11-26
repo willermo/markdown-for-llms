@@ -35,6 +35,24 @@ A = "http://schemas.openxmlformats.org/drawingml/2006/main"
 PIC = "http://schemas.openxmlformats.org/drawingml/2006/picture"
 
 
+def private_sockets():
+    """The socket directory of an attempt of the tests (`sockets.Private`), on a run volume of its own: a temporary
+    directory, removed when the directory is closed."""
+    import os
+    import secrets
+    import shutil
+    from markdown_for_llms.engine import sockets
+    run = tempfile.mkdtemp(prefix="run-")
+    private = sockets.Private("mdf-bench-%d-%s" % (os.getpid(), secrets.token_hex(4)), run)
+    close = private.close
+
+    def close_all():
+        close()
+        shutil.rmtree(run, ignore_errors=True)
+    private.close = close_all
+    return private
+
+
 def require_toolchain():
     """ID of the verified toolchain image, or a failure (never a skip) that says how to build it."""
     from markdown_for_llms.engine import toolchain
@@ -42,7 +60,7 @@ def require_toolchain():
         return toolchain.image()
     except EngineError as exc:
         raise AssertionError(f"toolchain image: {exc.code.value} ({exc.detail}); build it with "
-                             "`mdf prepare --toolchain` at the root of the checkout") from None
+                             "`make prepare` at the root of the checkout; the tests run with `make test`") from None
 
 
 def png(width=8, height=6, rgb=(200, 30, 30)):

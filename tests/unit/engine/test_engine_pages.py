@@ -2,12 +2,13 @@
 
 Pure parts (cornice, figures, gate, image names, progress) run on synthetic data; `pdfprep`
 runs on synthetic PDFs built in pure Python; the isolation of the Marker child (network,
-scope cap) and one real conversion with Marker 2.2.0 and the weights of `FULL_CHECK_MODEL_ROOT`
-(D7) run for real: a missing variable or scope is a failure, never a skip.
+cap of its container) and one real conversion with Marker 2.2.0 and the weights of `FULL_CHECK_MODEL_ROOT`
+(D7) run for real: a missing variable or launcher is a failure, never a skip.
 """
 import json
 import os
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 from types import SimpleNamespace
@@ -356,13 +357,14 @@ class FakeChildTests(unittest.TestCase):
             (Path(scratch) / "result.json").write_text(json.dumps(result))
             (Path(scratch) / "out" / "images").mkdir(parents=True, exist_ok=True)
             (Path(scratch) / "out" / "document.md").write_text(markdown)
-            kw["steps"].append({"tool": "bwrap:marker_child", "args": list(args), "seconds": 0, "exit": rc})
+            kw["steps"].append({"tool": "child:marker_child", "args": list(args), "seconds": 0, "exit": rc})
             return rc, b""
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         src = Path(tmp.name) / "s.pdf"
         src.write_bytes(make_pdf(spec or [{"content": NATIVE_TEXT}, {"content": NATIVE_TEXT}]))
         with mock.patch.object(pages.isolation, "run", fake_run), \
+                mock.patch.object(pages.containers, "MODEL_ROOT", tmp.name), \
                 mock.patch.object(pages.weights, "verify", return_value={"files": 18}):
             result = convert(src, Path(tmp.name) / "out", None, None, work=Path(tmp.name) / "work",
                              model_root=Path(tmp.name))
@@ -453,8 +455,8 @@ def prov_(source):
 def model_root():
     root = os.environ.get("FULL_CHECK_MODEL_ROOT")
     if not root:
-        raise AssertionError("FULL_CHECK_MODEL_ROOT is not set: run the suite from scripts/full-check.sh with the weights "
-                             "prepared by `mdf prepare --weights --model-root DIR`")
+        raise AssertionError("FULL_CHECK_MODEL_ROOT is not set: run the suite with `make test`, with the weights "
+                             "prepared in the models volume (`make prepare`)")
     return root
 
 
@@ -462,61 +464,63 @@ class ChildIsolationTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        if not isolation.scope_available():
-            self.fail("no systemd user scope: the Marker route needs `systemd-run --user --scope`")
+        if not isolation.available():
+            self.fail("no launcher: the Marker route needs it to start its child (run the suite with `make test`)")
 
-    def test_probe_with_the_mounts_and_scope_of_the_marker_child(self):                # 12.3
+    def test_probe_with_the_mounts_and_the_cap_of_the_marker_child(self):              # 12.3
         scratch = Path(self.tmp.name) / "probe"
         steps = []
         rc, _ = isolation.run(scratch, "markdown_for_llms.engine.selfprobe", [os.path.realpath(model_root())], memory_mib=512,
-                              timeout=60, ro_binds=[(model_root(), "/models")], env=pages.child_env(model_root(), 2),
-                              fonts=True, scope="mdf-eng-test%s-probe" % os.getpid(), steps=steps)
+                              timeout=60, env=pages.child_env(model_root(), 2), kind="marker",
+                              attempt="test%s" % os.getpid(), steps=steps)
         result = json.loads((scratch / "probe.json").read_text())
         self.assertEqual(rc, 0)
         self.assertTrue(all(result.values()), result)
-        self.assertTrue(steps[0]["scope"].endswith(".scope"))
-        self.assertIn("memory_peak_bytes", steps[0])         # None when the child ends before a sample
+        self.assertRegex(steps[0]["container"], r"^mdf-eng-test%s-marker-\d+$" % os.getpid())
+        self.assertGreater(steps[0]["memory_peak_bytes"], 0)        # the last sample of the supervisor, also for a short child
 
-    def test_a_child_over_the_scope_cap_is_killed(self):                               # 12.3
+    def test_a_child_over_the_cap_of_its_container_is_killed(self):                    # 12.3
         with self.assertRaises(EngineError) as e:
             isolation.run(Path(self.tmp.name) / "hog", "markdown_for_llms.engine.selfprobe", ["allocate", "600"],
-                          memory_mib=200, address_space_mib=4096, timeout=60, scope="mdf-eng-test%s-hog" % os.getpid())
+                          memory_mib=200, address_space_mib=4096, timeout=60, attempt="test%s" % os.getpid())
         self.assertEqual(e.exception.code, Code.MEMORY_LIMIT)
+
+    def test_a_model_root_that_is_not_the_models_volume_is_refused(self):
+        """The launcher mounts the weights of the models volume in a Marker child, whatever the caller names: a
+        copy of the weights elsewhere would be verified and never read."""
+        from markdown_for_llms.engine.core import convert
+        copy = Path(self.tmp.name) / "weights"
+        shutil.copytree(model_root(), copy)
+        src = Path(self.tmp.name) / "n.pdf"
+        src.write_bytes(make_pdf([{"content": NATIVE_TEXT}]))
+        result = convert(src, Path(self.tmp.name) / "out", None, None, work=Path(self.tmp.name) / "work", model_root=copy)
+        self.assertEqual(result["error"]["code"], "invalid_setting")
+        self.assertFalse(any(s["tool"] == "child:marker_child" for s in result["route"]["steps"]))
 
     def test_marker_is_available_with_the_weights(self):
         from markdown_for_llms.engine.core import availability
         self.assertEqual(availability(model_root=model_root())["marker"], {"available": True, "code": None})
 
-    def test_the_scope_is_named_to_the_observer_before_the_child_starts(self):         # HC1
+    def test_the_container_is_named_to_the_observer_before_it_is_created(self):        # HC1
         from unittest import mock
-        seen = []
-        with mock.patch.object(isolation.subprocess, "Popen") as popen, self.assertRaises(EngineError) as e:
-            isolation.run(Path(self.tmp.name) / "w", "markdown_for_llms.engine.selfprobe", timeout=10,
-                          scope="mdf-eng-window-marker-1", observer=lambda ev: seen.append(ev) or "cancelled")
+        from markdown_for_llms.engine import containers
+        seen, asked = [], []
+        real = containers.launcher()
+
+        class Recording:
+            def __getattr__(self, name):
+                asked.append(name)
+                return getattr(real, name)
+        attempt = "window%d" % os.getpid()
+        with mock.patch.object(containers, "launcher", lambda: Recording()), self.assertRaises(EngineError) as e:
+            isolation.run(Path(self.tmp.name) / "w", "markdown_for_llms.engine.selfprobe", timeout=10, kind="marker",
+                          attempt=attempt, observer=lambda ev: seen.append(ev) or "cancelled")
         self.assertEqual(e.exception.code, Code.CANCELLED)
-        popen.assert_not_called()
-        self.assertEqual(seen, [{"event": "child", "module": "markdown_for_llms.engine.selfprobe", "pid": None,
-                                 "scope": "mdf-eng-window-marker-1.scope"}])
-
-    def test_scopes_are_listed_by_prefix_and_names_are_checked(self):                 # HC1
-        from unittest import mock
-        self.assertEqual(isolation.list_scopes("mdf-eng-absent%d-" % os.getpid()), [])
-        for bad in ("other-", "mdf-eng-a b-", "mdf-eng-x"):
-            with self.subTest(bad=bad), self.assertRaises(ValueError):
-                isolation.list_scopes(bad)
-        with mock.patch.object(isolation.subprocess, "run") as run, self.assertRaises(ValueError):
-            isolation.stop_scope("../../etc/x.scope")
-        run.assert_not_called()
-
-    def test_scope_state_of_an_absent_unit(self):                                     # PB8
-        self.assertEqual(isolation.scope_state("mdf-eng-test-absent-%d" % os.getpid()), "absent")
-
-    def test_an_unreachable_manager_is_not_an_absent_unit(self):                      # PB8
-        from unittest import mock
-        with mock.patch.object(isolation, "_user_env", return_value={"XDG_RUNTIME_DIR": "/nonexistent",
-                                                                     "DBUS_SESSION_BUS_ADDRESS": "unix:path=/nonexistent"}):
-            with self.assertRaises(isolation.ScopeUnreachable):
-                isolation.scope_state("mdf-eng-test-absent-%d" % os.getpid())
+        self.assertNotIn("run", asked)                              # nothing was asked of the launcher
+        (event,) = seen
+        self.assertEqual({k: event[k] for k in ("event", "module")}, {"event": "child", "module": "markdown_for_llms.engine.selfprobe"})
+        self.assertRegex(event["container"], r"^mdf-eng-%s-marker-\d+$" % attempt[:16])
+        self.assertEqual(real.list(containers.prefix_of(attempt)), [])
 
 
 class RealMarkerTests(unittest.TestCase):
@@ -544,13 +548,13 @@ class RealMarkerTests(unittest.TestCase):
             self.assertIn("Scanned page", text)
             self.assertIn("](assets/asset-0001.", text)
             self.assertEqual(result["marker"]["network_calls"], 0)                      # 12.12
-            child = [s for s in result["route"]["steps"] if s["tool"] == "bwrap:marker_child"]
-            self.assertGreater(child[0]["memory_peak_bytes"], 100 << 20)               # read from the scope
+            child = [s for s in result["route"]["steps"] if s["tool"] == "child:marker_child"]
+            self.assertGreater(child[0]["memory_peak_bytes"], 100 << 20)               # sampled by the supervisor of the container
+            self.assertRegex(child[0]["container"], r"^mdf-eng-realmarker-marker-1?\d*$")
             self.assertEqual(result["limits"], pages.LIMITS)                            # D13
             self.assertEqual(result["components"]["weights"]["files"], 18)
             self.assertTrue(any(e.get("event") == "progress" for e in events))
-            self.assertTrue(any(e.get("event") == "child" and e.get("scope") == "mdf-eng-realmarker-marker-1.scope"
-                                for e in events))
+            self.assertTrue(any(e.get("event") == "child" and e.get("container") == child[0]["container"] for e in events))
             # M5 of MFL026: the stages and the seconds of each page, from the clock of the child
             timings = result["timings"]
             self.assertEqual(set(timings["stages"]), {"models", "pages", "structure", "processors", "render"})
@@ -607,7 +611,7 @@ class RealMarkerTests(unittest.TestCase):
             empty.mkdir()
             result = convert(src, Path(tmp) / "out", None, None, work=Path(tmp) / "work", model_root=empty)
             self.assertEqual(result["error"]["code"], "weights_missing")
-            self.assertFalse(any(s["tool"] == "bwrap:marker_child" for s in result["route"]["steps"]))
+            self.assertFalse(any(s["tool"] == "child:marker_child" for s in result["route"]["steps"]))
 
 
 if __name__ == "__main__":

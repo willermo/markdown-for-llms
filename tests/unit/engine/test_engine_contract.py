@@ -186,14 +186,27 @@ class TextConvertTests(Base):
         self.assertEqual(found["datalab"], {"available": False, "code": "datalab_key_missing"})
         self.assertTrue(found["text"]["available"])
 
-    def test_availability_without_bubblewrap(self):
-        """HA5 (Carbon I2): the pandoc route audits its packages in the light child, so without
-        Bubblewrap it is not available; djvutxt does not use the child."""
+    def test_availability_without_the_launcher(self):
+        """HA5 (Carbon I2): the pandoc route audits its packages in the light child, so where the launcher does
+        not answer it is not available; and no route of the toolchain is, because the image is the launcher's to
+        verify."""
         from unittest import mock
-        from markdown_for_llms.engine import isolation, toolchain
-        with mock.patch.object(toolchain, "image", return_value="sha256:" + "0" * 64), \
-                mock.patch.object(isolation, "BWRAP", str(self.root / "no-bwrap")):
+        from markdown_for_llms.engine import containers, toolchain
+
+        def refused(path, timeout):
+            raise ConnectionRefusedError(111, "no launcher")
+        saved = dict(toolchain._state)
+        self.addCleanup(toolchain._state.update, saved)
+        toolchain.reset()
+        with mock.patch.object(containers, "launcher", lambda: containers.Launcher(connect=refused)):
             found = availability()
+            self.assertEqual({name: found[name] for name in ("pandoc", "libreoffice", "djvutxt", "marker")},
+                             dict.fromkeys(("pandoc", "libreoffice", "djvutxt"), {"available": False, "code": "isolation_unavailable"})
+                             | {"marker": {"available": False, "code": "isolation_unavailable"}})
+            self.assertTrue(found["text"]["available"])
+            # with the image verified and no launcher for the child: the audited routes alone
+            with mock.patch.object(toolchain, "image", return_value="sha256:" + "0" * 64):
+                found = availability()
         self.assertEqual(found["pandoc"], {"available": False, "code": "isolation_unavailable"})
         self.assertEqual(found["libreoffice"], {"available": False, "code": "isolation_unavailable"})
         self.assertEqual(found["djvutxt"], {"available": True, "code": None})

@@ -5,7 +5,8 @@ its job: the default of the conversion matrix or the one the user chose, with th
 validated again by `services.job_options`, the function of the API (MFL032 C3, MFL023 A5). A route that cannot run on this
 machine fails its job with `route_unavailable` and the queue goes on. The Datalab route runs only
 with the transit confirmed in the job, under the cap `MDF_DATALAB_CAP_USD` of each conversion,
-with the key `DATALAB_API_KEY` that the worker takes out of its own environment when it starts
+with the key `DATALAB_API_KEY` read by name from the keys file at every use (MFL051; never from the
+environment, out of which the worker still takes that name when it starts
 (never a setting, never passed to a child, never written).
 
 A job on the route marker-server (MFL023 B4) runs on the GPU session of its preset (`gpu.lifecycle`): the
@@ -14,21 +15,32 @@ first, lingers, then closes it; every call to a provider runs in a child (`gpu.o
 worker is closed before the first claim. The reservation of each attempt is chained to the observer, its completion
 written in every outcome, and the facts of the attempt on its session go into `runs.gpu` before the publication.
 
-The observer of the engine renews the lease, records the running child (`runs.child`: the pid
-with its start time, the systemd scope of the Marker child, the container of a tool) and passes
-on cancellation and stop; reconciliation stops what a dead worker left by that record. A scope is
-named to the observer before it starts, and the attempt keeps the monotonic indicator
-`runs.scope_recorded` (0 until then, 1 after): reconciliation asks the systemd user manager only
-for the attempts that recorded a scope, and for those of a previous version without the
-indicator (NULL). The full result of the engine stays next to the published result
-(`engine-result.json`); the manifest carries a bounded summary of it (K9).
+Every child of the engine is a container started by the launcher (MFL051, `engine/containers.py`).
+The observer of the engine renews the lease, records the running child (`runs.child`: the name of
+its container) and passes on cancellation and stop. A container is named to the observer before
+it is created, and the attempt keeps the monotonic indicator `runs.scope_recorded` (0 until then,
+1 after).
+
+One rule releases the space commitment of an attempt (B1): its record in `operations/` goes away
+only after the launcher attested that no container of the attempt is left (`stop_attempt_children`:
+list by the prefix of its names, kill, remove, confirmed absence). It holds at the end of a job
+(`commitment`), in the loop (`release_kept`: while a commitment is kept the worker claims no job,
+says so in its heartbeat and asks again every few seconds) and at the start (`_reconcile`: the
+prefixes to attest come from the records without a live owner, whatever the state of their job,
+and from the rows still running with the indicator raised). A launcher or a daemon that does not
+answer is no proof that a child is gone: the commitment is kept and the error is visible.
+
+A child the launcher itself stopped (the service going down or restarting), or one whose caller
+stopped renewing its lease, ends its conversion with `interrupted`: the job becomes `interrupted`,
+terminal and open to `mdf retry`, as when the worker is stopped. The full result of the engine
+stays next to the published result (`engine-result.json`); the manifest carries a bounded summary
+of it (K9).
 """
 from pathlib import Path
 from contextlib import contextmanager
 import json
 import os
 import shutil
-import signal
 import sqlite3
 import logging
 import time
@@ -36,7 +48,8 @@ import uuid
 
 from decimal import Decimal
 
-from .engine import isolation, routes
+from . import routestate
+from .engine import containers, isolation, routes, selfprobe
 from .gpu import codes as gpu_codes, lifecycle
 from .engine.codes import Code, EngineError
 from .engine.core import availability, convert
@@ -51,81 +64,60 @@ MAX_ISSUES = 200                 # engine problems listed in the manifest; all o
 MANIFEST_LIMIT = 1048576         # the JSON limit of files.decode_json
 READY_SECONDS = 60               # how long a check of the availability of the converters holds
 ENGINE_FILES = ("engine-out", "engine-work")
+KEPT_SECONDS = 5.0               # how often the worker asks again for an attestation it did not get
 
 
-def process_identity(pid):
-    try:
-        raw = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
-        return {"pid": pid, "start": raw[19], "state": raw[0]}
-    except (FileNotFoundError, ProcessLookupError, IndexError):
-        return None
+class Unattested(StorageError):
+    """Docker did not attest, through the launcher, that no child of an attempt is left: its commitment is kept."""
+
+
+class Interrupted(StorageError):
+    """A child of the engine was stopped from outside the worker (the stop of the launcher, a lease not renewed):
+    the job is `interrupted`, not `failed`."""
 
 
 def execute(settings, scratch, module, inputs=(), tick=None, deadline=60, memory_mib=512, output_mib=None,
-            label="process"):
-    """A light child of the engine (`engine/isolation.py`) for the raster validation and the
-    isolation probe: Bubblewrap without network, read-only system and `inputs`, `scratch/label`
-    its only writable directory. Returns a receipt: `exit`, `reason` (a closed code of the
-    engine or None), `elapsed_seconds`, `dir` (where the child wrote its results)."""
+            label="process", attempt=None, args=(), results=None):
+    """A light child of the engine (`engine/isolation.py`) for the raster validation and the isolation probe: a
+    container without network, `inputs` read-only, its own scratch the only writable directory. `scratch/label`
+    is a directory of the worker: what is in it goes to the child, and `results` come back into it. Returns a
+    receipt: `exit`, `reason` (a closed code of the engine or None), `asked` (the tick of the worker asked for the
+    stop), `elapsed_seconds`, `dir` (where the results of the child are)."""
     work = Path(scratch) / label
     started = time.monotonic()
+    asked = []
 
     def observer(event):
         if tick is None:
             return None
-        child = {"pid": event["pid"]} if event.get("pid") else None
-        if child and (ident := process_identity(event["pid"])):
-            child["start"] = ident["start"]
-        stop = tick(child, None)
-        return "interrupted" if stop == "interrupted" else "cancelled" if stop else None
+        stop = tick({"container": event["container"]} if event.get("container") else None, None)
+        stop = "interrupted" if stop == "interrupted" else "cancelled" if stop else None
+        if stop:
+            asked.append(stop)
+        return stop
     try:
-        rc, _ = isolation.run(work, module, inputs=inputs, memory_mib=memory_mib,
+        rc, _ = isolation.run(work, module, args, inputs=inputs, memory_mib=memory_mib,
                               output_mib=output_mib or settings.output_mib, timeout=deadline,
-                              observer=observer, poll_seconds=0.2)
+                              observer=observer, poll_seconds=0.2, attempt=attempt, results=results)
         reason = None
     except EngineError as exc:
         rc, reason = None, exc.code.value
-    return {"exit": rc, "reason": reason, "elapsed_seconds": time.monotonic() - started, "dir": work}
+    return {"exit": rc, "reason": reason, "asked": bool(asked), "elapsed_seconds": time.monotonic() - started, "dir": work}
 
 
-def stop_attempt_scopes(attempt_id):
-    """Stop every scope of the Marker child that an attempt may have left, by the prefix of its
-    names (`mdf-eng-<attempt[:16]>-`), also when the worker died before recording one (HC1); an
-    unreachable manager keeps the reservation, as for a recorded scope (PB8)."""
-    prefix = 'mdf-eng-%s-' % attempt_id[:16]
+def stop_attempt_children(attempt_id):
+    """Attest that no child of an attempt is left, by the prefix of the names of its containers
+    (`mdf-eng-<attempt[:16]>-`): list, kill, remove, confirmed absence; then the folders of its calls go away.
+    `Unattested` when the launcher or Docker cannot say so: no proof that a child is gone, the commitment of the
+    attempt is kept (K7, HC1, PB8 of MFL032; B1 of MFL051). Also for an attempt whose worker died before it
+    recorded a child."""
+    prefix = containers.prefix_of(attempt_id)
     try:
-        names = isolation.list_scopes(prefix)
-    except isolation.ScopeUnreachable as exc:
-        raise StorageError('User systemd manager unreachable (%s): scopes %s* not attested; reservation kept'
-                           % (exc, prefix)) from None
-    for name in names:
-        stop_child({'scope': name})
-
-
-def stop_child(child):
-    """Stop what a dead attempt left running, from its `runs.child` record (K7, PB8): the systemd
-    scope of a Marker child, the container of a tool (the pid is handled by the caller). An
-    unreachable user manager or Docker is no proof that the child is gone: the reconciliation is
-    not attested, the reservation is kept and the error is visible."""
-    scope = child.get('scope')
-    if scope:
-        if not isinstance(scope, str) or not isolation.UNIT.fullmatch(scope.removesuffix('.scope')):
-            raise StorageError('Malformed child record')
-        try:
-            state = isolation.stop_scope(scope)
-        except isolation.ScopeUnreachable as exc:
-            raise StorageError('User systemd manager unreachable (%s): stop of %s not attested; reservation kept'
-                               % (exc, scope)) from None
-        if state != 'absent':
-            raise StorageError('Previous conversion scope still active: %s; reservation kept' % scope)
-    container = child.get('container')
-    if container:
-        if not isinstance(container, str) or not isolation.UNIT.fullmatch(container):
-            raise StorageError('Malformed child record')
-        from .engine.toolchain import remove_container
-        if not remove_container(container):
-            raise StorageError('Previous conversion container not removed (Docker unreachable?): %s; '
-                               'reservation kept' % container)
+        launcher = containers.launcher()
+        containers.stop_attempt_children(launcher, prefix)
+    except (containers.Unattested, containers.Refused) as exc:
+        raise Unattested('Children of the attempt not attested absent (%s*: %s); reservation kept' % (prefix, exc)) from None
+    containers.sweep(launcher, containers.WORK_ROOT, prefix=prefix, min_age=0)
 
 
 def chain(*observers):
@@ -163,15 +155,9 @@ class Observer:
         if self.error is not None:
             return "interrupted"
         kind, changed = event.get("event"), False
-        if kind == "child":
-            child = {"pid": event["pid"]} if event.get("pid") else {}     # no pid: the scope before the start
-            if event.get("pid") and (ident := process_identity(event["pid"])):
-                child["start"] = ident["start"]
-            if event.get("scope"):
-                child["scope"] = event["scope"]
-            self.child, changed = child, True
-        elif kind == "tool" and event.get("container"):
-            self.child, changed = {"container": event["container"]}, True
+        if kind == "child" or (kind == "tool" and event.get("container")):
+            # named before the container is created; an event of a child is never throttled
+            self.child, changed = ({"container": event["container"]} if event.get("container") else {}), True
         elif kind == "progress" and isinstance(event.get("progress"), dict):
             self.progress = event["progress"]
         now = time.monotonic()
@@ -210,11 +196,11 @@ def take_gpu_keys(settings, environ=None):
 
 
 def take_datalab_key(environ=None):
-    """The Datalab key of the worker: `DATALAB_API_KEY` taken out of the environment of the
-    process (so no child can inherit it), or None."""
+    """`DATALAB_API_KEY` taken out of the environment of the process, so no child can inherit it. The value is
+    dropped (MFL051): the key of the worker is read by name from its keys file at every use, never from the
+    environment. Returns whether the name was there, never the value."""
     from .engine import datalab
-    value = (os.environ if environ is None else environ).pop(datalab.KEY_NAME, None)
-    return datalab.Key(value) if value else None
+    return (os.environ if environ is None else environ).pop(datalab.KEY_NAME, None) is not None
 
 
 def engine_message(code, settings):
@@ -315,6 +301,8 @@ class Worker:
         self.settings = settings
         # the env file of `mdf worker --env-file`, checked by the CLI before Settings.load: the keys
         # of the GPU sessions are read from it by name, never from the environment (MFL023)
+        # (MFL051: the keys file, `--keys-file`). A file that is not safe does not stop the worker: every read
+        # refuses it, and the routes with a key are unavailable with their closed code
         self.env_file = None if env_file is None else str(Path(env_file).absolute())
         self.service = Service(settings)
         self.storage = self.service.storage
@@ -323,39 +311,97 @@ class Worker:
         self.lease = None
         self._worker_locked = False
         self._ready_at = None
+        self.kept = {}                   # attempt: the commitment kept until the absence of its children is attested
+        self._kept_at = None
         self.converters = None           # availability per converter, from `ready`
         self.readiness = {"ready": False, "message": "Worker starting", "converters": None}
-        self.datalab_key = take_datalab_key()
+        take_datalab_key()
         take_gpu_keys(settings)
+        self.launcher_instance = None    # the launcher the probe ran against (`hello`: `instance`)
+        self.probes = 0
+        self._code = None                # the code this process runs (`containers.identity`), read once
+        self.key_details = {}            # {converter: what to do about its key}, never a value
+        self._refresh_seen = self.service.routes_refresh_asked()      # a request older than this worker is its start
         # the GPU sessions (MFL023 B4): `gpu` gives the tests the command of the children, the clocks and the follower
         self.gpu = lifecycle.Manager(self, **(gpu or {}))
         self._gpu_job = None
 
+    def datalab_key(self):
+        """The key of Datalab, read now from the keys file (`datalab_key_unsafe`, `datalab_key_missing`)."""
+        from .engine import datalab
+        return datalab.read_key(self.env_file)
+
     def datalab_state(self):
-        """Datalab can run here with the key of the worker and a cap above 0."""
-        if self.datalab_key is None:
-            return {"available": False, "code": Code.DATALAB_KEY_MISSING.value}
+        """Datalab can run here with its key in the keys file, read now by name, and a cap above 0."""
+        from .engine import datalab
+        state = datalab.key_state(self.env_file)
+        self.key_details.pop(routes.DATALAB, None)
+        if not state["available"]:
+            if state["code"] == Code.DATALAB_KEY_UNSAFE.value:
+                self.key_details[routes.DATALAB] = state["detail"]
+            return {"available": False, "code": state["code"]}
         if Decimal(self.settings.datalab_cap_usd) <= 0:
             return {"available": False, "code": Code.DATALAB_CAP.value}
         return {"available": True, "code": None}
 
     def ready(self):
         """The availability of every converter on this machine (`engine.availability`: the
-        toolchain image, Bubblewrap, the systemd user scope and the verified weights of Marker;
-        Datalab from the key of the worker and the cap), checked again after READY_SECONDS; the
-        engine verifies the weights again before every Marker child. Returns it."""
+        launcher, the toolchain image and the verified weights of Marker;
+        Datalab from the keys file and the cap), checked again after READY_SECONDS; the
+        engine verifies the weights again before every Marker child. Returns it, or None when the children would
+        not run the code of this worker: the launcher answers with another build of the package (`stale engine
+        image`), or it is another launcher than the one of the probe and the probe, repeated, fails. The worker
+        then takes no job (`turn`) and says why in its heartbeat."""
         now = time.monotonic()
         if self._ready_at is not None and now - self._ready_at < READY_SECONDS:
             return self.converters
-        state = availability(model_root=self.settings.model_root)
+        failed = self.same_engine()
+        if failed:
+            self.converters, self._ready_at = None, now
+            message = "Isolation unavailable; no fallback (%s)" % ", ".join(failed)[:200]
+            self.readiness = {"ready": False, "code": Code.ISOLATION_UNAVAILABLE.value, "converters": None,
+                              "message": message, "routes": self.routes_blocked(message)}
+            return None
+        state = availability(model_root=self.settings.model_root, keys_file=self.env_file)
         state[routes.DATALAB] = self.datalab_state()
         missing = sorted('%s (%s)' % (name, s['code']) for name, s in state.items() if not s['available'])
+        notes = ''.join('; %s: %s' % item for item in sorted(self.key_details.items()))
         self.converters, self._ready_at = state, now
         self.readiness = {"ready": True, "converters": state,
-                          "message": "Local worker ready" + ("; routes unavailable: " + ", ".join(missing) if missing else "")}
+                          "message": "Local worker ready" + ("; routes unavailable: " + ", ".join(missing) if missing else "")
+                                     + notes}
         if self.settings.gpu_presets_enabled():
             self.readiness["gpu"] = self.gpu.readiness()      # closed values: availability, minimum reserve, ledger
+        self.readiness["routes"] = self.routes_now(state)
         return state
+
+    def gpu_providers(self):
+        """{GPU preset the instance enables: its provider}."""
+        names = self.settings.gpu_presets_enabled()
+        if not names:
+            return {}
+        from .gpu import presets as gpu_presets
+        table = gpu_presets.load()
+        return {name: table[name]["provider"] for name in names if name in table}
+
+    def routes_now(self, state):
+        """The state of every route (`routestate`, MFL051) from what this worker just checked: the converters, the
+        keys file (names only), the GPU presets and their ledgers. It goes in the heartbeat; the API reads it."""
+        gpu = self.readiness.get("gpu") or {}
+        presets = gpu.get("presets") or {}
+        details = dict(self.key_details)
+        unsafe = self.key_details.get(routes.DATALAB)             # the same file holds the keys of the GPUs
+        for name, item in presets.items():
+            if item.get("code") == Code.SERVER_KEY_UNSAFE.value and unsafe:
+                details["%s:%s" % (routestate.MARKER_SERVER, name)] = unsafe
+        key_names = {name: item["missing_keys"] for name, item in presets.items() if item.get("missing_keys")}
+        return routestate.compute(state, self.settings.datalab_cap_usd, gpu, self.gpu_providers(), details, key_names,
+                                  now=time.time())
+
+    def routes_blocked(self, detail):
+        """The routes of a worker that takes no job: every one broken, with the reason of the worker."""
+        return routestate.blocked(Code.ISOLATION_UNAVAILABLE.value, self.settings.datalab_cap_usd,
+                                  self.settings.gpu_presets_enabled(), self.gpu_providers(), detail, now=time.time())
 
     @contextmanager
     def exclusive(self):
@@ -388,38 +434,28 @@ class Worker:
             self._reconcile(run_id)
 
     def _reconcile(self, run_id):
-        from .capacity import recover, live_workers
+        from .capacity import recover, live_workers, dead_workers
         rows = [self.storage.get(r['id']) for r in self.storage.list()
                 if run_id is None or r['id'] == run_id]
         with self.storage.lock('admission.lock'):
             live = live_workers(self.storage)
-        selected = []
-        # Reap identified orphan children before releasing their dead commitments.
+            dead = dead_workers(self.storage)
+        selected, attest = [], set()
+        # Attest the absence of the children of the dead commitments before releasing them.
         # Live commitments from independent operations remain locked and reserved.
         for row in rows:
             if row['attempt_id'] in live and row['token'] != self.token:
                 continue
             selected.append(row)
-            if row['state'] not in {'running', 'publishing'}:
-                continue
-            if row.get('scope_recorded') != 0:
-                # 1: the attempt recorded a scope before starting it; NULL: an attempt of a previous
-                # version, without the indicator. 0: no scope was ever started, nothing to ask
-                stop_attempt_scopes(row['attempt_id'])
-            if row['child'] and json.loads(row['child']):
-                old = json.loads(row['child'])
-                stop_child(old)
-                now = process_identity(old['pid']) if old.get('pid') else None
-                if now and now['start'] == old.get('start') and now['state'] != 'Z':
-                    os.kill(old['pid'], signal.SIGKILL)
-                    deadline = time.monotonic() + self.settings.grace_seconds
-                    while time.monotonic() < deadline:
-                        now = process_identity(old['pid'])
-                        if not now or now['start'] != old['start'] or now['state'] == 'Z':
-                            break
-                        time.sleep(0.1)
-                    else:
-                        raise StorageError('Previous conversion process still alive')
+            if row['state'] in {'running', 'publishing'} and row.get('scope_recorded') != 0:
+                # 1: the attempt named a container before creating it; NULL: an attempt of a previous version,
+                # without the indicator. 0: no child was ever started, nothing to ask
+                attest.add(row['attempt_id'])
+        # B1: the commitments without a live owner, WHATEVER the state of their job (also `failed` or `completed`,
+        # also without a row: the probe of a worker that died), are released only after the attestation
+        attest |= dead if run_id is None else dead & {row['attempt_id'] for row in selected}
+        for attempt in sorted(attest):
+            stop_attempt_children(attempt)
         with self.storage.lock('admission.lock'):
             recover(self.storage, workers=True if run_id is None else
                     {row['attempt_id'] for row in selected})
@@ -514,13 +550,13 @@ class Worker:
             current = conn.execute("SELECT token,cancel FROM runs WHERE id=?", (row["id"],)).fetchone()
             if current["token"] != self.token:
                 return True
-            # a scope is named here before it starts: the indicator of the attempt becomes 1 in the
+            # a container is named here before it is created: the indicator of the attempt becomes 1 in the
             # same update, and never goes back (a trigger of 003.sql)
             conn.execute("UPDATE runs SET lease=?,child=?,updated=?,progress=COALESCE(?,progress),"
                          "scope_recorded=CASE WHEN ? THEN 1 ELSE scope_recorded END WHERE id=? AND token=?",
                          (time.time() + self.settings.lease_seconds, json.dumps(child, allow_nan=False) if child else None, time.time(),
                           json.dumps(progress, allow_nan=False) if progress else None,
-                          bool(child and child.get('scope')), row["id"], self.token))
+                          bool(child and (child.get('container') or child.get('scope'))), row["id"], self.token))
         if self.stop:
             return 'interrupted'
         if self._gpu_job == row["id"] and not self.gpu.serving():
@@ -530,9 +566,52 @@ class Worker:
         return bool(current["cancel"])
 
     def commitment(self, row):
-        return self.storage.reservation('worker', (2 * self.settings.output_mib +
-                    self.settings.log_mib + 1) * 1048576, row['attempt_id'],
-                    ('attempts/' + row['attempt_id'], 'results/' + row['attempt_id']))
+        return self.committed(row['attempt_id'], (2 * self.settings.output_mib + self.settings.log_mib + 1) * 1048576,
+                              ('attempts/' + row['attempt_id'], 'results/' + row['attempt_id']))
+
+    @contextmanager
+    def committed(self, attempt, budget, paths):
+        """The space commitment of an attempt (a job, or the probe of the worker), released under the one rule of
+        B1: when the block ends, however it ends, the launcher must attest that no child of the attempt is left
+        (ordinarily a list that comes back empty). When it does not, the commitment is KEPT (`Lease.keep`): its
+        record stays in `operations/`, its budget stays committed, and `release_kept` asks again; the outcome
+        of the job is written as usual, whatever it is."""
+        with self.storage.reservation('worker', budget, attempt, paths) as lease:
+            try:
+                yield lease
+            finally:
+                try:
+                    stop_attempt_children(attempt)
+                except Unattested as exc:
+                    logging.warning('%s', exc)
+                    self.kept[attempt] = lease.keep()
+
+    def release_kept(self, now=None):
+        """Ask again for the attestations that were missing, at most every `KEPT_SECONDS`; each commitment is
+        released only after its own. True when none is kept any more: only then the worker claims a job."""
+        if not self.kept:
+            return True
+        now = time.monotonic() if now is None else now
+        if self._kept_at is not None and now - self._kept_at < KEPT_SECONDS:
+            return False
+        self._kept_at = now
+        for attempt in sorted(self.kept):
+            try:
+                stop_attempt_children(attempt)
+            except Unattested:
+                continue
+            self.kept.pop(attempt).close()
+        if not self.kept:
+            self._kept_at = None
+        return not self.kept
+
+    def pending(self):
+        """The heartbeat of a worker that holds commitments whose children are not attested absent."""
+        prefixes = sorted(containers.prefix_of(attempt) for attempt in self.kept)
+        message = ("Cleanup of a previous conversion not attested by Docker (%s): no job is taken until it is; "
+                   "if it lasts, run `make restart`" % ", ".join(prefixes))
+        return {"ready": False, "code": Code.ISOLATION_UNAVAILABLE.value, "pending": prefixes, "converters": None,
+                "message": message, "routes": self.routes_blocked(message)}
 
     def process(self, row):
         with self.exclusive():
@@ -561,7 +640,8 @@ class Worker:
                     return
                 with self.storage.connect() as conn:
                     current = conn.execute('SELECT cancel FROM runs WHERE id=?', (row['id'],)).fetchone()
-                    state = 'cancelled' if current['cancel'] else 'interrupted' if self.stop else 'failed'
+                    state = ('cancelled' if current['cancel'] else
+                             'interrupted' if self.stop or isinstance(exc, Interrupted) else 'failed')
                     error = str(exc) if isinstance(exc, (StorageError, MetadataError, FileSafetyError)) else 'Conversion failed: ' + type(exc).__name__
                     conn.execute("UPDATE runs SET state=?,error=?,token=NULL,updated=? WHERE id=? AND token=? AND state='running'",
                                  (state, error, time.time(), row['id'], self.token))
@@ -595,6 +675,24 @@ class Worker:
                    'dropped_options': ['strip_existing_ocr'] if options.get('strip_existing_ocr') else []})
         limits = self.settings.engine_limits()
         observer = Observer(self, row)
+        asked = []                              # the stops this worker itself asked of the engine
+
+        def watched(inner):
+            def observe(event):
+                stop = inner(event)
+                if stop:
+                    asked.append(stop)
+                return stop
+            return observe
+        datalab_key = None
+        if converter == routes.DATALAB:
+            # the key is read from the keys file now, for this conversion: a file made unsafe, replaced or removed
+            # since the last check of the routes is seen here, before anything is sent
+            try:
+                datalab_key = self.datalab_key()
+            except EngineError as exc:
+                raise StorageError('Conversion failed: %s (%s: %s); source kept, retry available when the route is ready'
+                                   % (Code.ROUTE_UNAVAILABLE.value, converter, exc.code.value)) from None
         extra, hook, gpu = {}, None, converter == routes.MARKER_SERVER
         if gpu:
             opts = job_options(fmt, stored_options(options), self.settings)
@@ -609,9 +707,9 @@ class Worker:
         result = None
         try:
             result = convert(self.storage.root / row['source_path'], scratch / 'engine-out', request, limits,
-                             work=scratch / 'engine-work', observer=chain(hook, observer) if gpu else observer,
+                             work=scratch / 'engine-work', observer=watched(chain(hook, observer) if gpu else observer),
                              name=source_name(row.get('name'), row['source_path']),
-                             model_root=self.settings.model_root, datalab_key=self.datalab_key, **extra)
+                             model_root=self.settings.model_root, datalab_key=datalab_key, **extra)
         finally:
             if gpu:
                 self._gpu_job = None
@@ -626,6 +724,10 @@ class Worker:
                 code = lifecycle.JOB_CODES[reason]
                 if code not in ('interrupted', 'cancelled'):
                     raise StorageError(gpu_message(code))
+            if code == Code.INTERRUPTED.value and not asked:
+                # nobody of this worker asked: the launcher stopped the child, or its lease was not renewed (A2-c)
+                raise Interrupted('Conversion interrupted: a child of the engine was stopped; source and partials '
+                                  'preserved, retry available')
             raise StorageError(engine_message(code, self.settings))
         self.tick(row, None, finishing(observer.progress))
         # inside the private attempt, synchronized with it before the publication (sync_tree)
@@ -696,12 +798,16 @@ class Worker:
             write_json(scratch / 'raster', 'raster-request.json', dict(artifacts=candidates,
                        max_pixels=self.settings.max_pixels, max_dimension=self.settings.max_dimension))
             raster = execute(self.settings, scratch, 'markdown_for_llms.engines.raster', inputs=[(original, 'original')],
-                             tick=lambda child, progress: self.tick(row, child, progress), deadline=60, label='raster')
+                             tick=lambda child, progress: self.tick(row, child, progress), deadline=60, label='raster',
+                             attempt=row['attempt_id'], results=('raster-result.json',))
             if raster['exit'] == 0 and not raster['reason']:
                 results = validate_raster(read_json(raster.get('dir', scratch), 'raster-result.json'), candidates, self.settings)
                 for item in artifacts:
                     item.update(results.get(item['path'], {}))
             else:
+                if raster['reason'] == 'interrupted' and not raster.get('asked'):
+                    raise Interrupted('Conversion interrupted: a child of the engine was stopped; source and '
+                                      'partials preserved, retry available')
                 if raster['reason'] in {'interrupted', 'cancelled'}:
                     raise StorageError(raster['reason'])
                 for item in artifacts:
@@ -773,43 +879,130 @@ class Worker:
                                 "message": "A GPU window left by a previous worker cannot be closed: " + exc.detail,
                                 "converters": None})
                 raise StorageError(gpu_codes.GPU_UNRECOVERABLE + ": " + exc.detail) from None
-            self.reconcile()
+            try:
+                self.reconcile()
+            except Unattested as exc:
+                # the commitments stay: the service restarts and asks again, until the launcher answers
+                self.heartbeat({"ready": False, "code": Code.ISOLATION_UNAVAILABLE.value, "message": str(exc)[:300],
+                                "converters": None})
+                raise
             if self.stop:
                 self.expire_heartbeat()
                 return
-            probe = self.storage.root / 'staging' / ('worker-' + self.token)
-            make_directory(self.storage.root, 'staging/' + probe.name)
-            with self.storage.reservation('worker', (2 * self.settings.output_mib + 1) * 1048576,
-                                          self.token, ('staging/' + probe.name,)):
-                receipt = execute(self.settings, probe, 'markdown_for_llms.engines.probe', deadline=20,
-                                  memory_mib=256, label='probe')
-            if receipt['exit'] or receipt['reason']:
-                self.heartbeat({"ready": False, "message": "Isolation unavailable; no fallback", "converters": None})
-                raise StorageError('Isolation readiness failed; diagnostic retained')
+            failed = self.probe()
+            if failed:
+                self.heartbeat({"ready": False, "code": Code.ISOLATION_UNAVAILABLE.value, "converters": None,
+                                "message": "Isolation unavailable; no fallback (%s)" % ", ".join(failed)[:200]})
+                raise StorageError('Isolation readiness failed (%s); diagnostic retained' % ", ".join(failed)[:200])
             try:
                 while not self.stop:
-                    try:
-                        self.ready()
-                        self.heartbeat()
-                    except (ValueError, OSError, ImportError) as exc:
-                        self.heartbeat({"ready": False, "message": "Conversion engine unavailable: " + str(exc)[:120],
-                                        "converters": None})
-                        if once:
-                            raise StorageError("Conversion engine unavailable: " + str(exc)[:120]) from None
-                        time.sleep(self.settings.poll_seconds)
-                        continue
-                    self.gpu.poll()
-                    row = self.claim()
-                    if row:
-                        self.process(row)
+                    self.turn(once)
                     if once:
                         break
                     time.sleep(self.settings.poll_seconds)
             finally:
                 self.gpu.shutdown()          # a session open: CLOSING to a final state, then the exit
+                for lease in self.kept.values():
+                    lease.abandon()          # the records stay: the next worker attests from them before its first claim
             # a clean exit (--once, SIGINT, SIGTERM): the heartbeat expires; a worker stopped by an error keeps it,
             # with its message (a GPU window it cannot close, the isolation)
             self.expire_heartbeat()
+
+    def turn(self, once=False):
+        """One turn of the loop: the commitments still kept first, then the readiness, the GPU session and at most
+        one job. Returns the row it processed, or None."""
+        if not self.release_kept():
+            # B1: no claim while a commitment is kept. The worker stays alive (with Docker down nobody would
+            # restart it) and the GPU session, if one is open, still closes at its term
+            self.heartbeat(self.pending())
+            self.gpu.poll()
+            return None
+        try:
+            asked = self.service.routes_refresh_asked()
+            if asked > self._refresh_seen:
+                # `POST /api/v1/routes/refresh`, `mdf routes --refresh`: the routes are checked now, not at the next minute
+                self._refresh_seen, self._ready_at = asked, None
+            state = self.ready()
+            self.heartbeat()
+        except (ValueError, OSError, ImportError) as exc:
+            self.heartbeat({"ready": False, "message": "Conversion engine unavailable: " + str(exc)[:120],
+                            "converters": None})
+            if once:
+                raise StorageError("Conversion engine unavailable: " + str(exc)[:120]) from None
+            return None
+        self.gpu.poll()
+        if state is None:
+            # the children would not run the code of this worker (`ready`): no job is taken until they do
+            if once:
+                raise StorageError(self.readiness["message"])
+            return None
+        row = self.claim()
+        if row:
+            self.process(row)
+        return row
+
+    def code(self):
+        """What this process runs: its code, the build inputs its image recorded, its environment. Read once: the
+        modules of a process are those of its start, and the files of an image do not change."""
+        if self._code is None:
+            self._code = containers.identity()
+        return self._code
+
+    def launcher_code(self):
+        """The code of the launcher against the code of this worker, without a container: (`hello`, what failed).
+        The code always; the build inputs when this process runs from an image that recorded its own. The children
+        are containers of the image of the launcher: when it differs, they would run another code than this worker
+        (the launcher was rebuilt and recreated while this worker went on: `make up` recreates both)."""
+        try:
+            hello = containers.launcher().hello()
+        except (containers.Unreachable, containers.Refused) as exc:
+            return None, ["launcher: %s" % exc]
+        mine = self.code()
+        stale = [name for name in ("payload_sha256", "inputs_sha256")
+                 if hello.get(name) != mine[name] and (name == "payload_sha256" or mine[name] is not None)]
+        return hello, (["stale engine image (%s): run `make up`" % ", ".join(stale)] if stale else [])
+
+    def same_engine(self):
+        """At every check of the routes (`ready`): the comparison of the code with the launcher, and the whole
+        probe again when the launcher is another one than the one of the last probe. Returns what failed. A
+        launcher that does not answer is not judged here: the routes that need it say so (`availability`), the
+        others still run."""
+        hello, failed = self.launcher_code()
+        if hello is None:
+            return []
+        if failed:
+            return failed
+        if self.launcher_instance is not None and hello.get("instance") != self.launcher_instance:
+            return self.probe()
+        return []
+
+    def probe(self):
+        """The probe of the worker at its start, in place of the first job: a light child of the launcher reports
+        what it can and cannot do (`selfprobe`, container mode) and the code it runs. Returns what failed: the
+        launcher runs another build of the package than this worker (the payload gate: run `make up`), the child
+        did not run, or an entry of its report. Empty when conversion work may be admitted."""
+        hello, failed = self.launcher_code()
+        if failed:
+            return failed
+        mine = self.code()
+        # the first probe keeps the name of the worker; one repeated for another launcher has a directory of its own
+        name = 'worker-' + self.token + ('-%d' % self.probes if self.probes else '')
+        self.probes += 1
+        probe = self.storage.root / 'staging' / name
+        make_directory(self.storage.root, 'staging/' + name)
+        with self.committed(self.token, (2 * self.settings.output_mib + 1) * 1048576, ('staging/' + name,)):
+            receipt = execute(self.settings, probe, containers.PROBE_MODULE, args=['container'], deadline=60,
+                              memory_mib=256, label='probe', attempt=self.token, results=('probe.json',))
+        if receipt['exit'] or receipt['reason']:
+            return ["probe: exit %s, %s" % (receipt['exit'], receipt['reason'])]
+        try:
+            report = json.loads((receipt['dir'] / 'probe.json').read_bytes())
+        except (OSError, ValueError):
+            return ["probe: no report"]
+        failed = selfprobe.verdict(report, uid=os.getuid(), payload_sha256=mine["payload_sha256"])
+        if not failed:
+            self.launcher_instance = hello.get("instance")      # only a probe that passed is not repeated
+        return failed
 
 
 def validate_engine(engine):

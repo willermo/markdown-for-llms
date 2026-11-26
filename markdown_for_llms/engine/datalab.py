@@ -21,9 +21,12 @@ cancellation; a failed delete is the visible warning `datalab_delete_failed`; wi
 result stays one day on Datalab). An answer of the POST that is not a clear acceptance or a
 clear refusal is never followed by another POST.
 
-The key is `DATALAB_API_KEY`, read from the file given with `--env-file` (a regular file of the
-caller with mode 0600, opened without following links; otherwise refused) or from the
-environment of the process; it is never a setting, never written, never passed to a child.
+The key is `DATALAB_API_KEY`, read by name from the keys file (`--keys-file`, or `--env-file` when it is
+the only one given: a regular file of the caller with mode 0600 that still has a name, opened without following
+links; otherwise refused), again at every use: a conversion, a computation of the state of the route. It is
+never a setting, never written, never passed to a child, and never read from the environment of the process
+(MFL051: no key is in the environment of a container); only a caller that passes an `environ` of its own gets
+that fallback.
 
 Requests: `requests` with `trust_env=False` (no proxy or netrc of the environment), HTTPS to the
 fixed host only, certificate verification on, bounded timeouts.
@@ -83,7 +86,8 @@ def _parse_env(data):
 
 
 def read_key(env_file=None, environ=None):
-    """The key from `env_file` (checked as the module docstring says) or from the environment."""
+    """The key from `env_file` (checked as the module docstring says), then from `environ` when the caller
+    gives one. `datalab_key_unsafe`, `datalab_key_missing`."""
     if env_file is not None:
         try:
             value = envfile.read(env_file, [KEY_NAME]).get(KEY_NAME)
@@ -91,10 +95,20 @@ def read_key(env_file=None, environ=None):
             raise EngineError(Code.DATALAB_KEY_UNSAFE, str(exc)) from None
         if value:
             return Key(value)
-    value = (os.environ if environ is None else environ).get(KEY_NAME)
+    value = (environ or {}).get(KEY_NAME)
     if not value:
-        raise EngineError(Code.DATALAB_KEY_MISSING, KEY_NAME + " in the env file or the environment")
+        raise EngineError(Code.DATALAB_KEY_MISSING, KEY_NAME + " in the keys file")
     return Key(value)
+
+
+def key_state(keys_file):
+    """{"available", "code", "detail"} of the key of the route, from the keys file read now: the name is looked
+    for, the value is never kept. `detail` says what to do (`make restart` after a replaced file), never a value."""
+    try:
+        read_key(keys_file)
+    except EngineError as exc:
+        return {"available": False, "code": exc.code.value, "detail": exc.detail}
+    return {"available": True, "code": None, "detail": None}
 
 
 def parse_cap(value):

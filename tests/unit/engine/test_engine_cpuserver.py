@@ -1,7 +1,8 @@
 """The local CPU server of the `marker-server` route (MFL033, plan r2 §7): preparation and checks of a
 release, the route on the `cpu` endpoint, SIGTERM in the middle of a conversion. The suite has no
 GGUF weights: a fake `llama-server` (a Python program of this file) is packed into a fake release
-with its own manifest, and runs in the real sandbox and scope; the real build is proved in N3 with
+with its own manifest, prepared in the volume of the CPU server of the tests, and runs as a real
+`cpuserver` child of the launcher; the real build was proved in N3 of MFL033 with
 `mdf prepare --cpu-server` and the measurements."""
 import hashlib
 import io
@@ -19,10 +20,10 @@ import unittest
 from types import SimpleNamespace
 
 from engine_test_support import SCAN, make_pdf, scan_of
-from markdown_for_llms.engine import cpuserver, isolation, servers
+from markdown_for_llms.engine import containers, cpuserver, servers
 from markdown_for_llms.engine.codes import Code, EngineError
 
-FAKE_LLAMA = r'''#!/usr/bin/python3 -I
+FAKE_LLAMA = r'''#!/opt/mdf/venv/bin/python -I
 import json, os, socketserver, sys, time
 from http.server import BaseHTTPRequestHandler
 args = sys.argv[1:]
@@ -63,6 +64,9 @@ S(host, H).serve_forever()
 '''
 
 
+MARK = ".mdf-test-volume"
+
+
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -70,7 +74,7 @@ def sha(data):
 def model_root():
     root = os.environ.get("FULL_CHECK_MODEL_ROOT")
     if not root:
-        raise AssertionError("FULL_CHECK_MODEL_ROOT is not set: run the suite from scripts/full-check.sh")
+        raise AssertionError("FULL_CHECK_MODEL_ROOT is not set: run the suite with `make test`")
     return root
 
 
@@ -81,7 +85,26 @@ class FakeRelease(unittest.TestCase):
         self.base = Path(self.tmp.name)
         self.sources = self.base / "sources"
         self.sources.mkdir()
-        self.root = self.base / "cpu-server"
+        # the launcher mounts `llama/` and `gguf/` of the volume of the CPU server in the child: the fake release is
+        # prepared there. The volume of a check is of that check; one that holds anything else is not touched.
+        self.root = Path(containers.CPU_SERVER_ROOT)
+        if not self.root.is_dir():
+            self.fail("no volume of the CPU server at %s: run the suite with `make test`" % self.root)
+        if os.listdir(self.root) and not (self.root / MARK).exists():
+            self.fail("%s holds a CPU server that is not of the tests: nothing is removed" % self.root)
+        self.clear()
+        (self.root / MARK).write_text("the fake release of tests/unit/engine/test_engine_cpuserver.py\n")
+        self.addCleanup(self.clear)
+
+    def clear(self):
+        for entry in self.root.iterdir():
+            if entry.is_dir() and not entry.is_symlink():
+                shutil.rmtree(entry)
+            else:
+                entry.unlink()
+
+    def children(self, attempt):
+        return containers.launcher().list(containers.prefix_of(attempt))
 
     def release(self, delay=0, extra_member=None, help_text=True):
         program = FAKE_LLAMA if help_text else FAKE_LLAMA.replace("UNIX socket paths", "addresses").replace(".sock", "")
@@ -121,7 +144,7 @@ class TestPrepare(FakeRelease):
         self.assertEqual(record["binary"], "llama-b12040/llama-server")
         again = cpuserver.prepare(self.root, fetch=self.fetch, log=lambda line: None, m=m)
         self.assertEqual((again["downloaded"], again["kept"]), (0, 3))
-        tree = self.root / "llama-b12040" / "llama-b12040"
+        tree = self.root / "llama" / "llama-b12040"
         (tree / "LICENSE").write_text("changed\n")
         with self.assertRaises(EngineError) as caught:
             cpuserver.verify(self.root, m)
@@ -137,13 +160,32 @@ class TestPrepare(FakeRelease):
     def test_a_build_without_unix_sockets_and_an_archive_with_a_link_outside(self):
         m = self.release(help_text=False)
         self.assertFalse(cpuserver.prepare(self.root, fetch=self.fetch, log=lambda line: None, m=m)["unix_socket"])
-        shutil.rmtree(self.root)
+        self.clear()
         link = tarfile.TarInfo("llama-b12040/escape")
         link.type, link.linkname = tarfile.SYMTYPE, "../../outside"
         m = self.release(extra_member=link)
         with self.assertRaises(EngineError):
             cpuserver.prepare(self.root, fetch=self.fetch, log=lambda line: None, m=m)
-        self.assertFalse((self.root / "llama-b12040").exists())
+        self.assertFalse((self.root / "llama").exists())
+
+    def test_a_root_that_is_not_the_volume_or_another_release_is_refused(self):
+        """The child gets `llama/` and `gguf/` of the volume, whatever the caller names: a prepared copy elsewhere
+        is refused, and so is a tree extracted from another release."""
+        m = self.release()
+        cpuserver.prepare(self.root, fetch=self.fetch, log=lambda line: None, m=m)
+        copy = self.base / "copy"
+        shutil.copytree(self.root, copy)
+        for call in (lambda: cpuserver.verify(copy, m), lambda: cpuserver.prepare(copy, fetch=self.fetch, log=lambda line: None, m=m),
+                     lambda: cpuserver.start(copy, "elsewhere", self.base / "log", m)):
+            with self.assertRaises(EngineError) as caught:
+                call()
+            self.assertEqual(caught.exception.code, Code.SERVER_NOT_CONFIGURED)
+        other = json.loads(json.dumps(m))
+        other["llama_server"]["release"] = "b99999"
+        with self.assertRaises(EngineError) as caught:
+            cpuserver.verify(self.root, other)
+        self.assertEqual(caught.exception.code, Code.SERVER_NOT_CONFIGURED)
+        self.assertEqual(self.children("elsewhere"), [])
 
 
 DRIVER = Path(__file__).resolve().parent / "cpu_sigterm_driver.py"
@@ -163,39 +205,39 @@ class TestRoute(FakeRelease):
         subprocess.run(self.driver(attempt), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=600)
         return json.loads((self.base / ("out-" + attempt) / "engine.json").read_text())
 
-    def test_the_cpu_endpoint_runs_its_server_in_a_scope_and_stops_it(self):
+    def test_the_cpu_endpoint_runs_its_server_in_a_container_and_stops_it(self):
         m = self.release()
         cpuserver.prepare(self.root, fetch=self.fetch, log=lambda line: None, m=m)
         result = self.convert("cpusrv", m)
         self.assertEqual(result["status"], "complete", result.get("error"))
         self.assertIn("Page of the fake CPU server", (self.base / "out-cpusrv" / "document.md").read_text())
         cpu = result["components"]["server"]["cpu"]
-        self.assertEqual((cpu["release"], cpu["run"]["scope"], cpu["run"]["scope_after"]),
-                         ("b12040", "mdf-eng-cpusrv-llama.scope", "absent"))
+        self.assertEqual((cpu["release"], cpu["run"]["cause"]), ("b12040", "stopped"))      # ended by its caller, attested
+        self.assertRegex(cpu["run"]["container"], r"^mdf-eng-cpusrv-cpuserver-\d+$")
         self.assertEqual(result["components"]["server"]["versions"], {"llamacpp": "b12040-test"})
         self.assertEqual(result["components"]["server"]["endpoint"]["pins"], {"llama.cpp": "b12040"})
-        self.assertTrue(any(s["tool"] == "bwrap:llama-server" for s in result["route"]["steps"]))
+        self.assertTrue(any(s["tool"] == "child:llama-server" for s in result["route"]["steps"]))
         self.assertEqual(result["marker_server"]["requests"]["chat"], 1)
-        self.assertEqual(isolation.list_scopes("mdf-eng-cpusrv-"), [])
+        self.assertEqual(self.children("cpusrv"), [])
+        self.assertFalse((Path(containers.RUN_ROOT) / "sock" / containers.prefix_of("cpusrv")).exists())
 
     def test_a_server_not_prepared_is_refused_before_anything_starts(self):
         m = self.release()
         result = self.convert("cpunone", m)
         self.assertEqual((result["status"], result["error"]["code"]), ("failed", Code.SERVER_NOT_CONFIGURED.value))
 
-    def test_sigterm_in_the_middle_leaves_no_scope_and_no_socket_directory(self):
-        """Plan r2 §7: SIGTERM is SIGINT, so the `finally` of the engine stops the CPU server, the
-        Marker child, their scopes and the private socket directory."""
+    def test_sigterm_in_the_middle_leaves_no_container_and_no_socket_directory(self):
+        """Plan r2 §7: SIGTERM is SIGINT, so the engine, on its way out, ends the CPU server and the Marker
+        child, attests that their containers are gone and removes the socket directory of the attempt."""
         m = self.release(delay=120)
         cpuserver.prepare(self.root, fetch=self.fetch, log=lambda line: None, m=m)
-        runtime = Path(os.environ.get("XDG_RUNTIME_DIR") or "/tmp")
-        before = set(runtime.glob("mdf-*"))
+        sockets = Path(containers.RUN_ROOT) / "sock" / containers.prefix_of("cputerm")
         proc = subprocess.Popen(self.driver("cputerm"), stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         self.addCleanup(lambda: proc.poll() is None and proc.kill())
         deadline = time.monotonic() + 180
         while time.monotonic() < deadline:
-            scopes = isolation.list_scopes("mdf-eng-cputerm-")
-            if any(s.endswith("-llama.scope") for s in scopes) and any("-marker-" in s for s in scopes):
+            running = [c["name"] for c in self.children("cputerm") if c["state"] == "running"]
+            if any("-cpuserver-" in n for n in running) and any("-marker-" in n for n in running):
                 break
             self.assertIsNone(proc.poll(), proc.stderr.read().decode("utf-8", "replace")[-2000:] if proc.poll() else "")
             time.sleep(0.5)
@@ -204,12 +246,8 @@ class TestRoute(FakeRelease):
         time.sleep(3)
         proc.send_signal(signal.SIGTERM)
         self.assertEqual(proc.wait(timeout=90), 130)
-        for _ in range(20):
-            if not isolation.list_scopes("mdf-eng-cputerm-"):
-                break
-            time.sleep(0.5)
-        self.assertEqual(isolation.list_scopes("mdf-eng-cputerm-"), [])
-        self.assertEqual(set(runtime.glob("mdf-*")) - before, set())
+        self.assertEqual(self.children("cputerm"), [])              # both removed before the process ended
+        self.assertFalse(sockets.exists())
         result = json.loads((self.base / "out-cputerm" / "engine.json").read_text())
         self.assertEqual(result["error"]["code"], Code.INTERRUPTED.value)
 

@@ -7,11 +7,14 @@ its `owner` is free AND the launcher attests that the container does not exist; 
 launcher unreachable, it stays, with its reason. A name is among the removed only when its folder is gone
 (SOL-A1-N2): a removal that failed keeps it, as `not_removed`, and so does `Call.close`.
 """
+import fcntl
 import os
 from pathlib import Path
+import stat
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 import containers_test_support as support
 from markdown_for_llms.engine import containers
@@ -186,23 +189,66 @@ class TestSweep(Base):
     def test_the_reasons_are_a_closed_list(self):
         self.assertEqual(containers.SWEEP_KEPT, ("held", "young", "owner", "unattested", "container", "not_removed"))
 
-    def test_a_folder_that_cannot_be_removed_is_kept_and_never_reported_as_removed(self):
-        """SOL-A1-N2. What a command left in `scratch` may not be removable (here a directory that cannot be
-        entered): the folder stays on the volume, so its name stays among the kept, with the reason; once it can
-        be removed, the next sweep takes it."""
+    def locked_folder(self):
         folder = self.folder(support.name())
         locked = folder / "scratch" / "closed-directory"
-        locked.mkdir()
-        (locked / "data").write_text("synthetic output")
+        (locked / "deeper").mkdir(parents=True)
+        (locked / "deeper" / "data").write_text("synthetic output")
+        (locked / "deeper").chmod(0)
         locked.chmod(0)
-        self.addCleanup(lambda: locked.exists() and locked.chmod(0o700))
-        self.assertEqual(self.sweep(), ([], {support.name(): "not_removed"}))
-        self.assertTrue(folder.is_dir())
-        self.assertTrue(locked.is_dir())
-        self.assertEqual(self.sweep(), ([], {support.name(): "not_removed"}))      # and again: the owner is still free
-        locked.chmod(0o700)
+        self.addCleanup(lambda: locked.exists() and (locked.chmod(0o700), (locked / "deeper").chmod(0o700)))
+        return folder, locked
+
+    def test_a_folder_that_cannot_be_removed_is_kept_and_never_reported_as_removed(self):
+        """SOL-A1-N2. What a command left in `scratch` may not be removable (here directories that cannot be
+        entered): when its permissions cannot be given back either, the folder stays on the volume, so its name
+        stays among the kept, with the reason, at every pass."""
+        folder, locked = self.locked_folder()
+        with mock.patch.object(containers, "restore_permissions", lambda root: None):
+            self.assertEqual(self.sweep(), ([], {support.name(): "not_removed"}))
+            self.assertTrue(folder.is_dir())
+            self.assertTrue(locked.is_dir())
+            self.assertEqual(self.sweep(), ([], {support.name(): "not_removed"}))      # and again: the owner is still free
+
+    def test_the_permissions_a_command_took_away_are_given_back_and_the_folder_goes(self):
+        """A2-d. With the owner free and the absence of the container attested, the sweep gives the directories
+        of the folder their permissions back and tries again: the folder goes at that pass."""
+        folder, locked = self.locked_folder()
         self.assertEqual(self.sweep(), ([support.name()], {}))
         self.assertFalse(folder.exists())
+
+    def test_the_permissions_are_given_back_only_inside_the_folder_and_through_no_link(self):
+        """A2-d. What the folder points to is not touched: a link to a directory outside it, whose permissions were
+        taken away, is removed as a link, and that directory keeps its mode."""
+        outside = self.work / "outside"
+        (outside / "inner").mkdir(parents=True)
+        (outside / "inner").chmod(0)
+        outside.chmod(0o500)
+        self.addCleanup(lambda: (outside.chmod(0o700), (outside / "inner").chmod(0o700)))
+        folder, locked = self.locked_folder()
+        os.symlink(outside, folder / "scratch" / "to-outside")
+        os.symlink(outside / "inner", folder / "scratch" / "to-inner")
+        self.assertEqual(self.sweep(), ([support.name()], {}))
+        self.assertFalse(folder.exists())
+        self.assertEqual((stat.S_IMODE(outside.stat().st_mode), stat.S_IMODE(os.lstat(outside / "inner").st_mode)), (0o500, 0))
+
+    def test_nothing_is_given_back_while_the_call_lives_or_its_container_is_not_attested_absent(self):
+        """A2-d: only with the owner free and the absence attested."""
+        folder, locked = self.locked_folder()
+        calls = []
+        with mock.patch.object(containers, "restore_permissions", lambda root: calls.append(root)):
+            self.launcher.children[support.name()] = {"state": "exited", "exit": 0, "oom_killed": False}
+            self.assertEqual(self.sweep(), ([], {support.name(): "container"}))
+            del self.launcher.children[support.name()]
+            self.launcher.down = True
+            self.assertEqual(self.sweep(), ([], {support.name(): "unattested"}))
+            self.launcher.down = False
+            fd = os.open(folder / "owner", os.O_RDWR)
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            self.addCleanup(os.close, fd)
+            self.assertEqual(self.sweep(), ([], {support.name(): "held"}))
+        self.assertEqual(calls, [])
+        self.assertEqual(stat.S_IMODE(os.lstat(locked).st_mode), 0)
 
     def test_close_says_whether_the_folder_is_gone(self):
         call = containers.Call(self.work, support.name())
@@ -217,8 +263,7 @@ class TestSweep(Base):
         self.assertEqual([str(p.relative_to(call.root)) for p in sorted(call.root.rglob("*"))], ["scratch", "scratch/closed-directory"])
         self.assertIsNone(call.owner_fd)
         self.assertEqual(containers.sweep(self.launcher, self.work), ([], {support.name(): "young"}))
-        self.assertEqual(containers.sweep(self.launcher, self.work, min_age=0), ([], {support.name(): "not_removed"}))
-        locked.chmod(0o700)
+        self.assertTrue(locked.is_dir())                    # the call itself gives no permission back: the sweep does
         self.assertIs(containers.Call(self.work, support.name("light", 2)).close(remove=True), True)
         self.assertIs(containers.Call(self.work, support.name("light", 3)).close(remove=False), True)   # nothing was to go
         self.assertEqual(sorted(os.listdir(self.work / "call")), [support.name(), support.name("light", 3)])

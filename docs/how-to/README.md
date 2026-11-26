@@ -1,5 +1,6 @@
 # How-to guides
 
+- [Run the product in containers](run-in-containers.md): `make up`, the commands, the env file and the keys, the state of the routes, `mdf` on the command line.
 - [Prepare and update the uv environment](uv-environment.md), for the legacy pipeline and the new product.
 - [Prepare the experimental local product](local-product-setup.md).
 - [Convert documents with `mdf convert` and the archive of the product](convert-documents.md): the conversion engine directly, the archive with the Web UI, the API and `mdf submit`, Datalab in the service.

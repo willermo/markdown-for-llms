@@ -113,8 +113,8 @@ class SettingsTests(Base):
 
 
 class EnvFileTests(Base):
-    def env(self, text, mode=0o600):
-        path = self.tmp / "mdf.env"
+    def env(self, text, mode=0o600, name="mdf.env"):
+        path = self.tmp / name
         path.write_text(text)
         path.chmod(mode)
         return path
@@ -139,7 +139,7 @@ class EnvFileTests(Base):
         self.assertNotIn("synthetic", seen[0])
         self.assertNotIn("RUNPOD_API_KEY", seen[0])
 
-    def run_worker(self, path):
+    def run_worker(self, path, keys=None):
         calls = []
 
         class FakeWorker:
@@ -151,25 +151,26 @@ class EnvFileTests(Base):
                 calls.append(("run", once))
         out = io.StringIO()
         with patch("markdown_for_llms.worker.Worker", FakeWorker), redirect_stdout(out):
-            code = main(["--env-file", str(path), "--data-root", self.base["data_root"], "--model-root",
-                         self.base["model_root"], "worker", "--once"])
+            code = main(["--env-file", str(path), *(["--keys-file", str(keys)] if keys is not None else []),
+                         "--data-root", self.base["data_root"], "--model-root", self.base["model_root"], "worker", "--once"])
         return code, out.getvalue(), calls
 
-    def test_the_env_file_of_the_worker_is_checked_first(self):
+    def test_the_worker_starts_whatever_the_state_of_its_keys_file(self):
+        """MFL051 (rilievo I): before, `mdf worker` checked its env file first and left with 1 and
+        `server_key_unsafe`. In the containers its settings come from another file: it starts, and a keys file that
+        is not safe is refused at every read of a key (`server_key_unsafe`, `datalab_key_unsafe` of the route)."""
         good = self.env("MDF_POLL_SECONDS=1\n")
         code, _, calls = self.run_worker(good)
         self.assertEqual((code, calls), (0, [str(good.absolute()), ("run", True)]))
+        settings = self.env("MDF_POLL_SECONDS=1\n", name="settings.env")
         link = self.tmp / "link.env"
         link.symlink_to(good)
-        fifo = self.tmp / "fifo.env"
-        os.mkfifo(fifo)
-        for path, mode in ((good, 0o644), (link, 0o600), (fifo, None)):
+        for path, mode in ((good, 0o644), (link, 0o600), (self.tmp / "absent.env", None)):
             with self.subTest(path=path.name, mode=mode):
                 if mode is not None:
                     good.chmod(mode)
-                with patch.object(Settings, "load", side_effect=AssertionError("read before the check")):
-                    code, out, calls = self.run_worker(path)
-                self.assertEqual((code, json.loads(out)["code"], calls), (1, "server_key_unsafe", []))
+                code, out, calls = self.run_worker(settings, keys=path)
+                self.assertEqual((code, out, calls), (0, "", [str(path.absolute()), ("run", True)]))
                 good.chmod(0o600)
 
     def test_the_keys_of_the_gpus_leave_the_environment_of_the_worker(self):
@@ -194,7 +195,8 @@ class EnvFileTests(Base):
             self.assertNotIn("RUNPOD_API_KEY", os.environ)
             self.assertNotIn("DATALAB_API_KEY", os.environ)
             self.assertEqual(worker.env_file, str(self.tmp / "keys.env"))
-            self.assertIsNotNone(worker.datalab_key)
+            # MFL051: the name leaves the environment and its value is dropped; the key is the one of the keys file
+            self.assertEqual(worker.datalab_state()["code"], "datalab_key_unsafe")       # this test wrote no keys file
             worker.storage.close()
 
     def test_a_malformed_servers_file_never_stops_the_worker(self):

@@ -157,6 +157,17 @@ def create_app(settings):
         """The worker and, per converter, whether its route can run (MFL032 C2)."""
         return worker_state()
 
+    @app.get('/api/v1/routes')
+    def routes_state():
+        """The state of every route as the worker last computed it (`mdf-routes/1`, MFL051): broken, not configured
+        (with what is missing: names, never values), disabled or available. Read from the heartbeat."""
+        return service.routes()
+
+    @app.post('/api/v1/routes/refresh', status_code=202)
+    def routes_refresh():
+        """Ask the worker to check the routes at its next turn."""
+        return service.routes_refresh()
+
     @app.get('/api/v1/session')
     def session():
         """The formats of the matrix with their routes, the availability of each converter as the

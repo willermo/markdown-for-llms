@@ -74,8 +74,7 @@ class ProgressPersistenceTests(unittest.TestCase):
     def test_conversion_on_the_engine_records_child_progress_and_finishing(self):
         job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
         calls, seen = [], []
-        events = [{"event": "child", "module": "markdown_for_llms.engine.marker_child", "pid": 999999999,
-                   "scope": "mdf-eng-x-marker-1.scope"},
+        events = [{"event": "child", "module": "markdown_for_llms.engine.marker_child", "container": "mdf-eng-x-marker-1"},
                   {"event": "progress", "progress": pages_progress(9, 9)}]
         engine = fake_convert(events=events, calls=calls,
                               before=lambda observer: seen.append(self.stored(job['id'], 'child')))
@@ -90,7 +89,7 @@ class ProgressPersistenceTests(unittest.TestCase):
         row = self.service.storage.get(job['id'])
         self.assertEqual(call['request'], {'route': None, 'ocr': 'auto', 'lang': None, 'attempt': row['attempt_id']})
         self.assertEqual((call['name'], call['model_root']), ('p.pdf', self.settings.model_root))
-        self.assertEqual(seen, [{'pid': 999999999, 'scope': 'mdf-eng-x-marker-1.scope'}])        # K7
+        self.assertEqual(seen, [{'container': 'mdf-eng-x-marker-1'}])                            # K7
         stored = self.stored(job['id'])
         self.assertEqual((stored['stage'], stored['estimate_percent'], stored['current']), ('finishing', 95.0, 9))
         result = self.service.storage.root / row['result_path']

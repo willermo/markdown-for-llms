@@ -1,12 +1,11 @@
-# Development project of MFL051 (tranche A1): a dedicated launcher, bound by ID to the image `engine` built
-# from the tree under test, and the container that runs the component tests against it. Started only by
-# `make test-components`, with a project name, volumes and image tags of its own for each invocation; nothing of
-# the product uses this file. Every value comes from the Makefile; nothing has a default.
+# Development project of MFL051: a dedicated launcher, bound by ID to the image `engine` built from the tree
+# under test, and the containers that run the checks against it. Started only by `make check`, `make test`
+# (scripts/check.sh) and `make test-components`, with a project name, volumes and image tags of its own for each
+# invocation; nothing of the product uses this file. Every value comes from the Makefile or from scripts/check.sh.
 #
-#   init       once: gives the root of each named volume to the user of the host, mode 0700. The only
-#              container with a capability (CHOWN), without network, with a read-only root. A root that is
-#              already right is not touched; otherwise it is taken (chown 0:0), given its mode by its owner and
-#              handed back, so no CAP_FOWNER is needed and two runs in a row leave the same state.
+#   init       once: gives the root of each named volume to the user of the host, mode 0700, with the script of
+#              the product (docker/app/init-volumes.sh of the tree under test). The only container with a
+#              capability (CHOWN), without network, with a read-only root.
 #   launcher   the one process with the Docker socket (markdown_for_llms/launcher.py): the user of the host, the
 #              GID of the socket as its only extra group, no network, no capability, a read-only root; it sees
 #              the work and run volumes read-only. `restart: "no"`: the tests kill it and need it to stay down.
@@ -17,8 +16,91 @@
 #              created and record it. It is a development tool, not a part of the product.
 #   no-socket, no-group   two launchers that must refuse to start: a Docker socket that does not exist, and the
 #              real socket without its group (the access check of the launcher, with the real identity).
+#   check      the full check (`make check`): scripts/full-check.sh on a clone of HEAD mounted at /check/src, the
+#              evidence mounted inside the clone, in a container with the FIXED NAME `mdf-full-check`: Docker admits
+#              one, so one full check runs at a time on a daemon. No network, a memory cap without swap, no
+#              `MDF_` variable, and NO Docker socket: it is a client of the launcher like the worker. The only
+#              service without a read-only root: it installs the wheel under test in the venv of its own layer.
+#              The weights of the Marker route come from the models volume of the product, read-only.
+#   test       the same chain on the working copy (`make test`), mounted at its own path, without a fixed name.
 name: mdf-dev
+x-check: &check
+  image: ${MDF_COMPOSE_DEV_IMAGE:?}
+  user: "${MDF_COMPOSE_UID:?}:${MDF_COMPOSE_GID:?}"
+  network_mode: none
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges"]
+  mem_limit: ${MDF_COMPOSE_CHECK_MEMORY:-12g}
+  memswap_limit: ${MDF_COMPOSE_CHECK_MEMORY:-12g}
+  pids_limit: 4096
+  restart: "no"
+  working_dir: ${MDF_COMPOSE_TARGET:-/check/src}
+  environment:
+    HOME: /tmp
+    GIT_OPTIONAL_LOCKS: "0"
+    FULL_CHECK_UV: /opt/mdf/uv
+    FULL_CHECK_PYTHON_INSTALL_DIR: /opt/mdf/python
+    FULL_CHECK_DEV_PYTHON: /opt/mdf/venv/bin/python
+    FULL_CHECK_BACKEND_WHEEL: /opt/mdf/backend/setuptools-84.0.0-py3-none-any.whl
+    FULL_CHECK_UV_CACHE_DIR: /check/cache/uv
+    FULL_CHECK_MODEL_ROOT: /models/marker
+    FULL_CHECK_PROOF_DIR: ${MDF_COMPOSE_PROOF_TARGET:-/check/src/.cache/full-check/proof}
+    FULL_CHECK_HEAD: ${MDF_COMPOSE_HEAD:-}
+  tmpfs:
+    - /check/cache:rw,nosuid,nodev,size=256m,uid=${MDF_COMPOSE_UID:?},gid=${MDF_COMPOSE_GID:?},mode=0700
+  entrypoint: ["/bin/bash", "-euc"]
 services:
+  check:
+    <<: *check
+    profiles: [check]
+    container_name: mdf-full-check
+    command:
+      - |
+        cp -R /opt/mdf/seed/uv /check/cache/uv
+        if [ "$$(git rev-parse HEAD)" != "$$FULL_CHECK_HEAD" ]; then echo "STOP the clone is not at $$FULL_CHECK_HEAD" >&2; exit 1; fi
+        exec scripts/full-check.sh
+      - check
+    volumes:
+      - type: bind
+        source: ${MDF_COMPOSE_SOURCE:?}
+        target: ${MDF_COMPOSE_TARGET:-/check/src}
+      - type: bind
+        source: ${MDF_COMPOSE_PROOF:-/nonexistent}
+        target: ${MDF_COMPOSE_PROOF_TARGET:-/check/src/.cache/full-check/proof}
+      - mdf-launcher:/run/mdf/launcher
+      - mdf-work:/work
+      - mdf-run:/run/mdf/run
+      - mdf-weights:/models:ro
+      - mdf-cpu-server:/cpu-server
+
+  test:
+    <<: *check
+    profiles: [test]
+    command:
+      - |
+        cp -R /opt/mdf/seed/uv /check/cache/uv
+        mapfile -t selection < /out/selection
+        exec scripts/full-check.sh --working-tree "$${selection[@]}"
+      - test
+    volumes:
+      - type: bind
+        source: ${MDF_COMPOSE_SOURCE:?}
+        target: ${MDF_COMPOSE_TARGET:-/check/src}
+      - type: bind
+        source: ${MDF_COMPOSE_COMMON:-/nonexistent}
+        target: ${MDF_COMPOSE_COMMON:-/nonexistent}
+        read_only: true
+      - type: bind
+        source: ${MDF_COMPOSE_OUT:?}
+        target: /out
+        read_only: true
+      - mdf-launcher:/run/mdf/launcher
+      - mdf-work:/work
+      - mdf-run:/run/mdf/run
+      - mdf-weights:/models:ro
+      - mdf-cpu-server:/cpu-server
+
+
   init:
     image: ${MDF_COMPOSE_ENGINE_IMAGE:?}
     user: "0:0"
@@ -30,19 +112,20 @@ services:
     mem_limit: 128m
     memswap_limit: 128m
     restart: "no"
-    entrypoint: ["/bin/sh", "-euc"]
+    entrypoint: ["/bin/sh", "/init-volumes.sh"]
     command:
-      - |
-        for root in /volumes/*; do
-          if [ -L "$$root" ] || [ ! -d "$$root" ]; then echo "init: $$root is not a directory" >&2; exit 1; fi
-          if [ "$$(stat -c '%u:%g %a' "$$root")" = "$$1 700" ]; then continue; fi
-          chown 0:0 "$$root"
-          chmod 0700 "$$root"
-          chown "$$1" "$$root"
-        done
-      - init
-      - "${MDF_COMPOSE_UID:?}:${MDF_COMPOSE_GID:?}"
+      - "${MDF_COMPOSE_UID:?}"
+      - "${MDF_COMPOSE_GID:?}"
+      - /volumes/work
+      - /volumes/run
+      - /volumes/launcher
+      - /volumes/models
+      - /volumes/cpu-server
     volumes:
+      - type: bind
+        source: ${MDF_COMPOSE_SOURCE:?}/docker/app/init-volumes.sh
+        target: /init-volumes.sh
+        read_only: true
       - mdf-work:/volumes/work
       - mdf-run:/volumes/run
       - mdf-launcher:/volumes/launcher
@@ -80,7 +163,7 @@ services:
       - "--run=/run/mdf/run"
       - "--volume=work=${COMPOSE_PROJECT_NAME}_mdf-work"
       - "--volume=run=${COMPOSE_PROJECT_NAME}_mdf-run"
-      - "--volume=models=${COMPOSE_PROJECT_NAME}_mdf-models"
+      - "--volume=models=${MDF_COMPOSE_MODELS_NAME:?}"
       - "--volume=cpuserver=${COMPOSE_PROJECT_NAME}_mdf-cpu-server"
       - "--max-children=${MDF_COMPOSE_MAX_CHILDREN:-8}"
     volumes:
@@ -148,3 +231,8 @@ volumes:
   mdf-launcher:
   mdf-models:
   mdf-cpu-server:
+  # the models volume of the product, with the 18 weight files of the Marker route: read by `check` and `test`,
+  # and what their launcher mounts in a Marker child (`MDF_COMPOSE_MODELS_NAME`). Never written here.
+  mdf-weights:
+    external: true
+    name: ${MDF_COMPOSE_WEIGHTS_VOLUME:-mdf-no-weights}

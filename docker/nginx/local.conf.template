@@ -1,0 +1,35 @@
+# The only door of the product on the machine of the user (MFL051): compose publishes it on 127.0.0.1 alone.
+# The image fills `${MDF_...}` from the environment of the service (NGINX_ENVSUBST_FILTER); the variables of
+# nginx (`$http_host`, ...) stay as they are.
+#
+# The API checks Host, Origin and its CSRF token itself (markdown_for_llms/api.py): the Host of the browser
+# reaches it unchanged. Nothing is buffered on the way: an upload goes to the API as it arrives, a download to
+# the browser as the API writes it.
+
+# any other name: closed without an answer
+server {
+    listen 8080 default_server;
+    server_name _;
+    return 444;
+}
+
+server {
+    listen 8080;
+    server_name 127.0.0.1 localhost;
+    server_tokens off;
+    access_log off;
+
+    # the file limit is the API's (MDF_UPLOAD_MIB); a multipart body is a little larger than its file
+    client_max_body_size ${MDF_BODY_MIB}m;
+
+    location / {
+        proxy_pass http://unix:/run/mdf/api/api.sock:;
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+        proxy_set_header Connection "";
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+}

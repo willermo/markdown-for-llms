@@ -127,11 +127,16 @@ class CopiedCacheWithoutEngineTests(unittest.TestCase):
         toolchain.reset()
 
     def no_engine(self):
-        """No Docker on the PATH, and any attempt to call it is a failure of the test."""
-        return mock.patch.multiple(toolchain, engine_path=mock.Mock(side_effect=BenchError(Code.TOOLCHAIN_MISSING, "docker not found")),
-                                   engine_run=mock.Mock(side_effect=AssertionError("engine called")))
+        """No launcher: it does not answer, so nothing can be asked of Docker, and what was asked of it is kept."""
+        from markdown_for_llms.engine import containers
+        self.asked = []
 
-    def test_a_copied_cache_is_used_without_docker(self):
+        def refused(path, timeout):
+            self.asked.append(path)
+            raise ConnectionRefusedError(111, "no launcher")
+        return mock.patch.object(containers, "launcher", lambda: containers.Launcher(connect=refused))
+
+    def test_a_copied_cache_is_used_without_the_launcher(self):
         with self.no_engine():
             out, warnings, meta = derive.derive_input(self.doc, self.pdf, self.cache)
             self.assertEqual((sha(out.read_bytes()), meta), (sha(self.out.read_bytes()), self.meta))
@@ -139,6 +144,7 @@ class CopiedCacheWithoutEngineTests(unittest.TestCase):
             key = checks.cache_key({**self.doc, "twin": {"kind": "latex"}}, {"source": "0" * 64, "twin": "1" * 64, "derived": meta})
             self.assertRegex(key, r"^[0-9a-f]{64}$")
             self.assertIsNone(toolchain.report()["engine"])        # no container started
+            self.assertEqual(self.asked, [])                       # and the launcher never asked
 
     def test_an_altered_or_incomplete_copy_fails_closed(self):
         target = self.cache.derived_dir / "D99"
@@ -156,7 +162,7 @@ class CopiedCacheWithoutEngineTests(unittest.TestCase):
                 alter()
                 with self.no_engine(), self.assertRaises(BenchError) as ctx:
                     derive.derive_input(self.doc, self.pdf, self.cache)
-                self.assertEqual(ctx.exception.code, Code.TOOLCHAIN_MISSING)
+                self.assertEqual(ctx.exception.code, Code.ISOLATION_UNAVAILABLE)      # it needs a tool, and there is no launcher
 
 
 class TextDerivationTests(unittest.TestCase):

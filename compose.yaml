@@ -1,0 +1,328 @@
+# markdown-for-llms in containers (MFL051): the product on one machine, for one user, behind 127.0.0.1.
+#
+# Started by `make up`, never by hand: every `${...}` below comes from the Makefile (scripts/env-preflight.sh),
+# which reads the identity of the user, the Docker socket of the context in use and the few values of `.env`
+# that `make` and compose need (MDF_PORT, MDF_UPLOAD_MIB, MDF_COMPOSE_*). Compose itself is run with
+# `--env-file /dev/null`: it never reads `.env`, and no service has an `env_file:`, so no key enters the
+# environment of a container or `docker inspect`. The name of the project is the name of the directory: two
+# checkouts share no container, volume or network.
+#
+# Every service runs as the user of the host (never UID 0; `init` is the one exception), with a read-only root,
+# without capabilities, with `no-new-privileges` and a memory cap without swap.
+#
+#   init       once: gives the root of each named volume to the user, mode 0700 (docker/app/init-volumes.sh).
+#              UID 0 with the capability CHOWN alone, the only capability in the product; no network.
+#   config     once: validates `.env` and writes its settings (the `MDF_` lines; never a key) with the paths of
+#              the containers to `settings.env`, which the other services read. It refuses a path written in
+#              `.env`, and settings the archive would refuse (a service refused by its archive would leave with 1
+#              and be started again for ever): `make up` and `make restart` run it first and stop there. No network.
+#   launcher   the one process with the Docker socket (markdown_for_llms/launcher.py): it starts every child of
+#              the engine as a container without network, from a closed request, and stops it. The user of the
+#              host with the group of the socket as its only extra group. No network.
+#   api        the HTTP application on a Unix socket (mode 0600). No network, no key, not even the file of the keys.
+#   worker     the queue: it converts through the launcher, opens the GPU sessions, calls Datalab when the user
+#              chose it. The only long-lived service with a network (`egress`). The keys are read by name from
+#              `.env`, mounted read-only, at every use; never from its environment.
+#   nginx      the only door: 127.0.0.1:${MDF_PORT} -> the socket of the API.
+#   cli, bench (profile `tools`) `mdf ...` and `make bench` as one-off containers; they start no other service.
+#
+# Limit of a file bound alone (`.env`): a container keeps the file it was started with. After the file is
+# replaced on the host (the atomic save of an editor, `sed -i`), the routes with a key stop until `make restart`.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
+x-service: &service
+  user: "${MDF_COMPOSE_UID:?run through make}:${MDF_COMPOSE_GID:?run through make}"
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges"]
+  logging: *logging
+
+x-engine: &engine
+  <<: *service
+  image: ${MDF_COMPOSE_ENGINE_IMAGE:-mdf-app:engine}
+
+x-env-file: &env-file
+  type: bind
+  source: ${MDF_COMPOSE_ENV_FILE:?run through make}
+  target: /run/mdf/env
+  read_only: true
+  bind:
+    create_host_path: false
+
+x-data: &data
+  type: bind
+  source: ${MDF_COMPOSE_DATA:?run through make}
+  target: /data
+  bind:
+    create_host_path: false
+
+x-state: &state
+  type: bind
+  source: ${MDF_COMPOSE_STATE:?run through make}
+  target: /state
+  bind:
+    create_host_path: false
+
+x-tmp: &tmp "/tmp:rw,nosuid,nodev,size=256m,mode=1777"
+
+# What a process that converts needs: the archive, the state, the settings, the keys by name, the launcher and
+# the volumes it shares with the children (their work, the sockets of an attempt, the weights).
+x-converter: &converter
+  <<: *engine
+  networks: [egress]
+  pids_limit: 1024
+  environment:
+    HOME: /tmp
+  tmpfs:
+    - *tmp
+    # the private files of the credentials of a child (the Modal CLI): in memory, of the user alone
+    - "/run/mdf/secrets:rw,nosuid,nodev,noexec,size=1m,mode=0700,uid=${MDF_COMPOSE_UID:?run through make},gid=${MDF_COMPOSE_GID:?run through make}"
+
+services:
+  init:
+    image: ${MDF_COMPOSE_ENGINE_IMAGE:-mdf-app:engine}
+    user: "0:0"
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    security_opt: ["no-new-privileges"]
+    logging: *logging
+    mem_limit: 128m
+    memswap_limit: 128m
+    pids_limit: 64
+    restart: "no"
+    entrypoint: ["/bin/sh", "/init-volumes.sh"]
+    command:
+      - "${MDF_COMPOSE_UID:?run through make}"
+      - "${MDF_COMPOSE_GID:?run through make}"
+      - /volumes/work
+      - /volumes/run
+      - /volumes/launcher
+      - /volumes/api
+      - /volumes/settings
+      - /volumes/models
+      - /volumes/cpu-server
+    volumes:
+      - type: bind
+        source: ./docker/app/init-volumes.sh
+        target: /init-volumes.sh
+        read_only: true
+        bind:
+          create_host_path: false
+      - mdf-work:/volumes/work
+      - mdf-run:/volumes/run
+      - mdf-launcher:/volumes/launcher
+      - mdf-api:/volumes/api
+      - mdf-settings:/volumes/settings
+      - mdf-models:/volumes/models
+      - mdf-cpu-server:/volumes/cpu-server
+
+  config:
+    <<: *engine
+    network_mode: none
+    mem_limit: 512m
+    memswap_limit: 512m
+    pids_limit: 64
+    restart: "no"
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      HOME: /tmp
+    tmpfs: [*tmp]
+    command:
+      - mdf
+      - "--env-file=/run/mdf/env"
+      - settings-env
+      - "--out=/run/mdf/settings/settings.env"
+      - "--set=MDF_DATA_ROOT=/data"
+      - "--set=MDF_MODEL_ROOT=/models/marker"
+      - "--set=MDF_SERVERS=/state/config/servers.json"
+      - "--set=MDF_GPU_LEDGER_DIR=/state/gpu-ledger"
+      # `make status` asks for `--check`: the same validation, nothing written
+      - "${MDF_COMPOSE_CONFIG_MODE:---write}"
+    volumes:
+      - *env-file
+      - mdf-settings:/run/mdf/settings
+      # read-only: the identity of the archive is compared with the settings before any service opens it
+      - type: bind
+        source: ${MDF_COMPOSE_DATA:?run through make}
+        target: /data
+        read_only: true
+        bind:
+          create_host_path: false
+
+  launcher:
+    <<: *engine
+    group_add: ["${MDF_COMPOSE_DOCKER_GID:?run through make}"]
+    network_mode: none
+    mem_limit: 512m
+    memswap_limit: 512m
+    pids_limit: 256
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    command:
+      - /opt/mdf/venv/bin/python
+      - "-I"
+      - "-B"
+      - "-m"
+      - markdown_for_llms.launcher
+      - serve
+      - "--docker=/run/docker.sock"
+      - "--socket=/run/mdf/launcher/launcher.sock"
+      - "--project=${COMPOSE_PROJECT_NAME}"
+      - "--service=launcher"
+      - "--work=/work"
+      - "--run=/run/mdf/run"
+      - "--volume=work=${COMPOSE_PROJECT_NAME}_mdf-work"
+      - "--volume=run=${COMPOSE_PROJECT_NAME}_mdf-run"
+      - "--volume=models=${COMPOSE_PROJECT_NAME}_mdf-models"
+      - "--volume=cpuserver=${COMPOSE_PROJECT_NAME}_mdf-cpu-server"
+      - "--max-children=${MDF_COMPOSE_MAX_CHILDREN:-8}"
+    volumes:
+      - type: bind
+        source: ${MDF_COMPOSE_DOCKER_SOCKET:?run through make}
+        target: /run/docker.sock
+        bind:
+          create_host_path: false
+      - mdf-launcher:/run/mdf/launcher
+      - mdf-work:/work:ro
+      - mdf-run:/run/mdf/run:ro
+
+  api:
+    <<: *service
+    image: ${MDF_COMPOSE_API_IMAGE:-mdf-app:api}
+    network_mode: none
+    mem_limit: ${MDF_COMPOSE_API_MEMORY:-1g}
+    memswap_limit: ${MDF_COMPOSE_API_MEMORY:-1g}
+    pids_limit: 256
+    restart: unless-stopped
+    depends_on:
+      config:
+        condition: service_completed_successfully
+    environment:
+      HOME: /tmp
+    tmpfs: [*tmp]
+    command:
+      - mdf
+      - "--env-file=/run/mdf/settings/settings.env"
+      - serve
+      - "--uds=/run/mdf/api/api.sock"
+    volumes:
+      - *data
+      - mdf-api:/run/mdf/api
+      - mdf-settings:/run/mdf/settings:ro
+
+  worker:
+    <<: *converter
+    mem_limit: ${MDF_COMPOSE_WORKER_MEMORY:-4g}
+    memswap_limit: ${MDF_COMPOSE_WORKER_MEMORY:-4g}
+    restart: unless-stopped
+    # a GPU session that is open is closed before the exit
+    stop_grace_period: 11m
+    depends_on:
+      launcher:
+        condition: service_started
+      config:
+        condition: service_completed_successfully
+    command:
+      - mdf
+      - "--env-file=/run/mdf/settings/settings.env"
+      - "--keys-file=/run/mdf/env"
+      - worker
+    volumes:
+      - *data
+      - *state
+      - *env-file
+      - mdf-settings:/run/mdf/settings:ro
+      - mdf-launcher:/run/mdf/launcher:ro
+      - mdf-work:/work
+      - mdf-run:/run/mdf/run
+      - mdf-models:/models:ro
+      - mdf-cpu-server:/cpu-server:ro
+
+  nginx:
+    image: nginx:1.30.6-alpine@sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5
+    user: "${MDF_COMPOSE_UID:?run through make}:${MDF_COMPOSE_GID:?run through make}"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges"]
+    logging: *logging
+    networks: [front]
+    ports:
+      - "127.0.0.1:${MDF_PORT:-23465}:8080"
+    mem_limit: 256m
+    memswap_limit: 256m
+    pids_limit: 128
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      MDF_BODY_MIB: ${MDF_COMPOSE_BODY_MIB:-58}
+      NGINX_ENVSUBST_FILTER: "^MDF_"
+    tmpfs:
+      - "/etc/nginx/conf.d:rw,nosuid,nodev,noexec,size=1m,mode=0700,uid=${MDF_COMPOSE_UID:?run through make},gid=${MDF_COMPOSE_GID:?run through make}"
+      - "/var/cache/nginx:rw,nosuid,nodev,noexec,size=16m,mode=0700,uid=${MDF_COMPOSE_UID:?run through make},gid=${MDF_COMPOSE_GID:?run through make}"
+      - "/run:rw,nosuid,nodev,noexec,size=1m,mode=0755,uid=${MDF_COMPOSE_UID:?run through make},gid=${MDF_COMPOSE_GID:?run through make}"
+      - "/tmp:rw,nosuid,nodev,noexec,size=1m,mode=1777"
+    volumes:
+      - type: bind
+        source: ./docker/nginx/local.conf.template
+        target: /etc/nginx/templates/default.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - mdf-api:/run/mdf/api:ro
+
+  # `mdf ...` in a one-off container (bin/mdf, `make prepare`). It starts no other service: without the launcher
+  # of the project a conversion answers `isolation_unavailable`. It is also what prepares the weights and the
+  # local CPU server, so it sees their volumes read-write; the children get them read-only from the launcher.
+  cli: &cli
+    <<: *converter
+    profiles: [tools]
+    mem_limit: ${MDF_COMPOSE_CLI_MEMORY:-4g}
+    memswap_limit: ${MDF_COMPOSE_CLI_MEMORY:-4g}
+    restart: "no"
+    environment:
+      HOME: /tmp
+      # the cache and the runs of `mdf bench` (also the self-test of `mdf prepare --toolchain`), in the state
+      MDF_BENCH_CACHE_DIR: /state/bench/cache
+      MDF_BENCH_RUNS_DIR: /state/bench/runs
+    command: ["mdf", "--help"]
+    volumes:
+      - *data
+      - *state
+      - *env-file
+      - mdf-settings:/run/mdf/settings:ro
+      - mdf-launcher:/run/mdf/launcher:ro
+      - mdf-work:/work
+      - mdf-run:/run/mdf/run
+      - mdf-models:/models
+      - mdf-cpu-server:/cpu-server
+
+  bench:
+    <<: *cli
+
+networks:
+  # the worker and the one-off tools reach Datalab and the rented GPUs; nothing listens on it
+  egress: {}
+  # nginx alone, for the port published on 127.0.0.1
+  front: {}
+
+volumes:
+  mdf-work:
+  mdf-run:
+  mdf-launcher:
+  mdf-api:
+  mdf-settings:
+  mdf-models:
+  mdf-cpu-server:

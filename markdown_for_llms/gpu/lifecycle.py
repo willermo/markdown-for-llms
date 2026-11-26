@@ -554,9 +554,10 @@ def real_follower(session, path):
         return worker_logs.Follower(worker_logs.RunPodLogs(providers.REST, session.endpoint_id, client), path,
                                     session.t_arm)
     environ = providers.child_env(os.environ, also=session.ep.key_env)
-    modal = providers.Modal(session.resource, environ=environ)
-    return worker_logs.ModalFollower(worker_logs.ModalLogs(session.resource, environ, modal.app_containers), path,
-                                     session.t_arm)
+    # MFL051: the token of the SDK comes from the keys file of the worker, for the lists and for each stream
+    modal = providers.Modal(session.resource, environ=environ, env_file=session.m.env_file)
+    source = worker_logs.ModalLogs(session.resource, environ, modal.app_containers, auth=session.m.env_file)
+    return worker_logs.ModalFollower(source, path, session.t_arm)
 
 
 class Manager:
@@ -971,6 +972,11 @@ class Manager:
             except Refusal as exc:
                 item.update(available=False, code=exc.code)
             except EngineError as exc:
+                if exc.code is Code.SERVER_KEY_MISSING and item["code"] is None:
+                    # the names of the keys the keys file does not set (MFL051, the state of the routes): the detail
+                    # of `servers.read_keys` lists them, and only names of `key_env` are taken from it
+                    listed = exc.detail.split(" in the env file")[0].split(", ")
+                    item["missing_keys"] = [k for k in ep.key_env if k in listed]
                 item.update(available=False, code=item["code"] or exc.code.value)
             out["presets"][name] = item
         for name, item in out["presets"].items():
@@ -988,6 +994,7 @@ class Manager:
     def recover(self):
         """Before the first claim (module docstring): the windows left by a dead worker, then the orphan windows of the
         enabled presets in the ledger of today. Unrecoverable when a window cannot be closed."""
+        providers.modal_auth_sweep()            # MFL051: the credential files a dead process of the CLI left
         with self.storage.connect() as conn:
             rows = [dict(r) for r in conn.execute("SELECT * FROM gpu_sessions WHERE state != 'closed' ORDER BY created")]
         for r in rows:

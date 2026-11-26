@@ -6,7 +6,7 @@
 `verify(root)` checks every file before each start of the Marker child: a regular file reached
 without symbolic links, the bytes and the SHA-256 (read in streaming). A missing file is
 `weights_missing`, any other difference `weights_mismatch`; nothing is ever downloaded there.
-The child then gets the root read-only, and Bubblewrap leaves it without network, so the two
+The child then gets the root read-only, in a container without network, so the two
 download fallbacks of Marker and indra-ocr cannot run.
 
 `prepare(root)` (`mdf prepare --weights`) is the only step with network: each missing file is

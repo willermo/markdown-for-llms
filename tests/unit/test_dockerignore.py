@@ -21,7 +21,8 @@ ROOT = Path(__file__).resolve().parents[2]
 DOCKERFILE = ROOT / "docker" / "app" / "Dockerfile"
 GUARD = ROOT / "scripts" / "diagnostics" / "run-a001-fase0-uv" / "guard_product_inputs.py"
 ROOT_FILES = {"pyproject.toml", "uv.lock", "build-constraints.txt", "MANIFEST.in", "README.md", "LICENSE", ".python-version"}
-EXTRA_FILES = {"docker/app/Dockerfile", "scripts/diagnostics/run-a001-fase0-uv/guard_product_inputs.py"}
+EXTRA_FILES = {"docker/app/Dockerfile", "docker/app/modal-requirements.txt",
+               "scripts/diagnostics/run-a001-fase0-uv/guard_product_inputs.py"}
 OUTSIDE = (".env", ".env.local", ".full-check.env", "temp/run/stato.md", ".cache/full-check/x/S.json", "data/archive.sqlite3",
            "state/config/servers.json", ".git/config", ".venv-dev/bin/python", ".venv-python/x", "tests/conftest.py",
            "markdown_for_llms.egg-info/PKG-INFO", "markdown_for_llms/__pycache__/api.cpython-312.pyc",
@@ -179,8 +180,45 @@ class TestPins(unittest.TestCase):
         syntax = self.dockerfile.splitlines()[0]
         self.assertEqual(syntax, (ROOT / "scripts/bench-toolchain/Dockerfile").read_text().splitlines()[0])
 
-    def test_no_debian_package_and_no_unpinned_download(self):
-        self.assertNotRegex(self.dockerfile, r"apt-get|apt install|pip install (?!--python)")
+    # The Debian packages of the images (MFL051 A2): nothing outside these two lists is installed
+    ENGINE_PACKAGES = ("ca-certificates", "curl",                               # `weights.prepare`, `cpuserver.prepare`
+                       "libglib2.0-0t64", "libpango-1.0-0", "libpangoft2-1.0-0", "libharfbuzz0b", "libharfbuzz-subset0",
+                       "libfontconfig1", "fontconfig",                          # what WeasyPrint 63.1 opens, and /etc/fonts
+                       "fonts-noto-core", "fonts-dejavu-mono")                  # sans-serif and serif, monospace
+    DEV_PACKAGES = ("git",)                                                     # steps O and S of the full check
+
+    def test_the_debian_packages_are_the_two_lists_from_the_snapshot_of_the_toolchain(self):
+        theirs = (ROOT / "scripts/bench-toolchain/Dockerfile").read_text()
+        snapshot = re.search(r"^ARG SNAPSHOT=(\S+)$", self.dockerfile, re.M).group(1)
+        self.assertEqual(snapshot, re.search(r"^ARG SNAPSHOT=(\S+)$", theirs, re.M).group(1))
+        self.assertRegex(snapshot, r"^[0-9]{8}T[0-9]{6}Z$")
+        lists = dict(re.findall(r'^ARG (ENGINE_PACKAGES|DEV_PACKAGES)="([^"]*)"$', self.dockerfile, re.M))
+        self.assertEqual(sorted(lists["ENGINE_PACKAGES"].split()), sorted(self.ENGINE_PACKAGES))
+        self.assertEqual(sorted(lists["DEV_PACKAGES"].split()), sorted(self.DEV_PACKAGES))
+        # every installation names one of the two lists and nothing else, without recommended packages, and the
+        # lists of apt go away in the same layer
+        stages = re.split(r"^FROM ", self.dockerfile, flags=re.M)
+        installs = {}
+        for stage in stages:
+            name = stage.split("\n", 1)[0].rsplit(" AS ", 1)[-1].strip()
+            for run in re.findall(r"^RUN ((?:.*\\\n)*.*)$", stage, re.M):
+                if "apt-get" in run or "apt " in run or "dpkg" in run:
+                    installs[name] = " ".join(run.replace("\\\n", " ").split())
+        self.assertEqual(sorted(installs), ["dev", "engine"])
+        for name, variable in (("engine", "ENGINE_PACKAGES"), ("dev", "DEV_PACKAGES")):
+            run = installs[name]
+            self.assertEqual(re.findall(r"apt-get install (.*?) &&", run), ["-y --no-install-recommends ${%s}" % variable], name)
+            self.assertEqual(run.count("apt-get"), 2, name)                    # `update` and that one `install`
+            self.assertIn("&& rm -rf /var/lib/apt/lists/*", run, name)
+            self.assertNotIn("dpkg", run, name)
+            for suite, archive in (("trixie", "debian"), ("trixie-security", "debian-security")):
+                self.assertIn('echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/%s/${SNAPSHOT} %s main"'
+                              % (archive, suite), run, name)
+            self.assertIn("rm -f /etc/apt/sources.list.d/debian.sources", run, name)
+        self.assertEqual(len(re.findall(r"snapshot\.debian\.org", self.dockerfile)), 5)     # the header and the two stages
+
+    def test_no_unpinned_download(self):
+        self.assertNotRegex(self.dockerfile, r"apt install|pip install (?!--python)")
         adds = re.findall(r"^ADD (.*)$", self.dockerfile, re.M)
         self.assertEqual(len(adds), 3)
         self.assertTrue(all(a.startswith("--checksum=sha256:") for a in adds))

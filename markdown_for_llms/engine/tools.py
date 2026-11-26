@@ -1,49 +1,50 @@
 """External tools of the engine and of the bench, run only in the toolchain image (`toolchain.py`).
 
-`run` is the one place where an external tool starts: one `docker run` per call of the verified
-image, by ID, removed when it exits.
+`run` is the one place where an external tool starts: one `tool` child of the launcher per call
+(`containers.py`), a container of the verified image, by ID, removed when it ends.
 - Isolation: no network, no capabilities, no new privileges, a read-only root, the caller's user
   and a private tmpfs /tmp.
-- Mounts (E3): a private 0700 directory created for the call under `work_root`, the only
-  writable path, mounted as /work (working directory, HOME and TMPDIR are there), and each input
-  of the call, alone and read-only, at /in/<name> (a file, or a directory with `In(..., directory=True)`).
-  The cache, the runs, the home, personal sets and the Docker socket are never mounted. Arguments
-  name inputs and outputs with `In` and `Out`; outputs are moved out of /work after a successful
-  call, then /work goes away.
-- Environment: LC_ALL and LANG C.UTF-8, HOME and TMPDIR under /work; nothing of the caller.
+- Mounts (E3): the folder of the call on the work volume. Its `scratch` directory is the only
+  writable path, mounted as /work (working directory, HOME and TMPDIR are there); each input of the
+  call is copied to its `in` directory, mounted read-only, at /in/<name> (a file, or a directory with
+  `In(..., directory=True)`). The cache, the runs, the home, personal sets and the Docker socket are
+  never mounted. Arguments name inputs and outputs with `In` and `Out`; outputs are copied out of
+  /work after a successful call, then the folder goes away.
+- Outputs leave /work with the rooted copy of `containers` (`collect`, `collect_tree`): each
+  component opened from the one before, without following a link, regular files and directories
+  of this user only. A link in place of an output or of a directory above it is `tool_failed`
+  ("no output"), a link or a special file inside an output directory too; none is ever opened.
+- Environment: LC_ALL and LANG C.UTF-8, HOME and TMPDIR under /work; nothing of the caller. The
+  stdin of the tool is a file of the call the caller wrote (`ctl/stdin`), or /dev/null.
 - Memory (M4b: an uncapped `pandoc -f html` grew to 53 GB and the kernel killed it together with
   the editor): `MDF_BENCH_TOOL_MEMORY_MB` per call for the bench, the engine's own cap for a
   conversion, default `DEFAULT_MEMORY_MB`. Pandoc gets the cap of its own runtime,
-  `+RTS -M<cap>m -RTS` ("Heap exhausted", exit 251); every other tool `RLIMIT_DATA` through
-  `--ulimit data` (heap and private writable mappings; poppler prints "Out of memory" and exits
-  0 with an incomplete page); the container as a whole `--memory` of the cap plus
+  `+RTS -M<cap>m -RTS` ("Heap exhausted", exit 251); every other tool `RLIMIT_DATA` through the
+  `data` ulimit of the container (heap and private writable mappings; poppler prints "Out of
+  memory" and exits 0 with an incomplete page); the container as a whole the cap plus
   `GROUP_EXTRA_MB`, without swap (killed: exit 137, pandoc included). Each gives
   `tool_memory_limit`, also with exit status 0: the document is not determinable for that step.
 - Pandoc always runs with `--sandbox`: its readers and writers read only the files of the
   command line (no `\\input`, no images or includes fetched); a Lua filter reads and writes
-  only what the sandbox allows.
-- Timeout: the client is killed and the container removed by name (`docker rm -f`); a container
-  that still exists afterwards is a fatal `tool_failed`, which stops the command.
-- Exit 125-127 are failures of the engine, not of the tool: `engine_failed`.
+  only what the sandbox allows. The launcher refuses a pandoc without it.
+- Timeout: the supervisor of the container sees the stop of the caller within a tick; a container
+  that the launcher cannot attest as removed is a fatal `tool_failed`, which stops the command.
 
-A call of the engine passes `watch` (a `Watch`): the client then runs in the background and the
-runner, every `poll_seconds`, measures /work against its cap (a bind mount has no size limit of
-its own: `output_limit`), calls the observer (which can stop the call: `cancelled` or
-`interrupted`) and checks the deadline (`tool_timeout`). The container also gets a process
-limit and `--ulimit fsize`, and its memory peak is read from its own cgroup when the tool exits.
-A call of the bench passes no `watch` and runs exactly as before.
+A call of the engine passes `watch` (a `Watch`): the runner then, every `poll_seconds`, measures
+/work against its cap (`output_limit`), calls the observer (which can stop the call: `cancelled`
+or `interrupted`) and checks the deadline (`tool_timeout`). The container also gets its process
+limit and its file size limit. A call of the bench passes no `watch`. The memory peak and the CPU
+time of every call come from the supervisor of its container.
 """
 from contextlib import contextmanager
 import os
 from pathlib import Path
 import re
 import shutil
-import stat
 import subprocess
-import tempfile
 import time
 
-from . import toolchain
+from . import containers, toolchain
 from .codes import Code, EngineError
 
 DEFAULT_MEMORY_MB = 8192
@@ -51,6 +52,11 @@ MEMORY_MB_RANGE = range(64, 1048577)
 GROUP_EXTRA_MB = 512
 MIB = 1024 * 1024
 TMPFS = "/tmp:rw,nosuid,nodev,size=256m"
+TMPFS_MIB = 256
+VARIABLES = {"LC_ALL": "C.UTF-8", "LANG": "C.UTF-8", "HOME": "/work/home", "TMPDIR": "/work/tmp"}
+# a call without a `Watch` (the bench) had no limit of its own on processes and file size: the widest the launcher admits
+PIDS, FSIZE_MIB, NOFILE = 4096, 1048576, 4096
+POLL_SECONDS = 0.25
 _memory = {"mb": DEFAULT_MEMORY_MB}
 # allocation failures as the tools print them (lower case): GHC runtime of pandoc ("Heap
 # exhausted", "out of memory"), poppler gmalloc ("Out of memory", "Bogus memory allocation size"),
@@ -60,7 +66,7 @@ MEMORY_MARKERS = (b"heap exhausted", b"out of memory", b"bogus memory allocation
 TOOLS = ("ddjvu", "qpdf", "pdftoppm", "pdftotext", "pdfinfo", "pandoc", "soffice", "gs", "djvutxt", "djvused")
 # tools without a version of their own in toolchain.json: the package that provides them
 VERSION_OF = {"djvutxt": "ddjvu", "djvused": "ddjvu"}
-ENGINE_EXITS = (125, 126, 127)      # docker run: daemon error, command not executable, command not found
+ENGINE_EXITS = (126, 127)           # the supervisor could not start the command: not executable, not found
 KILLED = 137                        # SIGKILL: the memory cgroup of the container
 XFSZ = 128 + 25                     # SIGXFSZ: a file over `--ulimit fsize`
 LOG_LIMIT = 64 * MIB                # stdout and stderr of a watched call
@@ -104,9 +110,9 @@ class Watch:
     `pids`: the process limit of the container; `observer(event)` receives
     {"event": "tool", "tool", "container"} before the start and {"event": "tick", ...} at least
     every `poll_seconds`, and returns None, "cancelled" or "interrupted"; `attempt` names the
-    container `mdf-eng-<attempt>-<n>`; `deadline` is a `time.monotonic()` value after which the
+    container `mdf-eng-<attempt[:16]>-tool-<n>`; `deadline` is a `time.monotonic()` value after which the
     call stops with `tool_timeout`. `steps`, when a list, receives one record per call (tool,
-    arguments without host paths, seconds, exit status, memory peak of the container)."""
+    arguments without host paths, container, seconds, exit status, memory peak and CPU time)."""
 
     def __init__(self, work_mib, fsize_mib=None, pids=256, observer=None, attempt=None, deadline=None,
                  poll_seconds=0.25, steps=None):
@@ -150,15 +156,6 @@ def out_of_memory(name, returncode, stderr):
     return any(m in err for m in MEMORY_MARKERS)
 
 
-def _field(text):
-    """A field of `--mount`, which Docker reads as CSV: quoted when it holds a comma or a quote."""
-    return '"' + text.replace('"', '""') + '"' if ("," in text or '"' in text) else text
-
-
-def mount(src, dst, readonly=False):
-    return ",".join(_field(f) for f in ["type=bind", f"src={src}", f"dst={dst}", *(["readonly"] if readonly else [])])
-
-
 def _host_file(path, directory=False):
     real = os.path.realpath(path)
     if "\n" in real or "\r" in real or not (os.path.isdir(real) if directory else os.path.isfile(real)):
@@ -167,99 +164,60 @@ def _host_file(path, directory=False):
 
 
 class _Call:
-    def __init__(self, proc, work, outputs, mb):
-        self.proc, self.work, self.outputs, self.mb = proc, work, outputs, mb
-
-
-# The tool runs under `sh -c`: when it exits, the memory peak of the container's own cgroup goes
-# to stderr after a marker, and the exit status of the tool is kept.
-PEAK_MARKER = b"\nMDF-ENGINE-MEMORY-PEAK "
-PEAK_SCRIPT = ('"$@"; rc=$?; printf "\\nMDF-ENGINE-MEMORY-PEAK %s\\n" "$(cat /sys/fs/cgroup/memory.peak 2>/dev/null)" >&2; '
-               'exit $rc')
+    def __init__(self, proc, call, outputs, mb, memory):
+        self.proc, self.call, self.outputs, self.mb, self.memory = proc, call, outputs, mb, memory
 
 
 def tree_bytes(path):
     """Bytes of the regular files under `path` (links not followed), as allocated on disk or by size."""
-    total = 0
-    for parent, _, files in os.walk(path, followlinks=False):
-        for name in files:
-            try:
-                info = os.lstat(os.path.join(parent, name))
-            except OSError:
-                continue
-            total += max(info.st_size, info.st_blocks * 512)
-    return total
+    return containers.tree_bytes(path)
 
 
-def _split_peak(stderr):
-    at = stderr.rfind(PEAK_MARKER)
-    if at < 0:
-        return stderr, None
-    value = stderr[at + len(PEAK_MARKER):].strip()
-    return stderr[:at], int(value) if value.isdigit() else None
+def _stopped(stop, what):
+    return EngineError(Code.INTERRUPTED if stop == "interrupted" else Code.CANCELLED, what)
 
 
-def _watched(command, cname, name, work, stdin, timeout, watch):
-    """The client in the background under the caps of `watch`; a CompletedProcess-like result."""
-    observer = watch.observer
-    if observer is not None and (stop := observer({"event": "tool", "tool": name, "container": cname})):
-        raise EngineError(Code.INTERRUPTED if stop == "interrupted" else Code.CANCELLED, f"{name}: before start")
-    started = time.monotonic()
-    limit = started + timeout
-    if watch.deadline is not None:
-        limit = min(limit, watch.deadline)
-    reason = None
-    with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
-        proc = toolchain.engine_popen(command, out, err)
-        try:
-            try:
-                proc.stdin.write(stdin)
-                proc.stdin.close()
-            except BrokenPipeError:
-                pass
-            def over():
-                if tree_bytes(work) > watch.work_mib * MIB:
-                    return EngineError(Code.OUTPUT_LIMIT, f"{name}: /work over {watch.work_mib} MiB")
-                if os.fstat(out.fileno()).st_size + os.fstat(err.fileno()).st_size > LOG_LIMIT:
-                    return EngineError(Code.OUTPUT_LIMIT, f"{name}: output streams over {LOG_LIMIT} bytes")
-                return None
-            while True:
-                try:
-                    proc.wait(timeout=watch.poll_seconds)
-                    reason = over()             # a tool may fill /work and exit between two polls
-                    break
-                except subprocess.TimeoutExpired:
-                    pass
-                reason = over()
-                if reason is None and time.monotonic() > limit:
-                    reason = EngineError(Code.TOOL_TIMEOUT, f"{name}: timeout")
-                if reason is None and observer is not None and (
-                        stop := observer({"event": "tick", "tool": name, "container": cname})):
-                    reason = EngineError(Code.INTERRUPTED if stop == "interrupted" else Code.CANCELLED, name)
-                if reason is not None:
-                    break
-        except BaseException:           # an interrupted client (Ctrl-C) leaves its container running
-            proc.kill()
-            proc.wait()
-            toolchain.remove_container(cname)
-            raise
-        if reason is not None:
-            proc.kill()
-            proc.wait()
-            if not toolchain.remove_container(cname):
-                raise EngineError(Code.TOOL_FAILED, f"{name}: stopped, container {cname} still exists", fatal=True)
-            raise reason
-        out.seek(0)
-        err.seek(0)
-        stdout, stderr = out.read(), err.read()
-    stderr, peak = _split_peak(stderr)
-    if watch.steps is not None:
-        tail = command[command.index(toolchain.image()) + 1:]
-        if tail[:2] == ["sh", "-c"]:
-            tail = tail[4:]
-        watch.steps.append({"tool": name, "args": tail, "seconds": round(time.monotonic() - started, 3),
-                            "exit": proc.returncode, "memory_peak_bytes": peak})
-    return subprocess.CompletedProcess(command, proc.returncode, stdout, stderr)
+def _wait(child, name, tool, limits, timeout, watch):
+    """The child of one call to its attested end; returns its `containers.Outcome` when the tool ended by itself
+    or was killed for memory, and raises the closed code of every other end."""
+    observer = None if watch is None else watch.observer
+    seconds = timeout
+    if watch is not None and watch.deadline is not None:
+        seconds = min(seconds, watch.deadline - time.monotonic())
+
+    def before(cname):
+        if observer is not None and (stop := observer({"event": "tool", "tool": name, "container": cname})):
+            raise _stopped(stop, f"{name}: before start")
+
+    def on_poll(child, metrics):
+        if observer is not None and (stop := observer({"event": "tick", "tool": name, "container": child.name})):
+            return _stopped(stop, name)
+        return None
+    limits = dict(limits, max_seconds=max(1, min(86400, int(max(0, seconds)) + 1 + containers.TERM_MARGIN)))
+    try:
+        outcome = child.run(toolchain.role(), tool, VARIABLES, limits, timeout=seconds,
+                            poll_seconds=POLL_SECONDS if watch is None else watch.poll_seconds,
+                            scratch_mib=None if watch is None else watch.work_mib, log_limit=LOG_LIMIT,
+                            on_poll=on_poll, before=before)
+    except EngineError as exc:
+        if exc.code is Code.ISOLATION_UNAVAILABLE and child.unconfirmed:
+            # the container was to go and Docker did not confirm it: fatal for a whole command of the bench
+            raise EngineError(Code.TOOL_FAILED, f"{name}: stopped, container {child.name} still exists", fatal=True) from None
+        raise
+    if watch is not None and watch.steps is not None:
+        watch.steps.append({"tool": name, "args": list(tool), **outcome.step()})
+    reason = outcome.reason
+    if reason == "output_limit":
+        raise EngineError(Code.OUTPUT_LIMIT, f"{name}: /work over its cap or output streams over {LOG_LIMIT} bytes")
+    if reason == "timeout" or outcome.cause == "term":
+        raise EngineError(Code.TOOL_TIMEOUT if watch is not None else Code.TOOL_FAILED, f"{name}: timeout")
+    if reason is not None:
+        raise reason
+    if outcome.cause not in ("exited", "memory"):
+        raise containers.error_of(outcome, name, tool=True)
+    if watch is not None and containers.tree_bytes(child.call.scratch) > watch.work_mib * MIB:
+        raise EngineError(Code.OUTPUT_LIMIT, f"{name}: /work over {watch.work_mib} MiB")     # filled between two polls
+    return outcome
 
 
 @contextmanager
@@ -267,16 +225,13 @@ def _call(name, args, work_root, timeout, stdin, memory_mb, group_mb, watch=None
     _check_name(name)
     mb = memory_limit() if memory_mb is None else _checked_mb(memory_mb)
     group = mb + GROUP_EXTRA_MB if group_mb is None else _checked_mb(group_mb)
-    image = toolchain.image()
-    root = Path(work_root).absolute()
-    root.mkdir(parents=True, exist_ok=True)
-    work = Path(os.path.realpath(tempfile.mkdtemp(prefix="call-", dir=root)))      # mode 0700
-    try:
-        if "\n" in str(work) or "\r" in str(work):
-            raise EngineError(Code.TOOL_FAILED, "work directory path")
+    toolchain.image()                   # verified by the launcher, once per process
+    with containers.open_child(None if watch is None else watch.attempt, "tool") as child:
+        call = child.call
+        work = call.scratch
         (work / "home").mkdir()
         (work / "tmp").mkdir()
-        mounts, argv, outputs, names = [mount(work, "/work")], [], [], set()
+        argv, outputs, names = [], [], set()
         for a in args:
             if isinstance(a, In):
                 safe = re.sub(r"[^A-Za-z0-9._-]", "_", a.name or a.path.name).lstrip(".") or "input"
@@ -285,7 +240,10 @@ def _call(name, args, work_root, timeout, stdin, memory_mb, group_mb, watch=None
                     k += 1
                     n = f"{k}-{safe}"
                 names.add(n)
-                mounts.append(mount(_host_file(a.path, a.directory), "/in/" + n, readonly=True))
+                try:
+                    call.add_input(_host_file(a.path, a.directory), n)
+                except (OSError, ValueError):
+                    raise EngineError(Code.TOOL_FAILED, "input is not a regular " + ("directory" if a.directory else "file")) from None
                 if a.argument:
                     argv.append(a.prefix + "/in/" + n)
             elif isinstance(a, Out):
@@ -296,81 +254,67 @@ def _call(name, args, work_root, timeout, stdin, memory_mb, group_mb, watch=None
                 argv.append(a)
             else:
                 raise TypeError("tool argument: " + type(a).__name__)
+        limits = {"memory_mib": group, "pids": PIDS if watch is None else watch.pids,
+                  "fsize_mib": FSIZE_MIB if watch is None else watch.fsize_mib, "nofile": NOFILE, "tmpfs_mib": TMPFS_MIB,
+                  "lease_seconds": containers.LEASE_SECONDS}
         if name == "pandoc":
-            tool, limits = ["pandoc", "+RTS", f"-M{mb}m", "-RTS", "--sandbox", *argv], []
+            tool = ["pandoc", "+RTS", f"-M{mb}m", "-RTS", "--sandbox", *argv]
         else:
-            tool, limits = [name, *argv], ["--ulimit", f"data={mb * MIB}:{mb * MIB}"]
-        cname = toolchain.container_name(None if watch is None else watch.attempt)
-        if watch is not None:
-            limits += ["--pids-limit", str(watch.pids), "--ulimit", f"fsize={watch.fsize_mib * MIB}:{watch.fsize_mib * MIB}"]
-            tool = ["sh", "-c", PEAK_SCRIPT, "sh", *tool]
-        command = ["run", "--rm", "-i", "--name", cname, *toolchain.ISOLATION, "--user", f"{os.getuid()}:{os.getgid()}",
-                   "--tmpfs", TMPFS, "--memory", f"{group}m", "--memory-swap", f"{group}m", *limits,
-                   *[x for m in mounts for x in ("--mount", m)], "-w", "/work",
-                   "-e", "LC_ALL=C.UTF-8", "-e", "LANG=C.UTF-8", "-e", "HOME=/work/home", "-e", "TMPDIR=/work/tmp",
-                   image, *tool]
-        if watch is not None:
-            proc = _watched(command, cname, name, work, b"" if stdin is None else stdin, timeout, watch)
-        else:
-            try:
-                proc = toolchain.engine_run(command, timeout, b"" if stdin is None else stdin)
-            except subprocess.TimeoutExpired:
-                if not toolchain.remove_container(cname):
-                    raise EngineError(Code.TOOL_FAILED, f"{name}: timeout, container {cname} still exists", fatal=True) from None
-                raise EngineError(Code.TOOL_FAILED, f"{name}: timeout") from None
-            except BaseException:           # an interrupted client (Ctrl-C) leaves its container running
-                toolchain.remove_container(cname)
-                raise
-        if proc.returncode in ENGINE_EXITS:
-            raise EngineError(Code.ENGINE_FAILED, f"{name}: engine exit {proc.returncode}")
-        yield _Call(proc, work, outputs, mb)
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
+            tool, limits["data_mib"] = [name, *argv], mb
+        if stdin:
+            call.stdin(stdin)
+        outcome = _wait(child, name, tool, limits, timeout, watch)
+        status = KILLED if outcome.exit is None else outcome.exit
+        if status in ENGINE_EXITS:
+            raise EngineError(Code.ENGINE_FAILED, f"{name}: engine exit {status}")
+        proc = subprocess.CompletedProcess(tool, status, outcome.stdout, outcome.stderr)
+        yield _Call(proc, call, outputs, mb, outcome.cause == "memory")
 
 
-def _move_output(name, work, o):
-    produced = work / o.produced
+def _move_output(name, call, o):
+    """One output of a call from its /work to its destination, with the rooted copy of `containers`."""
+    produced = "scratch/" + o.produced
+    kind = containers.entry_kind(call.root, produced)
     if o.directory:
-        if produced.is_symlink() or (produced.exists() and not produced.is_dir()):
-            raise EngineError(Code.TOOL_FAILED, f"{name}: output {o.produced} is not a directory")
-        if not produced.exists():
+        if kind == "absent":
             if o.optional:
                 return
             raise EngineError(Code.TOOL_FAILED, f"{name}: no output {o.produced}")
-        for parent, dirs, files in os.walk(produced, followlinks=False):
-            for entry in dirs + files:
-                info = os.lstat(os.path.join(parent, entry))
-                if not (stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode)):
-                    raise EngineError(Code.TOOL_FAILED, f"{name}: output {o.produced} holds a link or a special file")
-        if o.dest.exists():
+        if kind != "directory":
+            raise EngineError(Code.TOOL_FAILED, f"{name}: output {o.produced} is not a directory")
+        if o.dest.exists() or o.dest.is_symlink():
             raise EngineError(Code.TOOL_FAILED, f"{name}: destination of {o.produced} exists")
         o.dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.move(str(produced), str(o.dest))
+        copied = containers.collect_tree(call.root, produced, o.dest)
+        if copied is None or copied[1]:
+            shutil.rmtree(o.dest, ignore_errors=True)
+            raise EngineError(Code.TOOL_FAILED, f"{name}: output {o.produced} holds a link or a special file")
         return
-    if not produced.exists() and not produced.is_symlink() and o.optional:
+    if kind == "absent" and o.optional:
         return
-    if produced.is_symlink() or not produced.is_file() or (not o.allow_empty and produced.stat().st_size == 0):
+    if kind != "file" or (not o.allow_empty and containers.regular_size(call.root, produced) == 0):
         raise EngineError(Code.TOOL_FAILED, f"{name}: no output {o.produced}")
-    o.dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.move(str(produced), str(o.dest))
+    if containers.collect(call.root, produced, o.dest) is None:
+        raise EngineError(Code.TOOL_FAILED, f"{name}: no output {o.produced}")
 
 
 def run(name, args, work_root, timeout=600, stdin=None, memory_mb=None, group_mb=None, watch=None):
-    """Run a tool under the memory cap; returns stdout bytes after moving the outputs (`Out`) to their
+    """Run a tool under the memory cap; returns stdout bytes after copying the outputs (`Out`) to their
     destinations. Raises `tool_memory_limit` when the tool reports an allocation failure or the
-    container is killed, `engine_failed` for 125-127 and `tool_failed` for any other exit status, a
+    container is killed, `engine_failed` for 126-127 and `tool_failed` for any other exit status, a
     missing output or a timeout (`tool_timeout` with `watch`). `group_mb` (self-test only) sets the
-    container cap apart; `watch` (a `Watch`) is given by the engine."""
+    container cap apart; `watch` (a `Watch`) is given by the engine. `work_root` is kept for the
+    callers and no longer used: the call has its folder on the work volume."""
     with _call(name, args, work_root, timeout, stdin, memory_mb, group_mb, watch) as c:
         proc = c.proc
-        if out_of_memory(name, proc.returncode, proc.stderr):
+        if c.memory or out_of_memory(name, proc.returncode, proc.stderr):
             raise EngineError(Code.TOOL_MEMORY_LIMIT, f"{name}: cap {c.mb} MiB, exit {proc.returncode}")
         if watch is not None and proc.returncode == XFSZ:
             raise EngineError(Code.OUTPUT_LIMIT, f"{name}: file over {watch.fsize_mib} MiB")
         if proc.returncode != 0:
             raise EngineError(Code.TOOL_FAILED, f"{name}: exit {proc.returncode}: {proc.stderr[-300:]!r}")
         for o in c.outputs:
-            _move_output(name, c.work, o)
+            _move_output(name, c.call, o)
         return proc.stdout
 
 

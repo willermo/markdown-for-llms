@@ -185,14 +185,47 @@ class DockerUnreachable(Exception):
         self.kind = kind
 
 
+class _Deadline(socket.socket):
+    """A socket whose every wait ends at one instant of the monotonic clock: before each operation its timeout is
+    what is left until then, so the connection, the request, the head of the answer and its body, however many
+    pieces the peer sends them in, never last longer together than the budget of the call (SOL-FIX-N1)."""
+    until = None
+
+    def _left(self):
+        left = self.until - time.monotonic()
+        if left <= 0:
+            raise socket.timeout("the deadline of the call")
+        self.settimeout(left)
+
+    def connect(self, address):
+        self._left()
+        return super().connect(address)
+
+    def sendall(self, *args):
+        self._left()
+        return super().sendall(*args)
+
+    def send(self, *args):
+        self._left()
+        return super().send(*args)
+
+    def recv(self, *args):
+        self._left()
+        return super().recv(*args)
+
+    def recv_into(self, *args):
+        self._left()
+        return super().recv_into(*args)
+
+
 class _UnixConnection(http.client.HTTPConnection):
     def __init__(self, path, timeout):
         super().__init__("localhost", timeout=timeout)
-        self._path = path
+        self._path, self._until = path, time.monotonic() + timeout
 
     def connect(self):
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM | socket.SOCK_CLOEXEC)
-        sock.settimeout(self.timeout)
+        sock = _Deadline(socket.AF_UNIX, socket.SOCK_STREAM | socket.SOCK_CLOEXEC)
+        sock.until = self._until
         try:
             sock.connect(self._path)
         except BaseException:
@@ -209,7 +242,8 @@ class Docker:
 
     def call(self, method, path, query=None, body=None, timeout=None, versioned=True, limit=16 * MIB):
         """(status, bytes) of one request; `DockerUnreachable` when the daemon cannot be reached or does not answer.
-        `timeout` bounds each wait on the socket (the connection, the answer), not their sum."""
+        `timeout` is the budget of the WHOLE call on the monotonic clock: the connection, the request and the
+        answer, its body included, whatever the number of pieces the daemon sends it in (`_Deadline`)."""
         url = (API if versioned else "") + path + ("?" + urlencode(query) if query else "")
         payload = None if body is None else json.dumps(body).encode("utf-8")
         headers = {"Host": "docker", "Accept": "application/json"}
@@ -609,8 +643,10 @@ def verify(found, body, image, daemon):
 class Config:
     """What the launcher is told at its birth (its command line) and what it reads of itself and of the daemon."""
 
-    def __init__(self, project, uid, gid, volumes, roots, images=None, daemon=None, maxima=None, max_children=MAX_CHILDREN):
+    def __init__(self, project, uid, gid, volumes, roots, images=None, daemon=None, maxima=None, max_children=MAX_CHILDREN,
+                 instance=None):
         self.project, self.uid, self.gid = project, uid, gid
+        self.instance = instance                # the ID of the container of this launcher (`hello`)
         self.volumes = dict(volumes)            # {volume role: the exact name of the volume of the project}
         self.roots = dict(roots)                # {volume role: where this process sees it}: work and run, read-only
         self.images = dict(images or {})        # {image role: {"id", "architecture", "inspect"}}
@@ -714,12 +750,19 @@ class Launcher:
             pass
 
     def note(self, name, why):
-        """Remember why this launcher kills or removes the child `name` (`containers.REAPED`), for `inspect`."""
+        """Remember why this launcher kills or removes the child `name` (`containers.REAPED`), for `inspect`: the
+        first reason given for it, kept while the launcher goes on acting on that child."""
         now = self.clock()
         with self.noting:
-            for old in [n for n, (_, at) in self.reaped.items() if now - at > REAPED_SECONDS]:
+            # SOL-FIX-R1: the first reason noted for a child stays for as long as the launcher acts on it, that is
+            # while its container exists. A removal that keeps failing brings the watch back on a child it already
+            # killed for its term or its lease, ten minutes later: `ended`, or the stop of the launcher, said then
+            # would make its 137 read as something else. Each act keeps the note fresh, whatever its age; only a
+            # new child of the same name (`op_run`) starts again, and a note nobody refreshes is forgotten.
+            first = self.reaped.get(name)
+            for old in [n for n, (_, at) in self.reaped.items() if n != name and now - at > REAPED_SECONDS]:
                 del self.reaped[old]
-            self.reaped[name] = (why, now)
+            self.reaped[name] = (first[0] if first is not None else why, now)
 
     def reap(self, ref, name=None, why=None, until=None):
         """Kill and remove a child (the watch and the stop of the launcher): best effort, repeated by the watch.
@@ -855,8 +898,11 @@ class Launcher:
 
     def op_hello(self, request):
         images = {role: {"id": entry["id"], "architecture": entry["architecture"]} for role, entry in self.config.images.items()}
+        # `instance`: the ID of the container of this launcher. A client that sees another one knows the launcher
+        # was recreated (another image, perhaps), and repeats what it checked of the first (the probe of the worker)
         return dict(self.identity(), images=images, docker=self.config.daemon, project=self.config.project,
-                    uid=self.config.uid, max=dict(self.config.maxima, children=self.config.max_children))
+                    uid=self.config.uid, max=dict(self.config.maxima, children=self.config.max_children),
+                    instance=self.config.instance)
 
     def op_run(self, request):
         if self.stopping.is_set():
@@ -1222,7 +1268,7 @@ def serve(args, out=sys.stderr):
         maxima[key] = int(value)
     launcher.config = Config(args.project, uid, gid, volumes, {"work": args.work, "run": args.run},
                              {"app": {"id": own["Image"], "architecture": image.get("Architecture"), "inspect": image}},
-                             daemon, maxima, args.max_children)
+                             daemon, maxima, args.max_children, instance=own.get("Id"))
     launcher.identity()
     try:
         launcher.forget_internal()              # what an instance that died in the middle of a verification left
@@ -1242,12 +1288,16 @@ def serve(args, out=sys.stderr):
     signal.signal(signal.SIGTERM, on_term)
     signal.signal(signal.SIGINT, on_term)
 
+    def pass_once():
+        try:
+            watch.tick()
+        except Exception:               # the watch never dies of one bad pass
+            pass
+
     def watching():
         while not launcher.stopping.wait(WATCH_SECONDS):
-            try:
-                watch.tick()
-            except Exception:           # the watch never dies of one bad pass
-                pass
+            pass_once()
+    pass_once()                         # H.6: the cleanup of the start, before the first request is served (A2-e)
     threading.Thread(target=watching, name="watch", daemon=True).start()
     slots = threading.BoundedSemaphore(CONNECTIONS)
     while not launcher.stopping.is_set():

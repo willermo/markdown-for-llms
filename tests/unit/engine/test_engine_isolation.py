@@ -1,10 +1,13 @@
 """Isolation and caps of the engine for real (criterion 12.3 of MFL032, native part).
 
-The container of a conversion: no network, read-only root, the caller's user, only its inputs
-visible (the runner, shared with the bench, is tested in `tests/unit/bench/test_bench_tools.py`);
-here the caps that the engine adds: /work as a whole, one file, the observer that stops a call,
-the deterministic container name and the memory peak. The light child: no network, no host
-paths, a read-only root, only its scratch writable.
+Every child is a container started by the launcher (MFL051): what each kind of container is from inside
+(network, root, user, capabilities, mounts, limits) is proved on real containers in
+`tests/container/test_child_isolation.py`, and the body the launcher builds in `tests/unit/launcher/`. Here
+the callers of the engine: the container of a tool (the runner, shared with the bench, is tested in
+`tests/unit/bench/test_bench_tools.py`) with the caps that the engine adds, /work as a whole, one file, the
+observer that stops a call, the deterministic container name and the memory peak; and the light child
+through `isolation.run`: no network, no host paths, a read-only root, only its scratch writable, its results
+copied out without following a link, and no fallback without the launcher.
 """
 import json
 import os
@@ -14,7 +17,7 @@ import unittest
 from unittest import mock
 
 from engine_test_support import require_toolchain
-from markdown_for_llms.engine import isolation, toolchain, tools
+from markdown_for_llms.engine import containers, isolation, tools
 from markdown_for_llms.engine.codes import Code, EngineError
 
 
@@ -25,8 +28,11 @@ class Base(unittest.TestCase):
         self.root = Path(tmp.name)
 
     def left(self, attempt):
-        proc = toolchain.engine_run(["ps", "-a", "--filter", f"name=mdf-eng-{attempt}-", "--format", "{{.Names}}"], 60)
-        return proc.returncode, proc.stdout.strip()
+        """What an attempt left: its containers, as the launcher lists them, and the folders of its calls."""
+        prefix = containers.prefix_of(attempt)
+        calls = Path(containers.WORK_ROOT) / "call"
+        folders = sorted(n for n in os.listdir(calls) if n.startswith(prefix + "-")) if calls.is_dir() else []
+        return [c["name"] for c in containers.launcher().list(prefix)], folders
 
 
 class ContainerCapTests(Base):
@@ -47,8 +53,8 @@ class ContainerCapTests(Base):
             tools.run("pandoc", ["-f", "markdown", "-t", "plain", "-o", tools.Out(self.root / "o.txt", arg="o.txt"),
                                  tools.In(src)], self.root / "tools", memory_mb=1024, watch=watch)
         self.assertEqual(ctx.exception.code, Code.OUTPUT_LIMIT)
-        self.assertEqual(self.left("captest1"), (0, b""))
-        self.assertEqual(os.listdir(self.root / "tools"), [])
+        self.assertEqual(self.left("captest1"), ([], []))
+        self.assertFalse((self.root / "tools").exists())            # the call has its folder on the work volume
 
     def test_work_cap_is_checked_when_the_tool_ends_before_a_poll(self):
         """HA6 (Carbon I3): a tool that fills /work and exits between two polls is still over the cap."""
@@ -58,7 +64,7 @@ class ContainerCapTests(Base):
             tools.run("pandoc", ["-f", "markdown", "-t", "plain", "-o", tools.Out(self.root / "o.txt", arg="o.txt"),
                                  tools.In(src)], self.root / "tools", memory_mb=1024, watch=watch)
         self.assertEqual(ctx.exception.code, Code.OUTPUT_LIMIT)
-        self.assertEqual(self.left("captest4"), (0, b""))
+        self.assertEqual(self.left("captest4"), ([], []))
         self.assertFalse((self.root / "o.txt").exists())
 
     def test_observer_cancels_and_names_the_container_before_the_start(self):
@@ -75,8 +81,8 @@ class ContainerCapTests(Base):
                       self.root / "tools", timeout=60, watch=watch)
         self.assertEqual(ctx.exception.code, Code.CANCELLED)
         self.assertEqual(events[0]["event"], "tool")
-        self.assertRegex(events[0]["container"], r"^mdf-eng-captest2-\d+$")
-        self.assertEqual(self.left("captest2"), (0, b""))
+        self.assertRegex(events[0]["container"], r"^mdf-eng-captest2-tool-\d+$")
+        self.assertEqual(self.left("captest2"), ([], []))
 
     def test_deadline_is_a_tool_timeout(self):
         ps = self.root / "endless.ps"
@@ -87,7 +93,7 @@ class ContainerCapTests(Base):
             tools.run("gs", ["-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "-sDEVICE=nullpage", tools.In(ps)],
                       self.root / "tools", timeout=60, watch=watch)
         self.assertEqual(ctx.exception.code, Code.TOOL_TIMEOUT)
-        self.assertEqual(self.left("captest3"), (0, b""))
+        self.assertEqual(self.left("captest3"), ([], []))
 
     def test_steps_record_arguments_without_host_paths_and_the_memory_peak(self):
         src = self.root / "in.md"
@@ -100,6 +106,8 @@ class ContainerCapTests(Base):
         self.assertEqual(step["tool"], "pandoc")
         self.assertEqual(step["args"], ["pandoc", "+RTS", "-M512m", "-RTS", "--sandbox", "-f", "markdown", "-t", "plain",
                                         "/in/in.md"])
+        self.assertRegex(step["container"], r"^mdf-bench-\d+-[0-9a-f]{8}-tool-\d+$")      # no attempt: a name of this process
+        self.assertEqual((step["exit"], step["oom_killed"]), (0, False))
         self.assertGreater(step["memory_peak_bytes"], 0)
         self.assertFalse([a for a in step["args"] if str(self.root) in a])
 
@@ -116,31 +124,51 @@ class LightChildTests(Base):
         self.assertEqual(probe, {"loopback_refused": True, "dns_failed": True, "host_path_hidden": True,
                                  "root_read_only": True, "docker_socket_absent": True, "scratch_writable": True})
 
-    def test_inputs_are_read_only_and_alone(self):
-        argv = isolation.command(self.root / "s", "markdown_for_llms.engine.pkgaudit", ["docx", "/in/source.docx"],
-                                 inputs=[(self.root / "a.docx", "source.docx")])
-        self.assertEqual(argv[:7], ["/usr/bin/bwrap", "--unshare-all", "--die-with-parent", "--new-session",
-                                    "--cap-drop", "ALL", "--clearenv"])
-        i = argv.index("--ro-bind", argv.index("/mdf/markdown_for_llms") - 2)
-        self.assertIn(["--ro-bind", os.path.realpath(self.root / "a.docx"), "/in/source.docx"],
-                      [argv[k:k + 3] for k in range(len(argv) - 2)])
-        self.assertIn("--remount-ro", argv)
-        self.assertEqual(argv[argv.index("--bind") + 2], "/scratch")
-        self.assertGreater(i, 0)
-        with self.assertRaises(ValueError):
-            isolation.command(self.root / "s", "m", inputs=[(self.root / "a", "../x")])
+    def test_without_the_launcher_there_is_no_fallback(self):
+        """No launcher, no child: `isolation_unavailable`, and the module never runs in this process."""
+        def refused(path, timeout):
+            raise ConnectionRefusedError(111, "no launcher")
+        gone = containers.Launcher(connect=refused)
+        marker = self.root / "child" / "probe.json"
+        with mock.patch.object(containers, "launcher", lambda: gone), self.assertRaises(EngineError) as ctx:
+            isolation.run(self.root / "child", "markdown_for_llms.engine.selfprobe", timeout=5, attempt="nolauncher1")
+        self.assertEqual(ctx.exception.code, Code.ISOLATION_UNAVAILABLE)
+        self.assertFalse(marker.exists())
+        self.assertFalse(isolation_available_with(gone))
+        # the folder of the call stays until Docker attests that no container has its name: the real launcher does
+        prefix = containers.prefix_of("nolauncher1")
+        self.assertEqual(self.left("nolauncher1")[1], [prefix + "-light-%d" % containers.split_name(self.left("nolauncher1")[1][0])[2]])
+        containers.stop_attempt_children(containers.launcher(), prefix)
+        containers.sweep(containers.launcher(), containers.WORK_ROOT, prefix=prefix, min_age=0)
+        self.assertEqual(self.left("nolauncher1"), ([], []))
 
-    def test_without_bubblewrap_there_is_no_fallback(self):
-        with mock.patch.object(isolation, "BWRAP", str(self.root / "no-bwrap")), self.assertRaises(EngineError) as ctx:
+    def test_without_the_work_volume_there_is_no_fallback(self):
+        with mock.patch.object(containers, "WORK_ROOT", str(self.root / "no-volume")), self.assertRaises(EngineError) as ctx:
             isolation.run(self.root / "child", "markdown_for_llms.engine.selfprobe", timeout=5)
         self.assertEqual(ctx.exception.code, Code.ISOLATION_UNAVAILABLE)
 
     def test_scratch_cap_is_checked_when_the_child_ends_before_a_poll(self):
-        """HA6 (Carbon I3): the scratch and the log are checked once more after a normal exit."""
-        with mock.patch.object(isolation, "scratch_bytes", return_value=10 << 30), self.assertRaises(EngineError) as ctx:
+        """HA6 (Carbon I3): the scratch is checked once more after a normal exit."""
+        with mock.patch.object(containers, "tree_bytes", return_value=10 << 30), self.assertRaises(EngineError) as ctx:
             isolation.run(self.root / "child", "markdown_for_llms.engine.selfprobe", [str(self.root / "x")], timeout=60,
                           output_mib=1, poll_seconds=120)
         self.assertEqual(ctx.exception.code, Code.OUTPUT_LIMIT)
+
+    def test_the_results_come_back_into_the_directory_of_the_caller_and_the_container_is_recorded(self):
+        steps, events = [], []
+        scratch = self.root / "child"
+        scratch.mkdir()
+        (scratch / "prepared.txt").write_text("of the caller")
+        rc, log = isolation.run(scratch, "markdown_for_llms.engine.selfprobe", [str(self.root)], timeout=60, steps=steps,
+                                observer=lambda event: events.append(event), attempt="results1", results=("probe.json",))
+        self.assertEqual(rc, 0, log)
+        self.assertEqual(sorted(p.name for p in scratch.iterdir()), ["prepared.txt", "probe.json"])
+        (step,) = steps
+        self.assertEqual((step["tool"], step["exit"], step["oom_killed"]), ("child:selfprobe", 0, False))
+        self.assertRegex(step["container"], r"^mdf-eng-results1-light-\d+$")
+        self.assertGreater(step["memory_peak_bytes"], 0)
+        self.assertEqual(events[0], {"event": "child", "module": "markdown_for_llms.engine.selfprobe", "container": step["container"]})
+        self.assertEqual(self.left("results1"), ([], []))
 
     def test_audit_memory_follows_a_lower_cap_of_the_conversion(self):
         """HA1 (Sol H1): the child of the audit never gets more memory than the conversion allows."""
@@ -163,6 +191,11 @@ class LightChildTests(Base):
             isolation.run(self.root / "child", "markdown_for_llms.engine.selfprobe", timeout=60,
                           observer=lambda event: "interrupted")
         self.assertEqual(ctx.exception.code, Code.INTERRUPTED)
+
+
+def isolation_available_with(launcher):
+    with mock.patch.object(containers, "launcher", lambda: launcher):
+        return isolation.available()
 
 
 if __name__ == "__main__":

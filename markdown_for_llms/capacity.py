@@ -97,6 +97,22 @@ class Lease:
             os.close(self.fd)
             self.fd = None
 
+    def keep(self):
+        """Hand the commitment over to the caller: the context that made it (`reserve`) no longer releases it.
+        Returns the lease that now owns the record and its lock; its `close` releases it. The record stays on
+        disk, its budget stays committed and, while this process lives, no `recover` collects it (MFL051, B1: the
+        worker keeps the commitment of an attempt until Docker attests that none of its children is left)."""
+        kept = Lease(self.storage, self.record, self.fd, self.name)
+        self.fd = None
+        return kept
+
+    def abandon(self):
+        """Let go of the lock without releasing the commitment: the record stays for whoever reconciles next (a
+        worker that ends while the absence of the children of an attempt is still not attested)."""
+        if self.fd is not None:
+            os.close(self.fd)
+            self.fd = None
+
 
 def cleanup(storage, record):
     """Delete only paths explicitly owned by this protocol, never by suffix."""
@@ -185,6 +201,22 @@ def live_workers(storage):
                 record = decode_json(stream.read(1048577))
                 if record['kind'] == 'worker':
                     tokens.add(record['token'])
+    return tokens
+
+
+def dead_workers(storage):
+    """Caller holds admission.lock; the tokens of the `worker` commitments whose owner is not alive: the
+    complement of `live_workers`. Nothing is collected."""
+    tokens = set()
+    for path in (storage.root / 'operations').glob('*.json'):
+        with open_file(storage.root, path.relative_to(storage.root).as_posix()) as stream:
+            try:
+                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                continue
+            record = decode_json(stream.read(1048577))
+            if record['kind'] == 'worker':
+                tokens.add(record['token'])
     return tokens
 
 

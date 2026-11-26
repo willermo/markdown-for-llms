@@ -1,6 +1,7 @@
-"""Entry of the light child (`isolation.py`): limits first, then the module.
+"""Entry of the Python children (`isolation.py`): limits first, then the module.
 
-argv: limits.json (in /scratch), the module, its arguments. The module's `main(args)` returns
+argv: limits.json (in /scratch), the module, its arguments. The limits of the process are set here (address space,
+file size, CPU time, core, files); memory and processes of the whole tree are those of the container. The module's `main(args)` returns
 the exit status; a `MemoryError` is exit 3 with a marker line, so the caller reports
 `memory_limit` instead of a generic failure.
 """
@@ -23,7 +24,8 @@ def main(argv=None):
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     files = limits.get("files_limit", 64)
     resource.setrlimit(resource.RLIMIT_NOFILE, (files, files))
-    resource.setrlimit(resource.RLIMIT_NPROC, (limits["process_limit"],) * 2)
+    # No RLIMIT_NPROC: without a user namespace it counts the processes of the user on the whole host (measured in
+    # tests/container/test_child_isolation.py). The processes of a child are limited by its container (`PidsLimit`).
     try:
         return importlib.import_module(argv[1]).main(argv[2:])
     except MemoryError:

@@ -19,6 +19,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 import unittest
 
 import launcher_support as support
@@ -80,6 +81,170 @@ class TestAccessOutcomes(unittest.TestCase):
         access = launcher.check_access(support.FakeDocker())
         self.assertRegex(access.detail, WHO + "$")
         self.assertIn(str(os.getegid()), access.detail.rsplit("gids ", 1)[1].split(","))
+
+
+class TestTheStartOfTheService(unittest.TestCase):
+    """A2-e (H.6). The cleanup of the start is a pass of the watch made before the first request is served, not a
+    second later: what a launcher that died left past its term is gone before any client is answered."""
+
+    def serve(self, tick):
+        import argparse
+        import io
+        import signal
+        from unittest import mock
+        order, made = [], []
+        fake = support.FakeDocker()
+        past = fake.add(support.ATTEMPT + "-light-9", {"mdf.project": support.PROJECT, "mdf.kind": "light",
+                                                       "mdf.attempt": support.ATTEMPT, "mdf.max": "60", "mdf.lease": "30",
+                                                       "mdf.t0": repr(1e12)})          # a label in the future: an expired term
+
+        class Recording(launcher.Launcher):
+            def __init__(self, *args, **kw):
+                super().__init__(*args, **kw)
+                made.append(self)
+
+        class Server:
+            def accept(self):
+                order.append("accept")
+                made[0].stopping.set()
+                raise OSError("closed")
+
+            def close(self):
+                pass
+
+        def first_tick(watch):
+            order.append("tick")
+            return tick(watch)
+        for name in ("SIGTERM", "SIGINT"):
+            self.addCleanup(signal.signal, getattr(signal, name), signal.getsignal(getattr(signal, name)))
+        args = argparse.Namespace(docker="/fake/docker.sock", socket="/nonexistent/launcher.sock", project=support.PROJECT,
+                                  service="launcher", work="/nonexistent/work", run="/nonexistent/run",
+                                  volume=["work=w", "run=r"], max=[], max_children=8)
+        real_tick = launcher.Watch.tick
+        with mock.patch.object(launcher, "Docker", lambda path: fake), mock.patch.object(launcher, "Launcher", Recording), \
+                mock.patch.object(launcher, "check_access", lambda docker: launcher.Access(True, None, "ok", dict(fake.version))), \
+                mock.patch.object(launcher, "find_self", lambda *a: {"Image": "sha256:" + "a" * 64}), \
+                mock.patch.object(Recording, "_image_inspect", lambda self, ref: {"Architecture": "amd64"}), \
+                mock.patch.object(Recording, "identity", lambda self: {}), \
+                mock.patch.object(launcher, "bind", lambda path, uid: Server()), \
+                mock.patch.object(launcher.os, "geteuid", lambda: 1000), \
+                mock.patch.object(launcher.Watch, "tick", lambda watch: first_tick(watch)):
+            self.real_tick = real_tick
+            status = launcher.serve(args, out=io.StringIO())
+        return status, order, fake, past
+
+    def test_the_first_pass_of_the_watch_comes_before_the_first_request(self):
+        status, order, fake, past = self.serve(lambda watch: self.real_tick(watch))
+        self.assertEqual((status, order[:2]), (0, ["tick", "accept"]))
+        self.assertNotIn(past, fake.containers)                      # killed and removed by that pass
+        self.assertEqual(len(fake.did("POST", "/kill")), 1)
+
+    def test_a_first_pass_that_fails_does_not_stop_the_service(self):
+        def broken(watch):
+            raise RuntimeError("a bad pass")
+        status, order, fake, past = self.serve(broken)
+        self.assertEqual((status, order[:2]), (0, ["tick", "accept"]))
+
+
+DRIBBLE_DRIVER = r"""
+import json, sys, time
+from markdown_for_llms import launcher
+path, budget, mode = sys.argv[1], float(sys.argv[2]), sys.argv[3]
+docker = launcher.Docker(path)
+started = time.monotonic()
+if mode == "call":
+    try:
+        status, data = docker.call("GET", "/containers/json", timeout=budget)
+        outcome = [status, len(data)]
+    except launcher.DockerUnreachable as exc:
+        outcome = exc.kind
+else:
+    sut = launcher.Launcher(docker, launcher.Config("mdf-fixture", 1000, 1000, {}, {}))
+    outcome = sut.stop(seconds=budget)
+print(json.dumps({"outcome": outcome, "seconds": time.monotonic() - started}))
+"""
+MARGIN = 0.25                           # what a deadline may be exceeded by here: the start of the last wait and the scheduling
+
+
+class TestTheWholeCallHasOneDeadline(unittest.TestCase):
+    """SOL-FIX-N1 (A2-a). The timeout of a call to Docker bounded each wait on the socket, not their sum: a peer that
+    sends its answer in pieces, each within the timeout, made the call last as long as it liked, and the stop of
+    the launcher outlast its budget. The deadline is of the whole call, the body included. A real Unix peer and a
+    real `connect`, so in a process of its own."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.path = os.path.join(tmp.name, "docker.sock")
+        self.server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.server.bind(self.path)
+        self.server.listen(8)
+        self.addCleanup(self.server.close)
+
+    def peer(self, pieces, pause, head_pause=0.0):
+        """Answers every request with the JSON list `[]` padded to `pieces` pieces, one every `pause` seconds, after
+        `head_pause` seconds for the head."""
+        body = b"[" + b" " * (pieces - 2) + b"]" if pieces > 1 else b"[]"
+
+        def serve():
+            while True:
+                try:
+                    conn, _ = self.server.accept()
+                except OSError:
+                    return
+                threading.Thread(target=answer, args=(conn,), daemon=True).start()
+
+        def answer(conn):
+            try:
+                data = b""
+                while b"\r\n\r\n" not in data:
+                    chunk = conn.recv(4096)
+                    if not chunk:
+                        return
+                    data += chunk
+                time.sleep(head_pause)
+                conn.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: %d\r\n\r\n" % len(body))
+                for i in range(len(body)):
+                    time.sleep(pause)
+                    conn.sendall(body[i:i + 1])
+            except OSError:
+                pass
+            finally:
+                conn.close()
+        threading.Thread(target=serve, daemon=True).start()
+
+    def drive(self, budget, mode):
+        done = subprocess.run([sys.executable, "-I", "-B", "-c", DRIBBLE_DRIVER, self.path, str(budget), mode],
+                              capture_output=True, text=True, timeout=60)
+        self.assertEqual(done.returncode, 0, done.stderr)
+        return json.loads(done.stdout)
+
+    def test_an_answer_in_pieces_within_the_budget_is_read_whole(self):
+        self.peer(pieces=6, pause=0.02)
+        got = self.drive(2.0, "call")
+        self.assertEqual(got["outcome"], [200, 6])
+        self.assertLess(got["seconds"], 2.0)
+
+    def test_a_body_in_pieces_ends_at_the_deadline_of_the_call_not_at_the_sum_of_its_waits(self):
+        """Ten pieces, one every 0.15 s: every wait is within the 0.4 s of the call, their sum is 1.5 s."""
+        self.peer(pieces=10, pause=0.15)
+        got = self.drive(0.4, "call")
+        self.assertEqual(got["outcome"], "no answer")
+        self.assertLessEqual(got["seconds"], 0.4 + MARGIN)
+
+    def test_a_head_that_comes_late_and_a_body_after_it_share_the_same_deadline(self):
+        self.peer(pieces=4, pause=0.15, head_pause=0.3)
+        got = self.drive(0.4, "call")
+        self.assertEqual(got["outcome"], "no answer")
+        self.assertLessEqual(got["seconds"], 0.4 + MARGIN)
+
+    def test_the_stop_of_the_launcher_ends_within_its_budget_with_a_peer_that_answers_in_pieces(self):
+        """The reproduction of the review: `stop(seconds=0.4)` lasted about 0.5 s and said True. It ends within the
+        budget and the declared margin, and says it did not see every child gone."""
+        self.peer(pieces=10, pause=0.15)
+        got = self.drive(0.4, "stop")
+        self.assertIs(got["outcome"], False)
+        self.assertLessEqual(got["seconds"], 0.4 + MARGIN)
 
 
 class TestAccessOnARealSocket(unittest.TestCase):

@@ -43,18 +43,25 @@ class InstalledWheelTests(unittest.TestCase):
             tmp = Path(tmp)
             src = make_docx(tmp / "w.docx", para("Installed engine text.") + f"<w:p><w:r>{drawing('rId1')}</w:r></w:p>",
                             media={"fig.png": png()})
-            code = ("import json, sys; from markdown_for_llms.engine import core, isolation, native; "
+            # the child is a container of the image of the launcher: its path is not comparable with this
+            # installation, the code it runs is (the digest of the payload gate, computed from the files it runs)
+            code = ("import json, sys; from markdown_for_llms.engine import containers, core, isolation, native; "
                     "r = core.convert(sys.argv[1], sys.argv[2], {}, {'memory_mib': 1024}); "
-                    "print(json.dumps({'core': core.__file__, 'child': str(isolation.PACKAGE), 'filter': str(native.FILTER), "
+                    "status, log = isolation.run(sys.argv[3], containers.PROBE_MODULE, ['container'], timeout=120, results=('probe.json',)); "
+                    "child = json.loads(open(sys.argv[3] + '/probe.json').read())['identity']['payload_sha256']; "
+                    "print(json.dumps({'core': core.__file__, 'payload': containers.payload_sha256(), 'child': child, "
+                    "'launcher': containers.launcher().hello()['payload_sha256'], 'filter': str(native.FILTER), "
                     "'status': r['status'], 'assets': len([i for i in r.get('inventory', []) if i['path'].startswith('assets/')])}))")
-            proc = subprocess.run([sys.executable, "-I", "-B", "-c", code, str(src), str(tmp / "out")], cwd=tmp,
+            proc = subprocess.run([sys.executable, "-I", "-B", "-c", code, str(src), str(tmp / "out"), str(tmp / "probe")], cwd=tmp,
                                   capture_output=True, text=True, timeout=300)
             self.assertEqual(proc.returncode, 0, proc.stderr)
             got = json.loads(proc.stdout)
         installed = Path(self.dist.locate_file("markdown_for_llms")).resolve()
         self.assertTrue(Path(got["core"]).resolve().is_relative_to(installed), got)
         self.assertNotEqual(installed, (ROOT / "markdown_for_llms").resolve())
-        self.assertEqual(Path(got["child"]).resolve(), installed)
+        from markdown_for_llms.engine import containers
+        self.assertEqual(got["payload"], containers.payload_sha256(installed))
+        self.assertEqual((got["child"], got["launcher"]), (got["payload"], got["payload"]))
         self.assertEqual((got["status"], got["assets"]), ("complete", 1))
         self.assertEqual(Path(got["filter"]).read_bytes(), (ROOT / PACKAGE_DATA[0]).read_bytes())
 

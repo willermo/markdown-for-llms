@@ -7,13 +7,36 @@ such a test fail, saying how to build the image, when it is missing or differs f
 cannot be made to take on demand (exit 137, 125-127, timeouts and their cleanup).
 """
 import json
+import os
+from pathlib import Path
 import subprocess
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "engine"))        # the scripted launcher of the engine tests
+import containers_test_support                                              # noqa: E402
+from containers_test_support import FAKE_IMAGE                              # noqa: E402,F401
 
 from markdown_for_llms.bench import toolchain
+from markdown_for_llms.engine import containers
 from markdown_for_llms.bench.codes import BenchError
 from markdown_for_llms.bench.selftest import growing_html, make_pdf  # noqa: F401  (used by the tests)
 
-FAKE_IMAGE = "sha256:" + "f" * 64
+def scripted(test, work, script=None, **kw):
+    """A scripted launcher in place of the launcher of the process (`containers_test_support.ScriptedLauncher`),
+    with the toolchain of the process forgotten before and after: the test starts from the image the fake
+    answers with, and leaves none behind."""
+    saved = dict(toolchain._state)
+    toolchain.reset()
+    test.addCleanup(toolchain._state.update, saved)
+    return containers_test_support.patched(test, work, script, **kw)
+
+
+def left_by_this_process():
+    """(containers, folders of calls) that the calls of this process outside an attempt left: both empty."""
+    prefix = containers.process_prefix()
+    calls = Path(containers.WORK_ROOT) / "call"
+    folders = sorted(n for n in os.listdir(calls) if n.startswith(prefix + "-")) if calls.is_dir() else []
+    return [child["name"] for child in containers.launcher().list(prefix)], folders
 
 
 def require_toolchain():
@@ -22,7 +45,7 @@ def require_toolchain():
         return toolchain.image()
     except BenchError as exc:
         raise AssertionError(f"reference toolchain image: {exc.code.value} ({exc.detail}); build it with "
-                             "`mdf bench prepare --toolchain` at the root of the checkout") from None
+                             "`make prepare` at the root of the checkout; the tests run with `make test`") from None
 
 
 class FakeEngine:

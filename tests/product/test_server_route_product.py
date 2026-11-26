@@ -125,7 +125,8 @@ class TestTheRouteInTheProduct(Instance):
             finally:
                 WATCH[0] = False
         self.assertNotIn(routes.MARKER_SERVER, state)
-        self.assertEqual([c for c in CONNECTS if "AF_UNIX" not in c[1]], [])
+        # the launcher is asked whether it answers (its socket, the one address the suite admits): no inference server is
+        self.assertEqual([c for c in CONNECTS if "AF_UNIX" not in c[1] and "/run/mdf/launcher/launcher.sock" not in c[1]], [])
 
 
 class TestTheArchive(Instance):

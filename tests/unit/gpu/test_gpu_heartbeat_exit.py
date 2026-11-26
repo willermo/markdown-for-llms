@@ -20,7 +20,7 @@ from markdown_for_llms.api import create_app  # noqa: E402
 
 
 def run_once(w):
-    with mock.patch("markdown_for_llms.worker.execute", return_value={"exit": 0, "reason": None}), \
+    with mock.patch("markdown_for_llms.worker.Worker.probe", return_value=[]), \
             mock.patch("markdown_for_llms.worker.availability", return_value={}):
         w.run(once=True)
 

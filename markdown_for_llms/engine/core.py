@@ -10,7 +10,7 @@ directory is made). `limits`: `memory_mib` (the cap of each tool and child),
 `output_mib` (the output and every /work), `timeout_seconds` (0: none), `max_pages`,
 `poll_seconds`, `threads` (of the Marker child), `stall_seconds` (a Marker child that writes no
 event and uses no CPU time for that long is stopped: `stalled`). `model_root`: the weights of the
-Marker route (`weights.py`; default `weights.default_root()`). `work`: where the private directories of the attempt go (a temporary directory
+Marker route (`weights.py`; default: the models volume, `containers.MODEL_ROOT`). `work`: where the private directories of the attempt go (a temporary directory
 when absent); it is never `out`. `observer(event)` receives the steps and the ticks of every
 tool call and child, and `{"event": "progress", "progress": snapshot}` from the Marker child
 (`progress.py`), and may stop the conversion by returning `cancelled` or `interrupted` to a step
@@ -20,8 +20,8 @@ The result is the content of `out/engine.json`, also on a failure (see `contract
 `timings` hold `total_seconds` and, on the Marker route, `stages` and `pages`
 (`pages.marker_timings`). The
 Datalab route (`datalab.py`) needs `request["datalab"]` (`mode`, `transit_confirmed`, `cap_usd`)
-and the key: `datalab_key` (a `datalab.Key`, read by the caller) or `DATALAB_API_KEY` in the
-environment of the process; the key is never part of the result.
+and the key: `datalab_key` (a `datalab.Key`, read by the caller from its keys file; never from the
+environment of the process); the key is never part of the result.
 
 The `marker-server` route (MFL033, `pages.marker_server_route`) needs `request["server"]`
 (`name`, `mode`, `transit_confirmed`, and for an endpoint with a provider `budget_cents` and the
@@ -33,7 +33,6 @@ times of the relay), `components.server` and, for a provider, the bound of the c
 """
 from datetime import datetime, timezone
 from pathlib import Path
-import os
 import re
 import secrets
 import shutil
@@ -41,14 +40,15 @@ import tempfile
 import time
 import traceback
 
-from . import contract, formats, routes
+from . import containers, contract, formats, routes
 from .codes import Code, EngineError
 
 DEFAULT_LIMITS = {"memory_mib": 4096, "output_mib": 512, "timeout_seconds": 0, "max_pages": 50,
                   "poll_seconds": 0.25, "threads": 4, "stall_seconds": 900}
 NOT_YET = {}
 TOOLCHAIN_ROUTES = (routes.PANDOC, routes.LIBREOFFICE, routes.DJVUTXT)
-AUDITED_ROUTES = (routes.PANDOC, routes.LIBREOFFICE)      # the package audit runs in a Bubblewrap child
+AUDITED_ROUTES = (routes.PANDOC, routes.LIBREOFFICE)      # the package audit runs in a light child
+CHILD_STEPS = ("child:", "bwrap:")      # a step of a Python child; `bwrap:` in the results written before MFL051
 ATTEMPT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 PREPARING = ("image-to-pdf", "ddjvu", "provider", "classify", "strip")      # steps before the Marker child
 MAX_CHILD_EVENTS = 20000            # events of one Marker child kept for the timings (pages, processors)
@@ -77,6 +77,21 @@ class Context:
         self.cost = self.transit = self.datalab_versions = None
         self.server = self.marker_server = None    # the marker-server route: endpoint record, relay record
         self.child_events, self.timings = [], {}     # events of the current Marker child; stages and pages
+        self._private = None                          # the socket directory of the attempt, made when a child needs it
+
+    def private(self):
+        """The socket directory of the attempt on the run volume (`sockets.Private`), made once and held until
+        `close`: the launcher mounts it in every Marker child and in the local CPU server."""
+        if self._private is None:
+            from . import sockets
+            sockets.sweep()
+            self._private = sockets.Private(containers.prefix_of(self.attempt))
+        return self._private
+
+    def close(self):
+        if self._private is not None:
+            self._private.close()
+            self._private = None
 
     def timeout(self):
         """Seconds left for the next call (a day when there is no deadline)."""
@@ -120,16 +135,18 @@ def _version(dist):
         return None
 
 
-def availability(model_root=None, only=None):
-    """{converter: {"available": bool, "code": closed code or None}} on this machine. Marker
-    needs Bubblewrap, a systemd user scope and the verified weights under `model_root`. `only`:
-    the converters to check (the worker asks for Marker alone)."""
+def availability(model_root=None, only=None, keys_file=None):
+    """{converter: {"available": bool, "code": closed code or None}} on this machine. The toolchain
+    routes need the launcher and the verified toolchain image, Marker the launcher and the verified
+    weights under `model_root`, Datalab its key in `keys_file`, read now by name (never from the environment:
+    no key is in the environment of a container). `only`: the converters to check (the worker asks for Marker
+    alone)."""
     if only is not None:
         out = {}
         if routes.MARKER in only:
             out[routes.MARKER] = _marker_availability(model_root)
         if set(only) - {routes.MARKER}:
-            full = availability(model_root)
+            full = availability(model_root, keys_file=keys_file)
             out.update({k: full[k] for k in only})
         return out
     out = {routes.TEXT: {"available": True, "code": None}}
@@ -146,8 +163,9 @@ def availability(model_root=None, only=None):
         for converter in AUDITED_ROUTES:
             out[converter] = {"available": False, "code": Code.ISOLATION_UNAVAILABLE.value}
     out[routes.MARKER] = _marker_availability(model_root)
-    out[routes.DATALAB] = ({"available": True, "code": None} if os.environ.get("DATALAB_API_KEY")
-                           else {"available": False, "code": Code.DATALAB_KEY_MISSING.value})
+    from . import datalab
+    state = datalab.key_state(keys_file)
+    out[routes.DATALAB] = {"available": state["available"], "code": state["code"]}
     return out
 
 
@@ -156,10 +174,10 @@ def _marker_availability(model_root):
     found = {name: _version(name) for name in ("marker-pdf", "indra-ocr")}
     if found != {"marker-pdf": "2.2.0", "indra-ocr": "1.1.2"}:
         return {"available": False, "code": Code.ENGINE_ADAPTER_MISMATCH.value}
-    if not isolation.scope_available():
+    if not isolation.available():
         return {"available": False, "code": Code.ISOLATION_UNAVAILABLE.value}
     try:
-        weights.verify(model_root or weights.default_root())
+        weights.verify(model_root or containers.MODEL_ROOT)
     except EngineError as exc:
         return {"available": False, "code": exc.code.value}
     return {"available": True, "code": None}
@@ -180,10 +198,10 @@ def _source_record(path, name, info):
 
 def _components(converter, ctx):
     comp = {"package": {"markdown-for-llms": _version("markdown-for-llms")}}
-    if converter in TOOLCHAIN_ROUTES or any(not s["tool"].startswith("bwrap:") for s in ctx.steps):
+    if converter in TOOLCHAIN_ROUTES or any(not s["tool"].startswith(CHILD_STEPS) for s in ctx.steps):
         from . import toolchain
         r = toolchain.report()
-        used = sorted({s["tool"] for s in ctx.steps if not s["tool"].startswith("bwrap:")})
+        used = sorted({s["tool"] for s in ctx.steps if not s["tool"].startswith(CHILD_STEPS)})
         comp["toolchain"] = {"content_sha256": r["content_sha256"], "image_id": r["image_id"],
                              "versions": {t: r["versions"].get(t) for t in used if t in r["versions"]}}
         from .tools import VERSION_OF
@@ -223,8 +241,7 @@ def convert(source, out, request=None, limits=None, work=None, observer=None, na
     stage = attempt_dir / "stage"
     (stage / "diagnostics").mkdir(parents=True, mode=0o700)
     if model_root is None:
-        from .weights import default_root
-        model_root = default_root()
+        model_root = containers.MODEL_ROOT
     ctx = Context(attempt, attempt_dir, stage, limits, observer, Path(model_root).absolute())
     requested = {k: request.get(k) for k in ("route", "ocr", "lang")}
     if request.get("datalab") is not None:
@@ -295,6 +312,7 @@ def convert(source, out, request=None, limits=None, work=None, observer=None, na
         ctx.diagnostics["engine-traceback.txt"] = traceback.format_exc().encode("utf-8", "replace")
         return _failed(out, result, ctx, converter, started, EngineError(Code.ENGINE_FAILED, type(exc).__name__))
     finally:
+        ctx.close()
         shutil.rmtree(root if own_root else attempt_dir, ignore_errors=True)
 
 

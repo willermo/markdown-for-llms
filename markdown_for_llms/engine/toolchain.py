@@ -20,54 +20,56 @@ wheel, is the identity:
 - `builder`: the BuildKit image, by digest, and the memory cap of the builder.
 - `selftest`: SHA-256 of the derivations of synthetic files in the self-test (`bench/selftest.py`).
 
-Each process verifies the image at its first tool call (`image()`): the local image tagged
-`mdf-bench-toolchain:<content_sha256[:16]>` must exist (`toolchain_missing`) and have the
-recorded config and a content manifest with the recorded SHA-256 (`toolchain_mismatch`); from
-then on it is called by `sha256:<image id>`, never by tag. A bench process that finds everything
-it needs in the cache starts no container and reports `engine: null` (U4: a cache prepared
-elsewhere and copied). Docker is the only engine, through a local socket: a remote endpoint
-would receive the documents.
+Each process asks the launcher for the image at its first tool call (`image()`); the launcher
+(`markdown_for_llms/launcher.py`, the one process with the Docker socket) verifies it before any tool
+may use it: the local image tagged `mdf-bench-toolchain:<content_sha256[:16]>` must exist
+(`toolchain_missing`) and have the recorded config and a content manifest with the recorded SHA-256
+(`toolchain_mismatch`); it is then started by `sha256:<image id>`, never by tag. Without the
+launcher: `isolation_unavailable`. A bench process that finds everything it needs in the cache starts
+no container and reports `engine: null` (U4: a cache prepared elsewhere and copied). Docker is the
+only engine, through the local socket the launcher holds: a remote endpoint would receive the
+documents.
+
+`prepare_candidate` is the part of `mdf prepare --toolchain` that runs in a container: the image the
+host built and tagged `mdf-bench-toolchain:candidate` is verified file by file (its stored content
+manifest against the one regenerated in it, both read by `manifest` children of the launcher) and
+the self-test runs on it; the host tags it afterwards. No container has a Docker client: the build is
+the host's, `scripts/prepare-toolchain.sh` (`make prepare`), which copies the build context, has it verified
+here (`python -m markdown_for_llms.engine.toolchain context DIR`, in a container without network), builds
+it with the capped builder and tags the result `mdf-bench-toolchain:candidate`.
 """
 import functools
 import hashlib
-import itertools
 import json
-import os
 from pathlib import Path
 import re
-import secrets
-import shutil
-import subprocess
 import sys
-import tempfile
-import time
 
+from . import containers
 from .codes import Code, EngineError
 
-ENGINE = "docker"
+ENGINE = "docker"                    # the name of the engine in the reports
 REPOSITORY = "mdf-bench-toolchain"
-BUILDER = "mdf-bench-toolchain"
+BUILDER = "mdf-bench-toolchain"      # the capped builder; scripts/prepare-toolchain.sh and the Makefile name it too
 MANIFEST_PATH = "/etc/mdf-bench-toolchain.sha256"
 CONTENT_SCRIPT = "/usr/local/bin/mdf-bench-content-manifest"
 SCHEMA = "mdf-bench-toolchain/1"
 DEFAULT_CONTEXT = Path("scripts") / "bench-toolchain"
-CONTEXT_MTIME = 1767225600          # 2026-01-01T00:00:00Z, the time of every file of the copied context
-# Isolation of every container of the toolchain; tools.py adds mounts, caps and environment.
-ISOLATION = ("--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--read-only")
-# The only variables of the caller that reach the Docker client (which socket, which config).
-ENGINE_ENV = ("DOCKER_HOST", "DOCKER_CONTEXT", "DOCKER_CONFIG", "XDG_RUNTIME_DIR")
+# 2026-01-01T00:00:00Z, the time of every file of the context copied by scripts/prepare-toolchain.sh (mode 0644):
+# BuildKit keys its cache on mode and time, whatever the checkout
+CONTEXT_MTIME = 1767225600
 SHA256 = re.compile(r"[0-9a-f]{64}")
 IMAGE_ID = re.compile(r"sha256:[0-9a-f]{64}")
 HINTS = {
-    Code.TOOLCHAIN_MISSING: "build the toolchain image with `mdf prepare --toolchain` (alias `mdf bench prepare "
-                            "--toolchain`) at the root of the checkout (Docker Engine on Linux)",
+    Code.TOOLCHAIN_MISSING: "build the toolchain image with `make prepare` at the root of the checkout (Docker Engine "
+                            "on Linux)",
     Code.TOOLCHAIN_MISMATCH: "the reference toolchain image or its build context differs from toolchain.json: rebuild "
-                             "it with `mdf prepare --toolchain` (alias `mdf bench prepare --toolchain`) from a clean "
-                             "checkout",
+                             "it with `make prepare` from a clean checkout",
+    Code.ISOLATION_UNAVAILABLE: "the launcher does not answer: start the product with `make up`",
 }
 
-_state = {"image": None, "engine": None}
-_counter = itertools.count(1)
+_state = {"image": None, "engine": None, "role": "toolchain"}
+MANIFEST_LIMITS = {"memory_mib": 512, "pids": 256, "fsize_mib": 64, "nofile": 1024, "tmpfs_mib": 64}
 
 
 # --- identity ---------------------------------------------------------------------------------
@@ -129,77 +131,24 @@ def differs(a, b):
 
 def reset():
     """Forget the verified image (tests, and a failed `prepare`)."""
-    _state.update(image=None, engine=None)
+    _state.update(image=None, engine=None, role="toolchain")
 
 
-# --- engine -----------------------------------------------------------------------------------
-
-def engine_path():
-    path = shutil.which(ENGINE)
-    if path is None:
-        raise EngineError(Code.TOOLCHAIN_MISSING, "docker not found on the PATH")
-    return path
+def role():
+    """The image role of the tool calls of this process: `toolchain`, or `candidate` while `prepare_candidate`
+    runs the self-test on the image the host just built."""
+    return _state["role"]
 
 
-def engine_env():
-    env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": os.environ.get("HOME", "/"), "LC_ALL": "C"}
-    env.update({k: os.environ[k] for k in ENGINE_ENV if k in os.environ})
-    return env
-
-
-def engine_run(args, timeout, stdin=b""):
-    """The Docker client with a closed environment and no shell; `subprocess.TimeoutExpired` propagates."""
+def _ask(call):
+    """An operation of the launcher with its refusals as the closed codes of the engine."""
     try:
-        return subprocess.run([engine_path(), *args], input=stdin, capture_output=True, timeout=timeout,
-                              env=engine_env(), close_fds=True)
-    except OSError as exc:
-        raise EngineError(Code.ENGINE_FAILED, f"docker: {type(exc).__name__}") from None
-
-
-def engine_popen(args, stdout, stderr):
-    """The Docker client started in the background (the watched calls of the engine), with the same
-    closed environment as `engine_run`; stdin is a pipe."""
-    try:
-        return subprocess.Popen([engine_path(), *args], stdin=subprocess.PIPE, stdout=stdout, stderr=stderr,
-                                env=engine_env(), close_fds=True)
-    except OSError as exc:
-        raise EngineError(Code.ENGINE_FAILED, f"docker: {type(exc).__name__}") from None
-
-
-def container_name(attempt=None):
-    """A name per call: pid, random part and counter for the bench; `mdf-eng-<attempt>-<n>` for a
-    conversion of the engine, known before the start (K7). A timed-out container is removed by name."""
-    if attempt is not None:
-        return f"mdf-eng-{attempt}-{next(_counter)}"
-    return f"mdf-bench-{os.getpid()}-{secrets.token_hex(4)}-{next(_counter)}"
-
-
-def remove_container(name):
-    """Remove a container that may have outlived its client; True when it no longer exists."""
-    try:
-        engine_run(["rm", "-f", name], 60)
-        proc = engine_run(["container", "inspect", name], 60)
-    except (subprocess.TimeoutExpired, EngineError):
-        return False
-    return proc.returncode != 0 and b"no such container" in proc.stderr.lower()
-
-
-def _check_local():
-    host = os.environ.get("DOCKER_HOST")
-    if host is None:
-        proc = engine_run(["context", "inspect", "--format", "{{.Endpoints.docker.Host}}"], 60)
-        if proc.returncode != 0:
-            raise EngineError(Code.TOOLCHAIN_MISSING, "docker context unreadable")
-        host = proc.stdout.decode("utf-8", "replace").strip()
-    if not host.startswith("unix://"):
-        raise EngineError(Code.TOOLCHAIN_MISSING, "the docker endpoint is not a local socket")
-
-
-def _inspect(ref):
-    proc = engine_run(["image", "inspect", "--format", "{{json .}}", ref], 60)
-    if proc.returncode != 0:
-        return None
-    return json.loads(proc.stdout)
+        return call(containers.launcher())
+    except containers.Unreachable as exc:
+        raise EngineError(Code.ISOLATION_UNAVAILABLE, "launcher: %s" % exc) from None
+    except containers.Refused as exc:
+        code = next((c for c in Code if c.value == exc.code), Code.ENGINE_FAILED)
+        raise EngineError(code, exc.detail) from None
 
 
 def config_of(data):
@@ -207,51 +156,31 @@ def config_of(data):
     return {"Env": config.get("Env") or [], "Entrypoint": config.get("Entrypoint"), "User": config.get("User") or ""}
 
 
-def _manifest(image_id, command, timeout=120, root=False):
-    """stdout of a read-only command in the image (the content manifest, stored or regenerated).
-    The regeneration runs as root of the container, still without capabilities, network or a
-    writable root: some files of the conda environment are readable by their owner only."""
-    name = container_name()
-    user = "0:0" if root else f"{os.getuid()}:{os.getgid()}"
-    args = ["run", "--rm", "-i", "--name", name, *ISOLATION, "--user", user,
-            "--tmpfs", "/tmp:rw,nosuid,nodev,size=64m", "--memory", "512m", "--memory-swap", "512m", image_id, *command]
-    try:
-        proc = engine_run(args, timeout)
-    except subprocess.TimeoutExpired:
-        fatal = not remove_container(name)
-        raise EngineError(Code.TOOLCHAIN_MISMATCH, "content manifest: timeout", fatal=fatal) from None
-    if proc.returncode != 0:
-        raise EngineError(Code.TOOLCHAIN_MISMATCH, f"content manifest: exit {proc.returncode}")
-    return proc.stdout
-
-
-def verify(ref):
-    """Image ID of `ref` when it is the reference toolchain (config and content manifest)."""
-    data = _inspect(ref)
-    if data is None:
-        raise EngineError(Code.TOOLCHAIN_MISSING, f"no image {ref}")
-    image_id = data.get("Id", "")
-    if not IMAGE_ID.fullmatch(image_id):
-        raise EngineError(Code.TOOLCHAIN_MISMATCH, "image id")
-    if config_of(data) != spec()["config"]:
-        raise EngineError(Code.TOOLCHAIN_MISMATCH, "image config")
-    if hashlib.sha256(_manifest(image_id, ["cat", MANIFEST_PATH])).hexdigest() != identity():
-        raise EngineError(Code.TOOLCHAIN_MISMATCH, "content manifest")
-    return image_id
-
-
-def _engine_version():
-    proc = engine_run(["version", "--format", "{{.Server.Version}}"], 60)
-    return proc.stdout.decode("utf-8", "replace").strip() if proc.returncode == 0 else "unknown"
+def _manifest(image_role, command, timeout=120):
+    """stdout of one of the two commands of a `manifest` child of the launcher in the image of `image_role`: the
+    stored content manifest (`containers.MANIFEST_READ`), or the one regenerated from the files of the image
+    (`containers.MANIFEST_REGENERATE`), which the launcher runs as root of the container, still without
+    capabilities, network or any writable volume: some files of the conda environment are readable by their
+    owner only."""
+    limits = dict(MANIFEST_LIMITS, lease_seconds=containers.LEASE_SECONDS,
+                  max_seconds=min(86400, int(timeout) + containers.TERM_MARGIN))
+    with containers.open_child(None, "manifest") as child:
+        outcome = child.run(image_role, list(command), {}, limits, timeout=timeout)
+    if outcome.reason == "timeout" or outcome.cause == "term":
+        raise EngineError(Code.TOOLCHAIN_MISMATCH, "content manifest: timeout")
+    if outcome.cause != "exited" or outcome.exit != 0:
+        raise EngineError(Code.TOOLCHAIN_MISMATCH, f"content manifest: exit {outcome.exit} ({outcome.cause})")
+    return outcome.stdout
 
 
 def image():
-    """ID of the verified reference image; verified once per process, at the first tool call."""
+    """ID of the verified reference image; asked of the launcher once per process, at the first tool call."""
     if _state["image"] is None:
-        engine_path()
-        _check_local()
-        image_id = verify(tag())
-        _state.update(image=image_id, engine=_engine_version())
+        answer = _ask(lambda launcher: launcher.toolchain())
+        image_id = answer.get("image") or ""
+        if not IMAGE_ID.fullmatch(image_id) or answer.get("verified") is not True:
+            raise EngineError(Code.TOOLCHAIN_MISMATCH, "the launcher did not verify the image")
+        _state.update(image=image_id, engine=str(answer.get("docker") or "unknown"), role="toolchain")
     return _state["image"]
 
 
@@ -279,118 +208,63 @@ def verify_context(directory):
     return found
 
 
-def ensure_builder(out):
-    """The BuildKit builder of the toolchain: a docker-container builder with the recorded image and
-    memory cap, created when absent; one with other options is refused."""
-    b = spec()["builder"]
-    proc = engine_run(["buildx", "inspect", BUILDER], 120)
-    if proc.returncode != 0:
-        create = engine_run(["buildx", "create", "--name", BUILDER, "--driver", "docker-container",
-                             "--driver-opt", "image=" + b["image"], "--driver-opt", "memory=" + b["memory"],
-                             "--driver-opt", "memory-swap=" + b["memory"]], 300)
-        if create.returncode != 0:
-            raise EngineError(Code.ENGINE_FAILED, "buildx create: " + create.stderr.decode("utf-8", "replace")[-300:])
-        out(f"toolchain builder created {BUILDER}")
-        proc = engine_run(["buildx", "inspect", BUILDER], 120)
-    text = proc.stdout.decode("utf-8", "replace")
-    driver = re.search(r"^Driver:\s+(\S+)\s*$", text, re.M)
-    options = re.search(r"^Driver Options:\s*(.*)$", text, re.M)
-    have = set(options.group(1).split()) if options else set()
-    want = {f'image="{b["image"]}"', f'memory="{b["memory"]}"', f'memory-swap="{b["memory"]}"'}
-    if not driver or driver.group(1) != "docker-container" or not want <= have:
-        raise EngineError(Code.TOOLCHAIN_MISMATCH, f"builder {BUILDER} has other options: remove it with "
-                                                  f"`docker buildx rm {BUILDER}`")
-    out(f"toolchain builder ok {BUILDER} memory {b['memory']}")
-
-
-def build(context_dir, log_dir, no_cache=False):
-    """Build the image from a private copy of the verified context; returns its image ID."""
-    log_dir = Path(log_dir)
-    log_dir.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="mdf-bench-toolchain-") as tmp:
-        ctx, meta = Path(tmp) / "context", Path(tmp) / "meta"
-        ctx.mkdir()
-        meta.mkdir()
-        expected = spec()["context"]
-        for name in expected:
-            target = ctx / name
-            shutil.copyfile(Path(context_dir) / name, target)
-            if _sha256_file(target) != expected[name]:
-                raise EngineError(Code.TOOLCHAIN_MISMATCH, f"build context changed while copying: {name}")
-            # the same mode and time for every copy: BuildKit keys its cache on them, whatever the checkout
-            os.chmod(target, 0o644)
-            os.utime(target, (CONTEXT_MTIME, CONTEXT_MTIME))
-        iid = meta / "iid"
-        args = ["buildx", "build", "--builder", BUILDER, "--load", "--provenance=false", "--sbom=false",
-                "--progress=plain", "--iidfile", str(iid), *(["--no-cache"] if no_cache else []),
-                "-f", str(ctx / "Dockerfile"), str(ctx)]
-        try:
-            proc = engine_run(args, 3600)
-        except subprocess.TimeoutExpired:
-            raise EngineError(Code.ENGINE_FAILED, "build: timeout") from None
-        log = log_dir / f"build-{time.strftime('%Y%m%dT%H%M%S')}.log"
-        log.write_bytes(proc.stdout + proc.stderr)
-        if proc.returncode != 0 or not iid.is_file():
-            raise EngineError(Code.ENGINE_FAILED, f"build failed (exit {proc.returncode}), log {log}")
-        return iid.read_text().strip(), log
-
-
-def full_verify(image_id):
-    """Every file of the image against its stored content manifest, and the manifest against
-    `toolchain.json`; returns the number of manifest lines."""
-    data = _inspect(image_id)
-    if data is None or data.get("Id") != image_id:
-        raise EngineError(Code.TOOLCHAIN_MISSING, "built image not found")
-    if config_of(data) != spec()["config"]:
-        raise EngineError(Code.TOOLCHAIN_MISMATCH, f"image config {config_of(data)}")
-    stored = _manifest(image_id, ["cat", MANIFEST_PATH])
-    regenerated = _manifest(image_id, [CONTENT_SCRIPT], timeout=900, root=True)
+def full_verify(image_role="candidate"):
+    """Every file of the image of `image_role` against its stored content manifest, and the manifest against
+    `toolchain.json`; returns (image ID, number of manifest lines). The launcher checks the config of the image."""
+    answer = _ask(lambda launcher: launcher.toolchain(candidate=image_role == "candidate"))
+    image_id = answer.get("image") or ""
+    if not IMAGE_ID.fullmatch(image_id):
+        raise EngineError(Code.TOOLCHAIN_MISMATCH, "image id")
+    stored = _manifest(image_role, containers.MANIFEST_READ)
+    regenerated = _manifest(image_role, containers.MANIFEST_REGENERATE, timeout=900)
     if stored != regenerated:
         raise EngineError(Code.TOOLCHAIN_MISMATCH, "the files of the image differ from its content manifest")
     content = hashlib.sha256(stored).hexdigest()
     if content != identity():
         raise EngineError(Code.TOOLCHAIN_MISMATCH, f"content manifest {content}, toolchain.json {identity()}")
-    return stored.count(b"\n")
+    return image_id, stored.count(b"\n"), str(answer.get("docker") or "unknown")
 
 
-def prepare(context_dir, cache, no_cache=False, out=print, selftest=None):
-    """`mdf prepare --toolchain`: verify the context, build, verify the image file by file, run
-    `selftest(cache, out)` through the runner on the image just built, then tag it. The self-test
-    is the bench's (`bench/selftest.py`), passed by the caller: the engine imports nothing of the
-    bench. `cache.root / "toolchain"` receives the build logs."""
-    engine_path()
-    _check_local()
-    files = verify_context(context_dir)
-    out(f"toolchain context ok {len(files)} files ({', '.join(files)})")
+def prepare_candidate(cache, out=print, selftest=None):
+    """The container part of `mdf prepare --toolchain`: the image the host built and tagged
+    `mdf-bench-toolchain:candidate` is verified file by file, then `selftest(cache, out)` runs through the runner
+    on it. The self-test is the bench's (`bench/selftest.py`), passed by the caller: the engine imports nothing
+    of the bench. The last line it prints, `toolchain candidate ok <tag> <image ID>`, is what the host reads to
+    give the image its tag. Returns the image ID."""
     if selftest is None:
         raise ValueError("prepare needs the self-test of the toolchain")
-    ensure_builder(out)
-    start = time.monotonic()
-    image_id, log = build(context_dir, cache.root / "toolchain", no_cache=no_cache)
-    out(f"toolchain build ok {image_id} in {time.monotonic() - start:.0f} s{' (no cache)' if no_cache else ''}")
-    lines = full_verify(image_id)
+    image_id, lines, engine = full_verify("candidate")
     out(f"toolchain content ok {identity()} ({lines} manifest lines, every file verified)")
     out(f"toolchain reference build {'yes' if image_id == spec()['image_id'] else 'no (same content, another build)'}")
-    _state.update(image=image_id, engine=_engine_version())
+    _state.update(image=image_id, engine=engine, role="candidate")
     try:
         selftest(cache, out)
-    except BaseException:
+    finally:
         reset()
-        raise
-    proc = engine_run(["tag", image_id, tag()], 60)
-    if proc.returncode != 0:
-        reset()
-        raise EngineError(Code.ENGINE_FAILED, "docker tag")
-    out(f"toolchain ready {tag()} {image_id} docker {_state['engine']}")
+    out(f"toolchain candidate ok {tag()} {image_id} docker {engine}")
     return image_id
 
 
-# --- `python -m markdown_for_llms.engine.toolchain verify` (precondition X of the full check) ----
+# --- `python -m markdown_for_llms.engine.toolchain verify | tag | context DIR` ------------------------
 
 def main(argv=None):
+    """`verify`: precondition X of the full check, the image through the launcher. `tag`: the tag the verified
+    image has, for the host script that builds it. `context DIR`: the build context copied by that script
+    against `toolchain.json`, before it is built."""
     argv = sys.argv[1:] if argv is None else argv
+    if argv == ["tag"]:
+        print(tag())
+        return 0
+    if len(argv) == 2 and argv[0] == "context":
+        try:
+            found = verify_context(argv[1])
+        except EngineError as exc:
+            print(f"toolchain {exc.code.value}: {exc.detail}")
+            return 1
+        print(f"toolchain context ok {len(found)} files")
+        return 0
     if argv != ["verify"]:
-        print("usage: python -m markdown_for_llms.engine.toolchain verify", file=sys.stderr)
+        print("usage: python -m markdown_for_llms.engine.toolchain verify | tag | context DIR", file=sys.stderr)
         return 2
     try:
         image()

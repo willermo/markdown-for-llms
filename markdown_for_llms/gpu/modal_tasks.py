@@ -150,7 +150,8 @@ class Tasks:
         self.headers = servers.headers(self.ep, keys)
         arm = self.arm_row()                    # MFL045 c2: the app of the snapshot, from the levers of the arm
         self.snapshot = arm is not None and "snapshot" in str(arm.get("levers") or "").split(",")
-        self.modal = modal or (pv.Modal(a.app, snapshot=self.snapshot) if getattr(a, "app", None) else None)
+        self.modal = modal or (pv.Modal(a.app, snapshot=self.snapshot, env_file=a.env_file)
+                               if getattr(a, "app", None) else None)
         self.live = dv.Live()                   # the result so far, printed on a signal (c7.13)
         self.no_capacity = None                 # the scheduler's summary when it stopped a wait (c7.14)
         # c7.17: the containers of the log of the session and rule (a)

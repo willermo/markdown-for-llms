@@ -56,7 +56,8 @@ MAX_PAGES_LISTED = 200
 # closed sets of the strings an engine.json carries (anything else is `unrecognized`)
 PAGE_CLASSES = ("native", "image", "ocr_layer")                    # engine.pdfprep
 PAGE_METHODS = ("pdftext", "surya", "gemini")                      # Marker 2.2.0 text_extraction_method
-ISOLATED = ("bwrap:pkgaudit", "bwrap:pdfprep", "bwrap:marker_child")    # modules of the Bubblewrap child
+# modules of the Python children: `child:` in a container (MFL051), `bwrap:` in the results written before
+ISOLATED = ("child:pkgaudit", "child:pdfprep", "child:marker_child", "bwrap:pkgaudit", "bwrap:pdfprep", "bwrap:marker_child")
 PAGE_TIME_KEYS = ("unit", "median", "max", "count")
 DATALAB_WARNING_CODE = "datalab_transit_training_retention_us"
 DJVUTXT_NOTE = ("djvutxt writes the text layer of a DjVu without structure: the checks of emphasis and linked "

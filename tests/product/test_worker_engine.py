@@ -1,6 +1,7 @@
-"""The worker on the conversion engine (MFL032 tranche B, Δ6): reconciliation of the child record
-(K7, PB8), the manifest summary of the engine result (K9, PB9), readiness, and one real PDF from
-the archive through the worker, Marker 2.2.0 and the download (12.13, PB10)."""
+"""The worker on the conversion engine (MFL032 tranche B, Δ6): reconciliation of what a dead attempt
+left, its containers, through the launcher (K7, HC1, PB8; MFL051), the manifest summary of the engine
+result (K9, PB9), readiness, and one real PDF from the archive through the worker, Marker 2.2.0 and
+the download (12.13, PB10). The release rule of B1 is in test_unattested_end.py."""
 import io
 import json
 import os
@@ -10,13 +11,14 @@ import unittest
 from unittest.mock import patch
 import zipfile
 
+from markdown_for_llms.engine import containers
 from markdown_for_llms.files import json_bytes, read_json
 from markdown_for_llms.services import Service
 from markdown_for_llms.settings import Settings
 from markdown_for_llms.storage import StorageError
 from markdown_for_llms.worker import Worker, engine_issues, summarize
 
-from engine_fake import fake_convert
+from engine_fake import fake_convert, launcher_fake
 
 PDF = b'%PDF-1.4\nsynthetic worker contract\n'
 
@@ -118,6 +120,13 @@ class TimingsTests(Base):
 
 
 class ReconciliationTests(Base):
+    """What a dead worker left is a container of the attempt: reconciliation asks the launcher, by the prefix of
+    the names of the attempt, and releases nothing until Docker attests that none is left (K7, HC1, PB8)."""
+
+    def setUp(self):
+        super().setUp()
+        self.launcher = launcher_fake.patched(self, Path(self.tmp.name) / 'volume')
+
     def interrupted_row(self, child):
         job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
         worker = Worker(self.settings)
@@ -128,74 +137,80 @@ class ReconciliationTests(Base):
             conn.execute("UPDATE runs SET token='dead-worker' WHERE id=?", (row['id'],))
         return job
 
-    def test_scope_of_a_dead_attempt_is_stopped(self):                                   # K7
-        job = self.interrupted_row({"pid": 999999999, "scope": "mdf-eng-abc-marker-1.scope"})
-        with patch('markdown_for_llms.worker.isolation.stop_scope', return_value='absent') as stop:
-            Worker(self.settings).reconcile()
-        stop.assert_called_once_with('mdf-eng-abc-marker-1.scope')
+    def left(self, job, kind='marker', n=1, state='running'):
+        """A container the dead attempt of `job` left, as the launcher lists it; returns its name."""
+        name = containers.child_name(self.service.storage.get(job['id'])['attempt_id'], kind, n)
+        self.launcher.children[name] = {"state": state, "exit": 0, "oom_killed": False}
+        return name
+
+    def test_the_container_of_a_dead_attempt_is_removed(self):                          # K7
+        job = self.interrupted_row({"container": "placeholder"})
+        name = self.left(job)
+        Worker(self.settings).reconcile()
+        self.assertEqual((self.launcher.ops('kill'), self.launcher.removed), ([('kill', name)], [name]))
         self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
 
-    def test_unreachable_manager_is_not_an_absent_unit(self):                            # PB8
-        from markdown_for_llms.engine.isolation import ScopeUnreachable
-        job = self.interrupted_row({"pid": 999999999, "scope": "mdf-eng-abc-marker-1.scope"})
-        for effect in (ScopeUnreachable("systemctl exit 1"), None):
+    def test_a_launcher_that_does_not_answer_is_not_an_absent_container(self):          # PB8
+        job = self.interrupted_row({"container": "placeholder"})
+        name = self.left(job, 'tool')
+        for effect in ('down', 'unconfirmed'):
             with self.subTest(effect=effect):
-                kwargs = {'side_effect': effect} if effect else {'return_value': 'active'}
-                with patch('markdown_for_llms.worker.isolation.stop_scope', **kwargs), \
-                        self.assertRaisesRegex(StorageError, 'not attested|still active'):
+                self.launcher.down = effect == 'down'
+                self.launcher.unconfirmed = {name} if effect == 'unconfirmed' else set()
+                with self.assertRaisesRegex(StorageError, 'not attested absent'):
                     Worker(self.settings).reconcile()
                 self.assertEqual(self.service.get(job['id'])['state'], 'running')
+        self.launcher.down, self.launcher.unconfirmed = False, set()
+        Worker(self.settings).reconcile()
+        self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
 
-    def test_scopes_of_the_attempt_are_stopped_by_prefix(self):                          # HC1
-        from markdown_for_llms.engine.isolation import ScopeUnreachable
+    def test_the_containers_of_the_attempt_are_found_by_prefix(self):                   # HC1
         job = self.interrupted_row(None)                     # the worker died before any record
         with self.service.storage.connect() as conn:         # an attempt of a previous version: no indicator
             conn.execute('UPDATE runs SET scope_recorded=NULL WHERE id=?', (job['id'],))
-        row = self.service.storage.get(job['id'])
-        prefix = 'mdf-eng-%s-' % row['attempt_id'][:16]
-        with patch('markdown_for_llms.worker.isolation.list_scopes', side_effect=ScopeUnreachable('bus')), \
-                self.assertRaisesRegex(StorageError, 'not attested'):
+        names = [self.left(job, 'marker', 2), self.left(job, 'light', 3, state='exited'), self.left(job, 'tool', 7)]
+        other = 'mdf-eng-0000000000000000-marker-1'          # of another attempt: never touched
+        self.launcher.children[other] = {"state": "running", "exit": 0, "oom_killed": False}
+        self.launcher.down = True
+        with self.assertRaisesRegex(StorageError, 'not attested absent'):
             Worker(self.settings).reconcile()
         self.assertEqual(self.service.get(job['id'])['state'], 'running')
-        with patch('markdown_for_llms.worker.isolation.list_scopes', return_value=[prefix + 'marker-2.scope']) as listed, \
-                patch('markdown_for_llms.worker.isolation.stop_scope', return_value='absent') as stop:
-            Worker(self.settings).reconcile()
-        listed.assert_called_once_with(prefix)
-        stop.assert_called_once_with(prefix + 'marker-2.scope')
+        self.launcher.down = False
+        Worker(self.settings).reconcile()
+        prefix = containers.prefix_of(self.service.storage.get(job['id'])['attempt_id'])
+        self.assertIn(('list', prefix), self.launcher.calls)
+        self.assertEqual(sorted(self.launcher.removed), sorted(names))
+        self.assertEqual(sorted(self.launcher.children), [other])
         self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
 
-    def test_only_attempts_that_recorded_a_scope_ask_the_user_manager(self):             # indicator of the scope
-        from markdown_for_llms.engine.isolation import ScopeUnreachable
-        # no scope was ever named (a native or Datalab route, or a death before the first one):
-        # the reconciliation does not need the user manager, even when it is unreachable
-        job = self.interrupted_row({"container": "mdf-eng-abc-1"})
+    def test_only_attempts_that_named_a_container_ask_the_launcher(self):                # the indicator of the attempt
+        # no container was ever named (the text route, Datalab, or a death before the first child): the
+        # reconciliation does not need the launcher, even when it is unreachable
+        job = self.interrupted_row(None)
         self.assertEqual(self.service.storage.get(job['id'])['scope_recorded'], 0)
-        with patch('markdown_for_llms.worker.isolation.list_scopes', side_effect=ScopeUnreachable('no bus')) as listed, \
-                patch('markdown_for_llms.engine.toolchain.remove_container', return_value=True):
-            Worker(self.settings).reconcile()
-        listed.assert_not_called()
+        self.launcher.down = True
+        Worker(self.settings).reconcile()
+        self.assertEqual(self.launcher.calls, [])
         self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
-        # a scope was named, then runs.child was replaced (the raster child of the publication):
-        # the indicator stays 1 and the scope is still found by its prefix
-        job = self.interrupted_row({"pid": None, "scope": "mdf-eng-x-marker-1.scope"})
+        # a container was named, then runs.child was replaced (another child, or none): the indicator stays 1
+        # and what the attempt left is still found by its prefix
+        job = self.interrupted_row({"container": "mdf-eng-x-marker-1"})
         worker = Worker(self.settings)
         self.addCleanup(worker.storage.close)
         row = self.service.storage.get(job['id'])
         with self.service.storage.connect() as conn:
             conn.execute("UPDATE runs SET token=? WHERE id=?", (worker.token, job['id']))
-        worker.tick(dict(row, token=worker.token), {"pid": 999999999})
+        worker.tick(dict(row, token=worker.token), None)
         with self.service.storage.connect() as conn:
             conn.execute("UPDATE runs SET token='dead-worker' WHERE id=?", (job['id'],))
         row = self.service.storage.get(job['id'])
-        self.assertEqual((row['scope_recorded'], json.loads(row['child'])), (1, {"pid": 999999999}))
-        prefix = 'mdf-eng-%s-' % row['attempt_id'][:16]
-        with patch('markdown_for_llms.worker.isolation.list_scopes', side_effect=ScopeUnreachable('no bus')):
-            with self.assertRaisesRegex(StorageError, 'not attested'):
-                Worker(self.settings).reconcile()
-        with patch('markdown_for_llms.worker.isolation.list_scopes', return_value=[prefix + 'marker-1.scope']) as listed, \
-                patch('markdown_for_llms.worker.isolation.stop_scope', return_value='absent') as stop:
+        self.assertEqual((row['scope_recorded'], row['child']), (1, None))
+        with self.assertRaisesRegex(StorageError, 'not attested absent'):
             Worker(self.settings).reconcile()
-        stop.assert_called_once_with(prefix + 'marker-1.scope')
+        self.launcher.down = False
+        name = self.left(job)
+        Worker(self.settings).reconcile()
+        self.assertEqual(self.launcher.removed, [name])
         self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
 
     def test_a_queued_run_of_a_previous_version_gets_the_indicator_when_claimed(self):
@@ -206,34 +221,32 @@ class ReconciliationTests(Base):
         self.addCleanup(worker.storage.close)
         self.assertEqual(worker.claim()['scope_recorded'], 0)
 
-    def test_the_scope_is_recorded_before_the_child_has_a_pid(self):                    # HC1
-        job = self.service.submit(io.BytesIO(PDF), 'p.pdf')
-        worker = Worker(self.settings)
-        self.addCleanup(worker.storage.close)
-        seen = []
+    def test_the_container_is_recorded_before_it_is_created_for_every_kind(self):       # HC1
+        for event in ({"event": "child", "module": "m", "container": "mdf-eng-x-marker-1"},
+                      {"event": "tool", "tool": "pandoc", "container": "mdf-eng-x-tool-2"}):
+            with self.subTest(event=event["event"]):
+                job = self.service.submit(io.BytesIO(PDF + event["event"].encode()), 'p.pdf')
+                worker = Worker(self.settings)
+                self.addCleanup(worker.storage.close)
+                seen = []
 
-        def record(observer):
-            with self.service.storage.connect() as conn:
-                seen.append(json.loads(conn.execute('SELECT child FROM runs WHERE id=?', (job['id'],)).fetchone()[0]))
-        engine = fake_convert(events=[{"event": "child", "module": "m", "pid": None, "scope": "mdf-eng-x-marker-1.scope"}],
-                              before=record)
-        with patch('markdown_for_llms.worker.convert', side_effect=engine):
-            worker.process(worker.claim())
-        self.assertEqual(seen, [{"scope": "mdf-eng-x-marker-1.scope"}])
+                def record(observer):
+                    with self.service.storage.connect() as conn:
+                        row = conn.execute('SELECT child, scope_recorded FROM runs WHERE id=?', (job['id'],)).fetchone()
+                    seen.append((json.loads(row[0]), row[1]))
+                with patch('markdown_for_llms.worker.convert', side_effect=fake_convert(events=[event], before=record)):
+                    worker.process(worker.claim())
+                self.assertEqual(seen, [({"container": event["container"]}, 1)])
 
-    def test_container_of_a_dead_attempt_is_removed(self):
-        job = self.interrupted_row({"container": "mdf-eng-abc-1"})
-        with patch('markdown_for_llms.engine.toolchain.remove_container', return_value=False):
-            with self.assertRaisesRegex(StorageError, 'container not removed'):
-                Worker(self.settings).reconcile()
-        with patch('markdown_for_llms.engine.toolchain.remove_container', return_value=True):
-            Worker(self.settings).reconcile()
+    def test_a_record_of_a_previous_version_is_reconciled_by_the_prefix_of_its_attempt(self):
+        """A row written before MFL051 may name a scope or a pid: neither exists in the containers. Its attempt is
+        still attested by the prefix of its names."""
+        job = self.interrupted_row({"pid": 999999999, "scope": "mdf-eng-abc-marker-1.scope"})
+        self.assertEqual(self.service.storage.get(job['id'])['scope_recorded'], 1)
+        Worker(self.settings).reconcile()
+        prefix = containers.prefix_of(self.service.storage.get(job['id'])['attempt_id'])
+        self.assertEqual(self.launcher.ops('list'), [('list', prefix), ('list', prefix)])
         self.assertEqual(self.service.get(job['id'])['state'], 'interrupted')
-
-    def test_malformed_child_record_is_refused(self):
-        self.interrupted_row({"scope": "../../etc.scope"})
-        with self.assertRaisesRegex(StorageError, 'Malformed child record'):
-            Worker(self.settings).reconcile()
 
 
 class ReadinessTests(Base):
@@ -259,7 +272,7 @@ class ReadinessTests(Base):
             self.assertEqual(check.call_count, 1)
             worker._ready_at -= 61
             self.assertTrue(worker.ready()['marker']['available'])
-        self.assertEqual(check.call_args.kwargs, {'model_root': self.settings.model_root})
+        self.assertEqual(check.call_args.kwargs, {'model_root': self.settings.model_root, 'keys_file': None})
         failed, done = self.service.get(pdf_job['id']), self.service.get(docx_job['id'])
         self.assertEqual(failed['state'], 'failed')
         self.assertTrue(failed['error'].startswith('Conversion failed: route_unavailable (marker: weights_missing)'),
@@ -290,8 +303,10 @@ class DatalabWorkerTests(Base):
         settings = replace(self.settings, datalab_cap_usd='0.05')
         pdf = make_pdf([{"content": NATIVE_TEXT}, {"content": NATIVE_TEXT}])
         job = self.service.submit(io.BytesIO(pdf), 'remote.pdf', {'route': 'datalab', 'transit_confirmed': True})
-        with patch.dict(os.environ, {'DATALAB_API_KEY': self.SECRET}):
-            worker = Worker(settings)
+        keys = Path(self.tmp.name) / 'keys.env'
+        keys.write_text('DATALAB_API_KEY=%s\n' % self.SECRET)
+        keys.chmod(0o600)
+        worker = Worker(settings, env_file=keys)
         self.addCleanup(worker.storage.close)
         transport = FakeTransport()
         with patch.object(datalab, 'Transport', return_value=transport), patch.object(datalab, 'POLL_SECONDS', 0.01):
@@ -319,23 +334,31 @@ class DatalabWorkerTests(Base):
         code, body = run(['retry', local['id'], '--confirm-transit'])
         self.assertEqual((code, body.get('code')), (1, 'route_option_unsupported'), body)
 
-    def test_the_key_leaves_the_environment_and_the_transit_is_the_one_of_the_job(self):
+    def test_the_key_comes_from_the_keys_file_and_the_transit_is_the_one_of_the_job(self):
+        """MFL051: the key is read by name from the keys file at every use, never from the environment, out of
+        which the worker still takes the name so that no child inherits it."""
         from dataclasses import replace
         settings = replace(self.settings, datalab_cap_usd='0.05')
         job = self.service.submit(io.BytesIO(PDF), 'p.pdf', {'route': 'datalab', 'transit_confirmed': True,
                                                              'datalab_mode': 'balanced'})
-        with patch.dict(os.environ, {'DATALAB_API_KEY': self.SECRET}):
-            worker = Worker(settings)
+        keys = Path(self.tmp.name) / 'keys.env'
+        keys.write_text('DATALAB_API_KEY=%s\n' % self.SECRET)
+        keys.chmod(0o600)
+        with patch.dict(os.environ, {'DATALAB_API_KEY': 'from-the-environment'}):
+            worker = Worker(settings, env_file=keys)
             self.assertNotIn('DATALAB_API_KEY', os.environ)          # no child of the worker inherits it
+            without = Worker(settings)
+            self.addCleanup(without.storage.close)
         self.addCleanup(worker.storage.close)
         self.assertEqual(worker.datalab_state(), {"available": True, "code": None})
+        self.assertEqual(without.datalab_state()['code'], 'datalab_key_missing')    # the environment gave nothing
         self.assertEqual(Worker(self.settings).datalab_state()['code'], 'datalab_key_missing')
         calls = []
         with patch('markdown_for_llms.worker.convert', side_effect=fake_convert(calls=calls)):
             worker.process(worker.claim())
         self.assertEqual(calls[0]['request']['datalab'], {'mode': 'balanced', 'transit_confirmed': True, 'cap_usd': '0.05'})
-        self.assertIs(calls[0]['datalab_key'], worker.datalab_key)
-        self.assertEqual(repr(worker.datalab_key), 'Key(***)')
+        self.assertEqual(calls[0]['datalab_key'].header(), {'X-API-Key': self.SECRET})
+        self.assertEqual(repr(calls[0]['datalab_key']), 'Key(***)')
         row = self.service.storage.get(job['id'])
         self.assertEqual(row['state'], 'completed')
         self.assertTrue(json.loads(row['options'])['transit_confirmed'])
@@ -343,8 +366,7 @@ class DatalabWorkerTests(Base):
             if path.is_file():
                 self.assertNotIn(self.SECRET.encode(), path.read_bytes(), path)
         # a capped worker without a cap above 0 reports Datalab unavailable
-        with patch.dict(os.environ, {'DATALAB_API_KEY': self.SECRET}):
-            zero = Worker(self.settings)
+        zero = Worker(self.settings, env_file=keys)
         self.addCleanup(zero.storage.close)
         self.assertEqual(zero.datalab_state(), {"available": False, "code": "datalab_cap"})
 
@@ -352,8 +374,8 @@ class DatalabWorkerTests(Base):
 def model_root():
     root = os.environ.get("FULL_CHECK_MODEL_ROOT")
     if not root:
-        raise AssertionError("FULL_CHECK_MODEL_ROOT is not set: run the suite from scripts/full-check.sh with the weights "
-                             "prepared by `mdf prepare --weights --model-root DIR`")
+        raise AssertionError("FULL_CHECK_MODEL_ROOT is not set: run the suite with `make test`, with the weights "
+                             "prepared in the models volume (`make prepare`)")
     return root
 
 

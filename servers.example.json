@@ -1,0 +1,19 @@
+{
+  "default": "runpod",
+  "servers": {
+    "runpod": {
+      "kind": "runpod",
+      "preset": "runpod-serverless-volume-dc",
+      "resource": "mdf-surya",
+      "url": "https://YOUR_ENDPOINT_ID.api.runpod.ai",
+      "key_env": ["RUNPOD_API_KEY"]
+    },
+    "modal": {
+      "kind": "modal",
+      "preset": "modal-base",
+      "resource": "mdf-surya",
+      "url": "https://YOUR_WORKSPACE--mdf-surya-serve.modal.run",
+      "key_env": ["MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET"]
+    }
+  }
+}

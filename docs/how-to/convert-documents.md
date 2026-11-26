@@ -4,28 +4,20 @@ For Linux users and developers. `mdf convert` converts one file directly with th
 
 ## Before you start
 
-- The development venv of this repository (see [Prepare and update the uv environment](uv-environment.md)), with the package installed.
-- Docker Engine on Linux with a local socket, and the toolchain image built once from a clean checkout. `mdf prepare --toolchain` is the same command as `mdf bench prepare --toolchain` ([Prepare the reference bench](bench.md)):
+The product runs in containers ([Run the product in containers](run-in-containers.md)): `make up` builds the images, prepares the toolchain image and the 18 weight files of the Marker route (indra-ocr v1.1.0 and the GoNoto font, about 111 MB, in the models volume) and starts the services. `mdf` in the examples below is the command `make install-cli` puts on your PATH (`bin/mdf` of the checkout): it runs the CLI in a one-off container, with the current directory mounted at its own path, so the paths of the examples are relative to the directory you are in.
 
-  ```bash
-  .venv-dev/bin/mdf prepare --toolchain
-  ```
+- `mdf convert` needs the product running: the engine starts every child (the tools of the toolchain image, the audit of the packages, the preparation of the PDFs, Marker) as a container through the launcher. Without it the answer is `isolation_unavailable`.
+- The weights are verified before every conversion (`weights_missing`, `weights_mismatch`); `make prepare` downloads the missing files by commit, verifies bytes and SHA-256 and never overwrites one that does not verify. They are read from the models volume alone: `--model-root` with another folder is refused with `invalid_setting`.
+- The keys of the remote routes are read by name from the `.env` of the checkout, or from the file of `mdf --env-file FILE ...`; the settings are those of the product.
 
-- Bubblewrap at `/usr/bin/bwrap`: the audit of OOXML, OpenDocument and EPUB packages and the preparation of PDFs run in a child without network.
-- For the pages family (PDF, images, DjVu) on the default route, Marker 2.2.0 on the CPU: the development venv has it (extra `engine`); its 18 weight files (indra-ocr v1.1.0 and the GoNoto font, about 111 MB) prepared once, and a systemd user manager (`systemd-run --user --scope`), which caps the memory of the Marker child:
-
-  ```bash
-  .venv-dev/bin/mdf prepare --weights
-  ```
-
-  `mdf prepare --weights` downloads each file by commit, verifies bytes and SHA-256, retries a few times, resumes from the files already verified and never overwrites one that does not verify. Every conversion verifies the 18 files again before it starts the child (`weights_missing`, `weights_mismatch`). With `mdf prepare --cpu-server`, which downloads the local CPU server of the `marker-server` route ([below](#convert-on-the-local-cpu-server)), it is the only command of the engine that downloads anything. The model root is `${XDG_CACHE_HOME:-~/.cache}/markdown-for-llms/models` unless you pass another one with `--model-root` or `MDF_MODEL_ROOT`, the same for `mdf prepare --weights`, `mdf convert` and the worker.
+The commands of `scripts/servers/` in the sections on the rented GPUs (sessions, endpoints, series) are development tools that still run from a virtual environment of the host (`.venv-dev/bin/python`, [the uv guide](uv-environment.md)); they are not part of the product in containers.
 
 Nothing is downloaded during a conversion, and no document leaves the machine except on the Datalab route and on the `marker-server` route with a server outside the loopback, which you choose and confirm (below).
 
 ## Convert a file
 
 ```bash
-.venv-dev/bin/mdf convert report.docx --out out/report
+mdf convert report.docx --out out/report
 ```
 
 `--out` must be a new or empty directory. On success it holds:
@@ -68,7 +60,7 @@ Each format has a default route; `--route` imposes one of its alternatives.
 `marker-server` runs with `mdf convert` and `mdf bench run` on an inference server that you name, and in the archive of the product on the GPU presets of the instance, only with a `gpu_preset` (`route_not_in_product` otherwise, see [The marker-server route](#the-marker-server-route) and [The GPU session of the archive](#the-gpu-session-of-the-archive)).
 
 ```bash
-.venv-dev/bin/mdf convert book.djvu --route djvutxt --max-pages 300 --out out/book
+mdf convert book.djvu --route djvutxt --max-pages 300 --out out/book
 ```
 
 `--max-pages` (default `MDF_MAX_PAGES` of the product settings, 50) bounds the pages of the pages family (`page_limit`). `--lang` is recorded in `engine.json`; no converter of this version uses it. `--ocr force` reads every page with OCR on the Marker route and is refused with `route_option_unsupported` by the others. The memory cap of each tool (`MDF_MEMORY_MIB`, at most 2,048 MiB for the package audit), the output cap (`MDF_OUTPUT_MIB`, `engine.json` included, also the cap of the private working directory of each tool) and the total deadline (`MDF_TIMEOUT_SECONDS`, 0 for none) come from the product settings; `--env-file` of `mdf` selects them.
@@ -83,7 +75,7 @@ LibreOffice, in the toolchain image, writes the workbook or the presentation as 
 An export that LibreOffice leaves empty fails with `tool_failed`. `--ocr force` is refused.
 
 ```bash
-.venv-dev/bin/mdf convert slides.pptx --route libreoffice --out out/slides
+mdf convert slides.pptx --route libreoffice --out out/slides
 ```
 
 ### Text files and their encoding
@@ -94,7 +86,7 @@ After a UTF-16 or UTF-32 mark the whole file must decode strictly, and the text 
 
 ## The Marker route
 
-Marker 2.2.0 runs in `fast` mode on the CPU, in a Bubblewrap child without network, the weights read-only, under a systemd scope whose memory cap is `MDF_MEMORY_MIB`; a child that writes no progress event and uses no CPU time for `MDF_STALL_SECONDS` is stopped (`stalled`). The PDF is classified first, page by page (`pages` in `engine.json`): `native` (visible text), `ocr_layer` (an image over most of the page with only invisible text, including the glyphless layers of OCR programs) or `image`.
+Marker 2.2.0 runs in `fast` mode on the CPU, in a container without network started by the launcher, the weights read-only, with a memory cap without swap of `MDF_MEMORY_MIB`; a child that writes no progress event and uses almost no CPU time for `MDF_STALL_SECONDS` is stopped (`stalled`). The PDF is classified first, page by page (`pages` in `engine.json`): `native` (visible text), `ocr_layer` (an image over most of the page with only invisible text, including the glyphless layers of OCR programs) or `image`.
 
 - Only native pages: Marker reads their text; Indra, its reader, still runs OCR where the text layer is broken (for example a broken font map or text without ink) and says so per page: `indra_source` `hybrid` (part of the page) or `ocr` (the whole page), with the reason in `note`.
 - No native page, or `--ocr force`: every page is read with OCR.
@@ -118,11 +110,11 @@ DjVu becomes a PDF of images before Marker, and that PDF is much larger than the
 Datalab is a remote service: the document leaves the machine, and the conversion is paid. It runs only when you choose it, confirm the transit and set a spending cap:
 
 ```bash
-.venv-dev/bin/mdf --env-file .env convert scan.pdf --route datalab --out out/scan \
+mdf --env-file .env convert scan.pdf --route datalab --out out/scan \
     --datalab-mode balanced --datalab-cap-usd 0.05 --confirm-transit
 ```
 
-- The key is `DATALAB_API_KEY` in the file given with `--env-file`, which must be a regular file of yours with mode 0600 (`datalab_key_unsafe` otherwise), or in the environment. It is never written to `engine.json`, the logs or stdout.
+- The key is `DATALAB_API_KEY` in the file given with `--env-file` (without the option, the `.env` of the checkout), which must be a regular file of yours with mode 0600 (`datalab_key_unsafe` otherwise). It is read from that file alone, never from the environment, and it is never written to `engine.json`, the logs or stdout.
 - Without `--confirm-transit` nothing is sent: the conversion stops with `transit_not_confirmed`, and the summary shows the service, the pages and the estimated cost (`cost`). The estimate (pages at the list price of the mode, plus one cent) above the cap stops it with `datalab_cap` before any byte leaves; the default cap is 0.
 - What is sent is a PDF from which an invisible OCR layer has been removed; when it cannot be removed the route refuses (`ocr_layer_not_removable`). `--ocr force` is refused.
 - The result is deleted from Datalab after every conversion, also after a failure or a cancellation; a failed deletion is the warning `datalab_delete_failed` (Datalab otherwise keeps it one day). The billed cost, when the answer gives it, is in `cost.billed_cents`. Whether Datalab may keep a copy for training depends on the settings of your Datalab team, not on this command.
@@ -140,12 +132,12 @@ Datalab is a remote service: the document leaves the machine, and the conversion
 
 | `kind` | The server | The page images leave the machine | Cost |
 | --- | --- | --- | --- |
-| `cpu` | the local CPU server: `llama-server` of llama.cpp b12040 with the GGUF weights of Surya, prepared once with `mdf prepare --cpu-server`, run in its own Bubblewrap child without network under a systemd user scope | no | none, but slow: 100 to 215 s for each page the server reads on the tested laptop (4 cores), about 6 s per page of text alone in `balanced` |
+| `cpu` | the local CPU server: `llama-server` of llama.cpp b12040 with the GGUF weights of Surya, prepared once with `make prepare CPU_SERVER=1`, run by the launcher in a container of its own without network, under its memory cap | no | none, but slow: 100 to 215 s for each page the server reads on the tested laptop (4 cores), about 6 s per page of text alone in `balanced` |
 | `local` | a server of yours on the loopback: `http` to a literal loopback address with an explicit port, such as `http://127.0.0.1:PORT`, another `127.x.y.z` or `http://[::1]:PORT`; never a name such as `localhost` (`server_not_loopback` otherwise) | no | yours |
 | `user` | a server of yours elsewhere, over https, for example vLLM 0.25.1 on your own GPU | yes | yours |
 | `runpod`, `modal` | an endpoint rented by the second on RunPod or Modal, prepared with the scripts of `scripts/servers/` ([Prepare a RunPod endpoint](#prepare-a-runpod-endpoint), [Prepare a Modal app](#prepare-a-modal-app)) | yes | billed while a GPU runs: a spending cap, a ledger and a session are required |
 
-The servers are named in `servers.json`, a file without secrets: `${XDG_CONFIG_HOME:-~/.config}/markdown-for-llms/servers.json`, or the file given with `--servers`. `default` names the server used without `--server`:
+The servers are named in `servers.json`, a file without secrets: for the archive it is `config/servers.json` of the state folder (`./state` by default; `servers.example.json` at the root of the checkout is an example), and `mdf convert` takes the file given with `--servers`. An endpoint of kind `local`, a server on the loopback of the host, cannot be reached from a container and is refused with `server_not_configured`. `default` names the server used without `--server`:
 
 ```json
 {"default": "cpu", "servers": {
@@ -184,16 +176,16 @@ A superseded preset is listed for its measures and never used; a preset on a glo
 ### Convert on the local CPU server
 
 ```bash
-.venv-dev/bin/mdf prepare --cpu-server
-.venv-dev/bin/mdf convert scan.pdf --route marker-server --server-mode balanced --server cpu --out out/scan
+make prepare CPU_SERVER=1
+mdf convert scan.pdf --route marker-server --server-mode balanced --server cpu --out out/scan
 ```
 
-`mdf prepare --cpu-server` downloads the release of `llama-server` and the two GGUF files, each by URL with its bytes and SHA-256, into `${XDG_CACHE_HOME:-~/.cache}/markdown-for-llms/cpu-server` (`--root` for another directory), and records whether that build listens on a Unix socket: without one the route cannot run in the sandbox. Every conversion verifies the files again before it starts the server.
+`make prepare CPU_SERVER=1` (`mdf prepare --cpu-server` in the `cli` container) downloads the release of `llama-server` and the two GGUF files, each by URL with its bytes and SHA-256, into the volume of the CPU server, the only root the children read (another `--root` is refused with `server_not_configured`; x86_64 only), and records whether that build listens on a Unix socket: without one the route cannot run in the sandbox. Every conversion verifies the files again before it starts the server.
 
 ### Convert on a server outside the loopback
 
 ```bash
-.venv-dev/bin/mdf --env-file .env convert scan.pdf --route marker-server --server-mode accurate \
+mdf --env-file .env convert scan.pdf --route marker-server --server-mode accurate \
     --server my-gpu --confirm-transit --out out/scan
 ```
 
@@ -208,7 +200,7 @@ L=~/bench-runs/spend.jsonl
 .venv-dev/bin/python -I -B scripts/servers/session.py run --provider modal --name mdf-surya \
     --url "https://<workspace>--mdf-surya-serve.<region>.modal.run" --env-file .env \
     --spend-ledger "$L" --spend-cap-usd 15 --cap-usd 1.00 -- \
-  .venv-dev/bin/mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
+  mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
     --server modal-l4 --confirm-transit --server-cap-usd 1.00 --spend-ledger "$L" --spend-cap-usd 15 --out out/report
 ```
 
@@ -275,7 +267,7 @@ The scripts of `scripts/servers/` run from the root of a clone with the developm
 
 ### Prepare a Modal app
 
-1. Give the pinned SDK its token: `uv tool run --from modal==1.6.3 modal token new` opens a login in the browser and writes the token of the SDK to `~/.modal.toml`. `uv tool run --from modal==1.6.3 modal profile current` must name the workspace that pays; on its dashboard set the spending limit and the usage budget you accept.
+1. Give the product the token of the SDK: create one in the settings of the workspace that pays (`ak-...` and `as-...`) and put it in `.env` as `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET`. The worker gives it to each process of the Modal CLI of the image (SDK 1.6.3) in a private file of its own; no `~/.modal.toml` is read in the containers. On the dashboard of the workspace set the spending limit and the usage budget you accept.
 2. Create a proxy token of the same workspace (Settings, Proxy tokens, or `uv tool run --from modal==1.6.3 modal workspace proxy-tokens create`, which prints the secret once) and put it in your key file in three lines: `MODAL_PROXY_TOKEN_ID` (it starts with `wk-`), `MODAL_PROXY_TOKEN_SECRET` (`ws-`) and `MODAL_PROXY_BEARER`, the two joined by a dot, for a `user` server that sends `Authorization: Bearer`.
 3. Fill the Volume `mdf-surya-weights` once, in a session at the rate of a CPU:
 
@@ -294,7 +286,7 @@ Each provider needs a key that manages it (the sessions and the scripts of `scri
 
 | | The key that manages the provider | The key that lets requests through | Where they are |
 | --- | --- | --- | --- |
-| Modal | the token of the SDK (`ak-…` and `as-…`): deploys, stops and reads the app, its containers, logs and bill, through the pinned SDK | the proxy token (`wk-…` and `ws-…`): it only opens the edge of the app's web endpoint, whose functions require it; a missing one, or one of another workspace, gets 401 from the edge and no request reaches the app | the token of the SDK in `~/.modal.toml`, never in the key file or given to `mdf`; the proxy token in the key file |
+| Modal | the token of the SDK (`ak-…` and `as-…`): deploys, stops and reads the app, its containers, logs and bill, through the pinned SDK | the proxy token (`wk-…` and `ws-…`): it only opens the edge of the app's web endpoint, whose functions require it; a missing one, or one of another workspace, gets 401 from the edge and no request reaches the app | both in `.env`, by name: the token of the SDK as `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET` (the worker gives it to each process of the Modal CLI in a private file of its own; never an option of `mdf`, and no `~/.modal.toml` is read in the containers), the proxy token as `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET` |
 | RunPod | one restricted API key does both, so keep its permissions to the list above | the same key | the key file (`RUNPOD_API_KEY`) |
 | Datalab | | `DATALAB_API_KEY`, for the Datalab route only | the key file |
 
@@ -330,7 +322,7 @@ On RunPod the arm alone makes a host load the image of the endpoint, and nothing
 ```bash
 .venv-dev/bin/python -I -B scripts/servers/session.py run --provider runpod --name mdf-surya --env-file .env \
     --spend-ledger ~/bench-runs/spend.jsonl --spend-cap-usd 4 --cap-usd 0.40 -- \
-  sh -c 'sleep 420 && exec .venv-dev/bin/mdf --env-file .env convert report.pdf --route marker-server \
+  sh -c 'sleep 420 && exec mdf --env-file .env convert report.pdf --route marker-server \
     --server-mode balanced --server runpod-24gb --confirm-transit --server-cap-usd 0.40 \
     --spend-ledger ~/bench-runs/spend.jsonl --spend-cap-usd 4 --out out/report'
 ```
@@ -361,7 +353,7 @@ L=~/bench-runs/spend.jsonl
 .venv-dev/bin/python -I -B scripts/servers/session.py run --provider modal --name mdf-surya-snap \
     --levers "snapshot,$CC" --url "https://<workspace>--mdf-surya-snap-serve-web.<region>.modal.run" \
     --env-file .env --spend-ledger "$L" --spend-cap-usd 15 --cap-usd 1.00 -- \
-  .venv-dev/bin/mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
+  mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
     --server modal-snap --confirm-transit --server-cap-usd 1.00 --spend-ledger "$L" --spend-cap-usd 15 --out out/report
 ```
 
@@ -385,7 +377,7 @@ L=~/bench-runs/spend.jsonl
 .venv-dev/bin/python -I -B scripts/servers/session.py run --provider runpod --name mdf-surya \
     --levers "compile-cache:<SHA-256 of the archive of the endpoint>,flashboot" --env-file .env \
     --spend-ledger "$L" --spend-cap-usd 4 --cap-usd 0.60 -- \
-  .venv-dev/bin/mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
+  mdf --env-file .env convert report.pdf --route marker-server --server-mode balanced \
     --server runpod-24gb --confirm-transit --server-cap-usd 0.60 --spend-ledger "$L" --spend-cap-usd 4 --out out/report
 ```
 
@@ -407,14 +399,14 @@ Measured on 22 and 23 November 2026, in three sessions on `mdf-surya` and the fa
 The ledger (`--spend-ledger`, the `spend.jsonl` of a runs folder of the bench) records every session of a provider: the arm with its window, the reservations of the attempts, the disarm with the zero, and what each window counts. It never holds a key or document text.
 
 ```bash
-.venv-dev/bin/mdf bench spend show --runs-dir ~/bench-runs
+mdf bench spend show --runs-dir ~/bench-runs
 ```
 
 prints the total of each provider and of Datalab, every window with its amount and state (`open` while its session lives, then `clean`, `unclean` or `orphan`), and the windows over their bound (`over_bound`). The ledger counts upper bounds; the bill of the provider, read at an hour already closed, is the cost. A bound holds under two conditions: the caps on the side of each platform, set as in the preparation (on RunPod a small prepaid balance without automatic top-up, on Modal the spending limit and the usage budget), which no session can check; and a disarm whose zero comes within Z, which the session checks: a zero later than Z makes the window unclean, counted to the zero. A laptop that stops with a window armed leaves only the caps of the platforms and the stops of the watchdog in the container. On RunPod `runpod_endpoint.py --env-file .env read-history --name N --since ISO` prints the bill of the endpoint by hour; on Modal `uv tool run --from modal==1.6.3 modal billing report --for today -r h --json` prints it by app and hour. When an hour is closed, the figure billed for a window replaces its amount:
 
 ```bash
-.venv-dev/bin/mdf bench spend reconcile --runs-dir ~/bench-runs --provider runpod --arm ARM_ID --manual-cents 4.07
-.venv-dev/bin/mdf bench spend reconcile --runs-dir ~/bench-runs --provider modal --orphan --manual-cents 7.13
+mdf bench spend reconcile --runs-dir ~/bench-runs --provider runpod --arm ARM_ID --manual-cents 4.07
+mdf bench spend reconcile --runs-dir ~/bench-runs --provider modal --orphan --manual-cents 7.13
 ```
 
 `--arm` (repeatable) names closed windows, `--activity` activities, `--orphan` the orphan windows that `session.py disarm` closed. A figure above the amounts of its windows is written and then stops the provider for good (`server_billed_over_bound`): a bill over the bound means that the guarantees of the session did not hold, and is a matter for you before any other session. The caps are never raised to let a session pass.
@@ -429,7 +421,7 @@ A session counts its window within its reserve `A` only when it watched the whol
 The window is then never cut at `A`: its `disarm` row has `orphan: true` and `uncertain` with the reason, the ledger counts the provider at its cap, and no new window opens on that provider (`session_orphaned`, also for `mdf convert` and the bench) until a reconciliation with the bill. `session.py run` writes the event `uncertain` in its report and exits with 4 (after 130 for a signal and 5 for the term, which come first: the row keeps the block). The archive shows the session as "GPU session not certified" with the reason, the hour of the zero, the provider at its cap and the command ([The GPU session of the archive](#the-gpu-session-of-the-archive)). Read on the bill of the provider the amount for the hours of the window (RunPod: `runpod_endpoint.py --env-file .env read-history --name N --since ISO`; Modal: `uv tool run --from modal==1.6.3 modal billing report --for today -r h --json`), when those hours are closed, then:
 
 ```bash
-.venv-dev/bin/mdf bench spend reconcile --runs-dir RUNS --provider runpod --orphan --arm ARM_ID --manual-cents N
+mdf bench spend reconcile --runs-dir RUNS --provider runpod --orphan --arm ARM_ID --manual-cents N
 ```
 
 `RUNS` is the folder of the ledger (for the archive `MDF_GPU_LEDGER_DIR`). The figure replaces the cap and frees the provider. To keep a session from being suspended, run its commands under `systemd-inhibit --what=sleep:idle:handle-lid-switch`.
@@ -445,16 +437,16 @@ The window is then never cut at `A`: its `disarm` row has `orphan: true` and `un
 
 ## Convert in the archive of the product
 
-The archive keeps every source, every attempt and every result under `MDF_DATA_ROOT` (default `./mdf-data`). It runs as two processes on the same machine, which load the same settings (`--env-file`, see [`.env.example`](../../.env.example)):
+The archive keeps every source, every attempt and every result in the archive folder (`./data` by default, `MDF_COMPOSE_DATA` in [`.env`](../../.env.example)). The product runs as services in containers, started together ([Run the product in containers](run-in-containers.md)):
 
 ```bash
-.venv-dev/bin/mdf --env-file mdf.env serve      # API and Web UI on http://127.0.0.1:23465
-.venv-dev/bin/mdf --env-file mdf.env worker     # the conversions, one at a time
+make up        # API and Web UI on http://127.0.0.1:23465, the worker, the launcher
+make status    # the services and the state of every route
 ```
 
 Open `http://127.0.0.1:23465` in a browser on the same machine, choose files under "Choose one or more files" and press "Convert"; a conversion shows its progress, then the extracted Markdown, the images, "Download source" and "Download Markdown and assets (ZIP)". From the command line, `mdf submit FILE… [--wait] [--route R] [--ocr force] [--lang L] [--datalab-mode M] [--confirm-transit]` sends files to the same archive, and `mdf jobs`, `mdf show ID`, `mdf retry ID [--confirm-transit]`, `mdf cancel ID`, `mdf download ID --output FILE` follow them. A refusal prints its code next to the text (`{"error": …, "code": "transit_not_confirmed"}`) and exits 1.
 
-The settings file of the product holds no key: `mdf serve` and `mdf worker` read from it only the lines of the `MDF_` settings. A file given to `mdf worker --env-file` must be a regular file of yours with mode 0600, not a link (`server_key_unsafe` otherwise, before anything reads it), because it may also hold the keys of the GPU sessions; the worker takes the keys of the rented GPUs (`RUNPOD_API_KEY`, the Modal proxy token, the `key_env` of `servers.json`) out of its environment when it starts.
+`.env` holds the settings and the keys: the services get only the `MDF_` lines (`settings.env`, written by the `config` step), and the API never sees the file. The worker reads the keys by name, at every use, from the file mounted read-only; a file that is not a private regular file of yours does not stop the worker: the local routes go on and the routes with a key are unavailable with their code (`datalab_key_unsafe`, `server_key_unsafe`). See [Run the product in containers](run-in-containers.md#the-env-file-and-the-keys).
 
 ### Conversion presets
 
@@ -470,11 +462,11 @@ A conversion preset says how a document is converted: route, mode of the GPU rou
 `quality-now` and `batch` run on a GPU preset of the instance ([The GPU session of the archive](#the-gpu-session-of-the-archive)): when the instance does not enable it they are listed and unavailable with their code (`gpu_preset_not_enabled`, `server_cap` with a cap of 0, `session_orphaned` while a window of the provider waits for the bill). You add presets of your own with the same fields and choose your default:
 
 ```bash
-.venv-dev/bin/mdf --env-file mdf.env presets list
-.venv-dev/bin/mdf --env-file mdf.env presets add scans --route marker --ocr force
-.venv-dev/bin/mdf --env-file mdf.env presets default scans      # or: presets default --clear
-.venv-dev/bin/mdf --env-file mdf.env submit page.png --preset scans --lang it
-.venv-dev/bin/mdf --env-file mdf.env presets remove scans
+mdf presets list
+mdf presets add scans --route marker --ocr force
+mdf presets default scans      # or: presets default --clear
+mdf submit page.png --preset scans --lang it
+mdf presets remove scans
 ```
 
 The names of the presets of the archive are reserved (`preset_reserved`); a name is lowercase letters, digits and hyphens (`preset_invalid` otherwise, as for options outside their form), once per user (`preset_exists`). With `--preset` only `--lang` and `--confirm-transit` go beside it; the job records the name of the preset in its options (`preset`). The API has the same operations: `GET /api/v1/presets` (the presets, the default and the GPU presets with whether this instance enables them), `POST /api/v1/presets` with `{"name": …, "options": {…}}`, `PUT` and `DELETE /api/v1/presets/NAME`, `PUT /api/v1/settings/default-preset` with `{"name": …}` or `null`, and `POST /api/v1/runs?preset=NAME`, with only `lang` and `transit_confirmed` beside it.
@@ -488,8 +480,8 @@ A job on a GPU preset (`quality-now`, `batch`, or `route=marker-server&server_mo
 What the instance needs:
 
 - `MDF_GPU_PRESETS` with the preset, its caps above 0, and an endpoint of `MDF_SERVERS` that names it ([GPU presets](#gpu-presets));
-- the keys of the endpoint by name in the env file of the worker (`mdf --env-file worker.env worker`, a file of yours with mode 0600: `RUNPOD_API_KEY`, or `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET` with the token of the SDK in `~/.modal.toml`), never in the settings of `mdf serve`;
-- for Modal, `uv` on the `PATH` of the worker (the CLI of the SDK).
+- the keys of the endpoint by name in `.env` (`RUNPOD_API_KEY`, or `MODAL_PROXY_TOKEN_ID` and `MODAL_PROXY_TOKEN_SECRET` with the token of the SDK in `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET`), read at every use and never in the settings of the services;
+- for Modal, nothing else: the CLI of the SDK is in the image of the worker (`/opt/modal/bin/modal`, SDK 1.6.3).
 
 Before anything is armed the worker opens a session only when it fits: no orphan window of the provider in the ledger, no window of another session (`provider_not_idle`), the endpoint at rest, and on RunPod its pins and, since this version, those of the preset: the volume of the preset in its data center, of its class and size (`endpoint_out_of_pins`). Only the session of the archive passes the preset to these checks (`pin_checks`, `RunPod.arm`); a session of `session.py run` checks the pins of MFL033 only. The reserve of the session `A` is the smaller of `MDF_GPU_SESSION_CAP_USD` and what the cap of the provider leaves, its window `W = A / rate - 60 s - Z - tail`, and it must hold an attempt of `MDF_MAX_PAGES` pages (one page to arm ahead): that is the **minimum reserve** of a session, 45.23 cents on Modal and 28.76 cents on RunPod with the 50 pages of the default, a reserve and never a charge. A larger `MDF_MAX_PAGES` raises it (98.19 cents on Modal with 200 pages); under it the job fails with `server_cap` before anything is armed.
 
@@ -511,27 +503,21 @@ The detail of a completed conversion lists its problems with their page under "P
 
 Datalab appears in the Web UI only when the worker has the key and the spending cap of each conversion is above 0:
 
-- the cap is `MDF_DATALAB_CAP_USD` (for example `0.05`) in the settings of both processes; the default 0 sends nothing;
-- the key is `DATALAB_API_KEY` in the environment of the worker process only, never in the settings file of the product. With the key alone in a file of yours with mode 0600 (here `datalab.env`), start the worker so that it is not printed or kept in the shell:
-
-  ```bash
-  ( set -a; . ./datalab.env; set +a; exec .venv-dev/bin/mdf --env-file mdf.env worker )
-  ```
-
-  The worker takes the key out of its environment when it starts, so no child process inherits it; it is never written to the archive, the manifests or the logs.
+- the cap is `MDF_DATALAB_CAP_USD` (for example `0.05`) in `.env`; the default 0 sends nothing;
+- the key is `DATALAB_API_KEY` in `.env`, then `make restart`. The worker reads it by name from that file at every conversion with Datalab and at every check of the routes; it is never in the environment of a container, and it is never written to the archive, the manifests or the logs. `make status` shows the route `not_configured` while the key is missing, `disabled` while the cap is 0, and `broken` (`datalab_key_unsafe`) when the file is not a private file of yours or was replaced after the start.
 
 Before sending, the Web UI shows what happens to the document under "Datalab: the document leaves this computer" (it is uploaded to the Datalab API, its result is deleted there afterwards, and whether Datalab keeps it or uses it for training depends on the settings of the Datalab account, not on the app) and the button stays disabled until "I confirm that these documents are sent to Datalab" is checked. The API needs `route=datalab&transit_confirmed=true`; without the confirmation the request is refused with `transit_not_confirmed`. A retry sends the document again, so it needs the confirmation again ("Send it to Datalab again"; `mdf retry ID --confirm-transit`; `POST /api/v1/runs/ID/retry?transit_confirmed=true`); without it the retry is refused with `transit_not_confirmed` and no new run is queued. The detail of the run shows that the document left the computer, whether its result was deleted on Datalab and the estimated and billed cost.
 
 ### The archive identity and the return to a previous version
 
-The archive records the identity of the settings it depends on (identity schema 3, profile `engine-v1`): the port, the model root, the time limits, the Datalab cap and the settings of the GPUs are not part of it, the quotas and the limits of a conversion are (`mdf configure` changes the storage quota). An archive of a previous version (identity schema 1 or 2) is upgraded by its first opening, which needs every API, worker and CLI of every version stopped; the upgrade is recorded in the `history` of `identity.json`. If it was created with a former default port, open it once with `MDF_PORT=23460` (or `8765` before 2026-11-07); with the former default model root (`./mdf-models` of the directory it was used from), once with `MDF_MODEL_ROOT` set to the absolute path of that `mdf-models` directory, from any directory, or with `MDF_MODEL_ROOT=./mdf-models` from the directory it was used from; the mismatch message names them.
+The archive records the identity of the settings it depends on (identity schema 3, profile `engine-v1`): the port, the model root, the time limits, the Datalab cap and the settings of the GPUs are not part of it, the quotas and the limits of a conversion are (only the storage quota can change, with `mdf configure` and the product stopped: the steps are in [Settings that cannot change](run-in-containers.md#settings-that-cannot-change)). An archive of a previous version (identity schema 1 or 2) is upgraded by its first opening, which needs every API, worker and CLI of every version stopped; the upgrade is recorded in the `history` of `identity.json`. If it was created with a former default port, open it once with `MDF_PORT=23460` (or `8765` before 2026-11-07). One created with the former default model root (`./mdf-models` of the directory it was used from) cannot be opened by the product in containers as it is: `MDF_MODEL_ROOT` is fixed there (`/models/marker`) and `make up` refuses the line in `.env`, while the mismatch message of the archive still names that setting. Start a new archive in another folder (`MDF_COMPOSE_DATA`) and keep the old one where it is.
 
 Its database is at schema 5 (4: the conversion presets of the users and their default; 5: the GPU sessions, their requests and the GPU facts of each run), which an archive of schema 3 or 4 reaches at its first opening, with the same identity. A binary of an earlier schema refuses it (`Unsupported database schema`): to use the archive again with the binary of schema 4 or 3, stop every process and add `--to-schema 4` or `--to-schema 3` to the command below. Those returns leave `identity.json` as it is. The return under 5 is refused, without changes, while a GPU session is not closed (`uncertain`, `orphan` or `stopped`: reconcile it first), a request to arm or disarm is pending, or a run has GPU facts or ran on the route `marker-server`; the return under 4 while a user has a conversion preset or a default, or a run was submitted with a preset (its options hold `preset`).
 
-To use the archive again with the version of schema 2, stop every process and run:
+To use the archive again with the version of schema 2, stop the product (`make down`: `mdf downgrade-storage`, like `mdf configure`, runs without the launcher and needs every service stopped) and run, from the checkout, with the folder of the archive in place of `data` when `MDF_COMPOSE_DATA` names another one:
 
 ```bash
-.venv-dev/bin/mdf --env-file mdf.env downgrade-storage --expected-config "$(python3 -c 'import json; print(json.load(open("mdf-data/identity.json"))["config"])')"
+mdf downgrade-storage --expected-config "$(sed -n 's/^  "config": "\(.*\)",*$/\1/p' data/identity.json)"
 ```
 
 The return is refused, without changes, unless the archive was upgraded from schema 2 (or 1) with the same settings, no run is running, every source is a PDF, every run has the options of that version and the owner `local`, plus the conditions of the return to schema 3: once a file of another format or a run with the options of schema 3 is in the archive, it can return to schema 3 at most. The checks of every schema crossed run before anything changes.

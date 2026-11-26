@@ -35,18 +35,6 @@ CASES = (("tool", "toolchain", ["qpdf", "--version"]), ("light", "app", containe
          ("manifest", "toolchain", containers.MANIFEST_REGENERATE))
 
 
-def prepare_volumes():
-    """What the read-only volumes of `marker` and `cpuserver` must hold for a child to start: a `marker` directory
-    in the volume of the weights, and in the one of the CPU server a `gguf` directory and a `llama` tree with a
-    program (here the shell probe, run by the image of the application)."""
-    (support.MODELS / "marker").mkdir(mode=0o700, exist_ok=True)
-    for name in ("llama", "gguf"):
-        (support.CPU_SERVER / name).mkdir(mode=0o700, exist_ok=True)
-    script = support.CPU_SERVER / "llama" / "probe.sh"
-    script.write_text(support.SHELL_SCRIPT)
-    script.chmod(0o755)
-
-
 def variables_for(kind, image):
     if kind == "manifest":
         return {"LC_ALL": "C.UTF-8", "LANG": "C.UTF-8"}
@@ -61,7 +49,7 @@ class Base(support.ComponentCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        prepare_volumes()
+        support.prepare_volumes()
         cls.launcher.toolchain()                # the toolchain image is verified by the launcher once
 
     def shell(self, kind, image, argv=None, limits=None, **run):
@@ -408,15 +396,17 @@ class TestPythonChildren(Base):
         self.assertIsNotNone(threads["error"])
 
     def test_rlimit_nproc_counts_the_processes_of_the_user_on_the_whole_host(self):
-        """Why the process limit of a child is `PidsLimit` and `RLIMIT_NPROC` goes away with the switch (tranche A2):
-        without a user namespace the limit of `child.py` counts every process of this UID on the host, so a small
-        one stops a child that has two processes, while a large one stops nothing that the container does not."""
+        """Why the process limit of a child is `PidsLimit` and `child.py` sets no `RLIMIT_NPROC` any more (tranche
+        A2): without a user namespace that limit counts every process of this UID on the host, so a small one
+        stops a child that has two processes, while a large one stops nothing that the container does not."""
         outcome, report = self.probe(steps=[{"do": "fork", "count": 3}], child_limits={"process_limit": 4})
         self.assertEqual(outcome.exit, 0)
-        self.assertEqual(report["limits"]["NPROC"], [4, 4])
-        self.assertEqual(self.step_result(report, "fork"), {"started": 0, "error": "EAGAIN"})
-        outcome, report = self.probe(steps=[{"do": "fork", "count": 3}])
+        self.assertNotEqual(report["limits"]["NPROC"], [4, 4])          # `child.py` no longer reads `process_limit`
         self.assertEqual(self.step_result(report, "fork"), {"started": 3, "error": None})
+        # the fact itself, with the limit set as `child.py` used to: not one fork, in a container with two processes
+        outcome, report = self.probe(steps=[{"do": "nproc", "limit": 4}, {"do": "fork", "count": 3}])
+        self.assertEqual(outcome.exit, 0)
+        self.assertEqual(self.step_result(report, "fork"), {"started": 0, "error": "EAGAIN"})
 
     def test_a_file_over_the_cap_is_refused(self):
         """The limit of `child.py` cannot be over the one of the container: here both are 4 MiB."""

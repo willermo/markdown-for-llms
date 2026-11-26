@@ -9,6 +9,8 @@ import threading
 import time
 import unittest
 
+from engine_test_support import private_sockets
+
 from fake_inference import Fake, MODEL, PairTransport, raw
 from markdown_for_llms.engine import relay as relay_mod, servers, sockets
 from markdown_for_llms.engine.codes import Code, EngineError
@@ -35,7 +37,7 @@ def keys_for(ep):
 
 class RelayCase(unittest.TestCase):
     def setUp(self):
-        self.private = sockets.Private()
+        self.private = private_sockets()
         self.addCleanup(self.private.close)
 
     def fake(self, **kw):
@@ -429,7 +431,7 @@ class TestReflectedCredentials(RelayCase):
     def test_the_version_of_the_server_passes_the_same_filter(self):
         for pins in ({}, {"vllm": "0.25.1"}):
             with self.subTest(pins=pins):
-                self.private = sockets.Private()                 # a socket of its own for each relay
+                self.private = private_sockets()                 # a socket of its own for each relay
                 self.addCleanup(self.private.close)
                 fake = self.fake(key=KEY, version="0.25.1-" + KEY)
                 r = self.relay(endpoint(pins=pins), fake)
@@ -514,7 +516,7 @@ class TestBoundedProbes(RelayCase):
         import httpx
         for name, total in (("endless", None), ("32 MiB", 32 << 20)):
             with self.subTest(body=name):
-                self.private = sockets.Private()
+                self.private = private_sockets()
                 self.addCleanup(self.private.close)
                 bodies = []
 
@@ -564,7 +566,7 @@ class TestBoundedProbes(RelayCase):
         self.assertEqual(r.versions, {"vllm": None})
         self.assertLessEqual(bodies[0].produced, PROBE_LIMIT + CHUNK)
         # the health: readiness passes, then every probe of /v1/models is endless
-        self.private = sockets.Private()
+        self.private = private_sockets()
         self.addCleanup(self.private.close)
         state = {"endless": False}
 

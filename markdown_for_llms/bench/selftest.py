@@ -192,10 +192,14 @@ def run_selftest(cache, out=print):
         endless.write_bytes(ENDLESS_PS)
         detail = _expect_code("timeout", Code.TOOL_FAILED, lambda: tools.run(
             "gs", ["-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "-sDEVICE=nullpage", tools.In(endless)], root, timeout=5))
-        left = toolchain.engine_run(["ps", "-a", "--filter", f"name=mdf-bench-{os.getpid()}-", "--format", "{{.Names}}"], 60)
-        if not detail.endswith("timeout") or left.returncode != 0 or left.stdout.strip():
-            _fail("timeout", f"{detail}; left: {left.stdout.decode().split()}")
-        done("timeout", "container removed by name")
+        from ..engine import containers
+        try:                # the children of this process, asked of the launcher by their prefix
+            left = [child["name"] for child in containers.launcher().list(containers.process_prefix())]
+        except (containers.Unreachable, containers.Refused) as exc:
+            _fail("timeout", f"{detail}; the launcher did not list the children: {exc}")
+        if not detail.endswith("timeout") or left:
+            _fail("timeout", f"{detail}; left: {left}")
+        done("timeout", "container removed, none left for this process")
     finally:
         shutil.rmtree(work, ignore_errors=True)
     return results

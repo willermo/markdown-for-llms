@@ -1184,7 +1184,8 @@ def server_options(m, routes, modes=None, server=None, servers_file=None, confir
         raise BenchError(Code.INVALID_SETTING, "marker-server and datalab in one run")
     modes = parse_server_modes(modes)
     path = Path(servers_file).absolute() if servers_file is not None else servers.default_path()
-    ep = servers.load(path, server, presets=gpu_presets())
+    from ..engine import containers
+    ep = servers.load(path, server, presets=gpu_presets(), host_loopback=not containers.in_product_image())
     if m.personal and ep.leaves_machine():
         raise BenchError(Code.SERVER_REFUSED_PERSONAL, "a personal set never leaves the loopback")
     if ep.leaves_machine() and not confirm_transit:
@@ -1209,10 +1210,13 @@ def gpu_presets():
 
 
 def load_server(state, key_file):
-    """The endpoint of a run on resumption, from its file and name, with the same identity, and its keys."""
-    from ..engine import servers
+    """The endpoint of a run on resumption, from its file and name, with the same identity, and its keys. As at
+    the start of a run (`server_options`), an endpoint on the loopback of the host is refused from a container of
+    the product (CARB-NB2): a run started on the host with a `local` endpoint is not resumed in one."""
+    from ..engine import containers, servers
     info = state["server"]
-    ep = servers.load(info["servers_file"], info["name"], presets=gpu_presets())
+    ep = servers.load(info["servers_file"], info["name"], presets=gpu_presets(),
+                      host_loopback=not containers.in_product_image())
     if ep.identity_sha256() != info["identity_sha256"]:
         raise BenchError(Code.RESUME_IDENTITY_CHANGED, "the endpoint " + info["name"])
     return ep, servers.read_keys(ep, key_file, environ=None)

@@ -192,6 +192,35 @@ def _report():
     }
 
 
+def verdict(report, uid, payload_sha256=None):
+    """What the report of the `container` probe shows that a child must not show; empty when the child is
+    isolated as the launcher builds it: no network (only `lo`, nothing reachable), a read-only root, no Docker
+    socket, a scratch it can write, the user of the caller (never 0), no capability, no new privileges, seccomp
+    in filter mode, no terminal, nothing written under `/in`, `/ctl` and `/usr`, and, with `payload_sha256`, the
+    code of the caller."""
+    failed = [name for name in ("loopback_refused", "dns_failed", "root_read_only", "docker_socket_absent", "scratch_writable")
+              if report.get(name) is not True]
+    if report.get("uid") != uid or report.get("uid") == 0:
+        failed.append("uid")
+    if not str(report.get("cap_eff") or "x").strip("0") == "":
+        failed.append("cap_eff")
+    if report.get("no_new_privs") != "1":
+        failed.append("no_new_privs")
+    if report.get("seccomp") != "2":
+        failed.append("seccomp")
+    if report.get("interfaces") != ["lo"]:
+        failed.append("interfaces")
+    if report.get("outside") == "ok":
+        failed.append("outside")
+    if report.get("tty") is not False:
+        failed.append("tty")
+    if any(result == "ok" for result in (report.get("writes") or {"": "ok"}).values()):
+        failed.append("writes")
+    if payload_sha256 is not None and (report.get("identity") or {}).get("payload_sha256") != payload_sha256:
+        failed.append("payload_sha256")
+    return failed
+
+
 def _readlink(path):
     try:
         return os.readlink(path)
@@ -230,6 +259,32 @@ def _step(step):
         while time.monotonic() < until:
             pass
         return "spun"
+    if do == "pulse":                       # slow and alive: the CPU for the share `busy` of every tenth of a second
+        until = time.monotonic() + float(step["seconds"])
+        while time.monotonic() < until:
+            burst = time.monotonic() + 0.1 * float(step["busy"])
+            while time.monotonic() < burst:
+                pass
+            time.sleep(0.1 * (1 - float(step["busy"])))
+        return "pulsed"
+    if do == "events":                      # an event of the child every `every` seconds, and no work between them
+        until = time.monotonic() + float(step["seconds"])
+        while time.monotonic() < until:
+            with open("/scratch/events.jsonl", "a") as stream:
+                stream.write(json.dumps({"event": "page", "mono": time.monotonic()}) + "\n")
+            time.sleep(float(step["every"]))
+        return "written"
+    if do == "nproc":                       # the per-user process limit that `child.py` set before MFL051
+        import resource
+        resource.setrlimit(resource.RLIMIT_NPROC, (int(step["limit"]),) * 2)
+        return "set"
+    if do == "lock":                        # a directory with something in it, and the permissions of both taken away
+        os.makedirs(step["path"] + "/inner")
+        with open(step["path"] + "/inner/data", "w") as stream:
+            stream.write("left by the command")
+        os.chmod(step["path"] + "/inner", 0)
+        os.chmod(step["path"], 0)
+        return "locked"
     if do == "write":                       # `mib` MiB into `path`
         def action():
             with open(step["path"], "wb") as stream:

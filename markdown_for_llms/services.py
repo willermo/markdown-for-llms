@@ -50,6 +50,9 @@ REFUSALS = {
     "preset_reserved": "A conversion preset of the instance cannot be changed or removed, and its name is reserved",
     "preset_exists": "A conversion preset of that name exists already",
     "preset_invalid": "Invalid conversion preset",
+    # MFL051, the only new code of the tranche A2: `mdf convert --preset` with a preset on a rented GPU
+    "preset_needs_archive": ("A conversion preset with a rented GPU runs through the archive, where its session, its "
+                             "ledger and its caps are: mdf submit --preset NAME --wait FILE"),
     "gpu_preset_unknown": "No GPU preset of that name",
     "gpu_preset_superseded": "The GPU preset is superseded: it is listed for its measures and never used",
     "gpu_volume_unsupported": "The GPU preset has a global volume, which arrives with a later version",
@@ -522,6 +525,54 @@ class Service:
         options.update(extra)
         options["preset"] = name
         return options
+
+    def convert_preset(self, name, extra=None):
+        """The job options of `mdf convert --preset NAME` (MFL051, D-4): the function of `mdf submit --preset` and of
+        the API (`preset_options`), so the same preset is refused with the same code everywhere. One preset more is
+        refused here: a preset on a rented GPU needs the session, the ledger and the caps of the worker, which a
+        conversion outside the archive does not have (`preset_needs_archive`, whatever else the instance would say
+        of it: the answer is to send the file to the archive)."""
+        item = self.preset(name, worker=False)
+        if item["options"].get("gpu_preset") is not None or item["options"].get("route") == routes.MARKER_SERVER:
+            raise Refused("preset_needs_archive")
+        return self.preset_options(name, extra)
+
+    # --- the state of the routes (MFL051) ---------------------------------------------------------------------------
+
+    def routes(self):
+        """`GET /api/v1/routes`, `mdf routes`: the state of every route as the worker last computed it (`routestate`),
+        read from its heartbeat and never computed here. `stale` when the heartbeat is older than the lease; without
+        a heartbeat ever, no routes."""
+        from . import routestate
+        with self.storage.connect() as conn:
+            row = conn.execute("SELECT heartbeat, readiness FROM worker WHERE id=1").fetchone()
+        alive = bool(row is not None and time.time() - row["heartbeat"] < self.settings.lease_seconds)
+        recorded = None
+        if row is not None:
+            try:
+                value = json.loads(row["readiness"])
+            except (TypeError, ValueError):
+                value = None
+            recorded = value.get("routes") if isinstance(value, dict) else None
+        return routestate.answer(recorded, alive)
+
+    def routes_refresh(self):
+        """`POST /api/v1/routes/refresh`, `mdf routes --refresh`: ask the worker to check the routes at its next
+        turn. The request is one row of `metadata` (no new table or column): the worker reads its time."""
+        asked = time.time()
+        with self.storage.connect() as conn:
+            conn.execute("INSERT INTO metadata VALUES ('routes_refresh',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                         (repr(asked),))
+        return {"requested_at": asked}
+
+    def routes_refresh_asked(self):
+        """The time of the last request of `routes_refresh`, 0.0 when there was none."""
+        with self.storage.connect() as conn:
+            row = conn.execute("SELECT value FROM metadata WHERE key='routes_refresh'").fetchone()
+        try:
+            return float(row["value"]) if row is not None else 0.0
+        except (TypeError, ValueError):
+            return 0.0
 
     # --- the GPU session (MFL023 B5) -------------------------------------------------------------------------------
 

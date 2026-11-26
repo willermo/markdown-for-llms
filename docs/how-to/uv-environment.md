@@ -1,6 +1,6 @@
 # Prepare and update the uv environment
 
-For Linux users and developers. The procedure serves the product `markdown_for_llms`, whose [setup guide](local-product-setup.md) relies on it to build and reinstall the canonical wheel. Use the local managed interpreter and `uv.lock`, canonical installation and current preflight. Build and inference are distinct checks; the outcomes of the runs stay in the development records (the development log is archived at tag `pre-docs-2026-10-18`). These commands require preparation and preflight; the acquisition of ML is not implicit.
+For Linux users and developers. The procedure describes how the canonical wheel of `markdown_for_llms` is built and reinstalled; since MFL051 the product itself runs in containers ([Run the product in containers](run-in-containers.md)) and this chain runs inside the full check (`make check`, below). Use the local managed interpreter and `uv.lock`, canonical installation and current preflight. Build and inference are distinct checks; the outcomes of the runs stay in the development records (the development log is archived at tag `pre-docs-2026-10-18`). These commands require preparation and preflight; the acquisition of ML is not implicit.
 
 You need an identified uv **0.13.7** and space for managed/cache/venv. The CPython patch **3.12.13** and Setuptools **84.0.0** are the pins of the run. The other Python minor versions are not in the declared support. The local pin can change the selection of the pyenv shim; it does not install Python in pyenv. No global change is needed. Windows testing remains future (path `Scripts` and `--no-registry` for the Windows acquisition, not a Linux protection).
 
@@ -47,7 +47,7 @@ uv pip install --python "$RUN_ENV/bin/python" --no-deps --no-build --reinstall-p
 
 The gate compares the build inputs (the package files included), archives, RECORD and installation; a mismatch stops the start. After changes generate new S/B/I and repeat the dependent checks; keep the previous outcomes without attributing them to the new code. The RECORD extras created by uv, including `uv_cache.json`, are checked with hash/size and confined paths. For a local wheel uv may not record a hash in `direct_url.json`: I verifies the URI, the digest of B and all the bytes of the installed wheel, without declaring present a hash omitted by the installer. Do not clean global caches to make it pass.
 
-For dev add `--group dev` to the sync; the development venv of the full check is prepared as in [Recreate the development venv](#recreate-the-development-venv). Every environment receives last the same canonical wheel and its preflight. The extra `engine` (Marker 2.2.0 on the CPU, the conversion engine's pages route) and the extras of the bench resolve torch from the PyTorch CPU index; `bench-cu132` is incompatible with both and has a separate heavy preparation. The universal lock can require metadata of the extras even if the client does not install ML: account for network/cache. Every uv pip that can build uses `--build-constraints`; installing a canonical wheel uses `--no-build`.
+For dev add `--group dev` to the sync; the development venv of the full check is prepared as in [The development venv of the host](#the-development-venv-of-the-host). Every environment receives last the same canonical wheel and its preflight. The extra `engine` (Marker 2.2.0 on the CPU, the conversion engine's pages route) and the extras of the bench resolve torch from the PyTorch CPU index; `bench-cu132` is incompatible with both and has a separate heavy preparation. The universal lock can require metadata of the extras even if the client does not install ML: account for network/cache. Every uv pip that can build uses `--build-constraints`; installing a canonical wheel uses `--no-build`.
 
 For the external check prepare a new venv with the runtime exported from the hash-locked lock, outside the clone. The suite must not prepare it by itself:
 
@@ -57,32 +57,54 @@ uv venv --python 3.12.13 --managed-python --no-python-downloads "$RUN_ENV"
 uv pip sync --python "$RUN_ENV/bin/python" --build-constraints "$RUN_REPO/build-constraints.txt" --require-hashes "$RUN_PROOF/runtime.txt"
 ```
 
-Then install the canonical wheel and verify it as above. In the IDE select the absolute `.venv-dev/bin/python` of the development venv; a local example is in [settings.uv.example.json](../../.vscode/settings.uv.example.json). Copy it only into your own workspace settings and complete the verified installation; no global setting changes. The conversion children of the product use the same `sys.executable`, with `-I -B -m`.
+Then install the canonical wheel and verify it as above. In the IDE select the absolute `.venv-dev/bin/python` of the development venv; a local example is in [settings.uv.example.json](../../.vscode/settings.uv.example.json). Copy it only into your own workspace settings and complete the verified installation; no global setting changes. That venv is a convenience of the host (the IDE, a test run by hand): it runs no child of the engine, each of which is a container started by the launcher from the image of the product.
 
 ## Run the full check
 
-`scripts/full-check.sh` is the project's full check (see `AGENTS.md`, "Verification"). At the root of a clean checkout it runs the chain of this guide on the current commit: origin of the managed interpreter (O), input inventory (P), standalone source manifest (S), offline build and audit of sdist and wheel (B), reinstallation of the wheel in the development venv with a RECORD check, installation receipt (I), preflight (F) and the toolchain image of the conversion engine (X: `python -m markdown_for_llms.engine.toolchain verify`, read-only, which stops when the image built by `mdf prepare --toolchain`, alias `mdf bench prepare --toolchain`, is missing or differs from `markdown_for_llms/engine/data/toolchain.json`; see [Prepare the reference bench](bench.md)) and the weights of the Marker route (W: `python -m markdown_for_llms.engine.weights verify "$FULL_CHECK_MODEL_ROOT"`, read-only, which stops when one of the 18 files of `markdown_for_llms/engine/data/weights.json` is missing, reached through a symbolic link or differs in bytes or SHA-256; prepare them once with `mdf prepare --weights --model-root DIR`, about 111 MB from Hugging Face and `models.datalab.to`); then the fast suite on `tests/` and the guard of the bench and engine tests. It never downloads or installs anything else: a missing cache or tool is a stop.
+Since MFL051 the full check runs in containers: `make check`. It needs `git`, `make` and Docker (Engine 26 or newer, buildx and compose, Linux x86_64); it needs no Python, no uv and no virtual environment of the host. The procedure of the sections above still describes what the chain does inside the container, and how to work on the host for an IDE.
 
-It reads six absolute paths, none of them under `temp/`. A variable already set in the environment wins; the missing ones are read from `.full-check.env` at the root of the checkout, or of the main checkout when it runs in a worktree. The file is ignored by git and holds only `NAME=value` lines and `#` comments, read without shell expansion:
+```bash
+make check                                  # the gate: a clean tree, the commit of HEAD
+make test                                   # the same chain on the working copy, no clean tree asked
+make test TESTS="tests/unit/test_x.py"      # a selection in place of tests/
+make test-components                        # tests/container against real containers
+```
 
-| Variable | Path |
-| --- | --- |
-| `FULL_CHECK_PYTHON_INSTALL_DIR` | directory of the uv-managed interpreters, containing `cpython-3.12.13-linux-x86_64-gnu/`, for example `<checkout>/.venv-python` |
-| `FULL_CHECK_DEV_PYTHON` | `bin/python` of the development venv, for example `<checkout>/.venv-dev/bin/python` |
-| `FULL_CHECK_UV` | uv binary of the version in `required-version` of `pyproject.toml` (0.13.7), a regular file, not a symbolic link |
-| `FULL_CHECK_UV_CACHE_DIR` | uv cache already prepared by that uv version (see below), for example `<checkout>/.cache/uv-fidelity/cache` |
-| `FULL_CHECK_BACKEND_WHEEL` | `setuptools-84.0.0-py3-none-any.whl`, SHA-256 `51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670`, for example `<checkout>/.cache/uv-fidelity/backend/setuptools-84.0.0-py3-none-any.whl` |
-| `FULL_CHECK_MODEL_ROOT` | model root with the weights of the Marker route, prepared by `mdf prepare --weights --model-root DIR`, for example `~/.cache/markdown-for-llms/models` written as an absolute path; the suite reads it for the real Marker tests (an `MDF_` variable would be refused) |
+**`make check`** (`scripts/check.sh check`) stops when the tree is not clean. It clones `HEAD` into `.cache/full-check/<id>/src`, builds the images `engine` and `dev` from the clone with the capped builder of the toolchain, reserves the container of the check by creating it (its name is fixed, `mdf-full-check`: Docker admits one, so one full check runs at a time on a daemon), starts a launcher of its own and then runs `scripts/full-check.sh` on the clone, in a container without network, with a memory cap without swap (`MDF_COMPOSE_CHECK_MEMORY`, default 12g) and without the Docker socket:
 
-Each uv version reads its own cache buckets (uv 0.13.7 uses `wheels-v7`, `sdists-v10` and `simple-v27`), so the offline build of step B finds Setuptools only in a cache that the same uv version has filled. Prepare it once, online, outside the full check: build a copy of the checkout with `FULL_CHECK_UV_CACHE_DIR` as `UV_CACHE_DIR`, `--build-constraints` pointing to a file whose only line is `setuptools==84.0.0 --hash=sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670` and `--require-build-hashes`. Then compare, byte for byte, every file of the extracted Setuptools (`wheels-v7/pypi/setuptools/84.0.0-py3-none-any`) with the members of `FULL_CHECK_BACKEND_WHEEL`, extra and missing files included. The full check itself stays offline and never fills the cache. Buckets of older uv versions are not read and can be deleted.
+- the installation preflight: origin of the managed interpreter (O), input inventory (P), source manifest (S), build of sdist and wheel (B), installation of the canonical wheel with a RECORD check, receipt (I), preflight (F);
+- the payload gate (C): the launcher and a child run the code under test, the image was built from the inputs of the clone, and the environments agree;
+- the preconditions X (the toolchain image, verified through the launcher) and W (the 18 weight files of the Marker route in the models volume against `markdown_for_llms/engine/data/weights.json`);
+- the fast suite with the bench JUnit guard (at least one bench test and one engine test run, none skipped).
 
-The script stops when the tree is not clean, when a variable is missing or wrong, when an `MDF_` variable is set in the environment (the suites would read it), when a `PYTEST_` variable is set (for example `PYTEST_ADDOPTS` or `PYTEST_PLUGINS`, which change collection, selection or plugins) and when another full check is using the same development venv. The evidence of each step goes to a new directory `.cache/full-check/<commit>-<UTC time>/`, ignored by git; stdout carries one line per step with its duration, the pytest summary and counts of the suite, and `FULL_CHECK_PASS` or `FULL_CHECK_FAIL`. A suite passes only when pytest exits 0 and its JUnit report can be read, counts at least one test and has no failures and no errors. After the fast suite, `scripts/bench_junit_guard.py` reads its JUnit report: at least one test of `tests/unit/bench/` and one of `tests/unit/engine/` must run, counted apart, and no bench or engine test may be skipped; otherwise the check fails. The bench and engine tests that use real tools run them in the toolchain image, never from the host `PATH`, and fail when the image is missing; the engine tests also need Bubblewrap (`/usr/bin/bwrap`), and one of them converts a document with the engine as installed from the canonical wheel. The exit code is 0 only when every step, the suite and the guard pass.
+Then, as a step of the same gate, it runs `make test-components` from the same clone: the tests of `tests/container`, which need a driver with the Docker socket and so cannot run inside the check. The container of the check has ended by then and stays where it is, so its name is held until these tests end too; the output names the clone and the reservation before they start. `make check` ends with `CHECK_PASS` and exit 0 only when both steps are green, the clone is still at the commit with a clean tree, and the reservation was held to the end. The 65 tests of `tests/container` are skipped in the first step and run in the second.
 
-The reinstallation replaces the package in the development venv. Two full checks never run at the same time, even from different worktrees, and API or worker processes that use the same venv should be stopped first.
+What it needs before the first run: the models volume of the product with the weights (`make up` or `make prepare`; `MDF_COMPOSE_MODELS_VOLUME` names another volume) and the toolchain image. It takes about 20 minutes. The evidence is under `.cache/full-check/<id>/` (ignored by git): `proof/` holds the outputs of every step, the JUnit report and the configurations of compose, among them the one of the product (`compose-product.json`), which `tests/unit/test_compose_config.py` judges. The evidence of the component tests is in the clone, with a link to it in `.cache/test-components/`, where `make test-components` run by hand puts its own. What the check created (its project, its volumes, the two image tags of the invocation) is removed at the end, also when a step is red or the check is interrupted.
 
-### Recreate the development venv
+A second `make check` started while one runs, in the chain or in the tests of the components, stops at the reservation of the name and removes only its own project. If a check was interrupted and its container stayed, the message says how to look at it and remove it (`docker rm mdf-full-check`). `make test` has no fixed name: several run side by side.
 
-The development venv is `<checkout>/.venv-dev/` (ignored by git), built from `uv.lock` with the product extras, the CPU engine and the dev group, without the project itself: the full check installs the canonical wheel into it. A venv records the absolute paths of its interpreter and scripts, so it is **recreated, never moved**: to change its place, build a new one and point `FULL_CHECK_DEV_PYTHON` to it. From the root of the main checkout:
+Do not change files of the working copy while `make test` or `make test-components` runs: the working copy is mounted in the container. `make check` reads its clone alone, in both steps: a change of the working copy while it runs does not enter it. Stop the product first if the machine is short of memory; the check does not touch it.
+
+The author saves the output of the check on the commit handed to a review, and reports the path and the SHA-256 of the file:
+
+```bash
+mkdir -p temp/<run>/checks
+f=temp/<run>/checks/full-check-$(git rev-parse --short HEAD).txt
+{ git rev-parse HEAD; git status --short; make check; echo "exit $?"; } > "$f" 2>&1
+sha256sum "$f"
+```
+
+`scripts/full-check.sh` still reads its paths from the `FULL_CHECK_*` variables; in the containers `docker/dev/compose.yaml` sets them (the interpreter, uv and its cache, the Setuptools wheel and the development venv are in the image `dev`; `FULL_CHECK_MODEL_ROOT` is `/models/marker`). Started by hand on the host it no longer passes: the engine starts its children only through a launcher.
+
+### The development venv of the host
+
+A venv on the host (`<checkout>/.venv-dev/`, ignored by git) is no longer part of any gate. It stays useful for an IDE and for running quickly, without a container, the tests that start no child of the engine:
+
+```bash
+.venv-dev/bin/python -B -m pytest --noconftest -p no:cacheprovider -q tests/unit/test_routestate.py
+```
+
+Tests that convert, or that talk to a launcher, fail there by design: run them with `make test TESTS="..."`. To create the venv:
 
 ```bash
 R=$(pwd -P); test ! -e "$R/.venv-dev" || exit 1
@@ -90,8 +112,6 @@ scripts/run-capped.sh venv-dev 8G -- env UV_PROJECT_ENVIRONMENT="$R/.venv-dev" U
   UV_PYTHON_INSTALL_DIR="$R/.venv-python" UV_PYTHON_DOWNLOADS=never "$HOME/.local/bin/uv" sync --locked --no-default-groups \
   --extra app --extra engine --group dev --no-install-project --python 3.12.13 --managed-python --no-python-downloads
 ```
-
-The cache is the one of the full check (`FULL_CHECK_UV_CACHE_DIR`): the first sync downloads the locked wheels from PyPI and from the PyTorch CPU index (about 1.6 GB installed) and builds `ebooklib` from its sdist; once it has run, later recreations need no network. Before the first full check, list the installed distributions (`"$R/.venv-dev/bin/python" -I -c 'import importlib.metadata as m; print(sorted(d.metadata["Name"]+"=="+d.version for d in m.distributions()))'`) and compare them, name and version, with the packages of `uv.lock` for these extras; the project itself is missing until the full check installs its wheel. Setuptools 84.0.0 for step B is kept next to the cache, in `<checkout>/.cache/uv-fidelity/backend/`.
 
 ## Explicit local tests without a run
 

@@ -371,15 +371,15 @@ def _r(value):
 
 
 def cmd_prepare(args, settings):
-    from pathlib import Path
     from .cache import Cache
     from .selftest import run_selftest
     from ..engine import toolchain
     if not args.toolchain:
         print("prepare: nothing to prepare (use --toolchain)", file=sys.stderr)
         return 2
-    context = Path(args.context) if args.context else Path.cwd() / toolchain.DEFAULT_CONTEXT
-    toolchain.prepare(context, Cache(settings.cache_dir), no_cache=args.no_cache, selftest=run_selftest)
+    # the image is built and tagged `mdf-bench-toolchain:candidate` on the host (`make prepare`); here, in a
+    # container, it is verified file by file through the launcher and the self-test runs on it
+    toolchain.prepare_candidate(Cache(settings.cache_dir), selftest=run_selftest)
     return 0
 
 

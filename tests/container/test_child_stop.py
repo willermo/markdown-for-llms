@@ -7,6 +7,7 @@ and the end that is NOT ATTESTED: with the launcher killed and held down the cal
 is back and attests the absence does `sweep` take the folder away. Also the term, the stop of the launcher itself,
 and a launcher that has no access to Docker (the access check with the real identity, E-3).
 """
+import calendar
 import fcntl
 import json
 from pathlib import Path
@@ -29,9 +30,42 @@ DRIVER = Path(__file__).with_name("stop_driver.py")
 LEASE = 3                               # seconds: the lease of the children of these tests
 GRACE = launcher_module.GRACE_SECONDS   # how long after the supervisor the watch of the launcher acts
 TICK = 0.5                              # the margin of a tick, of Docker's own stop and of a poll of the test
+# Two times are measured for the end of a child, and they are not the same thing (MFL051 A2, the red check of
+# fbf744b: Docker reported a container exited 4.5 s after it had ended, on a loaded machine).
+# - The REAL end is `State.FinishedAt` of the container: when its PID 1, the supervisor, left. The tight bounds of
+#   these tests are on it: that is what the supervisor guarantees.
+# - The REPORT is the moment an inspect of Docker says `exited`: it adds the bookkeeping of the daemon, which the
+#   supervisor does not control. It is written to the observations, within a wide bound.
+REPORT_SECONDS = 15                     # the wide bound: how long Docker may take to report an end that happened
+CLOCK_MARGIN = 0.1                      # two readings of the wall clock (a file time, Docker's time) are compared
+
+
+def finished_at(found):
+    """`State.FinishedAt` of an inspect, in seconds since the epoch (`2026-11-26T10:34:49.193595915Z`)."""
+    whole, _, fraction = found["State"]["FinishedAt"].rstrip("Z").partition(".")
+    return calendar.timegm(time.strptime(whole, "%Y-%m-%dT%H:%M:%S")) + float("0." + (fraction or "0"))
+
+
+def wall(instant):
+    """The wall-clock time of an instant of `time.monotonic()`."""
+    return time.time() - (time.monotonic() - instant)
 
 
 class StopCase(support.ComponentCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        support.prepare_volumes()               # a `marker` child needs its folder in the volume of the weights
+
+    def real_end(self, what, found, since, reported):
+        """Seconds from `since` (wall clock) to the real end of the container. `reported`: the seconds after which
+        Docker said `exited`, written to the observations and held within the wide bound."""
+        seconds = finished_at(found) - since
+        observe(what, real_end_seconds=round(seconds, 3), reported_after_seconds=round(reported, 3),
+                report_bound=REPORT_SECONDS, exit=found["State"]["ExitCode"])
+        self.assertLess(reported, REPORT_SECONDS, what)
+        return seconds
+
     def wait_state(self, name, wanted, seconds, since=None):
         """Poll Docker until the container is in a state of `wanted` (`absent`: no container); returns (state,
         seconds since `since` or the call)."""
@@ -86,7 +120,7 @@ class TestCallerKilled(StopCase):
         self.assertFalse(self.owner_is_free(name))
         killed = self.kill_caller(proc)
         lease_at_kill = (self.folder(name) / "ctl" / "lease").read_text().strip()
-        found, seconds = self.wait_state(name, ("exited", "absent"), LEASE + 8, since=killed)
+        found, seconds = self.wait_state(name, ("exited", "absent"), LEASE + REPORT_SECONDS, since=killed)
         metrics = supervisor.last_metrics(containers.read_regular(self.folder(name), "stat/metrics", containers.STAT_LIMIT, tail=True))
         observe("caller killed: the child ends at its lease", lease_seconds=LEASE, seconds_after_the_kill=round(seconds, 2),
                 exit=found and found["State"]["ExitCode"], ticks=metrics and metrics["tick"], started=found and found["State"]["StartedAt"],
@@ -97,7 +131,8 @@ class TestCallerKilled(StopCase):
         self.assertEqual(found["State"]["ExitCode"], supervisor.EXIT_LEASE)
         # the lease in ticks, counted from the last renewal (at most a second before the kill), and a tick
         self.assertLessEqual(metrics["tick"], (LEASE + 1) / supervisor.TICK_SECONDS + 3)
-        self.assertLessEqual(seconds, LEASE + 1 + supervisor.TICK_SECONDS + 2 * TICK)
+        real = self.real_end("caller killed: the real end at the lease", found, wall(killed), seconds)
+        self.assertLessEqual(real, LEASE + 1 + supervisor.TICK_SECONDS + 2 * TICK + CLOCK_MARGIN)
         self.assertGreaterEqual(seconds, LEASE - 1.5)
         self.assertEqual(self.launcher.inspect(name)["exit"], supervisor.EXIT_LEASE)
         # what the dead caller left is collected by whoever attests the attempt
@@ -189,11 +224,12 @@ class TestSupervisorAsPid1(StopCase):
         proc = self.caller(name, [{"do": "flood", "path": "/proc/1/fd/9", "seconds": 60, "newline": False}])
         time.sleep(1.0)
         killed = self.kill_caller(proc)
-        found, seconds = self.wait_state(name, ("exited",), LEASE + 8, since=killed)
+        found, seconds = self.wait_state(name, ("exited",), LEASE + REPORT_SECONDS, since=killed)
         observe("a flood of bytes without a newline on /proc/1/fd/9, the caller killed", exit=found["State"]["ExitCode"],
                 seconds_after_the_kill=round(seconds, 2), lease_seconds=LEASE)
         self.assertIn(found["State"]["ExitCode"], (supervisor.EXIT_LEASE, supervisor.EXIT_TERM))
-        self.assertLessEqual(seconds, LEASE + 1 + supervisor.TICK_SECONDS + 2 * TICK)
+        real = self.real_end("a flood without a newline: the real end at the lease", found, wall(killed), seconds)
+        self.assertLessEqual(real, LEASE + 1 + supervisor.TICK_SECONDS + 2 * TICK + CLOCK_MARGIN)
 
     def test_a_fifo_in_place_of_the_exit_file_does_not_block_the_stop(self):
         seen = {}
@@ -223,6 +259,9 @@ class TestLauncherKilledAndHeldDown(StopCase):
         name = self.name("light")
         child = containers.Child(self.launcher, containers.WORK_ROOT, name)
         seen = {}
+        stops = []                              # the wall-clock instants at which the caller writes `ctl/stop`
+        write_stop = child.call.stop
+        child.call.stop = lambda: (stops.append(time.time()), write_stop())[1]
 
         def on_poll(child, metrics):
             if "killed" not in seen and self.raw_inspect(name)["State"]["Running"]:
@@ -242,9 +281,14 @@ class TestLauncherKilledAndHeldDown(StopCase):
         waited = ended - seen["killed"]
         self.assertTrue(containers.UNREACHABLE_SECONDS <= waited <= containers.UNREACHABLE_SECONDS + containers.INSPECT_SECONDS + 3, waited)
         # the stop through `ctl/stop` works without the launcher and without Docker's help
-        found, seconds = self.wait_state(name, ("exited",), 5, since=ended)
+        found, seconds = self.wait_state(name, ("exited",), REPORT_SECONDS, since=ended)
         self.assertEqual(found["State"]["ExitCode"], supervisor.EXIT_STOP)
-        self.assertLess(seconds, 1 + TICK)
+        # the tight bound is on the real end of the supervisor, counted from the moment `ctl/stop` was written for
+        # the first time: a tick, and Docker's own stop. (Not the time of the file: the caller writes it again when
+        # it leaves the block, and a rewritten file would make the measure shorter than the truth.)
+        self.assertGreaterEqual(len(stops), 1)
+        real = self.real_end("stop without the launcher: the real end after ctl/stop", found, stops[0], seconds)
+        self.assertLess(real, 1 + TICK + CLOCK_MARGIN)
         # the folder stays, with its stop, and nobody can say the attempt is over
         folder = self.folder(name)
         self.assertEqual(sorted(p.name for p in folder.iterdir()), ["ctl", "in", "owner", "scratch", "stat"])
@@ -297,9 +341,10 @@ class TestLauncherKilledAndHeldDown(StopCase):
         self.kill_launcher()
         killed = max(self.kill_caller(proc) for proc in callers.values())
         for name in cases:
-            found, seconds = self.wait_state(name, ("exited",), LEASE + 6, since=killed)
+            found, seconds = self.wait_state(name, ("exited",), LEASE + REPORT_SECONDS, since=killed)
             self.assertEqual(found["State"]["ExitCode"], supervisor.EXIT_LEASE, name)
-            self.assertLessEqual(seconds, LEASE + 1 + supervisor.TICK_SECONDS + 2 * TICK, name)
+            real = self.real_end("launcher and caller killed: the real end at the lease", found, wall(killed), seconds)
+            self.assertLessEqual(real, LEASE + 1 + supervisor.TICK_SECONDS + 2 * TICK + CLOCK_MARGIN, name)
         self.assertGreater(len(answered), 10)                   # the relay was live until the child ended
         self.assertGreater((self.folder(list(cases)[0]) / "scratch" / "log").stat().st_size, 20 * 64)
         with self.assertRaises(containers.Unattested):

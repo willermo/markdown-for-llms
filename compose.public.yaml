@@ -1,0 +1,62 @@
+# NOT SUPPORTED AND NEVER STARTED (MFL051). The shape a deployment for other people would have, kept next to the
+# local one so that the two do not drift: it is only validated (`docker compose -f compose.yaml -f
+# compose.public.yaml config`, by `make check`). Nothing in the Makefile starts it.
+#
+# What differs from compose.yaml:
+#   - the archive and the state are named volumes, not folders of a checkout;
+#   - nginx answers to the public name (MDF_COMPOSE_PUBLIC_NAME) with its own template, still published on
+#     127.0.0.1 alone: TLS and the public address belong to the nginx of the host, in front of it.
+#
+# What is missing before it could be started, and is not in this file: the API accepts only the names
+# 127.0.0.1 and localhost and has one user without authentication; the tested target is one user on the loopback.
+services:
+  init:
+    command:
+      - "${MDF_COMPOSE_UID:?run through make}"
+      - "${MDF_COMPOSE_GID:?run through make}"
+      - /volumes/work
+      - /volumes/run
+      - /volumes/launcher
+      - /volumes/api
+      - /volumes/settings
+      - /volumes/models
+      - /volumes/cpu-server
+      - /volumes/data
+      - /volumes/state
+    volumes:
+      - mdf-data:/volumes/data
+      - mdf-state:/volumes/state
+
+  api:
+    volumes:
+      - mdf-data:/data
+
+  worker:
+    volumes:
+      - mdf-data:/data
+      - mdf-state:/state
+
+  cli:
+    volumes:
+      - mdf-data:/data
+      - mdf-state:/state
+
+  bench:
+    volumes:
+      - mdf-data:/data
+      - mdf-state:/state
+
+  nginx:
+    environment:
+      MDF_PUBLIC_NAME: ${MDF_COMPOSE_PUBLIC_NAME:-public.invalid}
+    volumes:
+      - type: bind
+        source: ./docker/nginx/public.conf.template
+        target: /etc/nginx/templates/default.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+
+volumes:
+  mdf-data:
+  mdf-state:

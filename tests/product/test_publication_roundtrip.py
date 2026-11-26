@@ -19,11 +19,13 @@ from fastapi.testclient import TestClient
 from markdown_for_llms.api import create_app
 from markdown_for_llms.capacity import CONTROL, sizes
 from markdown_for_llms.files import identify, write, write_json, FileSafetyError
-from markdown_for_llms.worker import process_identity
+from markdown_for_llms.engine import containers
 from markdown_for_llms.services import Service
 from markdown_for_llms.settings import Settings
 from markdown_for_llms.worker import Worker
 from markdown_for_llms.storage import CapacityError
+
+from engine_fake import launcher_fake
 
 PDF = b'%PDF-1.4\nr004 inert fixture\n'
 
@@ -256,11 +258,10 @@ class PublicationRoundtripTests(unittest.TestCase):
                 self.addCleanup(service.storage.close)
                 row = service.storage.list()[0]
                 child = json.loads(row['child'])
-                def stop_child():
-                    now = process_identity(child['pid'])
-                    if now and now['start'] == child['start'] and now['state'] != 'Z':
-                        os.kill(child['pid'], 9)
-                self.addCleanup(stop_child)
+                # the container the dead worker recorded is still listed by the launcher (a scripted one here)
+                self.assertEqual(child, {'container': containers.child_name(row['attempt_id'], 'light', 1)})
+                launcher = launcher_fake.patched(self, base/'volume')
+                launcher.children[child['container']] = {"state": "running", "exit": 0, "oom_killed": False}
                 self.assertEqual(row['state'], 'publishing')
                 self.assertEqual(len(list((base/'data/operations').iterdir())), 2)
                 total = sum(sizes(base/'data').values())
@@ -271,24 +272,24 @@ class PublicationRoundtripTests(unittest.TestCase):
                 final = service.get(row['id'])
                 self.assertEqual((final['state'], final['id'], final['attempt_id']),
                                  ('completed', row['id'], row['attempt_id']))
-                now = process_identity(child['pid'])
-                self.assertTrue(not now or now['start'] != child['start'] or now['state'] == 'Z')
+                self.assertEqual((launcher.removed, launcher.children), ([child['container']], {}))
                 self.assertEqual(list((base/'data/operations').iterdir()), [])
 
     def test_live_worker_and_independent_leases_are_not_collected(self):
         w, row, scratch = self.prepare()
-        child = subprocess.Popen([sys.executable, '-I', '-B', '-c', 'import time; time.sleep(30)'])
-        self.addCleanup(lambda: child.poll() is None and child.kill())
-        self.addCleanup(lambda: child.wait(timeout=5) if child.poll() is not None else None)
-        w.tick(row, process_identity(child.pid))
+        launcher = launcher_fake.patched(self, Path(self.tmp.name)/'volume')
+        name = containers.child_name(row['attempt_id'], 'marker', 1)
+        launcher.children[name] = {"state": "running", "exit": 0, "oom_killed": False}
+        w.tick(row, {'container': name})
         with w.commitment(row), self.s.storage.reservation('control', 65536):
             before = list((w.storage.root/'operations').iterdir())
             Worker(self.settings).reconcile()
             self.assertEqual(set(before), set((w.storage.root/'operations').iterdir()))
-            self.assertIsNone(child.poll())
+            # the child of a live worker is not asked of the launcher, let alone stopped
+            self.assertEqual((launcher.calls, sorted(launcher.children)), ([], [name]))
             self.assertEqual(self.s.get(row['id'])['state'], 'running')
-        child.terminate()
-        child.wait(timeout=5)
+        # the worker that owns the commitment releases it under its own rule: after the attestation
+        self.assertEqual((launcher.removed, list((w.storage.root/'operations').iterdir())), ([name], []))
 
     def test_unrecordable_deferral_releases_owner_before_readiness(self):
         w, row, scratch = self.pending()
@@ -310,7 +311,7 @@ from unittest.mock import patch
 from markdown_for_llms.settings import Settings
 from markdown_for_llms.services import Service
 from markdown_for_llms.worker import Worker
-from markdown_for_llms.worker import process_identity
+from markdown_for_llms.engine import containers
 from markdown_for_llms.files import write, write_json, identify
 base = Path(sys.argv[1])
 s = Settings(data_root=str(base/'data'), model_root=str(base/'models'), upload_mib=1,
@@ -320,9 +321,7 @@ w = Worker(s); row = w.claim()
 scratch = base/'data/attempts'/row['attempt_id']; (scratch/'original').mkdir(parents=True)
 write(scratch/'original', 'document.md', b'Preserved crash output 0012')
 write_json(scratch, 'engine.json', dict(inventory_complete=True, inventory=[identify(scratch/'original', 'document.md')]))
-child = subprocess.Popen([sys.executable, '-I', '-B', '-c', 'import time; time.sleep(60)'],
-                         start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-w.tick(row, process_identity(child.pid))
+w.tick(row, {'container': containers.child_name(row['attempt_id'], 'light', 1)})
 real = os.rename
 def crash(src, dst, *a, **kw):
     if src == row['attempt_id']:

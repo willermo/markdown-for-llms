@@ -32,16 +32,11 @@ LINE = re.compile(r"^(#\s*)?([A-Z_][A-Z0-9_]*)=(.*)$", re.M)
 # Read by the code and kept out of `.env.example` on purpose, each with its reason.
 EXCLUDED = {
     # the system and the session of the user: not settings of this project
-    "HOME": "the home directory of the user, for the defaults of Docker's client",
     "PATH": "the search path of the processes",
     "PYTHONPATH": "the import path of a child process (the watchdog, a legacy diagnostic)",
     "XDG_CACHE_HOME": "the cache base directory of the user, for the default model, CPU server and bench cache roots",
     "XDG_CONFIG_HOME": "the configuration base directory of the user, for the default servers.json",
     "XDG_DATA_HOME": "the data base directory of the user, for the default runs folder of the bench",
-    "XDG_RUNTIME_DIR": "the runtime directory of the user, for the local Docker socket",
-    "DOCKER_HOST": "Docker's own client setting; the toolchain refuses a remote endpoint",
-    "DOCKER_CONTEXT": "Docker's own client setting; the toolchain refuses a remote endpoint",
-    "DOCKER_CONFIG": "Docker's own client setting",
     # set by scripts/servers/session.py for the command it wraps, never by the user
     "MDF_SESSION_ARM": "the window of a live session, set by session.py run for its command",
     "SESSION_WORKER_LOG": "the log of the workers of a live session, set by session.py run for its command",
@@ -72,9 +67,6 @@ EXCLUDED = {
     **{name: "the container of the endpoint: a threshold of the watchdog (watchdog.RULES, watchdog.DEFAULTS), an "
        "internal override" for name in ("MDF_W1_S", "MDF_W2_S", "MDF_W3_S", "MDF_W4_S", "MDF_W5_S", "MDF_TICK_S",
                                         "MDF_REQ_MAX_S")},
-    # the session of the user that systemd-run needs (`isolation.USER_ENV`)
-    "DBUS_SESSION_BUS_ADDRESS": "the bus of the session of the user, for systemd-run --user",
-    "LANG": "the locale of the session of the user, passed to systemd-run --user",
 }
 # Named in the guides as the key of an endpoint `user` of a provider (`key_env` of servers.json), not by the code
 DOCUMENTED_KEYS = ("MODAL_PROXY_BEARER",)
@@ -109,16 +101,9 @@ SESSION, WORKER_LOG = _constant("markdown_for_llms.bench.serverspend", "SESSION_
 # Every read whose name is not a literal: {module: {expression: the names it can read}} (S-NB3).
 DYNAMIC = {
     "markdown_for_llms/bench/serverspend.py": {"environ.get(SESSION_ENV)": SESSION},
-    "markdown_for_llms/engine/isolation.py": {"os.environ[k]": _constant("markdown_for_llms.engine.isolation", "USER_ENV"),
-                                              "k in os.environ": _constant("markdown_for_llms.engine.isolation",
-                                                                           "USER_ENV")},
     # the keys of an endpoint (`key_env`), whose default names are those of servers.KEY_ENV
     "markdown_for_llms/engine/servers.py": {"environ.get(key)": _key_names_of_endpoints,
                                             "environ[key]": _key_names_of_endpoints},
-    "markdown_for_llms/engine/toolchain.py": {"os.environ[k]": _constant("markdown_for_llms.engine.toolchain",
-                                                                         "ENGINE_ENV"),
-                                              "k in os.environ": _constant("markdown_for_llms.engine.toolchain",
-                                                                           "ENGINE_ENV")},
     "scripts/servers/modal_tasks.py": {"self.environ.get(wl.LOG_ENV)": WORKER_LOG,
                                        "self.environ.get(serverspend.SESSION_ENV)": SESSION},
     "scripts/servers/runpod_endpoint.py": {"self.environ.get(wl.LOG_ENV)": WORKER_LOG,

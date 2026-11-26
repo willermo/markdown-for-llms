@@ -23,21 +23,24 @@ from markdown_for_llms.engine import containers
 DOCKER_SOCKET = "/run/docker.sock"
 OUT = Path("/out")
 MODELS, CPU_SERVER = Path("/models"), Path("/cpu-server")
-REASON = ("no launcher at %s: the component tests need a real Docker daemon, run them with `make test-components`"
-          % containers.LAUNCHER_SOCKET)
+REASON = ("no launcher at %s or no Docker socket for the driver at %s: the component tests need a real Docker daemon, "
+          "run them with `make test-components`" % (containers.LAUNCHER_SOCKET, DOCKER_SOCKET))
 LIMITS = {"memory_mib": 256, "pids": 64, "fsize_mib": 64, "nofile": 256, "tmpfs_mib": 16, "max_seconds": 120,
           "lease_seconds": 30}
 VARIABLES = {"PATH": "/opt/mdf/venv/bin:/usr/bin:/bin", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "HOME": "/scratch",
              "TMPDIR": "/scratch"}
 TOOL_VARIABLES = {"LC_ALL": "C.UTF-8", "LANG": "C.UTF-8", "HOME": "/work/home", "TMPDIR": "/work/tmp"}
-# `limits.json` of the light child (`child.py`); its process limit is the per-user RLIMIT_NPROC (see test_child_isolation)
+# `limits.json` of the light child (`child.py`); `process_limit` is no longer read by it: the processes of a child are
+# limited by its container (see test_child_isolation)
 CHILD_LIMITS = {"memory_mib": 4096, "output_mib": 64, "cpu_seconds": 120, "process_limit": 65536, "files_limit": 256}
 SHELL_SCRIPT = "#!/bin/sh\n" + containers.SHELL_PROBE
 
 
 def available():
+    """A launcher AND the Docker socket of the driver: in the container of the full check there is a launcher (the
+    suite converts through it) and, by design, no Docker socket; these tests run with `make test-components`."""
     try:
-        return stat.S_ISSOCK(os.stat(containers.LAUNCHER_SOCKET).st_mode)
+        return stat.S_ISSOCK(os.stat(containers.LAUNCHER_SOCKET).st_mode) and stat.S_ISSOCK(os.stat(DOCKER_SOCKET).st_mode)
     except OSError:
         return False
 
@@ -61,6 +64,19 @@ def parse_shell_probe(text):
         else:
             report[key] = rest
     return report
+
+
+def prepare_volumes():
+    """What the read-only volumes of `marker` and `cpuserver` must hold for a child to start: a `marker` directory
+    in the volume of the weights, and in the one of the CPU server a `gguf` directory and a `llama` tree with a
+    program (here the shell probe, run by the image of the application). Every test file that starts such a
+    child prepares them itself, so each file passes when it is run alone."""
+    (MODELS / "marker").mkdir(mode=0o700, exist_ok=True)
+    for name in ("llama", "gguf"):
+        (CPU_SERVER / name).mkdir(mode=0o700, exist_ok=True)
+    script = CPU_SERVER / "llama" / "probe.sh"
+    script.write_text(SHELL_SCRIPT)
+    script.chmod(0o755)
 
 
 class ComponentCase(unittest.TestCase):

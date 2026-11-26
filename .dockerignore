@@ -15,6 +15,7 @@ docker/*
 !docker/app
 docker/app/*
 !docker/app/Dockerfile
+!docker/app/modal-requirements.txt
 !scripts
 scripts/*
 !scripts/diagnostics

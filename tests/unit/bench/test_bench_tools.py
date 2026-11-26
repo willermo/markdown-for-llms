@@ -1,19 +1,20 @@
-"""External tools of the bench: the container runner, its mounts, caps, timeouts and LibreOffice.
+"""External tools of the bench: the runner, its request to the launcher, caps, timeouts and LibreOffice.
 
-`RealToolchainTests` run the tools for real in the reference image (E1 of the toolchain run); the
-fake engine covers only the exits a real tool cannot be made to give on demand.
+`RealToolchainTests` run the tools for real in the reference image, through the launcher (E1 of the toolchain
+run); the scripted launcher covers the request of each call (what the launcher is asked: it names no mount) and
+the exits a real tool cannot be made to give on demand. What the container of a tool is from inside is proved on
+real containers in `tests/container/test_child_isolation.py`, the body of its creation in `tests/unit/launcher/`.
 """
 import os
 from pathlib import Path
-import re
-import subprocess
 import tempfile
 import unittest
 import unittest.mock
 
-from bench_test_support import FAKE_IMAGE, FakeEngine, growing_html, make_pdf, require_toolchain
+from bench_test_support import FAKE_IMAGE, growing_html, left_by_this_process, make_pdf, require_toolchain, scripted
 from markdown_for_llms.bench import toolchain, tools
 from markdown_for_llms.bench.codes import BenchError, Code
+from markdown_for_llms.engine import containers
 
 
 class Base(unittest.TestCase):
@@ -30,33 +31,32 @@ class RealToolchainTests(Base):
         require_toolchain()
 
     def assert_work_root_empty(self):
-        self.assertEqual(sorted(os.listdir(self.work_root)), [])       # every /work removed after its call
+        """Nothing of the calls of this process is left: no container, no folder of a call on the work volume."""
+        self.assertEqual(left_by_this_process(), ([], []))
+        self.assertFalse(self.work_root.exists())                      # the calls no longer live under the cache
 
 
-class FakeEngineTests(Base):
-    """The runner against a fake Docker client, with the image taken as verified."""
+class ScriptedTests(Base):
+    """The runner against a scripted launcher (no container), with the image taken as verified."""
 
-    def setUp(self):
-        super().setUp()
-        saved = dict(toolchain._state)
-        self.addCleanup(toolchain._state.update, saved)
-        toolchain._state.update(image=FAKE_IMAGE, engine="test")
+    def launcher(self, script=None, **kw):
+        self.fake = scripted(self, self.root / "volume", script, **kw)
+        return self.fake
 
-    def engine(self, **kw):
-        fake = FakeEngine(**kw)
-        patcher = unittest.mock.patch.object(toolchain, "engine_run", fake)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        return fake
+    def calls_left(self):
+        calls = self.root / "volume" / "call"
+        return sorted(os.listdir(calls)) if calls.is_dir() else []
 
 
-def option_values(argv, flag):
-    return [argv[i + 1] for i, a in enumerate(argv) if a == flag]
+class RunnerArgumentTests(ScriptedTests):
+    def test_the_request_names_the_tool_its_environment_and_its_caps_and_no_mount(self):
+        seen = []
 
-
-class RunnerArgumentTests(FakeEngineTests):
-    def test_isolation_mounts_environment_and_caps(self):
-        fake = self.engine()
+        def script(request, call):
+            seen.append({"in": {p.name: p.read_bytes() for p in (call / "in").iterdir()},
+                         "stdin": (call / "ctl" / "stdin").read_bytes() if (call / "ctl" / "stdin").exists() else None})
+            return 0
+        fake = self.launcher(script)
         src = self.root / "runs" / "r1" / "in,put file.pdf"
         src.parent.mkdir(parents=True)
         src.write_bytes(b"%PDF")
@@ -66,60 +66,46 @@ class RunnerArgumentTests(FakeEngineTests):
         tools.set_memory_limit(1234)
         tools.run("pdftotext", ["-raw", tools.In(src), "-"], self.work_root)
         tools.run("pandoc", ["-f", "latex", "-t", "json"], self.work_root, stdin=b"x")
-        (poppler, pandoc) = fake.runs()
-        for argv in (poppler, pandoc):
-            self.assertEqual(argv[:3], ["run", "--rm", "-i"])
-            self.assertRegex(argv[4], r"^mdf-bench-\d+-[0-9a-f]{8}-\d+$")       # a name per call (E6)
-            for flag in ("--network none", "--cap-drop ALL", "--security-opt no-new-privileges"):
-                self.assertIn(flag, " ".join(argv))
-            self.assertIn("--read-only", argv)
-            self.assertEqual(option_values(argv, "--user"), [f"{os.getuid()}:{os.getgid()}"])
-            self.assertEqual(option_values(argv, "-w"), ["/work"])
-            self.assertEqual(option_values(argv, "-e"), ["LC_ALL=C.UTF-8", "LANG=C.UTF-8", "HOME=/work/home",
-                                                         "TMPDIR=/work/tmp"])
-            self.assertNotIn("-v", argv)
-            self.assertNotIn("--volume", argv)
-            self.assertFalse([a for a in argv if "docker.sock" in a])
-            self.assertIn(FAKE_IMAGE, argv)                                    # by ID, never by tag
-            self.assertFalse([a for a in argv if a.startswith(toolchain.REPOSITORY + ":")])
-            self.assertEqual(option_values(argv, "--memory"), ["1746m"])        # cap + 512 MiB, no swap
-            self.assertEqual(option_values(argv, "--memory-swap"), ["1746m"])
-        mounts = option_values(poppler, "--mount")
-        self.assertEqual(len(mounts), 2)
-        work = re.fullmatch(r"type=bind,src=(.+),dst=/work", mounts[0])
-        self.assertIsNotNone(work)
-        self.assertTrue(Path(work.group(1)).parent == self.work_root.resolve())   # private, under the cache
-        self.assertEqual(mounts[1], f'type=bind,"src={src.resolve()}",dst=/in/in_put_file.pdf,readonly')
-        self.assertEqual(poppler[poppler.index(FAKE_IMAGE) + 1:], ["pdftotext", "-raw", "/in/in_put_file.pdf", "-"])
-        self.assertEqual(option_values(poppler, "--ulimit"), [f"data={1234 * 1024 * 1024}:{1234 * 1024 * 1024}"])
-        self.assertEqual(pandoc[pandoc.index(FAKE_IMAGE) + 1:],
-                         ["pandoc", "+RTS", "-M1234m", "-RTS", "--sandbox", "-f", "latex", "-t", "json"])
-        self.assertEqual(option_values(pandoc, "--ulimit"), [])               # the runtime's own cap
-        self.assertEqual(len(option_values(pandoc, "--mount")), 1)            # no input file: /work only
-        self.assertEqual(os.listdir(self.work_root), [])
+        (poppler, pandoc) = fake.requests
+        for request in (poppler, pandoc):
+            self.assertEqual(set(request), {"kind", "name", "image", "argv", "env", "limits"})    # no mount, no path
+            self.assertEqual((request["kind"], request["image"]), ("tool", "toolchain"))           # a role, never a reference
+            self.assertRegex(request["name"], r"^mdf-bench-\d+-[0-9a-f]{8}-tool-\d+$")          # a name per call (E6)
+            self.assertEqual(request["env"], {"LC_ALL": "C.UTF-8", "LANG": "C.UTF-8", "HOME": "/work/home",
+                                              "TMPDIR": "/work/tmp"})
+            self.assertEqual(request["limits"]["memory_mib"], 1746)             # cap + 512 MiB; the launcher allows no swap
+            self.assertFalse([a for a in request["argv"] if "docker.sock" in a or str(self.root) in a])
+        self.assertEqual(poppler["argv"], ["pdftotext", "-raw", "/in/in_put_file.pdf", "-"])
+        self.assertEqual(poppler["limits"]["data_mib"], 1234)
+        self.assertEqual(pandoc["argv"], ["pandoc", "+RTS", "-M1234m", "-RTS", "--sandbox", "-f", "latex", "-t", "json"])
+        self.assertNotIn("data_mib", pandoc["limits"])                          # the runtime's own cap
+        # only the input of the call was copied for it, and the stdin is a file of the call
+        self.assertEqual(seen, [{"in": {"in_put_file.pdf": b"%PDF"}, "stdin": None}, {"in": {}, "stdin": b"x"}])
+        self.assertEqual(fake.removed, [poppler["name"], pandoc["name"]])
+        self.assertEqual(self.calls_left(), [])
+        self.assertEqual(toolchain.report()["image_id"], FAKE_IMAGE)             # by ID, as the launcher verified it
 
     def test_the_work_directory_is_private_and_removed(self):
         seen = {}
 
-        def result(argv, stdin):
-            src = re.fullmatch(r"type=bind,src=(.+),dst=/work", option_values(argv, "--mount")[0]).group(1)
-            seen["mode"] = os.stat(src).st_mode & 0o777
-            seen["dirs"] = sorted(os.listdir(src))
-            return 0, b"", b""
-        self.engine(result=result)
-        tools.run("qpdf", ["--version"], os.path.relpath(self.work_root))      # a relative cache still works
-        self.assertEqual(seen, {"mode": 0o700, "dirs": ["home", "tmp"]})
-        self.assertEqual(os.listdir(self.work_root), [])
+        def script(request, call):
+            seen["mode"] = os.stat(call / "scratch").st_mode & 0o777
+            seen["dirs"] = sorted(os.listdir(call / "scratch"))
+            seen["root"] = os.stat(call).st_mode & 0o777
+            return 0
+        self.launcher(script)
+        tools.run("qpdf", ["--version"], os.path.relpath(self.work_root))
+        self.assertEqual(seen, {"mode": 0o700, "dirs": ["home", "tmp"], "root": 0o700})
+        self.assertEqual(self.calls_left(), [])
 
-    def test_outputs_are_moved_and_must_exist(self):
-        def result(argv, stdin):
-            work = re.fullmatch(r"type=bind,src=(.+),dst=/work", option_values(argv, "--mount")[0]).group(1)
-            if "make" in argv:
-                Path(work, "page.png").write_bytes(b"png")
-            if "empty" in argv:
-                Path(work, "page.png").write_bytes(b"")
-            return 0, b"", b""
-        self.engine(result=result)
+    def test_outputs_are_copied_out_and_must_exist(self):
+        def script(request, call):
+            if "make" in request["argv"]:
+                (call / "scratch" / "page.png").write_bytes(b"png")
+            if "empty" in request["argv"]:
+                (call / "scratch" / "page.png").write_bytes(b"")
+            return 0
+        self.launcher(script)
         dest = self.root / "out" / "page.png"
         tools.run("pdftoppm", ["make", tools.Out(dest, arg="page", produced="page.png")], self.work_root)
         self.assertEqual(dest.read_bytes(), b"png")
@@ -132,10 +118,52 @@ class RunnerArgumentTests(FakeEngineTests):
         with self.assertRaises(ValueError):
             tools.Out(dest, arg="../escape")
 
+    def test_a_link_in_place_of_an_output_or_above_it_is_never_followed(self):
+        """E-8. A tool writes /work, so it can leave a link where its output should be: to a file of the process
+        that started it (its key file), or a directory in place of the directory of the output. The output is
+        `tool_failed` and no byte of the target reaches the destination."""
+        secret = self.root / "keys.env"
+        secret.write_text("SYNTHETIC_KEY=synthetic-value-of-the-caller\n")
+        elsewhere = self.root / "elsewhere"
+        elsewhere.mkdir()
+        (elsewhere / "source.pdf").write_text("SYNTHETIC_KEY=synthetic-value-of-the-caller\n")
 
-class RunnerExitTests(FakeEngineTests):
+        def script(request, call):
+            scratch = call / "scratch"
+            how = request["argv"][2]
+            if how == "leaf":
+                os.symlink(secret, scratch / "page.png")
+            elif how == "parent":
+                os.symlink(elsewhere, scratch / "out")
+            elif how == "inside":
+                (scratch / "media").mkdir()
+                (scratch / "media" / "real.png").write_bytes(b"png")
+                os.symlink(secret, scratch / "media" / "image.png")
+            elif how == "fifo":
+                os.mkfifo(scratch / "page.png")
+            return 0
+        self.launcher(script)
+        cases = (("leaf", tools.Out(self.root / "o1" / "page.png", arg="page.png"), "no output"),
+                 ("fifo", tools.Out(self.root / "o2" / "page.png", arg="page.png"), "no output"),
+                 ("parent", tools.Out(self.root / "o3" / "source.pdf", arg="out", produced="out/source.pdf"), "no output"),
+                 ("parent", tools.Out(self.root / "o4", arg="out", directory=True), "not a directory"),
+                 ("inside", tools.Out(self.root / "o5", arg="media", directory=True), "a link or a special file"))
+        for how, out, why in cases:
+            with self.subTest(how=how, why=why):
+                with self.assertRaises(BenchError) as ctx:
+                    tools.run("pdftoppm", ["x", how, out], self.work_root)
+                self.assertEqual(ctx.exception.code, Code.TOOL_FAILED)
+                self.assertIn(why, ctx.exception.detail)
+                self.assertFalse(out.dest.exists())
+        found = [p for p in self.root.rglob("*") if p.is_file() and p not in (secret, elsewhere / "source.pdf")
+                 and b"synthetic-value-of-the-caller" in p.read_bytes()]
+        self.assertEqual(found, [])
+        self.assertEqual(self.calls_left(), [])
+
+
+class RunnerExitTests(ScriptedTests):
     def run_tool(self, name, rc, stderr=b""):
-        self.engine(result=lambda argv, stdin: (rc, b"", stderr))
+        self.launcher(lambda request, call: (rc, b"", stderr))
         with self.assertRaises(BenchError) as ctx:
             tools.run(name, ["x"], self.work_root)
         return ctx.exception
@@ -146,43 +174,68 @@ class RunnerExitTests(FakeEngineTests):
                 exc = self.run_tool(name, 137)
                 self.assertEqual((exc.code, exc.detail.endswith("exit 137")), (Code.TOOL_MEMORY_LIMIT, True))
 
+    def test_a_process_of_the_tool_killed_for_memory_is_a_memory_limit_also_with_exit_0(self):
+        self.launcher(lambda request, call: {"exit": 0, "oom_killed": True, "oom_kill": 1})
+        with self.assertRaises(BenchError) as ctx:
+            tools.run("soffice", ["x"], self.work_root)
+        self.assertEqual((ctx.exception.code, ctx.exception.detail.endswith("exit 0")), (Code.TOOL_MEMORY_LIMIT, True))
+
     def test_runtime_and_allocation_failures(self):
         self.assertEqual(self.run_tool("pandoc", 251, b"pandoc: Heap exhausted;\n").code, Code.TOOL_MEMORY_LIMIT)
         self.assertEqual(self.run_tool("pdftoppm", 0, b"Out of memory\n").code, Code.TOOL_MEMORY_LIMIT)
         self.assertEqual(self.run_tool("qpdf", 2, b"qpdf: not a PDF file\n").code, Code.TOOL_FAILED)
 
     def test_engine_failures_are_not_tool_failures(self):
-        for rc in (125, 126, 127):
+        for rc in (126, 127):               # the supervisor could not start the command
             with self.subTest(rc=rc):
                 exc = self.run_tool("qpdf", rc)
                 self.assertEqual((exc.code, exc.fatal), (Code.ENGINE_FAILED, False))
 
-    def timeout(self, argv, stdin):
-        raise subprocess.TimeoutExpired(argv, 1)
-
-    def test_timeout_removes_the_container_by_name(self):
-        fake = self.engine(result=self.timeout)
+    def test_timeout_stops_the_container_and_attests_its_removal(self):
+        fake = self.launcher(lambda request, call: None)            # the tool never ends by itself
         with self.assertRaises(BenchError) as ctx:
             tools.run("gs", ["x"], self.work_root, timeout=1)
-        self.assertEqual((ctx.exception.code, ctx.exception.fatal), (Code.TOOL_FAILED, False))
-        name = fake.runs()[0][4]
-        self.assertEqual(fake.calls[1:], [["rm", "-f", name], ["container", "inspect", name]])
-        self.assertEqual(os.listdir(self.work_root), [])
+        self.assertEqual((ctx.exception.code, ctx.exception.fatal, ctx.exception.detail), (Code.TOOL_FAILED, False, "gs: timeout"))
+        name = fake.requests[0]["name"]
+        self.assertEqual(fake.removed, [name])
+        self.assertEqual(self.calls_left(), [])
 
-    def test_a_container_left_after_a_timeout_is_fatal(self):
-        self.engine(result=self.timeout, remove_ok=False)
-        with self.assertRaises(BenchError) as ctx:
+    def test_a_container_whose_removal_is_not_confirmed_after_a_timeout_is_fatal(self):
+        fake = self.launcher(lambda request, call: None)
+
+        class Every:
+            def __contains__(self, name):
+                return True
+        fake.unconfirmed = Every()
+        with unittest.mock.patch.object(containers, "UNREACHABLE_SECONDS", 0.3), self.assertRaises(BenchError) as ctx:
             tools.run("gs", ["x"], self.work_root, timeout=1)
         self.assertEqual((ctx.exception.code, ctx.exception.fatal), (Code.TOOL_FAILED, True))
+        # the end is not attested: the folder of the call stays, with the stop its supervisor reads
+        name = fake.requests[0]["name"]
+        self.assertEqual(self.calls_left(), [name])
+        self.assertTrue((self.root / "volume" / "call" / name / "ctl" / "stop").exists())
 
     def test_an_interrupted_client_removes_its_container(self):
-        def interrupt(argv, stdin):
+        def interrupt(request, call):
             raise KeyboardInterrupt
-        fake = self.engine(result=interrupt)
+        fake = self.launcher(interrupt)
         with self.assertRaises(KeyboardInterrupt):
             tools.run("gs", ["x"], self.work_root)
-        name = fake.runs()[0][4]
-        self.assertIn(["rm", "-f", name], fake.calls)
+        name = fake.ops("run")[0][1]
+        self.assertEqual((fake.ops("kill"), fake.removed), ([("kill", name)], [name]))
+        self.assertEqual(self.calls_left(), [])
+
+    def test_an_interrupted_client_without_the_launcher_leaves_the_stop_for_the_supervisor(self):
+        def interrupt(request, call):
+            fake.down = True
+            raise KeyboardInterrupt
+        fake = self.launcher(interrupt)
+        with self.assertRaises(KeyboardInterrupt):
+            tools.run("gs", ["x"], self.work_root)
+        name = fake.ops("run")[0][1]
+        # nothing attested the end: `ctl/stop` ends the container within a tick, without Docker, and the folder
+        # stays for the sweep
+        self.assertTrue((self.root / "volume" / "call" / name / "ctl" / "stop").exists())
 
     def test_memory_markers(self):
         self.assertTrue(tools.out_of_memory("pandoc", 251, b"pandoc: Heap exhausted;\n"))
@@ -199,25 +252,38 @@ class RunnerExitTests(FakeEngineTests):
             self.assertEqual(ctx.exception.code, Code.INVALID_SETTING)
 
     def test_versions_come_from_toolchain_json_without_a_container(self):
-        fake = self.engine()
+        fake = self.launcher()
         self.assertEqual(tools.version("pandoc"), toolchain.spec()["versions"]["pandoc"])
         self.assertEqual(fake.calls, [])
         with self.assertRaises(ValueError):
             tools.version("curl")
 
+    def test_without_the_launcher_or_with_an_image_it_refuses_no_tool_runs(self):
+        fake = self.launcher(toolchain={"refuse": ("toolchain_mismatch", "content manifest")})
+        with self.assertRaises(BenchError) as ctx:
+            tools.run("qpdf", ["--version"], self.work_root)
+        self.assertEqual(ctx.exception.code, Code.TOOLCHAIN_MISMATCH)
+        fake.down = True
+        with self.assertRaises(BenchError) as ctx:
+            tools.run("qpdf", ["--version"], self.work_root)
+        self.assertEqual(ctx.exception.code, Code.ISOLATION_UNAVAILABLE)
+        self.assertEqual(fake.requests, [])
 
-class SofficeIsolationTests(FakeEngineTests):
+
+class SofficeIsolationTests(ScriptedTests):
     """LibreOffice runs in the private /work of its call: with a relative TMPDIR its PDF export
     failed with exit 0 and NSS wrote `pkcs11.txt` in the current directory (the repository root)."""
 
     def test_profile_home_output_and_input_are_in_the_private_work(self):
-        def result(argv, stdin):
-            work = re.fullmatch(r"type=bind,src=(.+),dst=/work", option_values(argv, "--mount")[0]).group(1)
-            out = Path(work, "out")
+        seen = {}
+
+        def script(request, call):
+            seen["in"] = {p.name: p.read_bytes() for p in (call / "in").iterdir()}
+            out = call / "scratch" / "out"
             out.mkdir()
             (out / "twin.pdf").write_bytes(b"%PDF converted")
-            return 0, b"", b""
-        fake = self.engine(result=result)
+            return 0
+        fake = self.launcher(script)
         src = self.root / "cache" / "sources" / "abc"
         src.parent.mkdir(parents=True)
         src.write_bytes(b"pptx bytes")
@@ -225,15 +291,14 @@ class SofficeIsolationTests(FakeEngineTests):
         dest.mkdir(parents=True)
         out = tools.soffice_convert(src, "twin.pptx", "pdf", dest, self.work_root)
         self.assertEqual((out, out.read_bytes()), (dest / "twin.pdf", b"%PDF converted"))
-        (argv,) = fake.runs()
-        command = argv[argv.index(FAKE_IMAGE) + 1:]
-        self.assertEqual(command, ["soffice", "-env:UserInstallation=file:///work/profile", "--headless", "--norestore",
-                                   "--convert-to", "pdf", "--outdir", "/work/out", "/in/twin.pptx"])
-        self.assertEqual(option_values(argv, "--mount")[1], f"type=bind,src={src.resolve()},dst=/in/twin.pptx,readonly")
-        self.assertEqual(os.listdir(self.work_root), [])
+        (request,) = fake.requests
+        self.assertEqual(request["argv"], ["soffice", "-env:UserInstallation=file:///work/profile", "--headless", "--norestore",
+                                           "--convert-to", "pdf", "--outdir", "/work/out", "/in/twin.pptx"])
+        self.assertEqual(seen["in"], {"twin.pptx": b"pptx bytes"})
+        self.assertEqual(self.calls_left(), [])
 
     def test_an_export_without_output_fails_even_with_exit_0(self):
-        self.engine()
+        self.launcher()
         src = self.root / "in.xlsx"
         src.write_bytes(b"x")
         with self.assertRaises(BenchError) as ctx:
@@ -314,15 +379,13 @@ class RealRunnerTests(RealToolchainTests):
         self.assertTrue((self.root / "small.png").read_bytes().startswith(b"\x89PNG"))
 
     def test_a_timed_out_container_is_removed(self):
-        """E6: the client is killed at the timeout and the container removed by name."""
+        """E6: the container is stopped at the timeout and its removal attested by the launcher."""
         ps = self.root / "endless.ps"
         ps.write_bytes(b"%!PS\n{ 1 pop } loop\n")
         with self.assertRaises(BenchError) as ctx:
             tools.run("gs", ["-q", "-dNOPAUSE", "-dBATCH", "-dSAFER", "-sDEVICE=nullpage", tools.In(ps)],
                       self.work_root, timeout=3)
         self.assertEqual((ctx.exception.code, ctx.exception.fatal, ctx.exception.detail), (Code.TOOL_FAILED, False, "gs: timeout"))
-        left = toolchain.engine_run(["ps", "-a", "--filter", f"name=mdf-bench-{os.getpid()}-", "--format", "{{.Names}}"], 60)
-        self.assertEqual((left.returncode, left.stdout.strip()), (0, b""))
         self.assert_work_root_empty()
 
 

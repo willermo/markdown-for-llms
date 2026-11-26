@@ -5,6 +5,8 @@
 #   engine  the engine and the product: extras `app` and `engine` of uv.lock and the project, installed from
 #           the wheel built here (not editable). The launcher, the worker, the CLI and the children that
 #           run Python use this image; a child gets it by ID, from the launcher's own container.
+#           It also holds the Modal CLI 1.6.3 in a virtual environment of its own, /opt/modal, from a lock with
+#           hashes (docker/app/modal-requirements.txt): the worker runs it as a child process.
 #   api     the API alone: extra `app` and the same wheel (used from tranche A2).
 #   dev     what the checks need: the dependencies of `engine` and the `dev` group WITHOUT the project, uv
 #           and what an offline build of the project reads (the Setuptools wheel and a uv cache that
@@ -12,10 +14,23 @@
 #
 # Every input is pinned: the base image by digest (the index of amd64 and arm64, the same base as the
 # toolchain image), uv 0.13.7 by the SHA-256 of its release archive, CPython 3.12.13 as uv installs it,
-# the packages by uv.lock (`--frozen`), Setuptools 84.0.0 by SHA-256. No Debian package is installed.
+# the packages by uv.lock (`--frozen`), Setuptools 84.0.0 by SHA-256, and the Debian packages below from the
+# snapshot of the toolchain image (snapshot.debian.org at a fixed date, `--no-install-recommends`, the apt
+# lists removed in the same layer). tests/unit/test_dockerignore.py (`TestPins`) holds the two lists.
+#
+#   engine  curl and ca-certificates (`weights.prepare` and `cpuserver.prepare` download with curl); what
+#           WeasyPrint 63.1 opens with dlopen for the Marker providers of docx, xlsx, pptx, epub and html
+#           (GObject, Pango, PangoFT2, HarfBuzz, HarfBuzz subset, Fontconfig) with `fontconfig` for /etc/fonts
+#           and its cache; and the system fonts of that rendering: Noto for `sans-serif` and `serif`, DejaVu
+#           Sans Mono for `monospace`, the families fontconfig resolves on the development machine (the text
+#           itself is set in the font of the weights).
+#   dev     git, for the steps of the full check that read the checkout (O, S).
 # arm64 is expected to build and is not proven; the checks of the interpreter below are amd64 only,
 # like the guard they repeat (scripts/diagnostics/run-a001-fase0-uv/guard_product_inputs.py).
 ARG BASE=debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
+ARG SNAPSHOT=20261113T000000Z
+ARG ENGINE_PACKAGES="ca-certificates curl fontconfig fonts-dejavu-mono fonts-noto-core libfontconfig1 libglib2.0-0t64 libharfbuzz-subset0 libharfbuzz0b libpango-1.0-0 libpangoft2-1.0-0"
+ARG DEV_PACKAGES="git"
 
 FROM ${BASE} AS uv-amd64
 ADD --checksum=sha256:c5221ff41b7892bfc223543883600125f6a47fe845093e0f5bdff4f359196d83 \
@@ -76,6 +91,16 @@ FROM toolbox AS deps-api
 RUN --mount=type=cache,target=/var/cache/uv \
     /opt/mdf/uv sync --frozen --no-default-groups --extra app --no-install-project --python 3.12.13 --managed-python
 
+# The Modal CLI in a virtual environment of its own (MFL051 A2): `modal==1.6.3` and its dependencies from a lock
+# with the SHA-256 of every file (docker/app/modal-requirements.txt, `--require-hashes`). The worker starts
+# /opt/modal/bin/modal as a child process; nothing of it is importable from the environment of the product.
+FROM toolbox AS modal
+COPY docker/app/modal-requirements.txt /tmp/modal-requirements.txt
+RUN --mount=type=cache,target=/var/cache/uv \
+    /opt/mdf/uv venv --python 3.12.13 --managed-python /opt/modal \
+ && /opt/mdf/uv pip install --python /opt/modal/bin/python --require-hashes --no-deps -r /tmp/modal-requirements.txt \
+ && test "$(/opt/modal/bin/modal --version | grep -o '[0-9][0-9.]*' | head -n 1)" = 1.6.3
+
 # The wheel of the project, built as the full check builds it (source archive first, then the wheel).
 FROM toolbox AS wheel
 COPY MANIFEST.in README.md LICENSE .python-version build-constraints.txt ./
@@ -110,6 +135,14 @@ COPY --from=deps /opt/mdf/venv /opt/mdf/venv
 ENV PATH=/opt/mdf/venv/bin:/usr/local/bin:/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 FROM runtime AS engine
+ARG SNAPSHOT
+ARG ENGINE_PACKAGES
+COPY --from=modal /opt/modal /opt/modal
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+ && echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/${SNAPSHOT} trixie main" > /etc/apt/sources.list \
+ && echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/${SNAPSHOT} trixie-security main" >> /etc/apt/sources.list \
+ && apt-get -o Acquire::Retries=3 update && apt-get install -y --no-install-recommends ${ENGINE_PACKAGES} \
+ && rm -rf /var/lib/apt/lists/* && fc-cache -s > /dev/null
 RUN --mount=type=bind,from=toolbox,source=/opt/mdf/uv,target=/usr/local/bin/uv \
     --mount=type=bind,from=wheel,source=/dist,target=/dist \
     UV_NO_CACHE=1 uv pip install --python /opt/mdf/venv/bin/python --offline --no-deps --compile-bytecode \
@@ -138,6 +171,13 @@ RUN --mount=type=bind,from=toolbox,source=/opt/mdf/uv,target=/usr/local/bin/uv \
 # would have to be the file the guard knows.
 FROM runtime AS dev
 ARG TARGETARCH
+ARG SNAPSHOT
+ARG DEV_PACKAGES
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+ && echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/${SNAPSHOT} trixie main" > /etc/apt/sources.list \
+ && echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/${SNAPSHOT} trixie-security main" >> /etc/apt/sources.list \
+ && apt-get -o Acquire::Retries=3 update && apt-get install -y --no-install-recommends ${DEV_PACKAGES} \
+ && rm -rf /var/lib/apt/lists/*
 COPY --from=toolbox /opt/mdf/uv /opt/mdf/uv
 COPY --from=seed /opt/mdf/backend /opt/mdf/backend
 COPY --from=seed /opt/mdf/seed /opt/mdf/seed

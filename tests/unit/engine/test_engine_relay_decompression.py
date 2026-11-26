@@ -6,6 +6,8 @@ child decoded, and `bytes_out` counts the bytes received. The answers are real s
 import gzip
 import json
 import unittest
+
+from engine_test_support import private_sockets
 import zlib
 
 import httpx
@@ -37,7 +39,7 @@ def chunks(data, size=4096):
 
 class RelayDecompressionTests(unittest.TestCase):
     def setUp(self):
-        self.private = sockets.Private()
+        self.private = private_sockets()
         self.addCleanup(self.private.close)
         self.answers, self.seen = [], []
 

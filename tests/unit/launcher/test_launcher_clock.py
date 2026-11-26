@@ -339,6 +339,57 @@ class TestReason(WatchCase):
         self.assertEqual((self.inspect(other)["exit"], self.inspect(other)["reaped"]), (137, "stop"))
         self.assertEqual(set(why for why, _ in self.sut.reaped.values()) - set(containers.REAPED), set())
 
+    def client_cause(self, name=NAME):
+        """What the client makes of the `inspect` of the launcher at the end of a child (`containers._cause`)."""
+        answer = self.inspect(name)
+        absent = answer["state"] == "absent"
+        return containers._cause(None if absent else answer.get("exit"), bool(answer.get("oom_killed")), None, None,
+                                 answer.get("reaped"), absent)
+
+    def test_a_cleanup_that_comes_back_never_replaces_the_reason_of_the_kill(self):
+        """SOL-FIX-R1 (A2-b). Docker kills and keeps failing to remove. The watch killed the child at its term;
+        when it comes back on it, exited for longer than the tolerance, it removes it as `ended`: said to the
+        caller, that would turn the 137 of the launcher's own kill into a memory limit. The first reason stays for
+        as long as the launcher goes on acting on that child, at every pass, also past the time a note is kept
+        without one, and under the stop of the launcher too."""
+        self.keep_the_killed()
+        self.child(term=120, lease=100000)
+        self.assertEqual(self.tick(120 + G + 1), {NAME: "term"})
+        self.assertEqual((self.inspect()["exit"], self.inspect()["reaped"], self.client_cause()), (137, "term", "term"))
+        acted = []
+        for _ in range(4):                                  # each pass is past the tolerance of an exited child
+            acted.append(self.tick(launcher.EXITED_SECONDS + 1))
+            self.assertEqual((self.inspect()["exit"], self.inspect()["reaped"], self.client_cause()), (137, "term", "term"))
+        self.assertEqual(acted[-1], {NAME: "ended"})        # what the watch did: try again to remove it
+        self.assertGreater(len(self.fake.did("DELETE", "/containers/")), 2)
+        self.sut.stop(seconds=1.0)                          # and the stop of the launcher is not its reason either
+        self.assertEqual((self.inspect()["reaped"], self.client_cause()), ("term", "term"))
+        self.assertNotEqual(self.client_cause(), "memory")
+        self.assertEqual(containers.error_of(mock.Mock(cause=self.client_cause(), name=NAME, exit=137), "x").code, Code.TIMEOUT)
+
+    def test_the_first_reason_stays_for_a_lease_too_and_once_the_child_is_removed(self):
+        self.keep_the_killed()
+        self.child(term=100000, lease=30)
+        self.tick()
+        self.assertEqual(self.tick(30 + G + 1), {NAME: "lease"})
+        self.tick(launcher.EXITED_SECONDS + 1)
+        self.assertEqual((self.inspect()["reaped"], self.client_cause()), ("lease", "lease"))
+        del self.fake._route                                # the removal works again
+        self.tick(launcher.EXITED_SECONDS + 1)
+        self.assertTrue(self.gone())
+        self.assertEqual((self.inspect(), self.client_cause()), ({"ok": True, "state": "absent", "reaped": "lease"}, "lease"))
+
+    def test_a_note_nobody_refreshes_is_forgotten_and_an_exited_child_alone_is_ended(self):
+        """Without a kill before it, `ended` is the reason: the child ended by itself and was removed later."""
+        self.child(state="exited", term=3600)
+        self.tick()
+        self.assertEqual(self.tick(launcher.EXITED_SECONDS + 1), {NAME: "ended"})
+        self.assertEqual(self.inspect()["reaped"], "ended")
+        self.sut.note("other-child", "term")
+        self.clock.now += launcher.REAPED_SECONDS + 1
+        self.sut.note("third-child", "lease")
+        self.assertNotIn("other-child", self.sut.reaped)
+
     def test_a_new_child_of_the_same_name_has_no_reason_of_the_old_one(self):
         work = self.work / "call" / NAME
         for role in ("scratch", "in", "ctl", "stat"):
