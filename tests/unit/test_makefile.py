@@ -44,6 +44,26 @@ class MakefileTests(unittest.TestCase):
         for target in ("up", "down", "restart", "rebuild", "status", "logs", "prepare", "clean", "clean-archive"):
             self.assertIn(target, phony)
 
+    def test_the_commands_of_the_gpus_of_the_user(self):
+        """MFL051 B: listed, checked against the host before anything is pulled or started, and through compose alone;
+        the remote server is a project of its own, with its own file."""
+        phony = re.search(r"^\.PHONY:(.*?)(?<!\\)$", TEXT, re.M | re.S).group(1).replace("\\\n", " ").split()
+        for target in ("gpu-prepare", "gpu-up", "gpu-down", "server-prepare", "server-up", "server-down"):
+            with self.subTest(target=target):
+                self.assertRegex(TEXT, r"(?m)^%s:.*## \S" % re.escape(target))
+                self.assertIn(target, phony)
+        for target in ("gpu-prepare", "gpu-up", "server-prepare", "server-up"):
+            body = recipe(target)
+            self.assertLess(body.index("gpu_host_check"), body.index("$(GPU)" if target.startswith("gpu") else "$(SERVER)"))
+        for target in ("server-prepare", "server-up", "server-down"):
+            self.assertIn('server_environment "$(ENV)"', recipe(target))
+        self.assertEqual(variable("GPU"), "$(COMPOSE) --profile gpu")
+        self.assertEqual(variable("SERVER"), '$(COMPOSE) -p "$$COMPOSE_PROJECT_NAME-server" -f compose.server.yaml')
+        self.assertIn("worker", recipe("gpu-up"))                         # the product first
+        # `down` and `clean` name the profile: without it compose leaves the container of the local GPU running
+        for target in ("down", "clean"):
+            self.assertIn("$(TOOLS) --profile gpu down --remove-orphans", recipe(target))
+
     def test_compose_never_opens_the_env_file_of_the_user(self):
         self.assertEqual(variable("COMPOSE"), "docker compose --env-file /dev/null")
         self.assertEqual(variable("TOOLS"), "$(COMPOSE) --profile tools")
@@ -66,7 +86,7 @@ class MakefileTests(unittest.TestCase):
 
     def test_down_removes_no_volume(self):
         body = recipe("down")
-        self.assertIn("$(TOOLS) down --remove-orphans", body)
+        self.assertIn("$(TOOLS) --profile gpu down --remove-orphans", body)
         self.assertNotRegex(body, r"\s(-v|--volumes)\b")
         self.assertNotIn("volume rm", body)
         # the children of the engine are not services of compose: the ones of this project only, by its label

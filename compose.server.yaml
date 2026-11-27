@@ -1,0 +1,188 @@
+# The remote GPU server of markdown-for-llms (MFL051 B; J.7.4 of the plan): `make server-up` on the machine of the
+# GPU, from a checkout of this repository. DESIGNED AND TESTED WITH FAKE SERVERS ONLY: nobody has run it on a real GPU.
+#
+# A project of its own (`<directory>-server`), never with compose.yaml: on the machine of the GPU only these services
+# run. Started by `make server-up`, never by hand: every `${...}` comes from the Makefile (scripts/env-preflight.sh),
+# which reads the few names below from the env file of that machine; compose never opens the file.
+#
+#   init            once: the root of the volume of the weights to the user, mode 0700 (as in compose.yaml)
+#   server-prepare  once (`make server-prepare`): the pinned weights of Surya into mdf-vllm-models, with a network
+#   gpu             vLLM (the pinned image of the rented presets) behind the front of gpu/local_front.py, which
+#                   checks the bearer key of every request in constant time; on the internal network `server` alone:
+#                   no way out, and nothing reaches it but nginx
+#   nginx           TLS with the certificate of the user, published on MDF_COMPOSE_SERVER_ADDRESS:MDF_COMPOSE_SERVER_PORT
+#                   (23467, the block of the project), an address of the LAN or of the VPS: the product reaches it
+#                   from another machine. Never on the laptop that runs the product.
+#
+# The key and the TLS key are private files of the user mounted read-only (MDF_COMPOSE_SERVER_KEY, the folder
+# MDF_COMPOSE_SERVER_TLS with server.crt and server.key), never an environment variable. On the machine of the
+# product the endpoint of the preset gpu-remote names the URL, the key (GPU_SERVER_KEY) and the authority that signed
+# the certificate (`ca_file`); its page images leave that machine: the transit is confirmed for every job.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
+x-service: &service
+  user: "${MDF_COMPOSE_UID:?run through make}:${MDF_COMPOSE_GID:?run through make}"
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges"]
+  logging: *logging
+
+x-front-code: &front-code
+  type: bind
+  source: ./markdown_for_llms/gpu/local_front.py
+  target: /opt/mdf-front/local_front.py
+  read_only: true
+  bind:
+    create_host_path: false
+
+x-front-watchdog: &front-watchdog
+  type: bind
+  source: ./markdown_for_llms/gpu/watchdog.py
+  target: /opt/mdf-front/watchdog.py
+  read_only: true
+  bind:
+    create_host_path: false
+
+x-vllm: &vllm
+  <<: *service
+  image: vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268
+  entrypoint: ["python3", "-I", "-B", "/opt/mdf-front/local_front.py"]
+
+services:
+  init:
+    image: vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268
+    user: "0:0"
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    security_opt: ["no-new-privileges"]
+    logging: *logging
+    mem_limit: 128m
+    memswap_limit: 128m
+    pids_limit: 64
+    restart: "no"
+    entrypoint: ["/bin/sh", "/init-volumes.sh"]
+    command: ["${MDF_COMPOSE_UID:?run through make}", "${MDF_COMPOSE_GID:?run through make}", /volumes/vllm-models]
+    volumes:
+      - type: bind
+        source: ./docker/app/init-volumes.sh
+        target: /init-volumes.sh
+        read_only: true
+        bind:
+          create_host_path: false
+      - mdf-vllm-models:/volumes/vllm-models
+
+  server-prepare:
+    <<: *vllm
+    profiles: [prepare]
+    networks: [egress]
+    command: ["prepare", "--hf-home", "/models"]
+    restart: "no"
+    mem_limit: 4g
+    memswap_limit: 4g
+    pids_limit: 256
+    environment:
+      HOME: /tmp
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    tmpfs: ["/tmp:rw,nosuid,nodev,size=256m,mode=1777"]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    volumes:
+      - *front-code
+      - *front-watchdog
+      - mdf-vllm-models:/models
+
+  gpu:
+    <<: *vllm
+    networks: [server]
+    command: ["serve", "--listen", "0.0.0.0:8000", "--key-file", "/run/mdf/server/key", "--hf-home", "/models"]
+    restart: on-failure:3
+    stop_grace_period: 40s
+    mem_limit: ${MDF_COMPOSE_GPU_MEMORY:-16g}
+    memswap_limit: ${MDF_COMPOSE_GPU_MEMORY:-16g}
+    pids_limit: 4096
+    shm_size: 2g
+    environment:
+      HOME: /tmp
+      HF_HUB_OFFLINE: "1"
+      VLLM_NO_USAGE_STATS: "1"
+      DO_NOT_TRACK: "1"
+    tmpfs: ["/tmp:rw,nosuid,nodev,size=4g,mode=1777"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python3", "-I", "-B", "/opt/mdf-front/local_front.py", "health", "--listen", "127.0.0.1:8000"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15m
+      retries: 3
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    volumes:
+      - *front-code
+      - *front-watchdog
+      - mdf-vllm-models:/models:ro
+      - type: bind
+        source: ${MDF_COMPOSE_SERVER_KEY:?run through make}
+        target: /run/mdf/server/key
+        read_only: true
+        bind:
+          create_host_path: false
+
+  nginx:
+    image: nginx:1.30.6-alpine@sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5
+    <<: *service
+    networks: [public, server]
+    ports:
+      - "${MDF_COMPOSE_SERVER_ADDRESS:?run through make}:${MDF_COMPOSE_SERVER_PORT:-23467}:8443"
+    mem_limit: 256m
+    memswap_limit: 256m
+    pids_limit: 128
+    restart: unless-stopped
+    depends_on:
+      gpu:
+        condition: service_started
+    environment:
+      NGINX_ENVSUBST_FILTER: "^MDF_"
+    tmpfs:
+      - "/etc/nginx/conf.d:rw,nosuid,nodev,noexec,size=1m,mode=0700,uid=${MDF_COMPOSE_UID:?run through make},gid=${MDF_COMPOSE_GID:?run through make}"
+      - "/var/cache/nginx:rw,nosuid,nodev,noexec,size=16m,mode=0700,uid=${MDF_COMPOSE_UID:?run through make},gid=${MDF_COMPOSE_GID:?run through make}"
+      - "/run:rw,nosuid,nodev,noexec,size=1m,mode=0755,uid=${MDF_COMPOSE_UID:?run through make},gid=${MDF_COMPOSE_GID:?run through make}"
+      - "/tmp:rw,nosuid,nodev,noexec,size=1m,mode=1777"
+    volumes:
+      - type: bind
+        source: ./docker/nginx/server.conf.template
+        target: /etc/nginx/templates/default.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${MDF_COMPOSE_SERVER_TLS:?run through make}
+        target: /etc/mdf/tls
+        read_only: true
+        bind:
+          create_host_path: false
+
+networks:
+  # the weights of the prepare come from Hugging Face; nothing listens on it
+  egress: {}
+  # nginx and the front alone, with no way out
+  server:
+    internal: true
+  # the port published by nginx
+  public: {}
+
+volumes:
+  mdf-vllm-models:

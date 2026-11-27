@@ -15,6 +15,10 @@ What must hold, whatever else changes in the files:
   the capability CHOWN in `init` alone, and CAP_FOWNER nowhere; the launcher with the group of the socket;
 - a memory cap without swap on every service;
 - `cli` and `bench` start no other service; the launcher has no `hostname:` (it finds itself by it).
+
+MFL051 B: the profile `gpu` (the local GPU: vLLM without network behind the front, on a socket of mdf-run) and
+compose.server.yaml (the remote server: a project of its own, TLS on one port of an address that is not the loopback,
+the GPU on an internal network, the keys as private files); `compose-gpu.json`, `compose-server.json`.
 """
 import json
 import os
@@ -29,16 +33,22 @@ UID, GID = str(os.getuid()), str(os.getgid())
 KEY_NAME = re.compile(r"(_KEY|_SECRET|_TOKEN|_TOKEN_ID|_BEARER|PASSWORD)$")
 ASK = ('. scripts/env-preflight.sh && compose_environment /nonexistent/.env && '
        'docker compose --env-file /dev/null %s --profile tools config --format json')
+ASK_SERVER = ('. scripts/env-preflight.sh && compose_environment /nonexistent/.env && '
+              'MDF_COMPOSE_SERVER_ADDRESS=192.0.2.10 MDF_COMPOSE_SERVER_TLS=/nonexistent/tls '
+              'MDF_COMPOSE_SERVER_KEY=/nonexistent/key docker compose --env-file /dev/null -p check-server %s '
+              'config --format json')
+SERVER_ADDRESS = "192.0.2.10"                       # the documentation range: the config is read, never started
+PRESET_IMAGE = "vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268"
 
 
-def load(name, files):
+def load(name, files, server=False):
     proof = os.environ.get("FULL_CHECK_PROOF_DIR")
     if proof and (Path(proof) / name).is_file():
         return json.loads((Path(proof) / name).read_text())
     if shutil.which("docker") is None:
         raise unittest.SkipTest("no saved `docker compose config` (FULL_CHECK_PROOF_DIR) and no Docker here")
     env = {k: v for k, v in os.environ.items() if not k.startswith(("MDF_", "COMPOSE_"))}
-    proc = subprocess.run(["sh", "-euc", ASK % files], cwd=ROOT, capture_output=True, text=True, env=env, timeout=120)
+    proc = subprocess.run(["sh", "-euc", (ASK_SERVER if server else ASK) % files], cwd=ROOT, capture_output=True, text=True, env=env, timeout=120)
     if proc.returncode != 0:
         raise AssertionError("docker compose config: " + proc.stderr[-500:])
     return json.loads(proc.stdout)
@@ -60,7 +70,7 @@ class ProductComposeTests(unittest.TestCase):
         for name in ("cli", "bench"):
             self.assertEqual(self.services[name]["profiles"], ["tools"])
         self.assertEqual(sorted(self.config["volumes"]), ["mdf-api", "mdf-cpu-server", "mdf-launcher", "mdf-models", "mdf-run",
-                                                          "mdf-settings", "mdf-work"])
+                                                          "mdf-settings", "mdf-vllm-models", "mdf-work"])
 
     def test_one_published_port_on_the_loopback(self):
         ports = [(name, port) for name, s in self.services.items() for port in s.get("ports", [])]
@@ -193,6 +203,111 @@ class ProductComposeTests(unittest.TestCase):
 
     def test_nginx_by_digest(self):
         self.assertRegex(self.services["nginx"]["image"], r"^nginx:1\.30\.6-alpine@sha256:[0-9a-f]{64}$")
+
+
+class GpuComposeTests(unittest.TestCase):
+    """The profile `gpu` of compose.yaml (MFL051 B, J.7.2): the local GPU, never started by the suite."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.config = load("compose-gpu.json", "--profile gpu")
+        cls.services = cls.config["services"]
+
+    def test_the_two_services_of_the_profile(self):
+        gpu = {name for name, s in self.services.items() if "gpu" in (s.get("profiles") or [])}
+        self.assertEqual(gpu, {"gpu", "gpu-prepare"})
+        for name in gpu:
+            self.assertEqual(self.services[name]["image"], PRESET_IMAGE)
+            self.assertEqual(self.services[name]["entrypoint"],
+                             ["python3", "-I", "-B", "/opt/mdf-front/local_front.py"])
+
+    def test_vllm_has_no_network_and_publishes_nothing(self):
+        gpu = self.services["gpu"]
+        self.assertEqual(gpu.get("network_mode"), "none")
+        self.assertNotIn("ports", gpu)
+        self.assertEqual(gpu["command"][:3], ["serve", "--socket", "/run/mdf/run/gpu/front.sock"])
+        ports = [(name, p) for name, s in self.services.items() for p in s.get("ports", [])]
+        self.assertEqual([name for name, _ in ports], ["nginx"])
+        # the prepare alone has a network, to download the weights once
+        self.assertEqual(sorted(self.services["gpu-prepare"]["networks"]), ["egress"])
+
+    def test_the_rules_of_every_service_hold(self):
+        for name in ("gpu", "gpu-prepare"):
+            with self.subTest(service=name):
+                s = self.services[name]
+                self.assertEqual(s["user"], "%s:%s" % (UID, GID))
+                self.assertIs(s.get("read_only"), True)
+                self.assertEqual(s.get("cap_drop"), ["ALL"])
+                self.assertEqual(s.get("cap_add", []), [])
+                self.assertEqual(s.get("security_opt"), ["no-new-privileges"])
+                self.assertNotIn("privileged", s)
+                self.assertNotIn("env_file", s)
+                for variable in s.get("environment") or {}:
+                    self.assertIsNone(KEY_NAME.search(variable), variable)
+                self.assertEqual(s["memswap_limit"], s["mem_limit"])
+                self.assertTrue(int(s["pids_limit"]) > 0)
+                self.assertFalse([v for v in mounts(s) if v["target"] in ("/run/mdf/env", "/data", "/state")])
+        devices = self.services["gpu"]["deploy"]["resources"]["reservations"]["devices"]
+        self.assertEqual([(d["driver"], d["capabilities"]) for d in devices], [("nvidia", ["gpu"])])
+
+    def test_what_the_front_sees(self):
+        def seen(name):
+            return {v["target"]: ("ro" if v.get("read_only") else "rw") for v in mounts(self.services[name])}
+        code = {"/opt/mdf-front/local_front.py": "ro", "/opt/mdf-front/watchdog.py": "ro"}
+        self.assertEqual(seen("gpu"), dict(code, **{"/models": "ro", "/run/mdf/run": "rw"}))
+        self.assertEqual(seen("gpu-prepare"), dict(code, **{"/models": "rw"}))
+        for name in ("gpu", "gpu-prepare"):
+            for v in mounts(self.services[name], "bind"):
+                self.assertIs(v["bind"]["create_host_path"], False, v["target"])
+        volume = [v for v in mounts(self.services["gpu"], "volume") if v["target"] == "/models"][0]
+        self.assertEqual(self.config["volumes"][volume["source"]]["name"], "%s_mdf-vllm-models" % self.config["name"])
+        # the root of the volume of the weights is given to the user by `init`, as every named volume
+        self.assertIn("/volumes/vllm-models", self.services["init"]["command"])
+
+
+class ServerComposeTests(unittest.TestCase):
+    """compose.server.yaml (MFL051 B, J.7.4): the remote GPU server, a project of its own on the machine of the GPU."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.config = load("compose-server.json", "-f compose.server.yaml --profile prepare", server=True)
+        cls.services = cls.config["services"]
+
+    def test_the_services(self):
+        self.assertEqual(sorted(self.services), ["gpu", "init", "nginx", "server-prepare"])
+
+    def test_one_port_on_the_address_of_the_server_behind_tls(self):
+        ports = [(name, p) for name, s in self.services.items() for p in s.get("ports", [])]
+        self.assertEqual(len(ports), 1)
+        name, port = ports[0]
+        self.assertEqual((name, port["published"], port["target"]), ("nginx", "23467", 8443))
+        self.assertEqual(port["host_ip"], SERVER_ADDRESS)
+        self.assertNotEqual(port["host_ip"], "127.0.0.1")
+        self.assertTrue(23460 <= int(port["published"]) <= 23479)                    # the block of the project
+
+    def test_the_gpu_has_no_way_out(self):
+        gpu = self.services["gpu"]
+        self.assertEqual(sorted(gpu["networks"]), ["server"])
+        self.assertIs(self.config["networks"]["server"].get("internal"), True)
+        self.assertNotIn("ports", gpu)
+        self.assertEqual(sorted(self.services["nginx"]["networks"]), ["public", "server"])
+        self.assertEqual(gpu["command"][:5], ["serve", "--listen", "0.0.0.0:8000", "--key-file", "/run/mdf/server/key"])
+
+    def test_the_keys_are_private_files_never_an_environment(self):
+        for name, s in self.services.items():
+            with self.subTest(service=name):
+                self.assertNotIn("env_file", s)
+                for variable in s.get("environment") or {}:
+                    self.assertIsNone(KEY_NAME.search(variable), variable)
+                self.assertEqual(s["user"], "0:0" if name == "init" else "%s:%s" % (UID, GID))
+                self.assertEqual(s.get("cap_add", []), ["CHOWN"] if name == "init" else [])
+                self.assertIs(s.get("read_only"), True)
+                self.assertEqual(s["memswap_limit"], s["mem_limit"])
+        key = [v for v in mounts(self.services["gpu"], "bind") if v["target"] == "/run/mdf/server/key"][0]
+        self.assertIs(key.get("read_only"), True)
+        tls = [v for v in mounts(self.services["nginx"], "bind") if v["target"] == "/etc/mdf/tls"][0]
+        self.assertIs(tls.get("read_only"), True)
+        self.assertFalse([v for v in mounts(self.services["nginx"]) if "key" in v["target"]])
 
 
 class PublicComposeTests(unittest.TestCase):

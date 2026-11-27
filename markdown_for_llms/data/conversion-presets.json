@@ -19,6 +19,18 @@
       "description": "Pages and images only: Marker balanced with the inference of Surya on a GPU rented by the second on RunPod, one session for the whole queue; the GPU can be armed ahead. The page images leave this computer.",
       "options": {"route": "marker-server", "server_mode": "balanced", "gpu_preset": "runpod-serverless-volume-dc", "ocr": "auto", "datalab_mode": null}
     },
+    "local-gpu": {
+      "provisional": true,
+      "label": "Quality on your GPU (this computer)",
+      "description": "Pages and images only: Marker balanced with the inference of Surya on the NVIDIA GPU of this computer (the gpu profile, make gpu-up). Nothing is rented and nothing leaves this computer. Designed and tested with fake servers only.",
+      "options": {"route": "marker-server", "server_mode": "balanced", "gpu_preset": "gpu-local", "ocr": "auto", "datalab_mode": null}
+    },
+    "remote-gpu": {
+      "provisional": true,
+      "label": "Quality on your GPU server",
+      "description": "Pages and images only: Marker balanced with the inference of Surya on your own GPU server (make server-up on that machine), over TLS with its key. Nothing is rented; the page images leave this computer. Designed and tested with fake servers only.",
+      "options": {"route": "marker-server", "server_mode": "balanced", "gpu_preset": "gpu-remote", "ocr": "auto", "datalab_mode": null}
+    },
     "datalab": {
       "provisional": true,
       "label": "Datalab",

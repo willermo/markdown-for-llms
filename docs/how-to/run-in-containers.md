@@ -2,7 +2,7 @@
 
 For someone who wants to convert documents on their own computer, from the browser or from a terminal. The whole product runs in containers started by `make`: nothing of it needs a Python, a virtual environment or `systemd` on the host.
 
-**Tested**: one user on Linux x86_64 with Docker Engine 29, the CPU only, the loopback address. **Expected to work, not proven**: Linux arm64, macOS and Windows through Docker Desktop (on Windows keep the checkout in the filesystem of WSL). On arm64 the tools of the toolchain image run emulated and the local CPU server of the `marker-server` route is not available. Public, LAN and multi-user use are not supported.
+**Tested**: one user on Linux x86_64 with Docker Engine 29, the CPU only, the loopback address. **Expected to work, not proven**: Linux arm64, macOS and Windows through Docker Desktop (on Windows keep the checkout in the filesystem of WSL). On arm64 the tools of the toolchain image run emulated and the local CPU server of the `marker-server` route is not available. **Designed and tested with fake servers only**: your own GPU, on this computer or on another machine ([below](#your-own-gpu-on-this-computer-or-on-another-machine)). Public, LAN and multi-user use are not supported.
 
 ## What you need
 
@@ -38,6 +38,8 @@ That sharing is a limit, for whoever keeps two working copies on one Docker daem
 | `make bench` | the bench of the local routes (`BENCH="..."` for other arguments; see [the bench guide](bench.md)) |
 | `make clean` | removes the containers, the networks and the work volumes; never the archive, the state or the weights |
 | `make clean-archive CONFIRM=<id>` | deletes the archive, only with its own identifier and the product stopped |
+| `make gpu-prepare`, `make gpu-up`, `make gpu-down` | the local GPU: image and weights once, start, stop ([your own GPU](#your-own-gpu-on-this-computer-or-on-another-machine)) |
+| `make server-prepare`, `make server-up`, `make server-down` | on another machine: the remote GPU server, from a checkout there |
 | `make check`, `make test`, `make test-components` | the checks of a developer ([the full check](uv-environment.md#run-the-full-check)) |
 
 ## The env file and the keys
@@ -79,7 +81,7 @@ Two limits. `make clean` removes the settings of the last start: `mdf configure`
 | `not_configured` | something is missing: its name, where to write it and its kind (a key, a setting, an entry of `servers.json`, a command such as `make prepare`), never a value |
 | `broken` | a check fails, with its closed code and what to do: the keys file is not safe, the launcher does not answer, the weights differ |
 
-For Datalab and the rented GPUs, `transit` says whether a document or its page images would leave the machine. It is a property of the route: the confirmation is asked for each job.
+For Datalab, the rented GPUs and the remote GPU server, `transit` says whether a document or its page images would leave the machine. It is a property of the route: the confirmation is asked for each job. The local GPU has no transit and no spend; the remote server has a transit and no spend. `mdf routes --refresh` also reads, through the worker, the state of each rented provider (its workers or containers, from the management API alone, never its service URL) and the balance of RunPod with the key of `.env` (none when that key does not read it; Modal has no balance), and asks `/v1/models` of the GPUs of the user: `live` holds those readings with their time, until the next refresh.
 
 ## The command line
 
@@ -105,6 +107,62 @@ mdf routes
 - **Datalab**: put `DATALAB_API_KEY` in `.env` and a cap above 0 in `MDF_DATALAB_CAP_USD`, then `make restart`. A document leaves the machine only for a job that chose Datalab and confirmed the transit, under that cap.
 - **Rented GPUs** (`marker-server` route): enable the presets in `MDF_GPU_PRESETS`, set the caps, copy `servers.example.json` to `state/config/servers.json` and put your endpoint in it, and put the keys in `.env`. For Modal the token of the SDK is `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET`: the worker gives it to each process of the Modal CLI in a private file of its own, and no `~/.modal.toml` is read. An endpoint of kind `local` (a server on the loopback of the host) is refused from a container with `server_not_configured`.
 
+## Your own GPU: on this computer, or on another machine
+
+**Designed and tested with fake servers only.** Nobody has run these two on a real GPU yet: the front, the relay, the presets, the compose files and the commands are tested with a fake vLLM and synthetic TLS, never with the vLLM image or the weights. Expect to be the first.
+
+Both run Surya on vLLM with the image and the model of the rented presets (`vllm/vllm-openai` pinned by digest, `datalab-to/surya-ocr-2.5` at its pinned revision), behind a small front of the project (`markdown_for_llms/gpu/local_front.py`) that forwards only what Surya asks: the list of the models, the version, the metrics and the completions. They cost nothing: no session, no spend ledger, no cap.
+
+What they need: an NVIDIA card with 24 GB (the arguments of vLLM are those of a 24 GB card), a driver with CUDA 13 or newer, the NVIDIA Container Toolkit (Linux) or the CUDA of WSL2, an amd64 machine; never a Mac. The vLLM image is 10-20 GB, the weights 1.4 GB.
+
+### The local GPU (`gpu-local`)
+
+The `gpu` profile of `compose.yaml`, next to the product. vLLM runs **without a network**; the front, in the same container, listens on a Unix socket of the volume `mdf-run`, which the worker reaches as it reaches the local CPU server. No port, and the page images never leave this computer.
+
+1. `make up`, then `make gpu-prepare` once (the image and the weights; it stops with the reason when the NVIDIA runtime is not configured for Docker).
+2. In `.env`: `MDF_GPU_PRESETS=gpu-local` (with your other presets, comma-separated). No cap is needed.
+3. In `state/config/servers.json`, the endpoint of the preset:
+
+   ```json
+   "gpu": {"kind": "gpu", "preset": "gpu-local", "socket": "/run/mdf/run/gpu/front.sock"}
+   ```
+
+4. `make restart`, then `make gpu-up`. vLLM takes some minutes to start the first time; `make status` shows `marker-server:gpu-local` as `broken` with `make gpu-up` while the front is not there, and `available` once it is. `make gpu-down` stops it.
+
+From the command line: `mdf submit --preset local-gpu --wait FILE`, **without** `--confirm-transit`: nothing leaves the machine, and a confirmation is refused (`route_option_unsupported`). The Web UI of today asks for the confirmation of every GPU preset and sends it: from the browser the preset `local-gpu` is refused with that code until the new UI. Use the command line.
+
+### The remote server (`gpu-remote`)
+
+`compose.server.yaml`, on the machine of the GPU, from a checkout of this repository: vLLM and the front on an internal network with no way out, and nginx with TLS in front, on port 23467 of an address of that machine on your LAN or VPS. Every request needs the key of the server, which the front compares in constant time, except `GET` and `HEAD /health`, which answer without it with the readiness alone (`{"ready": true}` or `{"ready": false}`).
+
+On the machine of the GPU:
+
+1. A private key file and a certificate, for example a self-signed one for the name the product will use (`gpu.lan` here; an IP address goes in `subjectAltName` as `IP:192.168.1.20`):
+
+   ```bash
+   mkdir -p state/server/tls && chmod 700 state/server
+   (umask 077; openssl rand -hex 32 > state/server/key)
+   (umask 077; openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -days 365 -nodes \
+      -keyout state/server/tls/server.key -out state/server/tls/server.crt \
+      -subj /CN=gpu.lan -addext subjectAltName=DNS:gpu.lan)
+   ```
+
+2. In its `.env`: `MDF_COMPOSE_SERVER_ADDRESS=` the address of that machine, an IPv6 one between brackets (`[2001:db8::10]`); never the loopback nor every address, in IPv4 or in IPv6 (`127.0.0.1`, `0.0.0.0`, `[::1]`, `[::]` and their other forms are refused); `MDF_COMPOSE_SERVER_PORT=23467`, `MDF_COMPOSE_SERVER_TLS=./state/server/tls` and `MDF_COMPOSE_SERVER_KEY=./state/server/key` are the defaults.
+3. `make server-prepare` once, then `make server-up`; `make server-down` stops it.
+
+On the machine of the product:
+
+1. Copy `server.crt` (the certificate, never `server.key`) to `state/config/gpu-server-ca.pem`, and the content of `state/server/key` to `.env` as `GPU_SERVER_KEY=...`.
+2. `MDF_GPU_PRESETS=gpu-remote` in `.env`, and the endpoint in `state/config/servers.json`:
+
+   ```json
+   "remote": {"kind": "user", "preset": "gpu-remote", "url": "https://gpu.lan:23467",
+              "ca_file": "/state/config/gpu-server-ca.pem"}
+   ```
+
+   `ca_file` pins the authorities the relay trusts for that server, on both of its clients, in place of those of the system; the name in the URL must be a name of the certificate, and a redirect is never followed.
+3. `make restart`. The page images leave this computer for your server: the transit is declared and confirmed for every job (`mdf submit --preset remote-gpu --confirm-transit --wait FILE`, or the box of the Web UI). The client does not verify the weights on the remote machine; it checks the version of vLLM and the model at the readiness of every attempt.
+
 ## How a conversion is isolated
 
 Every child of the engine (a tool of the toolchain image, the Marker process, the local CPU server) is a container without network, with a read-only root, no capability, your user, a memory cap without swap and only the folders of that one call. They are started by the **launcher**, the only process with the Docker socket: it accepts a closed request and builds the container itself. Three things stop a child, each independent of the next: the limits of the kernel; a small supervisor that is PID 1 of the container and ends it at a stop, at a lease that the caller no longer renews, or at its term; and the launcher, which removes from outside what outlived its lease.
@@ -129,6 +187,6 @@ Limits you should know:
 
 ## Remove it
 
-`make down` stops the product. `make clean` also removes the work volumes. What stays, and how to remove it by hand: the images (`docker image rm mdf-app:engine mdf-app:api mdf-app:dev`, and the toolchain image `mdf-bench-toolchain:<tag>`), the volumes of the weights and of the CPU server (`docker volume rm <project>_mdf-models <project>_mdf-cpu-server`, where `<project>` is the name of the checkout directory), and the folders `./data` and `./state`.
+`make down` stops the product, the local GPU with it. `make clean` also removes the work volumes. What stays, and how to remove it by hand: the images (`docker image rm mdf-app:engine mdf-app:api mdf-app:dev`, the toolchain image `mdf-bench-toolchain:<tag>`, and after `make gpu-prepare` the vLLM image `vllm/vllm-openai`), the volumes of the weights and of the CPU server (`docker volume rm <project>_mdf-models <project>_mdf-cpu-server <project>_mdf-vllm-models`, where `<project>` is the name of the checkout directory), and the folders `./data` and `./state`.
 
 [Index](../README.md).

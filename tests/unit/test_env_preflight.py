@@ -227,6 +227,75 @@ class PreflightTests(unittest.TestCase):
         self.assertEqual(self.sh("docker_host_check", {"FAKE_API": "2.0"})[0], 0)
 
 
+class GpuOfTheUserTests(PreflightTests):
+    """MFL051 B: `gpu_host_check` (an amd64 daemon with the runtime of the NVIDIA Container Toolkit) and
+    `server_environment` (the remote server: an address that is not the loopback, its port, two private files)."""
+
+    def test_the_host_of_a_gpu(self):
+        nvidia = '{"io.containerd.runc.v2":{},"nvidia":{"path":"nvidia-container-runtime"}}'
+        self.assertEqual(self.sh("gpu_host_check", {"FAKE_API": "amd64", "FAKE_INFO": nvidia})[0], 0)
+        code, _, err = self.sh("gpu_host_check", {"FAKE_API": "arm64", "FAKE_INFO": nvidia})
+        self.assertEqual(code, 1)
+        self.assertIn("amd64 only", err)
+        code, _, err = self.sh("gpu_host_check", {"FAKE_API": "amd64", "FAKE_INFO": '{"runc":{}}'})
+        self.assertEqual(code, 1)
+        self.assertIn("NVIDIA Container Toolkit", err)
+
+    def server(self, lines, key_mode=0o600, tls_key_mode=0o600):
+        (self.checkout / "srv" / "tls").mkdir(parents=True, exist_ok=True)
+        for path, mode in ((self.checkout / "srv" / "key", key_mode), (self.checkout / "srv" / "tls" / "server.key",
+                                                                        tls_key_mode),
+                           (self.checkout / "srv" / "tls" / "server.crt", 0o644)):
+            path.write_text("synthetic\n")
+            path.chmod(mode)
+        env = self.env_file(lines)
+        return self.sh('compose_environment "%s" > /dev/null && server_environment "%s" && echo '
+                       '"$MDF_COMPOSE_SERVER_ADDRESS $MDF_COMPOSE_SERVER_PORT $MDF_COMPOSE_SERVER_TLS '
+                       '$MDF_COMPOSE_SERVER_KEY"' % (env, env))
+
+    def test_the_environment_of_the_remote_server(self):
+        files = "MDF_COMPOSE_SERVER_TLS=./srv/tls\nMDF_COMPOSE_SERVER_KEY=./srv/key\n"
+        code, out, err = self.server("MDF_COMPOSE_SERVER_ADDRESS=192.0.2.10\n" + files)
+        self.assertEqual(code, 0, err)
+        self.assertEqual(out, "192.0.2.10 23467 %s/srv/tls %s/srv/key" % (self.checkout, self.checkout))
+        for address in ("", "127.0.0.1", "::1", "localhost", "0.0.0.0"):
+            with self.subTest(address=address):
+                code, _, err = self.server("MDF_COMPOSE_SERVER_ADDRESS=%s\n" % address + files)
+                self.assertEqual(code, 1)
+                self.assertIn("MDF_COMPOSE_SERVER_ADDRESS", err)
+        code, _, err = self.server("MDF_COMPOSE_SERVER_ADDRESS=192.0.2.10\n" + files, key_mode=0o644)
+        self.assertEqual(code, 1)
+        self.assertIn("MDF_COMPOSE_SERVER_KEY", err)
+        code, _, err = self.server("MDF_COMPOSE_SERVER_ADDRESS=192.0.2.10\n" + files, tls_key_mode=0o640)
+        self.assertEqual(code, 1)
+        self.assertIn("MDF_COMPOSE_SERVER_TLS", err)
+        code, _, err = self.server("MDF_COMPOSE_SERVER_ADDRESS=192.0.2.10\nMDF_COMPOSE_SERVER_PORT=8443x\n" + files)
+        self.assertEqual(code, 1)
+        self.assertIn("not a number", err)
+
+    def test_the_remote_server_is_never_on_every_address_nor_the_loopback_in_ipv6(self):
+        # SOL-B-N1: compose takes an IPv6 address between brackets ([::] and [::1] were published as :: and ::1);
+        # every form of the unspecified address and of the loopback is refused, with or without the brackets
+        files = "MDF_COMPOSE_SERVER_TLS=./srv/tls\nMDF_COMPOSE_SERVER_KEY=./srv/key\n"
+        # an IPv4 address mapped is written as two parts here, so that the guard of repository hygiene does not read
+        # the text as an address of the internet (tests/unit/test_repository_hygiene.py)
+        mapped = ":".join(("", "", "ffff", ""))
+        refused = ("::", "::1", "0:0:0:0:0:0:0:0", "0::0", "::0", "0:0:0:0:0:0:0:1", "0000:0000::0001", "::0:1",
+                   mapped + "127.0.0.1", mapped + "127.9.8.7", mapped + "0.0.0.0", "::FFFF:7f00:1", mapped + "0:0",
+                   "::1%lo")
+        for address in refused + tuple("[%s]" % a for a in refused) + ("[]", "LocalHost", "127.1.2.3"):
+            with self.subTest(address=address):
+                code, out, err = self.server("MDF_COMPOSE_SERVER_ADDRESS=%s\n" % address + files)
+                self.assertEqual((code, out), (1, ""))
+                self.assertIn("MDF_COMPOSE_SERVER_ADDRESS is not the loopback nor every address", err)
+        for address in ("[2001:db8::10]", "2001:db8::10", "[2001:db8:0:0:0:0:0:1]", "[fe80::1]",
+                        "[%s192.0.2.10]" % mapped, "[::2]", "192.0.2.10"):
+            with self.subTest(address=address):
+                code, out, err = self.server("MDF_COMPOSE_SERVER_ADDRESS=%s\n" % address + files)
+                self.assertEqual(code, 0, err)
+                self.assertEqual(out.split(" ")[0], address)
+
+
 class RestartReportTests(PreflightTests):
     """The note of the supervision on A2-M2: the restart policy stays (`unless-stopped`), so a service that leaves
     with an error is started again for ever; `make status`, and `make up` after its wait, name it with its count of
@@ -298,10 +367,12 @@ class RestartReportTests(PreflightTests):
         up = bodies["up"]
         self.assertEqual(up.count("restart_report"), 2)                 # when the wait ends well, and when it times out
         self.assertLess(up.index("$(COMPOSE) up -d --no-build"), up.index("restart_report"))
-        # the restart policy itself is not changed
+        # the restart policy of the product itself is not changed; the local GPU of the profile `gpu` (MFL051 B) alone
+        # has a bounded one, so that a vLLM that cannot start does not hold a GPU for ever
         compose = (ROOT / "compose.yaml").read_text()
         self.assertEqual(compose.count("restart: unless-stopped"), 4)
-        self.assertNotIn("on-failure", compose)
+        self.assertEqual(compose.count("on-failure"), 1)
+        self.assertIn("restart: on-failure:3", compose[compose.index("\n  gpu:\n"):])
 
 
 if __name__ == "__main__":

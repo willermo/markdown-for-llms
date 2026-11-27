@@ -14,7 +14,10 @@ converting process, never in the child, with `ThreadingMixIn` + `UnixStreamServe
   `User-Agent: markdown-for-llms/<version>`;
 - outbound: one `httpx.Client` (`trust_env=False`, certificates verified, redirects never
   followed, `Limits` on `parallel`): HTTPS, HTTP to a literal loopback address, or the Unix
-  socket of the local CPU server. Every forwarded request asks `Accept-Encoding: identity`
+  socket of the local CPU server or of the front of the local GPU (kind `gpu`, MFL051 B). With the
+  `ca_file` of a `user` endpoint (MFL051 B) the two clients, that of the requests and that of the
+  probes, verify the certificate of the server and its name against that file alone, never the
+  authorities of the system; a file that cannot be read is `server_not_configured` before the start. Every forwarded request asks `Accept-Encoding: identity`
   (MFL046 d) and its answer is read as received: as it is, or gzip or deflate decoded piece by
   piece, each piece and each tail left by the decoder within what is left of the same limit (the
   decoder is never flushed, which is not bounded); over the limit it is 502 and `oversize`;
@@ -232,6 +235,24 @@ class _Handler(BaseHTTPRequestHandler):
         self.server.relay._inbound(self, "DELETE")
 
 
+def authorities(ep):
+    """What the clients of the relay verify the server with: True (the authorities of the system), or for a `user`
+    endpoint with `ca_file` (MFL051 B) an SSL context of that file alone, which also checks the name of the
+    certificate; `server_not_configured` when the file cannot be read or holds no certificate."""
+    import ssl
+    if getattr(ep, "ca_file", None) is None:
+        return True
+    try:
+        context = ssl.create_default_context(cafile=ep.ca_file)
+    except (OSError, ssl.SSLError, ValueError) as exc:
+        raise EngineError(Code.SERVER_NOT_CONFIGURED, "ca_file of %s: %s" % (ep.name, type(exc).__name__)) from None
+    if not context.get_ca_certs():
+        raise EngineError(Code.SERVER_NOT_CONFIGURED, "ca_file of %s: no certificate authority" % ep.name)
+    context.check_hostname = True
+    context.verify_mode = ssl.CERT_REQUIRED
+    return context
+
+
 class Relay:
     """One relay per conversion: `start`, `ready`, `set_term`, then `close` in a `finally`."""
 
@@ -250,17 +271,20 @@ class Relay:
         self._forms = credential_forms(self._plain)
         self.probe_interval, self.probe_deadline, self.probe_failures = probe_interval, probe_deadline, probe_failures
         self.ready_poll = ready_poll
-        base = "http://llama" if ep.kind == "cpu" else servers.canonical_url(ep.url)
+        base = {"cpu": "http://llama", "gpu": "http://gpu"}.get(ep.kind) or servers.canonical_url(ep.url)
+        if ep.kind == "gpu":
+            upstream_socket = ep.socket                  # the front of the local GPU (MFL051 B)
         if ep.kind == "cpu" and upstream_socket is None and transport_factory is None:
             raise EngineError(Code.SERVER_NOT_CONFIGURED, "the CPU server has no socket")
+        verify = authorities(ep)
         if transport_factory is None:
             def transport_factory(limits):
                 kw = {"uds": str(upstream_socket)} if upstream_socket is not None else {}
-                return httpx.HTTPTransport(verify=True, limits=limits, retries=0, **kw)
+                return httpx.HTTPTransport(verify=verify, limits=limits, retries=0, **kw)
 
         def make(limits, timeout):
             return httpx.Client(base_url=base, transport=transport_factory(limits), timeout=timeout, trust_env=False,
-                                follow_redirects=False, verify=True)
+                                follow_redirects=False, verify=verify)
         n = ep.parallel
         self.client = make(httpx.Limits(max_connections=n, max_keepalive_connections=n),
                            httpx.Timeout(connect=15.0, read=float(ep.read_timeout), write=60.0, pool=float(ep.read_timeout)))

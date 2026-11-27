@@ -40,6 +40,12 @@ that are not `closed` are closed from their own references (ledger, provider, re
 settings of today; a ledger recorded but missing, a key missing, or no zero is `gpu_unrecoverable`: the worker stops
 before any claim, with the commands that close the window by hand.
 
+A preset that costs nothing (MFL051 B: the local GPU and the remote server of the user, `presets.TRAITS`) has no
+session: `open` refuses it, the readiness reports it without a ledger, a reserve or a window, and its jobs are local
+jobs for a session that lingers; the worker converts them with `adapters.direct`. The readings of the panels (the
+state of a provider and its balance, `adapters`) are made only on request (`readiness(read=True)`, a refresh of the
+routes asked by the user) and kept with their time until the next one.
+
 Every call to a provider goes through `opchild` (a child with its own group and limits) and comes back in closed
 fields; the diary of a session (`<ledger dir>/worker-logs/<arm_id>/session.json`) holds events, times and closed fields
 only. The keys stay in the worker as `envfile.Secret`, for the relay and the follower of the worker logs. The follower
@@ -573,6 +579,7 @@ class Manager:
         self.session = None
         self.closed_reason = {}                         # arm_id -> reason, for the jobs it served
         self._checked = 0.0
+        self.readings = {}                              # preset -> {"reading", "balance"}: the last ones asked (MFL051 B)
 
     # --- opening ---------------------------------------------------------------------------------------
 
@@ -591,6 +598,9 @@ class Manager:
             raise Refusal(avail["code"])
         table = gpu_presets.load()
         preset = table[name]
+        if not gpu_presets.costs(preset):
+            # a GPU of the user (MFL051 B): no session, no window, no row; the worker converts with `adapters.direct`
+            raise Refusal(Code.ROUTE_OPTION_UNSUPPORTED.value, "a GPU of the user opens no session")
         ep = endpoint_of(self.settings.servers, name, gpu_presets.endpoint_table(table))
         try:
             keys = servers.read_keys(ep, self.env_file)
@@ -840,9 +850,16 @@ class Manager:
             self.reconciled()
 
     def local_queued(self):
+        """A job in the queue that needs no rented GPU: a local route, or a preset that costs nothing (MFL051 B), which
+        converts without a session while this one would stay armed."""
+        from . import presets as gpu_presets
+        table = gpu_presets.load()
+        free = [n for n in self.settings.gpu_presets_enabled() if n in table and not gpu_presets.costs(table[n])]
+        marks = ",".join("?" * len(free))
+        extra = (" OR json_extract(options,'$.gpu_preset') IN (%s)" % marks) if free else ""
         with self.storage.connect() as conn:
             return conn.execute("SELECT 1 FROM runs WHERE state='queued' AND (json_extract(options,'$.gpu_preset') "
-                                "IS NULL) LIMIT 1").fetchone() is not None
+                                "IS NULL" + extra + ") LIMIT 1", free).fetchone() is not None
 
     def requests(self):
         with self.storage.connect() as conn:
@@ -932,13 +949,17 @@ class Manager:
             return False
         return True
 
-    def readiness(self):
+    def readiness(self, read=False):
         """What the API shows of the GPU presets and of the ledger (closed values, read by the worker alone): each
         enabled preset with its availability and its minimum reserve, the total and the cap of each provider.
 
         Two things apart (MFL023 B10, SOL-B-N1): `a_cents` and `w_s` are those of a new session opened now, and
         `open_session` says whether the open session of the preset can still host a job (`serves`). A reserve of a
-        new opening under the minimum is `server_cap` only when no open session of the preset hosts the job."""
+        new opening under the minimum is `server_cap` only when no open session of the preset hosts the job.
+
+        MFL051 B: a preset that costs nothing is reported without a ledger, a reserve or a window (`user_gpu`). With
+        `read` (a refresh asked by the user) the state of each provider is read (`reading`) with its balance, by a child
+        for a rented GPU; each preset carries its last readings, with their time, until the next request."""
         from ..services import gpu_availability
         from . import presets as gpu_presets
         out = {"presets": {}, "ledgers": {}}
@@ -953,8 +974,12 @@ class Manager:
             except BenchError as exc:
                 out["ledgers"][provider] = {"error": exc.code.value}
         for name in self.settings.gpu_presets_enabled():
+            if name in table and not gpu_presets.costs(table[name]):
+                out["presets"][name] = self.user_gpu(name, table[name], endpoints, read)
+                continue
             item = dict(gpu_availability(name, self.settings), minimum_reserve_cents=None, a_cents=None, w_s=None,
                         open_session=self.serves(name))
+            ep = None
             try:
                 ep = endpoint_of(self.settings.servers, name, endpoints)
                 item["minimum_reserve_cents"] = minimum_reserve(ep, self.settings.max_pages)
@@ -978,6 +1003,9 @@ class Manager:
                     listed = exc.detail.split(" in the env file")[0].split(", ")
                     item["missing_keys"] = [k for k in ep.key_env if k in listed]
                 item.update(available=False, code=item["code"] or exc.code.value)
+            if read and ep is not None:
+                self.readings[name] = self.read_rented(ep)
+            item.update(self.readings.get(name) or {"reading": None, "balance": None})
             out["presets"][name] = item
         for name, item in out["presets"].items():
             led = out["ledgers"].get(table[name]["provider"]) or {}
@@ -988,6 +1016,49 @@ class Manager:
             phase, reason = s.state.snapshot()
             out["session"] = {"arm_id": s.arm_id, "gpu_preset": s.name, "phase": phase, "reason": reason}
         return out
+
+    def read_rented(self, ep):
+        """The state of a rented provider as a `Reading` and its balance, each in a child within READ_BUDGET_S, with
+        the key of the worker (`opchild` `read`, `balance`); None for a reading that failed."""
+        out = {}
+        for op, field in (("read", "reading"), ("balance", "balance")):
+            r = opchild.call(op, ep.provider, ep.resource, self.env_file, {}, argv=self.argv,
+                             budget_s=opchild.READ_BUDGET_S, stop=self.stopping, wall=self.clocks.wall,
+                             mono=self.clocks.mono, also=ep.key_env)
+            out[field] = (r["result"] or {}).get(field) if r["ok"] else None
+        return out
+
+    def user_gpu(self, name, preset, endpoints, read=False):
+        """The readiness of a preset that costs nothing (MFL051 B): its availability (no cap), its endpoint, its keys
+        and, for the local GPU, the socket of its front; no ledger, no reserve, no window, no session. With `read`,
+        `GET /v1/models` of the server (`adapters`), in this process: it costs nothing and holds no key of a provider."""
+        from ..services import gpu_availability
+        from . import adapters
+        item = dict(gpu_availability(name, self.settings), minimum_reserve_cents=None, a_cents=None, w_s=None,
+                    open_session=False, costs=False)
+        ep = keys = None
+        try:
+            ep = endpoint_of(self.settings.servers, name, endpoints)
+            keys = servers.read_keys(ep, self.env_file)
+            if ep.kind == "gpu" and not stat.S_ISSOCK(os.stat(ep.socket).st_mode):
+                raise OSError("not a socket")
+        except Refusal as exc:
+            item.update(available=False, code=item["code"] or exc.code)
+        except EngineError as exc:
+            if exc.code is Code.SERVER_KEY_MISSING and item["code"] is None:
+                listed = exc.detail.split(" in the env file")[0].split(", ")
+                item["missing_keys"] = [k for k in ep.key_env if k in listed]
+            item.update(available=False, code=item["code"] or exc.code.value)
+        except OSError:
+            # the front of the local GPU is not there: the `gpu` profile is not started
+            item.update(available=False, code=item["code"] or Code.SERVER_UNAVAILABLE.value,
+                        detail="start the local GPU: make gpu-up")
+        if read and item["available"]:
+            # only a server that can serve: without its key or its front a reading would ask in vain
+            self.readings[name] = {"reading": adapters.of_endpoint(preset["provider"], ep, keys or {}).read(),
+                                   "balance": None}
+        item.update(self.readings.get(name) or {"reading": None, "balance": None})
+        return item
 
     # --- recovery ----------------------------------------------------------------------------------------
 
@@ -1173,6 +1244,8 @@ class Manager:
             raise Unrecoverable("the ledger of the instance cannot be read",
                                 ["check %s" % self.ledger_path]) from None
         for name in self.settings.gpu_presets_enabled():
+            if name in table and not gpu_presets.costs(table[name]):
+                continue                                # a GPU of the user has no window (MFL051 B)
             try:
                 ep = endpoint_of(self.settings.servers, name, endpoints)
             except Refusal:

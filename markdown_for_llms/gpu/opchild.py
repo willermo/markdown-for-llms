@@ -2,7 +2,8 @@
 plan r2 §4.3, r3 §4.3).
 
 The worker never calls a provider in its own process. Every reading, arm, disarm, zero and restore of
-FlashBoot of a GPU session of the product runs in
+FlashBoot of a GPU session of the product, and the readings of the panels (MFL051 B: `read`, the state of the
+provider as a `Reading` of `adapters`, and `balance`, with the key of the worker alone), runs in
 
     python -I -B -m markdown_for_llms.gpu.opchild
 
@@ -47,7 +48,7 @@ REQUEST_LIMIT = 1 << 20
 ANSWER_LIMIT = 4 << 20
 PR_SET_PDEATHSIG = 1
 READ_BUDGET_S = 60                  # the readings before an arm (plan r3 §4.2, step 5)
-OPS = ("state", "rest", "arm", "disarm", "zero", "restore_flashboot", "waiting")
+OPS = ("state", "rest", "arm", "disarm", "zero", "restore_flashboot", "waiting", "read", "balance")
 
 
 # --- the child -------------------------------------------------------------------------------------
@@ -114,6 +115,20 @@ def op_waiting(prov, args, until):
             first = round(at if at is not None else time.time(), 3)
             break
     return {"waiting_at": first, "containers": len(prov.app_containers())}
+
+
+def op_read(prov, args, until):
+    """MFL051 B: the state of the provider for a panel, a `Reading` (`adapters`): the management API only, never the
+    URL of the service; `running` for the panel, never for the zero."""
+    from . import adapters
+    return {"reading": adapters.of_provider(prov).read()}
+
+
+def op_balance(prov, args, until):
+    """MFL051 B: the balance with the key of the worker (`adapters`: RunPod `GET /v2/billing/balance`, None when the key
+    does not read it; Modal None, without a call)."""
+    from . import adapters
+    return {"balance": adapters.of_provider(prov).balance()}
 
 
 def make(request):

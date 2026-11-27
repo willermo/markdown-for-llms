@@ -510,7 +510,9 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
     counters and times go to `engine.json` (`marker_server`), with the measured bound of the cost
     for a provider (`server_cost_bound`). The `cpu` endpoint starts the local CPU server first
     (`cpuserver`, verified before the wake; `cpu` = {"root", "manifest"} replaces its defaults in
-    the tests), in a container of its own, on the `llama/` socket of the same directory."""
+    the tests), in a container of its own, on the `llama/` socket of the same directory. The `gpu` endpoint (MFL051 B,
+    the local GPU of the `gpu` profile) is reached on the socket of its front, which the relay takes from the
+    endpoint; it has no URL, and its page images do not leave the machine."""
     from . import relay as relay_mod, servers
     from .codes import Code as C
     opts = request.get("server") or {}
@@ -545,7 +547,7 @@ def marker_server_route(ctx, src, fmt, request, ep, keys, transport_factory=None
     # MFL023 B2 (C-B2 of the plan r1): the canonical URL of the endpoint, which the reservation compares with the URL
     # of the window it draws from
     ctx.event("server-wake", reserve={"provider": ep.provider, "endpoint": ep.name, "identity": ep.identity_sha256(),
-                                      "url": None if ep.kind == "cpu" else servers.canonical_url(ep.url),
+                                      "url": None if ep.kind in ("cpu", "gpu") else servers.canonical_url(ep.url),
                                       "reserve_cents": term["reserve_cents"], "rate": ep.rate_usd_per_s,
                                       "tail_idle_s": ep.tail_idle_s, "D": term["D"]})
     private = ctx.private()

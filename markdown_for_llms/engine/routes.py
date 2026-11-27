@@ -14,8 +14,11 @@ A route is named after its converter:
 - `marker-server`: Marker 2.2.0 in `balanced` or `accurate` with the inference of Surya on an
   OpenAI-compatible server the user names (MFL033): the local CPU server, a server on the
   loopback, the user's own server, a RunPod or Modal endpoint. In the product (MFL023 B3) only on
-  a GPU preset of the instance (`gpu_preset`, a rented GPU), with a server mode and the transit
-  confirmed; without a GPU preset it stays for the engine, `mdf convert` and `mdf bench`
+  a GPU preset of the instance (`gpu_preset`: a rented GPU, or since MFL051 B the local GPU of the
+  `gpu` profile and the remote server of the user), with a server mode, and the transit confirmed
+  when the preset sends the page images out of the machine (`leaves_machine`: a rented GPU and the
+  remote server; never the local GPU, for which a confirmation is refused as an option it does not
+  take); without a GPU preset it stays for the engine, `mdf convert` and `mdf bench`
   (`route_not_in_product`: a local or own server is not in the archive, D4 of MFL023). The
   product does not list it among the alternatives: it is reached through the conversion presets.
 
@@ -111,14 +114,18 @@ def check_options(converter, request):
             raise EngineError(Code.ROUTE_OPTION_UNSUPPORTED, "Datalab options with marker-server")
 
 
-def job_options(fmt, options=None):
+def job_options(fmt, options=None, leaves_machine=True):
     """The normalized options of a job for a file of format `fmt`: {route (None: the default of
     the matrix), ocr, lang, datalab_mode, transit_confirmed}, and on the route marker-server also
     {server_mode, gpu_preset} (MFL023 B3). A route the format does not have, an option its
     converter does not accept, Datalab or a GPU without the confirmed transit, marker-server
     without a GPU preset: a closed code (`route_invalid`, `route_option_unsupported`,
     `transit_not_confirmed`, `invalid_setting`, `route_not_in_product`). Whether the instance
-    enables the GPU preset is checked by the caller (`services.job_options`)."""
+    enables the GPU preset is checked by the caller (`services.job_options`), which also says
+    whether its server is out of this machine (`leaves_machine`, MFL051 B, from the provider of
+    the preset; true by default, the rule before MFL051): only then is the transit confirmed, and a
+    confirmation given to a server of this machine is `route_option_unsupported`, as a transit
+    without a remote route."""
     options = dict(options or {})
     if set(options) - set(JOB_OPTIONS):
         raise EngineError(Code.INVALID_SETTING, "unknown job option")
@@ -142,6 +149,8 @@ def job_options(fmt, options=None):
         raise EngineError(Code.ROUTE_OPTION_UNSUPPORTED, "Datalab options without the Datalab route")
     if converter not in (DATALAB, MARKER_SERVER) and confirmed:
         raise EngineError(Code.ROUTE_OPTION_UNSUPPORTED, "a transit without a remote route")
+    if converter == MARKER_SERVER and confirmed and not leaves_machine:
+        raise EngineError(Code.ROUTE_OPTION_UNSUPPORTED, "a transit to a GPU of this machine: nothing leaves it")
     if converter != MARKER_SERVER and (server_mode is not None or gpu is not None):
         raise EngineError(Code.ROUTE_OPTION_UNSUPPORTED, "GPU options without the marker-server route")
     if converter == DATALAB:
@@ -155,7 +164,7 @@ def job_options(fmt, options=None):
             raise EngineError(Code.INVALID_SETTING, "gpu_preset: the name of a GPU preset")
         if server_mode not in SERVER_MODES:
             raise EngineError(Code.ROUTE_OPTION_UNSUPPORTED, "marker-server needs a server mode: balanced or accurate")
-        if not confirmed:
+        if leaves_machine and not confirmed:
             raise EngineError(Code.TRANSIT_NOT_CONFIRMED, "the page images would leave the machine")
         out.update(server_mode=server_mode, gpu_preset=gpu)
     return out

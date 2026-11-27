@@ -1,5 +1,7 @@
 # Prepare the local product
 
+> **Historical.** This guide describes the product before MFL051, on the host, with a virtual environment and Bubblewrap. That product no longer exists: the product runs in containers, and its guide is [Run the product in containers](run-in-containers.md). This page stays only for the pages that still link it.
+
 This guide covers the experimental package `markdown_for_llms`, distinct from the legacy `markdown-*` commands. Target: Linux x86_64, managed CPython 3.12.13, CPU, single user and local filesystem. The API process does not import Marker or torch; the worker uses the same interpreter of the venv for the isolated children.
 
 Follow the [uv guide](uv-environment.md) for the origin of the managed interpreter, input inventory, run snapshot, sdist→wheel build and canonical reinstallation. Add the extras `--extra app --extra marker-cpu` to the sync; for development add `--group dev`. Do not use `marker-cpu` and `marker-cu126` together. Run the distribution checks with the `cpu` profile when the venv contains ML; the `api` profile rejects those dependencies. The diagnostics identify the ten legacy modules and the files of the new package, including static files, migration and model inventory. The sync alone does not replace S/B/I.

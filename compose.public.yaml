@@ -21,6 +21,7 @@ services:
       - /volumes/settings
       - /volumes/models
       - /volumes/cpu-server
+      - /volumes/vllm-models
       - /volumes/data
       - /volumes/state
     volumes:

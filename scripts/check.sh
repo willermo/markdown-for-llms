@@ -114,12 +114,18 @@ for profile in check test suite faults; do
 done
 # the configuration of the product itself, as compose reads the files of the tree under test, with the defaults of
 # an env file that is not there (the env file of the user is never looked at by a check): what
-# tests/unit/test_compose_config.py judges
+# tests/unit/test_compose_config.py judges; also the profile `gpu` and the remote server (MFL051 B), the latter with
+# an address of the documentation range (192.0.2.0/24) and paths that do not exist: it is only read, never started
 ( unset MDF_COMPOSE_ENGINE_IMAGE MDF_COMPOSE_DEV_IMAGE
   cd "$src" && . scripts/env-preflight.sh && compose_environment "$out/absent/.env" \
   && docker compose --env-file /dev/null --profile tools config --format json > "$out/proof/compose-product.json" \
   && docker compose --env-file /dev/null -f compose.yaml -f compose.public.yaml --profile tools config --format json \
-       > "$out/proof/compose-public.json" ) 2> "$out/compose-config.err" \
+       > "$out/proof/compose-public.json" \
+  && docker compose --env-file /dev/null --profile tools --profile gpu config --format json \
+       > "$out/proof/compose-gpu.json" \
+  && MDF_COMPOSE_SERVER_ADDRESS=192.0.2.10 MDF_COMPOSE_SERVER_TLS="$out/absent/tls" MDF_COMPOSE_SERVER_KEY="$out/absent/key" \
+     docker compose --env-file /dev/null -p "$COMPOSE_PROJECT_NAME-server" -f compose.server.yaml --profile prepare \
+       config --format json > "$out/proof/compose-server.json" ) 2> "$out/compose-config.err" \
   || { cat "$out/compose-config.err" >&2; echo "STOP compose config (product)" >&2; exit 1; }
 # building touches no container
 $build -f "$src/docker/app/Dockerfile" --target engine -t "$IMAGE:engine-$id" "$src" > "$out/build-engine.log" 2>&1 \

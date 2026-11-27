@@ -48,11 +48,12 @@ class ListTests(Base):
     def test_the_presets_of_the_instance_and_the_gpu_presets(self):
         body = self.client.get('/api/v1/presets').json()
         builtin = {p['name']: p for p in body['presets'] if p['builtin']}
-        self.assertEqual(sorted(builtin), ['batch', 'datalab', 'local-fast', 'quality-now'])
+        self.assertEqual(sorted(builtin), ['batch', 'datalab', 'local-fast', 'local-gpu', 'quality-now', 'remote-gpu'])
         self.assertTrue(all(p['provisional'] for p in builtin.values()))
         self.assertEqual({n: (p['available'], p['code']) for n, p in builtin.items()}, {
             'local-fast': (True, None), 'datalab': (True, None),
-            'quality-now': (False, 'server_cap'), 'batch': (False, 'gpu_preset_not_enabled')})
+            'quality-now': (False, 'server_cap'), 'batch': (False, 'gpu_preset_not_enabled'),
+            'local-gpu': (False, 'gpu_preset_not_enabled'), 'remote-gpu': (False, 'gpu_preset_not_enabled')})
         self.assertEqual((builtin['quality-now']['options']['gpu_preset'], builtin['batch']['options']['gpu_preset']),
                          ('modal-base', 'runpod-serverless-volume-dc'))
         self.assertIsNone(body['default'])
@@ -60,7 +61,8 @@ class ListTests(Base):
         self.assertEqual({n: (g['enabled'], g['available'], g['code']) for n, g in gpus.items()}, {
             'modal-base': (True, False, 'server_cap'),
             'runpod-serverless-volume-dc': (False, False, 'gpu_preset_not_enabled'),
-            'runpod-serverless-volume-eu-se-1': (False, False, 'gpu_preset_superseded')})
+            'runpod-serverless-volume-eu-se-1': (False, False, 'gpu_preset_superseded'),
+            'gpu-local': (False, False, 'gpu_preset_not_enabled'), 'gpu-remote': (False, False, 'gpu_preset_not_enabled')})
         self.assertEqual(gpus['modal-base']['measures'][0]['value'], '164-172 s')
         self.assertNotIn(self.temp.name, json.dumps(body))
 
@@ -230,7 +232,7 @@ class TheWheelTests(unittest.TestCase):
         self.assertIn('site-packages', Path(conv_path).parts)
         self.assertIn('site-packages', Path(gpu_path).parts)
         self.assertEqual(conv, sorted(builtin_presets()))
-        self.assertEqual(len(gpu), 3)
+        self.assertEqual(len(gpu), 5)                  # MFL051 B: gpu-local and gpu-remote
 
 
 if __name__ == '__main__':

@@ -49,7 +49,8 @@ BIN ?= $(HOME)/.local/bin
 # seconds `make up` waits for the first heartbeat of the worker
 UP_WAIT ?= 180
 
-.PHONY: help builder images test check test-components up down restart rebuild status logs prepare install-cli bench clean clean-archive
+.PHONY: help builder images test check test-components up down restart rebuild status logs prepare install-cli bench clean clean-archive \
+	gpu-prepare gpu-up gpu-down server-prepare server-up server-down
 
 help: ## list the commands
 	@awk -F':.*## ' '/^[a-z][a-z-]*:.*## / { printf "  make %-16s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -140,9 +141,9 @@ restart: ## create the services again (after a change of .env); no build, no dow
 	refused=$$($(GATE) 2> /dev/null) || { echo "$$refused" >&2; echo "restart: the env file is refused (above): the services were not touched" >&2; exit 1; }; \
 	$(COMPOSE) up -d --force-recreate --no-build --remove-orphans
 
-down: ## stop the product; the archive, the state and the weights stay
+down: ## stop the product, the local GPU with it; the archive, the state and the weights stay
 	@$(PRODUCT); \
-	$(TOOLS) down --remove-orphans; \
+	$(TOOLS) --profile gpu down --remove-orphans; \
 	docker ps -a -q --filter "label=mdf.project=$$COMPOSE_PROJECT_NAME" | while read -r child; do \
 	  docker container rm -f "$$child" > /dev/null 2>&1 || true; done
 
@@ -186,7 +187,7 @@ install-cli: ## put `mdf` on your PATH: a small file in BIN (default ~/.local/bi
 # the state and the weights are never named here.
 clean: ## remove the containers, the networks and the work volumes of the product; never the archive, the state or the weights
 	@$(PRODUCT); \
-	$(TOOLS) down --remove-orphans; \
+	$(TOOLS) --profile gpu down --remove-orphans; \
 	docker ps -a -q --filter "label=mdf.project=$$COMPOSE_PROJECT_NAME" | while read -r child; do \
 	  docker container rm -f "$$child" > /dev/null 2>&1 || true; done; \
 	for volume in $(EPHEMERAL); do \
@@ -207,6 +208,45 @@ clean-archive: ## delete the archive (CONFIRM=<id of the archive>, with the prod
 	if [ -n "$$($(TOOLS) ps -q)" ]; then echo "clean-archive: the product is running: \`make down\` first" >&2; exit 1; fi; \
 	rm -rf -- "$$MDF_COMPOSE_DATA"; \
 	echo "clean-archive: removed $$MDF_COMPOSE_DATA"
+
+# --- the GPUs of the user (MFL051 B): designed and tested with fake servers only --------------------------------
+# The local GPU is the profile `gpu` of compose.yaml, next to the product: `make gpu-prepare` once (the vLLM image,
+# 10-20 GB, and the weights of Surya, 1.4 GB), then `make gpu-up`; the preset `gpu-local` (MDF_GPU_PRESETS) and its
+# endpoint in servers.json (kind `gpu`). The remote server is compose.server.yaml on the machine of the GPU, a project
+# of its own: `make server-prepare` once, then `make server-up` there; on the machine of the product the preset
+# `gpu-remote` and its endpoint (kind `user`, `ca_file`, the key GPU_SERVER_KEY). Both need an NVIDIA card of 24 GB,
+# a driver with CUDA 13 or newer and the NVIDIA Container Toolkit (Linux) or the CUDA of WSL2, on amd64.
+GPU := $(COMPOSE) --profile gpu
+SERVER = $(COMPOSE) -p "$$COMPOSE_PROJECT_NAME-server" -f compose.server.yaml
+
+gpu-prepare: ## the local GPU: the pinned vLLM image (10-20 GB) and the weights of Surya (1.4 GB), once
+	@$(PRODUCT); gpu_host_check || exit 1; \
+	echo "== the local GPU: image and weights (the first run downloads 12-22 GB)"; \
+	$(COMPOSE) run --rm --no-deps -T init > /dev/null; \
+	$(GPU) run --rm --no-deps -T gpu-prepare
+
+gpu-up: ## start the local GPU of the profile `gpu` (after make up and make gpu-prepare)
+	@$(PRODUCT); gpu_host_check || exit 1; \
+	[ -n "$$($(TOOLS) ps --status running -q worker 2> /dev/null)" ] \
+	  || { echo "gpu-up: the product is not running: run make up" >&2; exit 1; }; \
+	$(GPU) up -d --no-deps --no-build gpu; \
+	echo "gpu-up: vLLM starts (some minutes the first time); \`make status\` shows the route marker-server:gpu-local"
+
+gpu-down: ## stop the local GPU; the weights stay
+	@$(PRODUCT); $(GPU) stop gpu > /dev/null 2>&1 || true; \
+	echo "gpu-down: the local GPU is stopped"
+
+server-prepare: ## on the machine of the GPU: the weights of the remote server, once
+	@$(PRODUCT); server_environment "$(ENV)" || exit 1; gpu_host_check || exit 1; \
+	$(SERVER) --profile prepare run --rm -T server-prepare
+
+server-up: ## on the machine of the GPU: start the remote server, TLS on MDF_COMPOSE_SERVER_ADDRESS:23467
+	@$(PRODUCT); server_environment "$(ENV)" || exit 1; gpu_host_check || exit 1; \
+	$(SERVER) up -d --no-build --remove-orphans; \
+	echo "server-up: https://$$MDF_COMPOSE_SERVER_ADDRESS:$$MDF_COMPOSE_SERVER_PORT (vLLM starts in some minutes)"
+
+server-down: ## on the machine of the GPU: stop the remote server; the weights stay
+	@$(PRODUCT); server_environment "$(ENV)" || exit 1; $(SERVER) down --remove-orphans
 
 # --- the checks -------------------------------------------------------------------------------------------
 # The suite and the full check run in a container of the image `dev`, next to a launcher of their own

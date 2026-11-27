@@ -86,6 +86,44 @@
         {"what": "D19 (7 pages), invoice of the hour", "value": "3.07 cents", "date": "2026-11-21",
          "hardware": "NVIDIA RTX A5000", "source": "MFL033 N5b"}
       ]
+    },
+    "gpu-local": {
+      "status": "supported",
+      "superseded_by": null,
+      "reason": null,
+      "provider": "local",
+      "mode": "server",
+      "data_center": null,
+      "volume": null,
+      "gpu": {"group": "NVIDIA 24 GB, CUDA 13", "memory_gb": 24, "observed": []},
+      "image": "vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268",
+      "model": {"id": "datalab-to/surya-ocr-2.5", "revision": "00c843e9cae45611dca0a6dc2c9bbbf2dadaaed3", "vllm": "0.25.1"},
+      "server": "vllm",
+      "parallel": 32,
+      "rate": null,
+      "levers": {"compile_cache": [], "arm_ahead_s": null},
+      "seconds": {"ready_within": 900, "read_timeout": 300, "page_seconds": 30, "cold_start_s": null, "w1_s": null,
+                  "tail_idle_s": null, "tail_fault_s": null, "idle_s": null},
+      "measures": []
+    },
+    "gpu-remote": {
+      "status": "supported",
+      "superseded_by": null,
+      "reason": null,
+      "provider": "remote",
+      "mode": "server",
+      "data_center": null,
+      "volume": null,
+      "gpu": {"group": "NVIDIA 24 GB, CUDA 13", "memory_gb": 24, "observed": []},
+      "image": "vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268",
+      "model": {"id": "datalab-to/surya-ocr-2.5", "revision": "00c843e9cae45611dca0a6dc2c9bbbf2dadaaed3", "vllm": "0.25.1"},
+      "server": "vllm",
+      "parallel": 32,
+      "rate": null,
+      "levers": {"compile_cache": [], "arm_ahead_s": null},
+      "seconds": {"ready_within": 900, "read_timeout": 300, "page_seconds": 30, "cold_start_s": null, "w1_s": null,
+                  "tail_idle_s": null, "tail_fault_s": null, "idle_s": null},
+      "measures": []
     }
   }
 }

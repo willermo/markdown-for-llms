@@ -17,6 +17,13 @@
 #                           archive and of the state, the port, and the settings of `make` and compose that
 #                           FILE gives (MDF_COMPOSE_*)
 #
+#   gpu_host_check          the GPUs of the user (MFL051 B): an amd64 daemon with the runtime of the NVIDIA
+#                           Container Toolkit; fails with the reason
+#   server_environment FILE  the remote GPU server (compose.server.yaml): exports its address (never the loopback
+#                           nor every address, in IPv4 or in IPv6: server_address_local),
+#                           its port (23467) and the paths of its two private files, the TLS folder and the bearer
+#                           key, each checked as a private regular file of the user; fails with the reason
+#
 #   install_cli CHECKOUT DIR   writes DIR/mdf: `#!/bin/sh`, a check that bin/mdf of CHECKOUT is still there (else
 #                           "checkout not found: run make install-cli again", exit 127) and the `exec` of it
 #   restart_report          one line for each service of the compose project that Docker started again by itself
@@ -47,8 +54,9 @@ env_value() {
   # In order (SOL-A2-N1): a value between single quotes, then one between double quotes, each up to its closing
   # quote and with nothing after it but a comment: what is between the quotes is the value, a ` #` in it included
   # (`t` ends there). Then a value without quotes: a comment starts at a `#` after a space. The last two lines
-  # are for a value that opens a quote and holds that quote again: its outer quotes go, as before. It is the
-  # reading of the parser of the product (python-dotenv) for the values a path or a number can have.
+  # are for a value that opens a quote and holds that quote again: its outer quotes go, as before. A comment is
+  # recognized only outside the quotes, and escape sequences are not handled: a backslash, and a quote after it,
+  # stay as they are.
   sed -n "s/^[[:space:]]*\(export[[:space:]][[:space:]]*\)\{0,1\}$2[[:space:]]*=[[:space:]]*//p" "$1" | tail -n 1 \
     | sed -e "s/^'\([^']*\)'[[:space:]]*\(#.*\)\{0,1\}\$/\1/" -e t \
           -e 's/^"\([^"]*\)"[[:space:]]*\(#.*\)\{0,1\}$/\1/' -e t \
@@ -93,7 +101,7 @@ compose_environment() {
   MDF_COMPOSE_ENV_FILE=$1
   case "$MDF_COMPOSE_ENV_FILE" in /*) ;; *) MDF_COMPOSE_ENV_FILE=$mdf_top/${MDF_COMPOSE_ENV_FILE#./} ;; esac
   for mdf_name in MDF_COMPOSE_DATA MDF_COMPOSE_STATE MDF_COMPOSE_MAX_CHILDREN MDF_COMPOSE_API_MEMORY \
-      MDF_COMPOSE_WORKER_MEMORY MDF_COMPOSE_CLI_MEMORY MDF_PORT MDF_UPLOAD_MIB; do
+      MDF_COMPOSE_WORKER_MEMORY MDF_COMPOSE_CLI_MEMORY MDF_COMPOSE_GPU_MEMORY MDF_PORT MDF_UPLOAD_MIB; do
     # the environment of `make` wins over the file, as for every variable of make
     eval "mdf_given=\${$mdf_name:-}"
     [ -n "$mdf_given" ] || mdf_given=$(env_value "$1" "$mdf_name")
@@ -110,7 +118,92 @@ compose_environment() {
   MDF_COMPOSE_BODY_MIB=$((MDF_UPLOAD_MIB + 8))
   export MDF_COMPOSE_UID MDF_COMPOSE_GID MDF_COMPOSE_DOCKER_SOCKET MDF_COMPOSE_DOCKER_GID MDF_COMPOSE_ENV_FILE \
     MDF_COMPOSE_DATA MDF_COMPOSE_STATE MDF_COMPOSE_MAX_CHILDREN MDF_COMPOSE_API_MEMORY MDF_COMPOSE_WORKER_MEMORY \
-    MDF_COMPOSE_CLI_MEMORY MDF_PORT MDF_COMPOSE_BODY_MIB COMPOSE_PROJECT_NAME
+    MDF_COMPOSE_CLI_MEMORY MDF_COMPOSE_GPU_MEMORY MDF_PORT MDF_COMPOSE_BODY_MIB COMPOSE_PROJECT_NAME
+}
+
+gpu_host_check() {
+  # the GPUs of the user (MFL051 B): an amd64 daemon whose runtimes include the one of the NVIDIA Container Toolkit
+  mdf_arch=$(docker version --format '{{.Server.Arch}}') || { echo "the Docker daemon does not answer" >&2; return 1; }
+  [ "$mdf_arch" = amd64 ] || { echo "the local GPU and the remote server run on amd64 only: this daemon is $mdf_arch" >&2; return 1; }
+  case "$(docker info --format '{{json .Runtimes}}' 2> /dev/null)" in
+    *'"nvidia"'*) ;;
+    *) echo "the NVIDIA Container Toolkit is not configured for this daemon (no runtime nvidia in docker info):" \
+            "install it and run \`sudo nvidia-ctk runtime configure --runtime=docker\`, then restart Docker" >&2; return 1 ;;
+  esac
+}
+
+# an IPv6 address written out as its eight groups (the two last ones from an IPv4 tail), then compared: "local"
+# for the unspecified address, the loopback, and the IPv4 loopback or unspecified address mapped (five groups 0,
+# a group ffff, then the IPv4 address, dotted or in two hexadecimal groups);
+# nothing for any other address or a text that is not one. The text is read on the input, never run
+mdf_ipv6_local='
+function hex(s,   i, n) {
+  if (s !~ /^[0-9a-f]+$/ || length(s) > 4) return -1
+  n = 0
+  for (i = 1; i <= length(s); i++) n = n * 16 + index("0123456789abcdef", substr(s, i, 1)) - 1
+  return n
+}
+NR == 1 {
+  a = tolower($0)
+  if (index(a, ".")) {
+    t = a; sub(/.*:/, "", t)
+    if (split(t, q, ".") != 4) exit
+    for (i = 1; i <= 4; i++) if (q[i] !~ /^[0-9]+$/ || q[i] + 0 > 255) exit
+    a = substr(a, 1, length(a) - length(t)) sprintf("%x:%x", q[1] * 256 + q[2], q[3] * 256 + q[4])
+  }
+  m = split(a, part, "::")
+  if (m > 2) exit
+  nl = (part[1] == "") ? 0 : split(part[1], l, ":")
+  nr = 0
+  if (m == 2) { if (part[2] != "") nr = split(part[2], r, ":"); if (nl + nr > 7) exit }
+  else if (nl != 8) exit
+  g = 0
+  for (i = 1; i <= nl; i++) { v[++g] = hex(l[i]); if (v[g] < 0) exit }
+  for (i = nl + nr; i < 8; i++) v[++g] = 0
+  for (i = 1; i <= nr; i++) { v[++g] = hex(r[i]); if (v[g] < 0) exit }
+  for (i = 1; i <= 5; i++) if (v[i] != 0) exit
+  if (v[6] == 0 && v[7] == 0 && (v[8] == 0 || v[8] == 1)) print "local"
+  if (v[6] == 65535 && ((v[7] >= 32512 && v[7] <= 32767) || (v[7] == 0 && v[8] == 0))) print "local"
+}'
+
+server_address_local() {   # ADDRESS: true when it is the loopback or every address, in IPv4 or in IPv6, in every
+  # form compose takes: between brackets or not, groups with zeros or left out (::), an IPv4 tail, a zone (%...)
+  mdf_address=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')
+  mdf_address=${mdf_address#\[}; mdf_address=${mdf_address%\]}; mdf_address=${mdf_address%%\%*}
+  case "$mdf_address" in
+    ""|localhost|127.*|0.0.0.0) return 0 ;;
+    *:*) [ "$(printf '%s\n' "$mdf_address" | LC_ALL=C awk "$mdf_ipv6_local")" = local ] ;;
+    *) return 1 ;;
+  esac
+}
+
+server_environment() {
+  # the remote server (compose.server.yaml, MFL051 B): its address, its port and its two private files
+  for mdf_name in MDF_COMPOSE_SERVER_ADDRESS MDF_COMPOSE_SERVER_PORT MDF_COMPOSE_SERVER_TLS MDF_COMPOSE_SERVER_KEY; do
+    eval "mdf_given=\${$mdf_name:-}"
+    [ -n "$mdf_given" ] || mdf_given=$(env_value "$1" "$mdf_name")
+    eval "$mdf_name=\$mdf_given"
+  done
+  : "${MDF_COMPOSE_SERVER_PORT:=23467}" "${MDF_COMPOSE_SERVER_TLS:=./state/server/tls}" \
+    "${MDF_COMPOSE_SERVER_KEY:=./state/server/key}"
+  case "$MDF_COMPOSE_SERVER_PORT" in ""|*[!0-9]*) echo "MDF_COMPOSE_SERVER_PORT is not a number" >&2; return 1 ;; esac
+  [ -n "$MDF_COMPOSE_SERVER_ADDRESS" ] || { echo "MDF_COMPOSE_SERVER_ADDRESS: the address of this machine on the LAN" \
+    "or the VPS, where the product reaches it" >&2; return 1; }
+  if server_address_local "$MDF_COMPOSE_SERVER_ADDRESS"; then
+    echo "MDF_COMPOSE_SERVER_ADDRESS is not the loopback nor every address: the product reaches the server from" \
+         "another machine" >&2; return 1
+  fi
+  for mdf_name in MDF_COMPOSE_SERVER_TLS MDF_COMPOSE_SERVER_KEY; do
+    eval "mdf_given=\$$mdf_name"
+    case "$mdf_given" in /*) ;; *) mdf_given=$mdf_top/${mdf_given#./} ;; esac
+    eval "$mdf_name=\$mdf_given"
+  done
+  [ "$(env_state "$MDF_COMPOSE_SERVER_KEY")" = ok ] || { echo "MDF_COMPOSE_SERVER_KEY ($MDF_COMPOSE_SERVER_KEY):" \
+    "a regular file of yours, mode 0600, with the key (\`umask 077; openssl rand -hex 32 > FILE\`)" >&2; return 1; }
+  [ -f "$MDF_COMPOSE_SERVER_TLS/server.crt" ] && [ "$(env_state "$MDF_COMPOSE_SERVER_TLS/server.key")" = ok ] \
+    || { echo "MDF_COMPOSE_SERVER_TLS ($MDF_COMPOSE_SERVER_TLS): server.crt and server.key, the key a regular file" \
+              "of yours with mode 0600" >&2; return 1; }
+  export MDF_COMPOSE_SERVER_ADDRESS MDF_COMPOSE_SERVER_PORT MDF_COMPOSE_SERVER_TLS MDF_COMPOSE_SERVER_KEY
 }
 
 install_cli() {    # CHECKOUT DIR: write DIR/mdf, a small file that runs bin/mdf of CHECKOUT (`make install-cli`)

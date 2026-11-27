@@ -129,7 +129,7 @@ def job_options(fmt, options=None, settings=None):
     preset = opts.pop("preset", None)
     if "preset" in (options or {}) and (not isinstance(preset, str) or not PRESET_NAME.fullmatch(preset)):
         raise EngineError(Code.INVALID_SETTING, "preset: the name of a conversion preset")
-    result = routes.job_options(fmt, opts)
+    result = routes.job_options(fmt, opts, leaves_machine=gpu_leaves_machine(opts.get("gpu_preset")))
     if result["route"] == routes.MARKER_SERVER:
         state = gpu_availability(result["gpu_preset"], settings)
         if not state["available"]:
@@ -141,13 +141,24 @@ def job_options(fmt, options=None, settings=None):
     return result
 
 
+def gpu_leaves_machine(name):
+    """Whether the page images leave this machine with the GPU preset `name` (MFL051 B, rilievo H): from the provider
+    of the preset (`gpu.presets.TRAITS`); true for a name that is not a preset, which `gpu_availability` refuses."""
+    if not isinstance(name, str):
+        return True
+    from .gpu import presets as gpu_presets
+    table = gpu_presets.load()
+    return gpu_presets.leaves_machine(table[name]) if name in table else True
+
+
 def gpu_availability(name, settings):
     """Whether the instance of `settings` can use the GPU preset `name` (MFL023 B3), {"available", "code"}, in the
     order of the checks: `gpu_preset_unknown`; the code that keeps the preset from any instance (superseded, a global
     volume: `gpu.presets.refusal`); `gpu_preset_not_enabled` (not in MDF_GPU_PRESETS); `server_cap` (a cap of the
-    ledger of its provider, or of a session, of 0 USD). What only the worker knows (the endpoint of servers.json, the
-    keys of its env file, an orphan window, the minimum reserve) comes with its readiness, never from here: the API
-    process reads neither the ledger nor a provider."""
+    ledger of its provider, or of a session, of 0 USD), only for a rented preset: a GPU of the user costs nothing and
+    reads no cap (MFL051 B, rilievo H). What only the worker knows (the endpoint of servers.json, the keys of its env
+    file, an orphan window, the minimum reserve) comes with its readiness, never from here: the API process reads
+    neither the ledger nor a provider."""
     from decimal import Decimal
     from .gpu import presets as gpu_presets
     table = gpu_presets.load()
@@ -158,6 +169,8 @@ def gpu_availability(name, settings):
         return {"available": False, "code": code}
     if settings is None or name not in settings.gpu_presets_enabled():
         return {"available": False, "code": "gpu_preset_not_enabled"}
+    if not gpu_presets.costs(table[name]):
+        return {"available": True, "code": None}
     provider_cap = getattr(settings, "gpu_cap_usd_" + table[name]["provider"])
     if Decimal(provider_cap) <= 0 or Decimal(settings.gpu_session_cap_usd) <= 0:
         return {"available": False, "code": Code.SERVER_CAP.value}
@@ -215,11 +228,19 @@ def builtin_presets(path=None):
         raise IntegrityError("Malformed conversion presets of the instance") from None
 
 
-PROVIDER_NAMES = {"runpod": "RunPod", "modal": "Modal"}
+PROVIDER_NAMES = {"runpod": "RunPod", "modal": "Modal", "local": "the local GPU", "remote": "your GPU server"}
 
 
 def gpu_notice(name, preset):
-    """The notice of the transit of a GPU preset, as `api.TRANSIT_NOTICE` for Datalab (plan r2 §4.8)."""
+    """The notice of the transit of a GPU preset, as `api.TRANSIT_NOTICE` for Datalab (plan r2 §4.8). A GPU of the user
+    (MFL051 B): the local GPU sends nothing out of this computer; the remote server receives the page images."""
+    if preset["provider"] == "local":
+        return ("With this preset the page images stay on this computer: Surya runs on the local GPU of the `gpu` "
+                "profile (make gpu-up), reached through a Unix socket. Nothing is rented and nothing leaves.")
+    if preset["provider"] == "remote":
+        return ("With this preset the page images leave this computer: they are sent to your own GPU server (the "
+                "endpoint of the preset in servers.json), over TLS with its key, through the relay of the worker. "
+                "Nothing is rented and nothing is charged. Send only documents you may send to that machine.")
     group = preset["gpu"]["group"]
     where = preset["data_center"] or "a region chosen by Modal"
     return ("With this preset the page images leave this computer: they are sent to a GPU rented by the second on %s "
@@ -664,18 +685,24 @@ class Service:
         if preset not in table:
             raise Refused("gpu_preset_unknown")
         p = table[preset]
-        rate = Decimal(p["rate"]["usd_per_s"])
-        cents = lambda s: str((rate * s * 100).quantize(Decimal("0.01"), rounding=ROUND_CEILING))  # noqa: E731
+        rented = gpu_presets.costs(p)
+        # a GPU of the user (MFL051 B) is not rented: no rate, a cost of zero, no ledger and no window
+        rate = Decimal(p["rate"]["usd_per_s"]) if rented else Decimal(0)
+        cents = lambda s: str((rate * (s or 0) * 100).quantize(Decimal("0.01"), rounding=ROUND_CEILING))  # noqa: E731
         worker = ((self.worker_gpu() or {}).get("presets") or {}).get(preset) or {}
         state = with_worker(gpu_availability(preset, self.settings), worker)
         group = p["gpu"]["group"]
-        return {"gpu_preset": preset, "provider": p["provider"], **state,
-                "region": p["data_center"] or "chosen by Modal", "gpu": group if isinstance(group, list) else [group],
+        region = (p["data_center"] or "chosen by Modal") if rented else \
+            ("this computer" if p["provider"] == "local" else "your GPU server")
+        return {"gpu_preset": preset, "provider": p["provider"], **state, **gpu_presets.traits(p),
+                "region": region, "gpu": group if isinstance(group, list) else [group],
                 "a_cents": worker.get("a_cents"), "w_s": worker.get("w_s"),
                 "minimum_reserve_cents": worker.get("minimum_reserve_cents"),
                 "open_session": worker.get("open_session") is True,
                 "start_cents": cents(p["seconds"]["cold_start_s"]), "page_cents": cents(p["seconds"]["page_seconds"]),
-                "rate": p["rate"], "measures": p["measures"], "provisional": True, "quality": "unverified",
+                "rate": p["rate"] if rented else {"usd_per_s": "0", "source": "not rented: a GPU of the user",
+                                                  "date": None},
+                "measures": p["measures"], "provisional": True, "quality": "unverified",
                 "arm_ahead": p["levers"]["arm_ahead_s"] is not None, "notice": gpu_notice(preset, p),
                 "bound_text": "A reserve and a measured limit are an upper bound, not a bill"}
 

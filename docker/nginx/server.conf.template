@@ -1,0 +1,31 @@
+# The door of the remote GPU server (MFL051 B; compose.server.yaml): TLS with the certificate of the user, in front of
+# the front of gpu/local_front.py, which checks the bearer key of every request but GET and HEAD /health (the
+# readiness alone, without the key) and forwards to vLLM only its closed list. The certificate and its key are files
+# of the user (MDF_COMPOSE_SERVER_TLS: server.crt, server.key), mounted read-only; the product pins the authority
+# that signed it (`ca_file` of its endpoint).
+
+server {
+    listen 8443 ssl;
+    server_name _;
+    server_tokens off;
+    access_log off;
+
+    ssl_certificate /etc/mdf/tls/server.crt;
+    ssl_certificate_key /etc/mdf/tls/server.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_tickets off;
+
+    # a request of Surya holds the images of one page: the front refuses a body over 30,000,000 bytes
+    client_max_body_size 30m;
+
+    location / {
+        proxy_pass http://gpu:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_redirect off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+        proxy_buffering off;
+    }
+}

@@ -18,7 +18,11 @@ available. `transit` is a REQUIREMENT of the route (does a document, or its page
 a confirmation: the confirmation is of each job. A key never appears: only its name.
 
 The routes: `text`, `pandoc`, `libreoffice`, `djvutxt`, `marker`, `datalab`, and one `marker-server` entry for each
-GPU preset the instance enables, with its provider.
+GPU preset the instance enables, with its provider. What a provider implies comes from the caller, as the pure table
+of the GPU presets says it (`traits`, from `gpu.presets.TRAITS`, MFL051 B): a rented GPU has a transit, a capped
+spend, its ledger and its caps; the local GPU has neither a transit nor a spend; the remote server of the user has a
+transit and no spend. A preset without traits counts as rented. `live` holds what the worker last read on request
+(the state of the provider as a `Reading`, its balance), each with its own `read_at`.
 """
 
 SCHEMA = "mdf-routes/1"
@@ -45,6 +49,7 @@ DISABLED_BY = {
     "server_cap": ("MDF_GPU_SESSION_CAP_USD", "MDF_GPU_CAP_USD_MODAL", "MDF_GPU_CAP_USD_RUNPOD"),
 }
 NO_TRANSIT = {"required": False, "what": None}
+RENTED = {"costs": True, "leaves_machine": True}
 
 
 def state_of(check):
@@ -84,7 +89,8 @@ def route(ident, converter, check, *, provider=None, gpu_preset=None, transit=No
             "live": live}
 
 
-def compute(converters, datalab_cap_usd, gpu=None, providers=None, details=None, key_names=None, now=None):
+def compute(converters, datalab_cap_usd, gpu=None, providers=None, details=None, key_names=None, now=None,
+            traits=None):
     """The routes of the instance, in the order of the matrix, from what the worker checked:
 
     converters     {converter: {"available", "code"}} (`engine.availability`, Datalab with its cap)
@@ -94,6 +100,7 @@ def compute(converters, datalab_cap_usd, gpu=None, providers=None, details=None,
     details        {route id: what to do}, for the broken ones
     key_names      {GPU preset: the names of its keys that the keys file does not set}
     now            the time of the computation, seconds since the epoch
+    traits         {GPU preset: {"costs", "leaves_machine"}} (MFL051 B); a preset without them counts as rented
     """
     converters, details, key_names = converters or {}, details or {}, key_names or {}
     routes = [route(name, name, converters.get(name)) for name in LOCAL]
@@ -104,25 +111,32 @@ def compute(converters, datalab_cap_usd, gpu=None, providers=None, details=None,
     ledgers = gpu.get("ledgers") if isinstance(gpu.get("ledgers"), dict) else {}
     for name, item in sorted((gpu.get("presets") or {}).items()):
         provider = (providers or {}).get(name)
-        book = ledgers.get(provider) if isinstance(ledgers.get(provider), dict) else None
+        trait = dict(RENTED, **((traits or {}).get(name) or {}))
+        rented = trait["costs"] is not False
+        book = ledgers.get(provider) if rented and isinstance(ledgers.get(provider), dict) else None
         ledger = None if book is None else dict(book, read_at=now)
         ident = "%s:%s" % (MARKER_SERVER, name)
+        live = {"open_session": item.get("open_session") is True, "read_at": now}
+        for key in ("reading", "balance"):
+            if isinstance(item.get(key), dict):
+                live[key] = item[key]
         routes.append(route(
             ident, MARKER_SERVER, item, provider=provider, gpu_preset=name,
-            transit={"required": True, "what": "page_images"}, spend="capped",
+            transit={"required": True, "what": "page_images"} if trait["leaves_machine"] is not False else NO_TRANSIT,
+            spend="capped" if rented else "none",
             caps=None if book is None or "cap_cents" not in book else {"ledger_cents": book["cap_cents"]},
-            preset={k: item.get(k) for k in ("minimum_reserve_cents", "a_cents", "w_s")}, ledger=ledger,
-            live={"open_session": item.get("open_session") is True, "read_at": now},
-            detail=details.get(ident), key_names=key_names.get(name)))
+            preset={k: item.get(k) for k in ("minimum_reserve_cents", "a_cents", "w_s")} if rented else None,
+            ledger=ledger, live=live, detail=details.get(ident), key_names=key_names.get(name)))
     return {"schema": SCHEMA, "computed_at": now, "routes": routes}
 
 
-def blocked(code, datalab_cap_usd, gpu_presets=(), providers=None, detail=None, now=None):
+def blocked(code, datalab_cap_usd, gpu_presets=(), providers=None, detail=None, now=None, traits=None):
     """The routes of a worker that takes no job at all (its children would not run its code, or the end of a
     previous conversion is not attested): every route is broken with the code of the worker."""
     check = {"available": False, "code": code}
     gpu = {"presets": {name: dict(check) for name in gpu_presets}, "ledgers": {}}
-    computed = compute({name: check for name in LOCAL + (DATALAB,)}, datalab_cap_usd, gpu, providers, now=now)
+    computed = compute({name: check for name in LOCAL + (DATALAB,)}, datalab_cap_usd, gpu, providers, now=now,
+                       traits=traits)
     for item in computed["routes"]:
         item.update(state=BROKEN, code=code, detail=detail, missing=[])
     return computed

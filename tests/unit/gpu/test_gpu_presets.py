@@ -1,5 +1,6 @@
 """The GPU presets (MFL023 A3): the versioned file and its closed schema, the values equal to the constants of the
-session code, the presets an instance may enable, and the file in the wheel."""
+session code, the presets an instance may enable, and the file in the wheel. MFL051 B: the presets of a GPU of the
+user (`gpu-local`, `gpu-remote`), without rate, volume, data center or lever, and the pure table of the traits."""
 import ast
 import copy
 import json
@@ -42,14 +43,18 @@ class Base(unittest.TestCase):
         change(doc["presets"][name])
         return doc
 
+    def rented(self):
+        return [n for n, p in self.doc["presets"].items() if p["provider"] in ("runpod", "modal")]
+
 
 class TheFileTests(Base):
     def test_the_presets_of_mfl023(self):
         found = presets.load()
-        self.assertEqual(sorted(found), ["modal-base", "runpod-serverless-volume-dc", "runpod-serverless-volume-eu-se-1"])
+        self.assertEqual(sorted(found), ["gpu-local", "gpu-remote", "modal-base", "runpod-serverless-volume-dc",
+                                         "runpod-serverless-volume-eu-se-1"])
         self.assertEqual({n: p["status"] for n, p in found.items()}, {
             "modal-base": "supported", "runpod-serverless-volume-dc": "supported",
-            "runpod-serverless-volume-eu-se-1": "superseded"})
+            "runpod-serverless-volume-eu-se-1": "superseded", "gpu-local": "supported", "gpu-remote": "supported"})
         old = found["runpod-serverless-volume-eu-se-1"]
         self.assertEqual(old["superseded_by"], "runpod-serverless-volume-dc")
         self.assertEqual((old["data_center"], old["volume"]["class"]), ("EU-SE-1", "STANDARD"))
@@ -69,6 +74,10 @@ class TheFileTests(Base):
                 self.assertEqual(p["model"]["id"], watchdog.MODEL)
                 self.assertEqual(p["model"]["revision"], watchdog.REVISION)
                 self.assertEqual(p["model"]["vllm"], constant("drivers", "VLLM_VERSION"))
+                if p["provider"] in ("local", "remote"):
+                    # MFL051 B: the same image and model as the rented GPUs, nothing rented
+                    self.assertEqual((p["volume"], p["rate"], p["data_center"], p["mode"]), (None, None, None, "server"))
+                    continue
                 self.assertEqual(p["volume"]["name"], pv.VOLUME)
                 self.assertEqual(p["rate"]["usd_per_s"], str(pv.RATES[p["provider"]]))
                 if p["provider"] == "runpod":
@@ -96,13 +105,41 @@ class TheFileTests(Base):
         table = presets.endpoint_table()
         self.assertEqual(table["runpod-serverless-volume-dc"]["fields"]["gpu"], "AMPERE_24")
         self.assertEqual({n: e["refusal"] for n, e in table.items()}, {
-            "modal-base": None, "runpod-serverless-volume-dc": None,
+            "modal-base": None, "runpod-serverless-volume-dc": None, "gpu-local": None, "gpu-remote": None,
             "runpod-serverless-volume-eu-se-1": codes.GPU_PRESET_SUPERSEDED})
+        self.assertEqual({n: (e["kind"], e["key_env"]) for n, e in table.items()}, {
+            "modal-base": ("modal", ["MODAL_PROXY_TOKEN_ID", "MODAL_PROXY_TOKEN_SECRET"]),
+            "runpod-serverless-volume-dc": ("runpod", ["RUNPOD_API_KEY"]),
+            "runpod-serverless-volume-eu-se-1": ("runpod", ["RUNPOD_API_KEY"]),
+            "gpu-local": ("gpu", []), "gpu-remote": ("user", ["GPU_SERVER_KEY"])})
+
+    def test_the_endpoint_fields_of_a_gpu_of_the_user(self):
+        """MFL051 B: no rate and none of the seconds that bound a spend; the seconds of a conversion stay."""
+        fields = presets.endpoint_fields(presets.load()["gpu-local"])
+        self.assertEqual(fields, {
+            "server": "vllm", "model": "datalab-to/surya-ocr-2.5", "revision": watchdog.REVISION,
+            "pins": {"vllm": "0.25.1"}, "parallel": 32, "gpu": "NVIDIA 24 GB, CUDA 13", "rate_usd_per_s": None,
+            "rate_source": None, "rate_date": None, "ready_within": 900, "read_timeout": 300, "page_seconds": 30,
+            "cold_start_s": None, "w1_s": None, "tail_idle_s": None, "tail_fault_s": None})
+        self.assertEqual(presets.endpoint_fields(presets.load()["gpu-remote"]), fields)
+
+    def test_the_traits_of_the_providers(self):
+        """MFL051 B (App. A, rilievo H): a pure table; only a rented GPU costs and arms; only the local GPU keeps the
+        page images on this machine."""
+        found = presets.load()
+        self.assertEqual({n: presets.traits(p) for n, p in found.items() if p["status"] == "supported"}, {
+            "modal-base": {"costs": True, "arms": True, "leaves_machine": True},
+            "runpod-serverless-volume-dc": {"costs": True, "arms": True, "leaves_machine": True},
+            "gpu-local": {"costs": False, "arms": False, "leaves_machine": False},
+            "gpu-remote": {"costs": False, "arms": False, "leaves_machine": True}})
+        self.assertEqual(set(presets.TRAITS), set(presets.PROVIDERS))
+        self.assertEqual((presets.costs(found["gpu-remote"]), presets.leaves_machine(found["gpu-remote"])),
+                         (False, True))
 
 
 class TheSchemaTests(Base):
     def test_a_field_more_or_less_refuses_the_file(self):
-        for name in self.doc["presets"]:
+        for name in self.rented():
             for change in (lambda p: p.update(extra=1), lambda p: p.pop("measures"),
                            lambda p: p["volume"].update(extra=1), lambda p: p["seconds"].pop("idle_s"),
                            lambda p: p["model"].pop("vllm"), lambda p: p["rate"].update(currency="USD")):
@@ -111,6 +148,29 @@ class TheSchemaTests(Base):
         self.refused(dict(self.doc, schema=2))
         self.refused(dict(self.doc, extra=1))
         self.refused({"schema": 1, "presets": {}})
+        for name in ("gpu-local", "gpu-remote"):
+            for change in (lambda p: p.update(extra=1), lambda p: p.pop("measures"),
+                           lambda p: p["seconds"].pop("idle_s"), lambda p: p["model"].pop("vllm")):
+                with self.subTest(preset=name, change=change):
+                    self.refused(self.changed(name, change))
+
+    def test_a_gpu_of_the_user_rents_nothing(self):
+        """MFL051 B: a rate, a volume, a data center, a lever or a second that bounds a spend refuses the file, and so
+        does the mode of a rented GPU."""
+        rp = self.doc["presets"]["runpod-serverless-volume-dc"]
+        for name in ("gpu-local", "gpu-remote"):
+            for change in (lambda p: p.update(rate=copy.deepcopy(rp["rate"])),
+                           lambda p: p.update(volume=copy.deepcopy(rp["volume"])),
+                           lambda p: p.update(data_center="CA-MTL-1"), lambda p: p.update(mode="serverless"),
+                           lambda p: p["levers"].update(arm_ahead_s=420),
+                           lambda p: p["levers"].update(compile_cache=list(rp["levers"]["compile_cache"])),
+                           lambda p: p["seconds"].update(idle_s=60), lambda p: p["seconds"].update(w1_s=900),
+                           lambda p: p["seconds"].update(ready_within=None)):
+                with self.subTest(preset=name, change=change):
+                    self.refused(self.changed(name, change))
+        self.refused(self.changed("modal-base", lambda p: p.update(mode="server")))
+        self.refused(self.changed("modal-base", lambda p: p.update(rate=None)))
+        self.refused(self.changed("runpod-serverless-volume-dc", lambda p: p.update(volume=None)))
 
     def test_the_nullable_fields(self):
         modal = "modal-base"
@@ -128,7 +188,7 @@ class TheSchemaTests(Base):
         self.refused(self.changed(old, lambda p: p.update(superseded_by=None)))
         self.refused(self.changed(old, lambda p: p.update(superseded_by="nope")))
         self.refused(self.changed(old, lambda p: p.update(reason=None)))
-        self.assertEqual(len(presets.check(self.changed(rp, lambda p: p["levers"].update(arm_ahead_s=None)))), 3)
+        self.assertEqual(len(presets.check(self.changed(rp, lambda p: p["levers"].update(arm_ahead_s=None)))), 5)
 
     def test_no_experimental_lever_in_a_preset(self):
         for lever in ("snapshot", "flashboot", "skip_mm_profiling"):
@@ -171,6 +231,7 @@ class EnableTests(Base):
         found = presets.load()
         self.assertEqual(presets.enable(["modal-base", "runpod-serverless-volume-dc"], found),
                          ["modal-base", "runpod-serverless-volume-dc"])
+        self.assertEqual(presets.enable(["gpu-local", "gpu-remote"], found), ["gpu-local", "gpu-remote"])
         self.assertEqual(presets.enable([], found), [])
         experimental = presets.check(self.changed("modal-base", lambda p: p.update(status="experimental")))
         glob = presets.check(self.changed("runpod-serverless-volume-dc", lambda p: p["volume"].update(type="global")))

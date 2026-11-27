@@ -203,12 +203,19 @@ class CheckScript(unittest.TestCase):
         self.assertEqual(os.stat(clone / ".cache" / "full-check" / "proof").st_uid, os.getuid())
         self.assertEqual(sorted(p.name for p in (evidence / "proof").iterdir()),
                          ["compose-dev-check.json", "compose-dev-faults.json", "compose-dev-suite.json",
-                          "compose-dev-test.json", "compose-product.json", "compose-public.json", "images.txt"])
+                          "compose-dev-test.json", "compose-gpu.json", "compose-product.json", "compose-public.json",
+                          "compose-server.json", "images.txt"])
         # the configuration of the product is asked of the files of the clone, and compose never opens an env file
         product = [call for call in calls if "--profile tools config --format json" in call]
         self.assertEqual(product, ["compose --env-file /dev/null --profile tools config --format json",
                                    "compose --env-file /dev/null -f compose.yaml -f compose.public.yaml --profile tools "
                                    "config --format json"])
+        # MFL051 B: the profile gpu and the remote server, read and never started; the server as a project of its own
+        self.assertIn("compose --env-file /dev/null --profile tools --profile gpu config --format json", calls)
+        server = [call for call in calls if "compose.server.yaml" in call]
+        self.assertEqual(len(server), 1)
+        self.assertRegex(server[0], r"^compose --env-file /dev/null -p \S+-server -f compose.server.yaml --profile prepare "
+                                    r"config --format json$")
         # the images of the evidence carry the tags of THIS invocation (an image can have the tags of another check too)
         ident = evidence.name
         images = (evidence / "proof" / "images.txt").read_text().splitlines()[1:]

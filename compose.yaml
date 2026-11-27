@@ -25,6 +25,9 @@
 #              `.env`, mounted read-only, at every use; never from its environment.
 #   nginx      the only door: 127.0.0.1:${MDF_PORT} -> the socket of the API.
 #   cli, bench (profile `tools`) `mdf ...` and `make bench` as one-off containers; they start no other service.
+#   gpu-prepare, gpu  (profile `gpu`, MFL051 B; designed and tested with fake servers only) the local GPU: the
+#              pinned vLLM image with the front of gpu/local_front.py on a Unix socket of mdf-run, without network.
+#              `make gpu-prepare`, `make gpu-up`; `make restart` leaves it running, `make down` stops it.
 #
 # Limit of a file bound alone (`.env`): a container keeps the file it was started with. After the file is
 # replaced on the host (the atomic save of an editor, `sed -i`), the routes with a key stop until `make restart`.
@@ -107,6 +110,7 @@ services:
       - /volumes/settings
       - /volumes/models
       - /volumes/cpu-server
+      - /volumes/vllm-models
     volumes:
       - type: bind
         source: ./docker/app/init-volumes.sh
@@ -121,6 +125,7 @@ services:
       - mdf-settings:/volumes/settings
       - mdf-models:/volumes/models
       - mdf-cpu-server:/volumes/cpu-server
+      - mdf-vllm-models:/volumes/vllm-models
 
   config:
     <<: *engine
@@ -312,6 +317,86 @@ services:
   bench:
     <<: *cli
 
+  # --- the local GPU (profile `gpu`, MFL051 B): designed and tested with fake servers only -------------------------
+  # `make gpu-prepare` once (the pinned vLLM image, 10-20 GB, and the pinned weights of Surya, 1.4 GB, into
+  # mdf-vllm-models), then `make gpu-up`. vLLM runs with NO network: the front of gpu/local_front.py, in the same
+  # container, starts it on its loopback and listens on the Unix socket run/gpu/front.sock of the volume mdf-run,
+  # which the relay of the worker reaches as it reaches the local CPU server. No port, no transit, no spend.
+  # Limits: an NVIDIA card of 24 GB for the arguments of today, a driver with CUDA 13 or newer, the NVIDIA Container
+  # Toolkit (Linux) or the CUDA of WSL2, amd64, never a Mac.
+  gpu-prepare:
+    <<: *service
+    image: vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268
+    profiles: [gpu]
+    networks: [egress]
+    entrypoint: ["python3", "-I", "-B", "/opt/mdf-front/local_front.py"]
+    command: ["prepare", "--hf-home", "/models"]
+    restart: "no"
+    mem_limit: 4g
+    memswap_limit: 4g
+    pids_limit: 256
+    environment:
+      HOME: /tmp
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    tmpfs: [*tmp]
+    volumes:
+      - &front-code
+        type: bind
+        source: ./markdown_for_llms/gpu/local_front.py
+        target: /opt/mdf-front/local_front.py
+        read_only: true
+        bind:
+          create_host_path: false
+      - &front-watchdog
+        type: bind
+        source: ./markdown_for_llms/gpu/watchdog.py
+        target: /opt/mdf-front/watchdog.py
+        read_only: true
+        bind:
+          create_host_path: false
+      - mdf-vllm-models:/models
+
+  gpu:
+    <<: *service
+    image: vllm/vllm-openai@sha256:f0b9a0dc75a9fca3b6811e3279367b2d6a448055a000bfd13859587d74cef268
+    profiles: [gpu]
+    entrypoint: ["python3", "-I", "-B", "/opt/mdf-front/local_front.py"]
+    network_mode: none
+    command: ["serve", "--socket", "/run/mdf/run/gpu/front.sock", "--hf-home", "/models"]
+    # vLLM leaves with an error at once when there is no GPU or the weights differ: a bounded number of restarts
+    restart: on-failure:3
+    stop_grace_period: 40s
+    mem_limit: ${MDF_COMPOSE_GPU_MEMORY:-16g}
+    memswap_limit: ${MDF_COMPOSE_GPU_MEMORY:-16g}
+    pids_limit: 4096
+    shm_size: 2g
+    environment:
+      HOME: /tmp
+      HF_HUB_OFFLINE: "1"
+      VLLM_NO_USAGE_STATS: "1"
+      DO_NOT_TRACK: "1"
+    tmpfs:
+      - "/tmp:rw,nosuid,nodev,size=4g,mode=1777"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python3", "-I", "-B", "/opt/mdf-front/local_front.py", "health", "--socket",
+             "/run/mdf/run/gpu/front.sock"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15m
+      retries: 3
+    volumes:
+      - *front-code
+      - *front-watchdog
+      - mdf-vllm-models:/models:ro
+      - mdf-run:/run/mdf/run
+
 networks:
   # the worker and the one-off tools reach Datalab and the rented GPUs; nothing listens on it
   egress: {}
@@ -326,3 +411,5 @@ volumes:
   mdf-settings:
   mdf-models:
   mdf-cpu-server:
+  # the weights of Surya for the local GPU (profile `gpu`): empty until `make gpu-prepare`
+  mdf-vllm-models:

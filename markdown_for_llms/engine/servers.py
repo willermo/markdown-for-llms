@@ -10,10 +10,16 @@ Fields of an endpoint (a closed set; anything else is `server_not_configured`):
 
 - `kind`: `cpu` (the local CPU server of `mdf prepare --cpu-server`, on a Unix socket), `local`
   (a server on the loopback, only the literal `http://127.0.0.1:P` or `http://[::1]:P`, else
-  `server_not_loopback`), `user` (the user's own server), `runpod`, `modal`;
+  `server_not_loopback`), `user` (the user's own server), `runpod`, `modal`, `gpu` (MFL051 B: the
+  local GPU of the `gpu` profile of compose, on the Unix socket of its front, `socket`; no url, no
+  key, the page images never leave the machine);
 - `provider`: `runpod`, `modal` or absent. An endpoint with a provider costs, also used as
   `user`: it needs a spending cap, the ledger and a live session (`server_not_armed`);
 - `url`: https, or http to a literal loopback IP only; never userinfo, query or fragment;
+- `socket` (kind `gpu` only, and required there): the absolute path of the Unix socket of the front;
+- `ca_file` (kind `user` only, MFL051 B): the absolute path of a PEM file of the certificate
+  authorities that sign the certificate of the server, in place of those of the system; with it the
+  URL is https, and the relay verifies the certificate and its name against it on its two clients;
 - `server`: `vllm` or `llamacpp` (what Surya may ask: `stop_token_ids` and `json_schema` with
   vLLM; neither with llama.cpp, run with `--special`); `model`, `revision`, `pins` (declared
   versions, compared with what the server says at readiness), `parallel` (in-flight requests);
@@ -32,7 +38,9 @@ preset fixes every other value (server, model, revision, pins, parallel, gpu, ra
 date, the seconds), so a value written by hand next to `preset` is `server_not_configured` (D3 of
 MFL023), as are a preset of another provider, a preset that cannot be used (superseded, a global
 volume) and two endpoints of one file with the same preset. `resource` is the name of the endpoint or
-app at the provider (`mdf-surya`). The engine depends on nothing of the GPU package: `load` and
+app at the provider (`mdf-surya`). A preset of a GPU of the user (MFL051 B) is served by the kind its
+entry of the table names (`gpu` for the local GPU, with `socket` in place of `url`; `user` for the
+remote server, with its `url`, its `key_env` and `ca_file`), without `resource`. The engine depends on nothing of the GPU package: `load` and
 `endpoint` receive the table of the presets (`gpu.presets.endpoint_table()`) as a plain dict, and
 without it an endpoint with a preset is `server_not_configured`. The identity of the endpoint is
 computed on the expanded values.
@@ -40,7 +48,7 @@ computed on the expanded values.
 Keys are read from `--env-file` (a private regular file, `envfile.read`) and, for `mdf convert`
 only, from the environment; they are wrapped in `envfile.Secret` and go only into the headers of
 the relay: `Authorization: Bearer` (RunPod, `user`, `local`), `Modal-Key` and `Modal-Secret`
-(Modal), none for `cpu`. The identity of an endpoint (`identity_sha256`) is the SHA-256 of the
+(Modal), none for `cpu` and `gpu`. The identity of an endpoint (`identity_sha256`) is the SHA-256 of the
 canonical JSON of its URL, kind, provider, server, model, revision, parallel, request extensions
 and pins: a name given to another host changes it.
 
@@ -68,7 +76,7 @@ from urllib.parse import urlsplit
 from . import envfile
 from .codes import Code, EngineError
 
-KINDS = ("cpu", "local", "user", "runpod", "modal")
+KINDS = ("cpu", "local", "user", "runpod", "modal", "gpu")
 PROVIDERS = ("runpod", "modal")
 SERVERS = ("vllm", "llamacpp")
 MODEL = "datalab-to/surya-ocr-2.5"
@@ -76,9 +84,11 @@ NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 ENV_NAME = re.compile(r"[A-Z_][A-Z0-9_]{0,63}")
 FIELDS = {"kind", "provider", "url", "server", "model", "revision", "pins", "parallel", "gpu", "rate_usd_per_s",
           "rate_source", "rate_date", "ready_within", "read_timeout", "page_seconds", "cold_start_s", "w1_s",
-          "tail_idle_s", "tail_fault_s", "key_env"}
+          "tail_idle_s", "tail_fault_s", "key_env", "socket", "ca_file"}
 # The fields of an endpoint that names a GPU preset (MFL023 A3): the preset fixes all the others.
-PRESET_FIELDS = {"kind", "preset", "resource", "url", "key_env"}
+PRESET_FIELDS = {"kind", "preset", "resource", "url", "key_env", "socket", "ca_file"}
+# The paths of `socket` and `ca_file`: absolute, plain, short enough for a Unix socket (108 bytes with its NUL)
+SOCKET_MAX, PATH_MAX = 107, 1024
 SECONDS = ("ready_within", "read_timeout", "page_seconds", "cold_start_s", "w1_s", "tail_idle_s", "tail_fault_s")
 # Defaults (plan r2 §4, §11; r4 §11.4 and C.3): RunPod reads within 5.5 min of its balancer, Modal
 # within the 150 s of a web request; the tails are req_max + tick + provider idle + stop margin.
@@ -88,6 +98,7 @@ DEFAULTS = {
     "user": {"server": "vllm", "parallel": 32, "ready_within": 300, "read_timeout": 300, "page_seconds": 30},
     "runpod": {"server": "vllm", "parallel": 32, "ready_within": 900, "read_timeout": 300, "page_seconds": 30},
     "modal": {"server": "vllm", "parallel": 32, "ready_within": 900, "read_timeout": 140, "page_seconds": 30},
+    "gpu": {"server": "vllm", "parallel": 32, "ready_within": 900, "read_timeout": 300, "page_seconds": 30},
 }
 PROVIDER_DEFAULTS = {
     "runpod": {"cold_start_s": 480, "w1_s": 900, "tail_idle_s": 90, "tail_fault_s": 385},
@@ -163,13 +174,15 @@ class Endpoint:
         return self.provider is not None
 
     def leaves_machine(self):
-        """The page images leave the machine: any endpoint but `cpu` and a literal loopback IP."""
-        if self.kind == "cpu":
+        """The page images leave the machine: any endpoint but `cpu`, `gpu` and a literal loopback IP."""
+        if self.kind in ("cpu", "gpu"):
             return False
         return not loopback_host(urlsplit(self.url).hostname or "")
 
     def host(self):
-        return "local CPU server" if self.kind == "cpu" else urlsplit(self.url).hostname
+        if self.kind in ("cpu", "gpu"):
+            return "local CPU server" if self.kind == "cpu" else "local GPU"
+        return urlsplit(self.url).hostname
 
     def requests(self):
         """The extensions of the requests Surya may send to this server."""
@@ -177,7 +190,8 @@ class Endpoint:
         return {"allow_stop_token_ids": vllm, "allow_guided_json": vllm}
 
     def identity(self):
-        return {"url": "unix:llama" if self.kind == "cpu" else canonical_url(self.url), "kind": self.kind,
+        url = {"cpu": "unix:llama", "gpu": "unix:gpu"}.get(self.kind) or canonical_url(self.url)
+        return {"url": url, "kind": self.kind,
                 "provider": self.provider, "server": self.server, "model": self.model, "revision": self.revision,
                 "parallel": self.parallel, "requests": self.requests(), "pins": self.pins}
 
@@ -196,7 +210,17 @@ class Endpoint:
                "seconds": {k: getattr(self, k) for k in SECONDS if getattr(self, k) is not None}}
         if self.preset is not None:
             out.update(preset=self.preset, resource=self.resource)
+        if self.ca_file is not None:
+            out["ca_file"] = True                   # pinned authorities: whether, never the path
         return out
+
+
+def _path(value, what, limit):
+    """An absolute, plain path (no `..`, no NUL or line break), at most `limit` bytes."""
+    if (not isinstance(value, str) or not value.startswith("/") or len(value.encode("utf-8", "replace")) > limit
+            or any(c in value for c in "\0\r\n") or ".." in value.split("/")):
+        raise _bad(what + ": an absolute path of at most %d bytes, without .." % limit)
+    return value
 
 
 def _seconds(value, what):
@@ -218,21 +242,32 @@ def _expand(name, raw, presets):
         raise _bad(name + ": unknown GPU preset")
     if entry["refusal"] is not None:
         raise _bad("%s: the GPU preset %s cannot be used (%s)" % (name, preset, entry["refusal"]))
-    if raw.get("kind") != entry["provider"]:
-        raise _bad("%s: the GPU preset %s is of %s" % (name, preset, entry["provider"]))
+    kind = entry.get("kind", entry["provider"])
+    if raw.get("kind") != kind:
+        raise _bad("%s: the GPU preset %s is of %s: kind %s" % (name, preset, entry["provider"], kind))
+    rented = entry["provider"] in PROVIDERS
     resource = raw.get("resource")
-    if not isinstance(resource, str) or not NAME.fullmatch(resource):
+    if rented and (not isinstance(resource, str) or not NAME.fullmatch(resource)):
         raise _bad(name + ": resource, the name of the endpoint or app at the provider")
-    if "url" not in raw:
-        raise _bad(name + ": url")
-    fields = dict(entry["fields"], kind=raw["kind"], url=raw["url"])
+    if not rented and resource is not None:
+        raise _bad(name + ": resource only for a rented GPU")
+    where = "socket" if kind == "gpu" else "url"
+    if where not in raw:
+        raise _bad("%s: %s" % (name, where))
+    fields = dict(entry["fields"], kind=raw["kind"], **{where: raw[where]})
+    for key in ("ca_file", "socket", "url"):
+        if key != where and key in raw:
+            fields[key] = raw[key]
+    expected = entry.get("key_env", KEY_ENV.get(entry["provider"], []))
     if "key_env" in raw:
         # MFL023 B10 (C-DB-NB5, a reversible choice of the supervision): next to a preset, only the names the provider of
         # the preset reads, in their order (the worker, its children, the follower and the relay read those)
         given = [raw["key_env"]] if isinstance(raw["key_env"], str) else raw["key_env"]
-        if given != KEY_ENV[entry["provider"]]:
-            raise _bad("%s: key_env next to a GPU preset is absent or %s" % (name, ", ".join(KEY_ENV[entry["provider"]])))
+        if given != expected:
+            raise _bad("%s: key_env next to a GPU preset is absent or %s" % (name, ", ".join(expected) or "empty"))
         fields["key_env"] = raw["key_env"]
+    elif not rented:
+        fields["key_env"] = list(expected)          # the remote server: its key, named by the preset
     return fields, preset, resource
 
 
@@ -257,19 +292,27 @@ def endpoint(name, raw, presets=None):
         raise _bad(name + ": provider")
     if kind in PROVIDERS and provider != kind:
         raise _bad(name + ": the provider of a %s endpoint is %s" % (kind, kind))
-    if kind in ("cpu", "local") and provider is not None:
+    if kind in ("cpu", "local", "gpu") and provider is not None:
         raise _bad(name + ": a %s endpoint has no provider" % kind)
     fields = dict(DEFAULTS[kind], **(PROVIDER_DEFAULTS.get(provider) or {}))
     fields.update({k: v for k, v in raw.items() if k != "kind"})
     fields.update(kind=kind, provider=provider)
     for key in ("url", "revision", "gpu", "rate_usd_per_s", "rate_source", "rate_date", "cold_start_s", "w1_s",
-                "tail_idle_s", "tail_fault_s", "key_env"):
+                "tail_idle_s", "tail_fault_s", "key_env", "socket", "ca_file"):
         fields.setdefault(key, None)
     fields.setdefault("model", MODEL)
     fields.setdefault("pins", {})
-    if kind == "cpu":
+    if kind == "gpu":
+        fields["socket"] = _path(fields["socket"], name + ": socket", SOCKET_MAX)
+    elif fields["socket"] is not None:
+        raise _bad(name + ": socket only for a gpu endpoint")
+    if fields["ca_file"] is not None:
+        if kind != "user":
+            raise _bad(name + ": ca_file only for a user endpoint")
+        fields["ca_file"] = _path(fields["ca_file"], name + ": ca_file", PATH_MAX)
+    if kind in ("cpu", "gpu"):
         if fields["url"] is not None:
-            raise _bad(name + ": a cpu endpoint has no url (Unix socket)")
+            raise _bad(name + ": a %s endpoint has no url (Unix socket)" % kind)
     else:
         url = canonical_url(fields["url"])
         scheme, host = urlsplit(url).scheme, urlsplit(url).hostname
@@ -277,6 +320,8 @@ def endpoint(name, raw, presets=None):
             raise _bad(name + ": local is http://127.0.0.1:PORT or http://[::1]:PORT", Code.SERVER_NOT_LOOPBACK)
         if scheme == "http" and not loopback_host(host):
             raise _bad(name + ": http only to a literal loopback address; https otherwise")
+        if fields["ca_file"] is not None and scheme != "https":
+            raise _bad(name + ": ca_file pins the authorities of an https server")
     if fields["server"] not in SERVERS:
         raise _bad(name + ": server vllm or llamacpp")
     if not isinstance(fields["model"], str) or not fields["model"] or len(fields["model"]) > 200:
@@ -316,8 +361,8 @@ def endpoint(name, raw, presets=None):
                                                              for n in names):
         raise _bad(name + ": key_env: names of variables ending in " + ", ".join(envfile.KEY_SUFFIXES)
                    + ", not MDF_ settings")
-    if kind == "cpu" and names:
-        raise _bad(name + ": a cpu endpoint has no key")
+    if kind in ("cpu", "gpu") and names:
+        raise _bad(name + ": a %s endpoint has no key" % kind)
     if kind == "modal" and len(names) != 2 or kind != "modal" and len(names) > 1:
         raise _bad(name + ": key_env: two names for modal, at most one otherwise")
     fields["key_env"] = names

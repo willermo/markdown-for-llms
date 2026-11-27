@@ -41,7 +41,7 @@ class PresetsCliTests(unittest.TestCase):
     def test_list_show_add_default_remove(self):
         code, (listed,) = self.mdf('presets', 'list')
         self.assertEqual((code, sorted(p['name'] for p in listed['presets'])),
-                         (0, ['batch', 'datalab', 'local-fast', 'quality-now']))
+                         (0, ['batch', 'datalab', 'local-fast', 'local-gpu', 'quality-now', 'remote-gpu']))
         code, (shown,) = self.mdf('presets', 'show', 'batch')
         self.assertEqual((shown['options']['gpu_preset'], shown['available'], shown['code']),
                          ('runpod-serverless-volume-dc', False, 'gpu_preset_not_enabled'))

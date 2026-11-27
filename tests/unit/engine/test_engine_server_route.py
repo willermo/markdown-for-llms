@@ -208,6 +208,21 @@ class TestBeforeTheWake(RouteCase):
         self.refused(Code.SERVER_CAP, ep=runpod(), server={"transit_confirmed": True, "budget_cents": "20",
                                                             "session": far})
 
+    def test_the_local_gpu_asks_no_transit_and_has_no_url(self):
+        """MFL051 B: an endpoint of kind `gpu` (the front of the local GPU, on its socket) reaches the wake without a
+        confirmed transit, and its reservation names no URL and no provider; stopped there, nothing left the machine."""
+        from markdown_for_llms.engine.codes import EngineError
+        seen = []
+
+        def observer(event):
+            if event.get("step") == "server-wake":
+                seen.append(event["reserve"])
+                raise EngineError(Code.SERVER_CAP, "stop at the wake")
+        ep = servers.endpoint("gpu", {"kind": "gpu", "socket": "/run/mdf/run/gpu/front.sock"})
+        result = self.refused(Code.SERVER_CAP, ep=ep, observer=observer)
+        self.assertEqual((seen[0]["url"], seen[0]["provider"], seen[0]["reserve_cents"]), (None, None, None))
+        self.assertEqual(result["transit"]["endpoint"], "local GPU")
+
     def test_a_refusal_of_the_reservation_stops_before_the_wake(self):
         from markdown_for_llms.engine.codes import EngineError
 

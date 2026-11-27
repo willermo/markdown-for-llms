@@ -5,7 +5,6 @@ Experimental local converter from PDF to Markdown with assets: the `mdf` CLI, an
 Status: the first increment I1 is integrated in `dev` and not released on `main`. The only profile is Linux x86_64 on CPU, single user, loopback access, with Marker 1.10.2. Quality is always `unverified`: check formulas and contents against the PDF.
 
 - [First conversion in the browser or the CLI](docs/tutorials/first-local-pdf.md).
-- [Prepare the package, runtime and local models](docs/how-to/local-product-setup.md).
 - [Configuration, commands and API](docs/reference/local-product.md).
 - [Bundle states and limits of the experimental product](docs/explanation/experimental-product.md).
 

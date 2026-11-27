@@ -14,6 +14,8 @@ worker opens it at the first job of the preset (or at a request to arm ahead), s
 first, lingers, then closes it; every call to a provider runs in a child (`gpu.opchild`); a window left by a dead
 worker is closed before the first claim. The reservation of each attempt is chained to the observer, its completion
 written in every outcome, and the facts of the attempt on its session go into `runs.gpu` before the publication.
+A preset that costs nothing (MFL051 B: the local GPU, the remote server of the user) has no session: the worker
+converts with its endpoint and keys (`gpu.adapters.direct`) and writes nothing in `gpu_sessions` or in the ledger.
 
 Every child of the engine is a container started by the launcher (MFL051, `engine/containers.py`).
 The observer of the engine renews the lease, records the running child (`runs.child`: the name of
@@ -50,7 +52,7 @@ from decimal import Decimal
 
 from . import routestate
 from .engine import containers, isolation, routes, selfprobe
-from .gpu import codes as gpu_codes, lifecycle
+from .gpu import adapters, codes as gpu_codes, lifecycle
 from .engine.codes import Code, EngineError
 from .engine.core import availability, convert
 from .engine.formats import extension_of
@@ -174,15 +176,17 @@ class Observer:
 
 def take_gpu_keys(settings, environ=None):
     """The keys of the rented GPUs taken out of the environment of the worker (MFL023, C-NB2 of the
-    plan r1): the names of `gpu.providers.KEYS` and the `key_env` of the endpoints of the instance's
+    plan r1): the names of `gpu.providers.KEYS`, those of the providers of the presets (`gpu.presets.KEY_ENV`,
+    with the key of the remote server of the user, MFL051 B) and the `key_env` of the endpoints of the instance's
     servers.json, so that no child inherits them; the worker reads its keys only from its env file.
     A file that cannot be read, or entries of another type, are skipped (C-DA-NB3 of the review of A); of
     `key_env` only the names of keys leave, by the rule of `engine.servers`: ending in one of
     `envfile.KEY_SUFFIXES`, never an `MDF_` setting. Returns the names taken, never a value."""
     from .engine.envfile import KEY_SUFFIXES
+    from .gpu.presets import KEY_ENV
     from .gpu.providers import KEYS
     environ = os.environ if environ is None else environ
-    names = set(KEYS)
+    names = set(KEYS) | {n for names in KEY_ENV.values() for n in names}      # MFL051 B: GPU_SERVER_KEY too
     try:
         doc = json.loads(Path(settings.servers).read_bytes())
         entries = doc.get("servers") if isinstance(doc, dict) else None
@@ -322,6 +326,7 @@ class Worker:
         self._code = None                # the code this process runs (`containers.identity`), read once
         self.key_details = {}            # {converter: what to do about its key}, never a value
         self._refresh_seen = self.service.routes_refresh_asked()      # a request older than this worker is its start
+        self._read_asked = False         # a refresh asked: the next readiness reads the providers (MFL051 B)
         # the GPU sessions (MFL023 B4): `gpu` gives the tests the command of the children, the clocks and the follower
         self.gpu = lifecycle.Manager(self, **(gpu or {}))
         self._gpu_job = None
@@ -371,9 +376,18 @@ class Worker:
                           "message": "Local worker ready" + ("; routes unavailable: " + ", ".join(missing) if missing else "")
                                      + notes}
         if self.settings.gpu_presets_enabled():
-            self.readiness["gpu"] = self.gpu.readiness()      # closed values: availability, minimum reserve, ledger
+            # closed values: availability, minimum reserve, ledger; the providers are read only on request (MFL051 B)
+            self.readiness["gpu"] = self.gpu.readiness(read=self._read_asked)
+        self._read_asked = False
         self.readiness["routes"] = self.routes_now(state)
         return state
+
+    def gpu_costs(self, name):
+        """Whether the GPU preset `name` is rented (a session, the ledger, the caps), from the table of its provider
+        (MFL051 B); a name that is not a preset counts as rented, and its session refuses it."""
+        from .gpu import presets as gpu_presets
+        table = gpu_presets.load()
+        return name not in table or gpu_presets.costs(table[name])
 
     def gpu_providers(self):
         """{GPU preset the instance enables: its provider}."""
@@ -383,6 +397,11 @@ class Worker:
         from .gpu import presets as gpu_presets
         table = gpu_presets.load()
         return {name: table[name]["provider"] for name in names if name in table}
+
+    def gpu_traits(self):
+        """{GPU preset the instance enables: what its provider implies} (`gpu.presets.TRAITS`, MFL051 B)."""
+        from .gpu import presets as gpu_presets
+        return {name: gpu_presets.TRAITS[provider] for name, provider in self.gpu_providers().items()}
 
     def routes_now(self, state):
         """The state of every route (`routestate`, MFL051) from what this worker just checked: the converters, the
@@ -394,14 +413,17 @@ class Worker:
         for name, item in presets.items():
             if item.get("code") == Code.SERVER_KEY_UNSAFE.value and unsafe:
                 details["%s:%s" % (routestate.MARKER_SERVER, name)] = unsafe
+            elif isinstance(item.get("detail"), str):
+                details["%s:%s" % (routestate.MARKER_SERVER, name)] = item["detail"]       # make gpu-up (MFL051 B)
         key_names = {name: item["missing_keys"] for name, item in presets.items() if item.get("missing_keys")}
         return routestate.compute(state, self.settings.datalab_cap_usd, gpu, self.gpu_providers(), details, key_names,
-                                  now=time.time())
+                                  now=time.time(), traits=self.gpu_traits())
 
     def routes_blocked(self, detail):
         """The routes of a worker that takes no job: every one broken, with the reason of the worker."""
         return routestate.blocked(Code.ISOLATION_UNAVAILABLE.value, self.settings.datalab_cap_usd,
-                                  self.settings.gpu_presets_enabled(), self.gpu_providers(), detail, now=time.time())
+                                  self.settings.gpu_presets_enabled(), self.gpu_providers(), detail, now=time.time(),
+                                  traits=self.gpu_traits())
 
     @contextmanager
     def exclusive(self):
@@ -696,6 +718,17 @@ class Worker:
         extra, hook, gpu = {}, None, converter == routes.MARKER_SERVER
         if gpu:
             opts = job_options(fmt, stored_options(options), self.settings)
+            if not self.gpu_costs(opts['gpu_preset']):
+                # a GPU of the user (MFL051 B, rilievo H): no session, no row of gpu_sessions or of the ledger; the
+                # endpoint and its keys straight from servers.json and the keys file, as `mdf convert` does
+                gpu = False
+                try:
+                    ep, keys = adapters.direct(self.settings, opts['gpu_preset'], self.env_file)
+                except lifecycle.Refusal as exc:
+                    raise StorageError(gpu_message(exc.code)) from None
+                request = dict(request, server=dict(request['server'], name=ep.name))
+                extra = {'server_endpoint': ep, 'server_keys': keys}
+        if gpu:
             try:
                 ep, keys, srv, hook = self.gpu.prepare(row, opts, request)
             except lifecycle.Refusal as exc:
@@ -921,7 +954,7 @@ class Worker:
             asked = self.service.routes_refresh_asked()
             if asked > self._refresh_seen:
                 # `POST /api/v1/routes/refresh`, `mdf routes --refresh`: the routes are checked now, not at the next minute
-                self._refresh_seen, self._ready_at = asked, None
+                self._refresh_seen, self._ready_at, self._read_asked = asked, None, True
             state = self.ready()
             self.heartbeat()
         except (ValueError, OSError, ImportError) as exc:
